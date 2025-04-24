@@ -30,4 +30,52 @@ fasadfasdf
 <button class="btn btn-lg btn-outline-primary" (click)="open(content)">Launch demo modal</button>
 
 <hr />{{env | json}}
+
+
+<div class="container">
+	<div [hidden]="submitted">
+	  <h1>Actor Form</h1>
+	  <form (ngSubmit)="onSubmit()" #actorForm="ngForm">
+		<div class="form-group">
+		  <label for="name">Name</label>
+		  <input type="text" class="form-control" id="name"
+				 required [(ngModel)]="model.name" name="name"
+				 #name="ngModel">
+		  <div [hidden]="name.valid || name.pristine"
+			   class="alert alert-danger">
+			Name is required
+		  </div>
+		</div>
+		<div class="form-group">
+		  <label for="studio">Studio Affiliation</label>
+		  <input type="text" class="form-control" id="studio"
+				 [(ngModel)]="model.studio" name="studio">
+		</div>
+		 
+		<button type="submit" class="btn btn-success"
+		  [disabled]="!actorForm.form.valid">Submit</button>
+		 
+  ...
+	  </form>
+	</div>
+	<div [hidden]="!submitted">
+	  <h2>You submitted the following:</h2>
+	  <div class="row">
+		<div class="col-xs-3">Name</div>
+		<div class="col-xs-9">{{ model.name }}</div>
+	  </div>
+	  <div class="row">
+		<div class="col-xs-3">Studio</div>
+		<div class="col-xs-9">{{ model.studio }}</div>
+	  </div>
+	  <div class="row">
+		<div class="col-xs-3">Skill</div>
+		<div class="col-xs-9">{{ model.skill }}</div>
+	  </div>
+	  <br>
+	  <button type="button" class="btn btn-primary" (click)="submitted=false">
+		Edit
+	  </button>
+	</div>
+  </div>
  

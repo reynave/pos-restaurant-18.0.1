@@ -1,0 +1,48 @@
+/* Tree node container */
+::ng-deep .tree-node {
+  
+    font-size: 14px;
+    color: #333; 
+  }
+  
+  /* Hover effect */
+  ::ng-deep .tree-node:hover {
+    
+  }
+  
+  /* Expand/collapse arrow */
+  ::ng-deep .toggle-children {
+    margin-right: 8px;
+    color: #888;
+    font-size: 12px;
+  }
+  
+  /* Node wrapper */
+  ::ng-deep .node-content-wrapper {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+  ::ng-deep a{
+    text-decoration: none;
+    color: #333;
+  }
+  /* Selected node */
+  ::ng-deep .node-content-wrapper-active { 
+    font-weight: bold;
+    border: none;
+    padding-left: 9px;
+  }
+  
+  /* Child nodes */
+  ::ng-deep .tree-children {
+    margin-left: 18px;
+    border-left: 2px dashed #dcdcdc;
+    padding-left: 10px;
+  }
+  
+  /* Custom icons (optional if you want to use Font Awesome) */
+  ::ng-deep .fa {
+    margin-right: 5px;
+  }
+  

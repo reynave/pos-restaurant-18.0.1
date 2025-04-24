@@ -10,6 +10,7 @@
   },
   "private": true,
   "dependencies": {
+    "@ali-hm/angular-tree-component": "^18.0.5",
     "@angular/animations": "^18.0.0",
     "@angular/common": "^18.0.0",
     "@angular/compiler": "^18.0.0",
