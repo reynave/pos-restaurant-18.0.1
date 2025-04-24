@@ -3,8 +3,11 @@
     
 }
 
+div, p {
+  font-size: 0.9rem;
+}
 .mainNavigator{
-    border-right: 1px solid #333;
+    border-right: 1px solid #ccc;
     height: 100vh;
     overflow-x: auto;
 }
