@@ -1,8 +1,8 @@
 <div class="row">
     <div class="col-12 ">
 
-
-        <div class="table table-sm ">
+        <button type="button" class="btn btn-sm btn-primary" (click)="disabled= false">Editable</button>
+        <div class="table table-sm table-editable">
             <thead>
                 <tr>
                     <th>test</th>
@@ -10,9 +10,9 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>asdf</td>
-                    <td>asdf</td>
+                <tr *ngFor="let x of items">
+                    <td>{{x.id}}</td>
+                    <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.first1" [disabled]="disabled"> </td>
                 </tr>
             </tbody>
         </div>

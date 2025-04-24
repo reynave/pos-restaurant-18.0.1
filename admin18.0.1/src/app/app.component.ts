@@ -3,11 +3,12 @@ import { Router, RouterOutlet } from '@angular/router';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TreeModule } from '@ali-hm/angular-tree-component';
 import { LoginComponent } from './login/login.component';
+import { ConfigService } from './service/config.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink,TreeModule, RouterLinkActive, LoginComponent],
+  imports: [RouterOutlet, RouterLink,TreeModule, LoginComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
@@ -32,6 +33,7 @@ export class AppComponent implements OnInit {
   options : any = {};
   constructor(
     private router: Router,
+     private config: ConfigService,
   ){
   }
   ngOnInit(): void {
@@ -39,10 +41,12 @@ export class AppComponent implements OnInit {
   }
 
   checkLogin(){
-    if(this.login == false){
+    console.log("this.config.checkToken() ",this.config.checkToken() );
+    if(this.config.checkToken() == false){ 
       this.router.navigate(['login']);
     }else{
-      this.router.navigate(['home']);
+      this.login = true; 
+     
     }
   }
 }

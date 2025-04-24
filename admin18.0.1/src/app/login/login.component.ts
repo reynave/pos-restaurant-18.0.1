@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ConfigService } from '../service/config.service';
+import { Router, RouterLink } from '@angular/router';
 
 
 export class Mylogin {
@@ -17,9 +19,20 @@ export class Mylogin {
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
-   model = new Mylogin('', '');
-
+  model = new Mylogin('', '');
+  constructor(
+    private config: ConfigService,
+    private router: Router,
+  ) { }
   onSubmit() {
+    this.config.setToken({}).subscribe(
+      data => {
+        console.log(data);
+        if (data == true) {
+          this.router.navigate(['home']);
+        }
+      }
+    )
 
   }
 }
