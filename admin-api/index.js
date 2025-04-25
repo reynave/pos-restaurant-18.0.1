@@ -3,7 +3,7 @@ const express = require('express');
 const app = express();
 const userRoutes = require('./routes/users');
 const employeeRoutes = require('./routes/employee');
-
+const fs = require('fs');
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -18,9 +18,10 @@ app.use((req, res, next) => {
 });
 
 app.use(express.json());
-
+app.use('/public',express.static('public'));
 
 app.use('/employee', employeeRoutes);
+ 
 app.use('/',  (req, res) => {
     const data = {
         error :false,

@@ -29,7 +29,7 @@ export class LoginComponent {
       data => {
         console.log(data);
         if (data == true) {
-          this.router.navigate(['home']);
+          window.location.reload();
         }
       }
     )

@@ -50,11 +50,21 @@ export class AppComponent implements OnInit {
       this.router.navigate(['login']);
     }else{
       this.login = true;  
+   
     }
   }
 
   onEvent(data : any){
     console.log('onEvent', data.node.data);
     this.router.navigate([data.node.data.href]);
+  }
+
+  onLogout(){
+    this.config.removeToken().subscribe(
+      data => {
+          window.location.reload();
+      }
+    )
+   
   }
 }

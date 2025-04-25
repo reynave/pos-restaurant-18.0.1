@@ -17,7 +17,8 @@ export class ConfigService {
     private router : Router
   ) { } 
   checkToken(){
-    if(localStorage.getItem(this.tokenKey) != '' ){
+    console.log(this.tokenKey, localStorage.getItem(this.tokenKey) );
+    if( localStorage.getItem(this.tokenKey) != null  ){
       return true;
     }else{
       return false;
