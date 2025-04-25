@@ -1,20 +1,184 @@
 <div class="row">
-    <div class="col-12 ">
+   <div class="col-12 ">
 
-        <button type="button" class="btn btn-sm btn-primary" (click)="disabled= false">Editable</button>
-        <div class="table table-sm table-editable">
-            <thead>
-                <tr>
-                    <th>test</th>
-                    <th>test</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let x of items">
-                    <td>{{x.id}}</td>
-                    <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.first1" [disabled]="disabled"> </td>
-                </tr>
-            </tbody>
-        </div>
-    </div>
+
+      <div class="header py-2">
+         @if(disabled==false){
+         <button type="button" class="btn btn-sm btn-light border me-2" (click)="cancel()">Close</button>
+         <button type="button" class="btn btn-sm btn-light border me-2" (click)="onUpdate();">Update</button>
+         <button type="button" class="btn btn-sm btn-danger border me-2" (click)="onDelete();">Delete</button>
+         }
+         @else {
+         <button type="button" class="btn btn-sm btn-light border me-2" (click)="disabled= false">Editable</button>
+        
+
+         <div ngbDropdown class="d-inline-block" container="body">
+            <button type="button" class="btn btn-sm btn-light border" id="dropdownBasic1" ngbDropdownToggle>
+               Filter
+            </button>
+            <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+               <div class="px-3">
+                  <div class="mb-2">
+                     <label><small>Select Employee Dept</small></label>
+                     <select class="form-control form-control-sm  me-2" [(ngModel)]="filterDept">
+                        <option [value]="''"> - All -</option>
+                        <option *ngFor="let a of selectDept" [value]="a.empdept">{{a.desc1}}</option>
+                     </select>
+                  
+                  </div>
+
+                  <div class="mb-2">
+                     <label><small>Select authlevel</small></label>
+                     <select class="form-control form-control-sm  me-2" [(ngModel)]="filterAuthLevel">
+                        <option [value]="''"> - All -</option>
+                        <option *ngFor="let a of selectAuthLevel" [value]="a.authlevel">{{a.desc1}}</option>
+                     </select>
+                  
+                  </div>
+
+                  <div class="mb-2">
+                     <label><small>Select selectOrdLevel</small></label>
+                     <select class="form-control form-control-sm  me-2" [(ngModel)]="filterOrdLevel">
+                        <option [value]="''"> - All -</option>
+                        <option *ngFor="let a of selectOrdLevel" [value]="a.ordlevel">{{a.desc1}}</option>
+                     </select>
+                  
+                  </div>
+               </div>
+
+               
+
+               <button ngbDropdownItem (click)="httpGet();">Filter</button> 
+            </div>
+         </div>
+
+
+      }
+
+         <span class="mx-1" *ngIf="loading">
+            <img src="./gif/Pulse@1x-1.0s-200px-200px.gif" height="30">
+         </span>
+      </div>
+      <div class="mainContent border">
+         <div class="">
+
+            <div class="table table-sm table-editable table-hover" style="width: max-content;">
+               <thead class="sticky-top ">
+                  <tr>
+
+                     <th *ngIf="disabled==false">
+                        <a href="javascript:;" (click)="checkAll();">
+                           @if(checkboxAll == 1){
+                           <i class="bi bi-check-square"></i>
+                           }@else {
+                           <i class="bi bi-square"></i>
+                           }
+
+                        </a>
+                     </th>
+                     <th>#</th>
+                     <th>ID</th>
+                     <th>FirstName</th>
+                     <th>LastName</th>
+                     <th>login</th>
+                     <th>tel</th>
+                     <th>addr1</th>
+                     <th>addr2</th>
+                     <th>birthday</th>
+                     <th>dob</th>
+                     <th>sex</th>
+                     <th>socialid</th>
+                     <th>email</th>
+                     <th>empdept</th>
+                     <th>authlevel</th>
+                     <th>ordlevel</th>
+                     <th>disclevel</th>
+                     <th>actdate</th>
+                     <th>card</th>
+                     <th>emptype</th>
+
+                  </tr>
+               </thead>
+               <tbody>
+                  <tr *ngFor="let x of items; let i = index">
+
+                     <td *ngIf="disabled==false">
+                        <a href="javascript:;" (click)=" x.checkbox == 0 ? x.checkbox = 1 : x.checkbox = 0">
+                           <i *ngIf="x.checkbox == 0" class="bi bi-square"></i>
+
+                           <i *ngIf="x.checkbox == 1" class="bi bi-check-square"></i>
+                        </a>
+                     </td>
+                     <td>{{i+1}}</td>
+                     <td>{{x.id}}</td>
+                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.first1"
+                           [disabled]="disabled">
+                     </td>
+                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.last1"
+                           [disabled]="disabled">
+                     </td>
+                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.login"
+                           [disabled]="disabled">
+                     </td>
+                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.tel"
+                           [disabled]="disabled">
+                     </td>
+                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.addr1"
+                           [disabled]="disabled">
+                     </td>
+                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.addr2"
+                           [disabled]="disabled">
+                     </td>
+                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.birthday"
+                           [disabled]="disabled"></td>
+                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.dob"
+                           [disabled]="disabled">
+                     </td>
+                     <td>
+                        <select class="form-control form-control-sm" [(ngModel)]="x.sex" [disabled]="disabled">
+                           <option value="F">Female</option>
+                           <option value="M">Male</option>
+                        </select>
+
+                     </td>
+                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.socialid"
+                           [disabled]="disabled"></td>
+                     <td><input type="email" class="form-control form-control-sm" [(ngModel)]="x.email"
+                           [disabled]="disabled">
+                     </td>
+                     <td>
+                        <select class="form-control form-control-sm" [(ngModel)]="x.empdept" [disabled]="disabled">
+                           <option *ngFor="let a of selectDept" [value]="a.empdept">{{a.desc1}}</option>
+                        </select>
+                     </td>
+                     <td>
+                        <select class="form-control form-control-sm" [(ngModel)]="x.autdlevel" [disabled]="disabled">
+                           <option *ngFor="let a of selectAuthLevel" [value]="a.autdlevel">{{a.desc1}}</option>
+                        </select>
+                     </td>
+                     <td>
+                        <select class="form-control form-control-sm" [(ngModel)]="x.ordlevel" [disabled]="disabled">
+                           <option *ngFor="let a of selectOrdLevel" [value]="a.ordlevel">{{a.desc1}}</option>
+                        </select>
+                     </td>
+                     <td><input type="number" class="form-control form-control-sm" [(ngModel)]="x.disclevel"
+                           [disabled]="disabled"></td>
+
+                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.actdate"
+                           [disabled]="disabled">
+                     </td>
+                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.card"
+                           [disabled]="disabled">
+                     </td>
+                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.emptype"
+                           [disabled]="disabled">
+                     </td>
+
+                  </tr>
+               </tbody>
+            </div>
+
+         </div>
+      </div>
+   </div>
 </div>

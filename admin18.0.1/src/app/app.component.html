@@ -1,30 +1,65 @@
 @if(login == true){
-  <div class="container-fluid">
-    <div class="row g-2">
-      <div class="col-md-2">
-        <div class="mainNavigator">
-          <tree-root #treeComponent [nodes]="nodes" [options]="options">
-            <ng-template #treeNodeTemplate let-node let-index="index">
-  
-              <a [routerLink]="['/', node.data.href]">
-                <span class="file-icon" [innerHTML]="node.data.icon"></span> 
-                {{ node.data.name }}
-              </a>
-  
+<div class="container-fluid">
+  <div class="row g-2">
+    <div class="col-md-2">
+      <div class="mainNavigator">
+        <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
+          <li [ngbNavItem]="1">
+            <button ngbNavLink class="px-2 py-1"><small>General</small></button>
+            <ng-template ngbNavContent>
+
+
+              <tree-root #treeComponent [nodes]="nodes" [options]="options"   (activate)="onEvent($event)">
+                <ng-template #treeNodeTemplate let-node let-index="index"> 
+                    <span class="file-icon" [innerHTML]="node.data.icon"></span>
+                    {{ node.data.name }} 
+                </ng-template>
+      
+              </tree-root>
+
             </ng-template>
-  
-          </tree-root>
-        </div>
-      </div>
-      <div class="col-md-10">
-        <div class="mainContent">
-          <router-outlet /> 
-        </div>
-     
+          </li>
+          <li [ngbNavItem]="2">
+            <button ngbNavLink class="px-2 py-1"><small>Station</small></button>
+            <ng-template ngbNavContent>
+              <p>
+                soon
+              </p>
+            </ng-template>
+          </li>
+          <li [ngbNavItem]="3">
+            <button ngbNavLink class="px-2 py-1"><small>Menu</small></button>
+            <ng-template ngbNavContent>
+              <p>
+                soon
+              </p>
+            </ng-template>
+          </li>
+          <li [ngbNavItem]="4">
+            <button ngbNavLink class="px-2 py-1"><small>Outlet</small></button>
+            <ng-template ngbNavContent>
+              <p>
+               soon
+              </p>
+            </ng-template>
+          </li>
+        </ul>
+
+        <div [ngbNavOutlet]="nav" class="mt-2"></div>
+
+
+
+      
       </div>
     </div>
+    <div class="col-md-10">
+
+      <router-outlet />
+
+    </div>
   </div>
+</div>
 }
 @else {
-  <app-login></app-login>
+<app-login></app-login>
 }
