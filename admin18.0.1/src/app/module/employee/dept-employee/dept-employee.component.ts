@@ -1,32 +1,25 @@
 import { Component, OnInit } from '@angular/core';
-import { ConfigService } from '../../service/config.service';
+import { ConfigService } from '../../../service/config.service';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { environment } from '../../../environments/environment.development';
+import { environment } from '../../../../environments/environment.development';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgbDatepickerModule, NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 export class Actor {
   constructor(
-    public login: string,
-    public passwd: string,
-    public name1: string,
-    public birthday: any,
-    public empdept: string,
-    public authlevel: string,
-    public ordlevel: string,
-    public disclevel: string,
-
-
+    public desc1: string,
+    public desc2: string,
+    public desc3: string,
   ) { }
 }
 @Component({
-  selector: 'app-employee',
+  selector: 'app-dept-employee',
   standalone: true,
   imports: [HttpClientModule, CommonModule, FormsModule, NgbDropdownModule, NgbDatepickerModule],
-  templateUrl: './employee.component.html',
-  styleUrl: './employee.component.css'
+  templateUrl: './dept-employee.component.html',
+  styleUrl: './dept-employee.component.css'
 })
-export class EmployeeComponent implements OnInit {
+export class DeptEmployeeComponent implements OnInit {
   loading: boolean = false;
   checkboxAll: number = 0;
   disabled: boolean = true;
@@ -35,11 +28,8 @@ export class EmployeeComponent implements OnInit {
   selectAuthLevel: any = [];
   selectOrdLevel: any = [];
 
-  filterDept: string = '';
-  filterAuthLevel: string = '';
-  filterOrdLevel: string = '';
 
-  model = new Actor('', '', '', '', '', '', '', '');
+  model = new Actor('', '', '',);
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
@@ -47,46 +37,20 @@ export class EmployeeComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.httpSelect();
+    this.httpGet();
   }
 
-  httpSelect() {
-    this.loading = true;
-    const url = environment.api + "employee/select";
-    console.log(url);
-    this.http.get<any>(url, {
-      headers: this.configService.headers(),
-    }).subscribe(
-      data => {
-        console.log(data);
-        this.selectDept = data['dept'];
-        this.selectAuthLevel = data['auth_level'];
-        this.selectOrdLevel = data['order_level'];
-
-        this.httpGet();
-      },
-      error => {
-        console.log(error);
-      }
-    )
-  }
   httpGet() {
     this.loading = true;
-    const url = environment.api + "employee";
-    const params = {
-      filterDept: this.filterDept,
-      filterAuthLevel: this.filterAuthLevel,
-      filterOrdLevel: this.filterOrdLevel,
-    }
-    console.log(url);
+    const url = environment.api + "employee/dept/";
     this.http.get<any>(url, {
       headers: this.configService.headers(),
-      params: params
     }).subscribe(
       data => {
         console.log(data);
         this.loading = false;
         this.items = data['items'];
+        this.modalService.dismissAll();
       },
       error => {
         console.log(error);
@@ -113,7 +77,7 @@ export class EmployeeComponent implements OnInit {
   }
   onUpdate() {
     this.loading = true;
-    const url = environment.api + "employee/update";
+    const url = environment.api + "employee/dept/update";
     const body = this.items;
     this.http.post<any>(url, body, {
       headers: this.configService.headers(),
@@ -129,9 +93,9 @@ export class EmployeeComponent implements OnInit {
   }
 
   onDelete() {
-    if (confirm("Delete this checklist?")) {
+    if (confirm("Delete this checklist?")) { 
       this.loading = true;
-      const url = environment.api + "employee/delete";
+      const url = environment.api + "employee/dept/delete";
       const body = this.items;
       this.http.post<any>(url, body, {
         headers: this.configService.headers(),
@@ -149,7 +113,7 @@ export class EmployeeComponent implements OnInit {
 
   onSubmit() {
     this.loading = true;
-    const url = environment.api + "employee/create";
+    const url = environment.api + "employee/dept/create";
     const body = {
       model: this.model,
     };
@@ -159,7 +123,7 @@ export class EmployeeComponent implements OnInit {
       data => {
         console.log(data);
         if (data['error'] == false) {
-          this.model = new Actor('', '', '', '', '', '', '', '');
+          this.model = new Actor('', '', '');
           this.httpGet();
         } else {
           alert("INSERT ERROR");

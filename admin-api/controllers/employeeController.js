@@ -1,13 +1,14 @@
 const db = require('../config/db');
+const { today } = require('./../helpers/global');
 
 exports.getSelect = async (req, res) => {
-  try { 
+  try {
     const [auth_level] = await db.query('SELECT * FROM employee_auth_level');
     const [dept] = await db.query('SELECT * FROM employee_dept');
-    const [order_level] = await db.query('SELECT * FROM employee_order_level'); 
+    const [order_level] = await db.query('SELECT * FROM employee_order_level');
 
     const data = {
-      error: false, 
+      error: false,
       auth_level: auth_level,
       dept: dept,
       order_level: order_level,
@@ -23,9 +24,9 @@ exports.getSelect = async (req, res) => {
 exports.getAllData = async (req, res) => {
   try {
 
-    const filterAuthLevel = req.query.filterAuthLevel != '' ? " AND e.authlevel = "+req.query.filterAuthLevel : '';
-    const filterDept = req.query.filterDept != '' ? " AND e.empdept = "+req.query.filterDept : '';
-    const filterOrdLevel = req.query.filterOrdLevel != '' ? " AND e.ordlevel = "+req.query.filterOrdLevel : '';
+    const filterAuthLevel = req.query.filterAuthLevel != '' ? " AND e.authlevel = " + req.query.filterAuthLevel : '';
+    const filterDept = req.query.filterDept != '' ? " AND e.empdept = " + req.query.filterDept : '';
+    const filterOrdLevel = req.query.filterOrdLevel != '' ? " AND e.ordlevel = " + req.query.filterOrdLevel : '';
 
 
     const [rows] = await db.query(`SELECT e.*, 0 as 'checkbox' , 
@@ -39,12 +40,12 @@ exports.getAllData = async (req, res) => {
     WHERE e.presence =1 ${filterAuthLevel} ${filterDept} ${filterOrdLevel}
     
     `);
-   
+
 
     const data = {
       error: false,
-      items: rows,  
-      get : req.query
+      items: rows,
+      get: req.query
     }
 
     res.json(data);
@@ -76,25 +77,40 @@ exports.getDetail = async (req, res) => {
 };
 
 exports.postCreate = async (req, res) => {
-  const { name, position, email } = req.body;
+  const model = req.body['model'];
+  const inputDate = today();
 
-  if (!name || !position || !email) {
-    return res.status(400).json({ error: 'Please provide name, position, and email' });
-  }
 
   try {
     const [result] = await db.query(
-      'INSERT INTO employees (name, position, email) VALUES (?, ?, ?)',
-      [name, position, email]
+      `INSERT INTO employee (presence, inputDate, login, passwd, name1,empdept, ordlevel, authlevel,disclevel,birthday  ) 
+      VALUES (?, ?, ?,  ?, ?, ?, ?, ?, ?,?)`,
+      [
+        1,
+        inputDate,
+        model['login'],
+        model['passwd'],
+        model['name1'],
+
+        model['empdept'],
+        model['ordlevel'],
+        model['authlevel'],
+        model['disclevel'],
+
+        model['birthday']['year'] + "-" + model['birthday']['month'] + "-" + model['birthday']['day'],
+
+      ]
     );
 
     res.status(201).json({
+      error: false,
+      inputDate: inputDate,
       message: 'Employee created',
       employeeId: result.insertId
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Database insert error' });
+    res.status(500).json({ error : true, note: 'Database insert error' });
   }
 };
 

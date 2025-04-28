@@ -1,8 +1,11 @@
 require('dotenv').config();
 const express = require('express');
-const app = express();
-const userRoutes = require('./routes/users');
+const app = express(); 
 const employeeRoutes = require('./routes/employee');
+const specialHour = require('./routes/specialHour');
+const holidayList = require('./routes/holidayList');
+const payment = require('./routes/payment');
+
 const fs = require('fs');
 
 app.use((req, res, next) => {
@@ -19,8 +22,10 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 app.use('/public',express.static('public'));
-
+app.use('/specialHour', specialHour); 
+app.use('/holidayList', holidayList); 
 app.use('/employee', employeeRoutes);
+app.use('/payment', payment);
  
 app.use('/',  (req, res) => {
     const data = {

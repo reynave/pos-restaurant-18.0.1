@@ -3,61 +3,74 @@
 
 
       <div class="header py-2">
-         @if(disabled==false){
-         <button type="button" class="btn btn-sm btn-light border me-2" (click)="cancel()">Close</button>
-         <button type="button" class="btn btn-sm btn-light border me-2" (click)="onUpdate();">Update</button>
-         <button type="button" class="btn btn-sm btn-danger border me-2" (click)="onDelete();">Delete</button>
-         }
-         @else {
-         <button type="button" class="btn btn-sm btn-light border me-2" (click)="disabled= false">Editable</button>
-        
+         <div class="row">
+            <div class="col-3">
+              <strong>EMPLOYEE</strong>  <span class="btn btn-sm me-2"> </span>
+            </div>
+            <div class="col-9 text-end">
+               <small class="mx-1" >Search (CTRL + F)</small>
+               @if(disabled==false){
+               <button type="button" class="btn btn-sm btn-light border me-2" (click)="cancel()">Close</button>
+               <button type="button" class="btn btn-sm btn-light border me-2" (click)="onUpdate();">Update</button>
 
-         <div ngbDropdown class="d-inline-block" container="body">
-            <button type="button" class="btn btn-sm btn-light border" id="dropdownBasic1" ngbDropdownToggle>
-               Filter
-            </button>
-            <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
-               <div class="px-3">
-                  <div class="mb-2">
-                     <label><small>Select Employee Dept</small></label>
-                     <select class="form-control form-control-sm  me-2" [(ngModel)]="filterDept">
-                        <option [value]="''"> - All -</option>
-                        <option *ngFor="let a of selectDept" [value]="a.empdept">{{a.desc1}}</option>
-                     </select>
-                  
-                  </div>
+               <button type="button" class="btn btn-sm btn-dark border me-2" (click)="open(content);">Create</button>
+               <button type="button" class="btn btn-sm btn-danger border me-2" (click)="onDelete();">Delete</button>
 
-                  <div class="mb-2">
-                     <label><small>Select authlevel</small></label>
-                     <select class="form-control form-control-sm  me-2" [(ngModel)]="filterAuthLevel">
-                        <option [value]="''"> - All -</option>
-                        <option *ngFor="let a of selectAuthLevel" [value]="a.authlevel">{{a.desc1}}</option>
-                     </select>
-                  
-                  </div>
+               }
+               @else {
+               <button type="button" class="btn btn-sm btn-light border me-2"
+                  (click)="disabled= false">Editable</button>
 
-                  <div class="mb-2">
-                     <label><small>Select selectOrdLevel</small></label>
-                     <select class="form-control form-control-sm  me-2" [(ngModel)]="filterOrdLevel">
-                        <option [value]="''"> - All -</option>
-                        <option *ngFor="let a of selectOrdLevel" [value]="a.ordlevel">{{a.desc1}}</option>
-                     </select>
-                  
+
+               <div ngbDropdown class="d-inline-block " container="body">
+                  <button type="button" class="btn btn-sm btn-light border me-2" id="dropdownBasic1" ngbDropdownToggle>
+                     Filter
+                  </button>
+                  <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                     <div class="px-3">
+                        <div class="mb-2">
+                           <label><small>Select Employee Dept</small></label>
+                           <select class="form-control form-control-sm  me-2" [(ngModel)]="filterDept">
+                              <option [value]="''"> - All -</option>
+                              <option *ngFor="let a of selectDept" [value]="a.empdept">{{a.desc1}}</option>
+                           </select>
+
+                        </div>
+
+                        <div class="mb-2">
+                           <label><small>Select authlevel</small></label>
+                           <select class="form-control form-control-sm  me-2" [(ngModel)]="filterAuthLevel">
+                              <option [value]="''"> - All -</option>
+                              <option *ngFor="let a of selectAuthLevel" [value]="a.authlevel">{{a.desc1}}</option>
+                           </select>
+
+                        </div>
+
+                        <div class="mb-2">
+                           <label><small>Select selectOrdLevel</small></label>
+                           <select class="form-control form-control-sm  me-2" [(ngModel)]="filterOrdLevel">
+                              <option [value]="''"> - All -</option>
+                              <option *ngFor="let a of selectOrdLevel" [value]="a.ordlevel">{{a.desc1}}</option>
+                           </select>
+
+                        </div>
+                     </div>
+
+
+
+                     <button ngbDropdownItem (click)="httpGet();">Filter</button>
                   </div>
                </div>
 
-               
 
-               <button ngbDropdownItem (click)="httpGet();">Filter</button> 
+               }
+              
+               <span class="mx-1" *ngIf="loading">
+                  <img src="./gif/Pulse@1x-1.0s-200px-200px.gif" height="30">
+               </span>
+
             </div>
          </div>
-
-
-      }
-
-         <span class="mx-1" *ngIf="loading">
-            <img src="./gif/Pulse@1x-1.0s-200px-200px.gif" height="30">
-         </span>
       </div>
       <div class="mainContent border">
          <div class="">
@@ -78,8 +91,7 @@
                      </th>
                      <th>#</th>
                      <th>ID</th>
-                     <th>FirstName</th>
-                     <th>LastName</th>
+                     <th>Name</th>
                      <th>login</th>
                      <th>tel</th>
                      <th>addr1</th>
@@ -111,12 +123,10 @@
                      </td>
                      <td>{{i+1}}</td>
                      <td>{{x.id}}</td>
-                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.first1"
+                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.name1"
                            [disabled]="disabled">
                      </td>
-                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.last1"
-                           [disabled]="disabled">
-                     </td>
+
                      <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.login"
                            [disabled]="disabled">
                      </td>
@@ -182,3 +192,79 @@
       </div>
    </div>
 </div>
+
+
+<ng-template #content let-modal>
+   <div class="modal-header">
+      <strong class="modal-title" id="modal-basic-title">New Employee</strong>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+   </div>
+   <div class="modal-body">
+      <form (ngSubmit)="onSubmit()" #actorForm="ngForm">
+         <div class="mb-2">
+            <label for="name">Name*</label>
+            <input id="name" class="form-control form-control-sm" name="name" [(ngModel)]="model.name1" required
+               #name="ngModel" />
+            <small [hidden]="name.valid || name.pristine" class="text-danger">
+               *Name is required
+            </small>
+         </div>
+
+         <div class="mb-2">
+            <label for="name">login*</label>
+            <input id="login" class="form-control form-control-sm" name="login" [(ngModel)]="model.login" required
+               #login="ngModel" />
+            <small [hidden]="login.valid || login.pristine" class="text-danger">
+               *login is required
+            </small>
+         </div>
+         <div class="mb-2">
+            <label for="passwd">password*</label>
+            <input id="login" class="form-control form-control-sm" name="passwd" [(ngModel)]="model.passwd" required
+               #passwd="ngModel" />
+            <small [hidden]="passwd.valid || passwd.pristine" class="text-danger">
+               *password is required
+            </small>
+         </div>
+
+
+         <div class="mb-2">
+            <label for="empdept">Employee Dept*</label>
+            <select id="empdept" class="form-control form-control-sm" name="empdept" [(ngModel)]="model.empdept">
+               <option *ngFor="let x of selectDept" [value]="x.empdept">{{x.desc1}}</option>
+            </select>
+         </div>
+
+         <div class="mb-2">
+            <label for="authlevel">Auth Level*</label>
+            <select id="authlevel" class="form-control form-control-sm" name="authlevel" [(ngModel)]="model.authlevel">
+               <option *ngFor="let x of selectAuthLevel" [value]="x.authlevel">{{x.desc1}}</option>
+            </select>
+         </div>
+
+         <div class="mb-2">
+            <label for="ordlevel">Order Level*</label>
+            <select id="ordlevel" class="form-control form-control-sm" name="ordlevel" [(ngModel)]="model.ordlevel">
+               <option *ngFor="let x of selectOrdLevel" [value]="x.ordlevel">{{x.desc1}}</option>
+            </select>
+         </div>
+
+
+         <div class="mb-4">
+            <label for="dateOfBirth">Date of birth</label>
+            <div class="input-group">
+               <input id="dateOfBirth" class="form-control form-control-sm" placeholder="yyyy-mm-dd" name="dp"
+                  [(ngModel)]="model.birthday" ngbDatepicker #dp="ngbDatepicker"
+                  [maxDate]="{ year: 2009, month: 12, day: 31 }" />
+               <button class="btn btn-sm btn-light bi bi-calendar3 border" (click)="dp.toggle()" type="button"></button>
+            </div>
+         </div>
+
+
+         <div class="d-grid">
+            <button type="submit" class="btn btn-sm btn-dark" [disabled]="!actorForm.form.valid">Save</button>
+         </div>
+      </form>
+   </div>
+
+</ng-template>

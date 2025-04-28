@@ -2,8 +2,11 @@
     font-family: "Open Sans", sans-serif;   
 }
 
-div, p {
+div, p, label {
   font-size: 0.9rem;
+}
+label{
+  color: #333 !important;
 }
 .mainNavigator{
     border-right: 1px solid #ccc;
