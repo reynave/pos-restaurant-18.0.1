@@ -20,7 +20,7 @@ export class AppComponent implements OnInit {
   title = 'admin18.0.1';
   nodes : any  = [
     {
-      name: 'Employees', href: 'employee', icon:'<i class="bi bi-people"></i>',
+      name: 'Employees', href: 'employee', icon:'<i class="bi bi-person-vcard"></i> ',
       children: [
         { name: 'All Employees', href: 'employee', icon:'' },
         { name: 'Auth Level', href: 'employee/authLevel', icon:'' },
@@ -41,35 +41,74 @@ export class AppComponent implements OnInit {
         { name: 'Discount Group', href: 'discount/discGroup', icon:'' },  
         { name: 'Discount Type', href: 'discount/discType', icon:'' },   
       ]
-    },
-
+    }, 
 
     {
       name: 'Payment', href: 'payment', icon:'<i class="bi bi-currency-dollar"></i>',
       children: [
         { name: 'Payment Type', href: 'payment/paymentType', icon:'' }, //check_payment_type
         { name: 'Payment Group', href: 'payment/paymentGroup', icon:'' }, //check_payment_group
-        { name: 'Foreign Currency', href: '', icon:'' },
+        { name: 'Foreign Currency', href: 'payment/foreignCurrency', icon:'' },
         { name: 'Cash Type', href: 'payment/cashType', icon:'' }, 
         { name: 'Tax', href: 'payment/taxType', icon:'' }, 
         { name: 'Service Charge (SC)', href: 'payment/serviceCharge', icon:'' }, 
         { name: 'Pay In and Out', href: '', icon:'' }, 
         { name: 'Member Deposit', href: '', icon:'' }, 
-        { name: 'IC Card Add Value', href: '', icon:'' }, 
-        { name: 'WP Deposit Add Value', href: '', icon:'' }, 
-        { name: 'WP Svc Card Add Value', href: '', icon:'' },  
+        { name: 'IC Card Add Value', href: 'payment/icCard', icon:'' }, 
+        { name: 'WP Deposit Add Value', href: 'payment/wbDeposit', icon:'' }, 
+        { name: 'WP Svc Card Add Value', href: 'payment/wpSvcCard', icon:'' },  
       ]
     },
 
     {
-      name: 'Kitchen', href: '', icon:'',
+      name: 'Kitchen', href: '', icon:'<i class="bi bi-fire"></i>',
       children: [
         { name: 'Kitchen Slip', href: '', icon:'' },
         { name: 'Kitchen Message', href: '', icon:'' },
         { name: 'Kitchen Monitor', href: '', icon:'' },  
       ]
     },
-    
+
+
+    {
+      name: 'Other', href: '', icon:'<i class="bi bi-folder"></i>',
+      children: [
+        { name: 'Void Code', href: '', icon:'' },
+        { name: 'Pantry Message', href: '', icon:'' },
+        { name: 'Function Authority', href: '', icon:'' },  
+        { name: 'Function List', href: '', icon:'' },  
+        { name: 'Function Short Cuts', href: '', icon:'' },   
+      ]
+    },
+
+
+    {
+      name: 'Membership', href: '', icon:'<i class="bi bi-postcard-heart"></i>',
+      children: [
+        { name: 'Member Profiles', href: '', icon:'' }, 
+        { name: 'Member Classes', href: '', icon:'' }, 
+        { name: 'Member Period', href: '', icon:'' }, 
+        { name: 'Member Account', href: '', icon:'' }, 
+        { name: 'Member Account Holder', href: '', icon:'' }, 
+        { name: 'Member Cost Centre', href: '', icon:'' }, 
+        
+      ]
+    },
+
+    {
+      name: 'Complaint', href: '', icon:'<i class="bi bi-people"></i>',
+      children: [
+        { name: 'Complaint Type', href: '', icon:'' }, 
+        { name: 'Complaint Category', href: '', icon:'' },    
+      ]
+    },
+
+    {
+      name: 'Customer', href: '', icon:'<i class="bi bi-people"></i>',
+      children: [
+        { name: 'Customer Information', href: '', icon:'' },  
+      ]
+    },
   ];
 
   options : any = {};

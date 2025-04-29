@@ -7,7 +7,7 @@ exports.getAllData = async (req, res) => {
 
     const [rows] = await db.query(`
       SELECT *, 0 as 'checkbox'
-      FROM check_disc_group  
+      FROM check_disc_type  
       WHERE presence =1
     `);
  
@@ -37,13 +37,13 @@ exports.postCreate = async (req, res) => {
   try {
     
     const [result] = await db.query(
-      `INSERT INTO check_disc_group (presence, inputDate, desc1, discgrp ) 
+      `INSERT INTO check_disc_type (presence, inputDate, desc1, discid ) 
       VALUES (?, ?, ?,? )`,
       [
         1,
         inputDate,
         model['desc1'],
-        model['discgrp'],
+        model['discid'],
        
       ]
     );
@@ -51,8 +51,8 @@ exports.postCreate = async (req, res) => {
     res.status(201).json({
       error: false,
       inputDate: inputDate,
-      message: 'check_disc_group created',
-      check_disc_groupId: result.insertId
+      message: 'check_disc_type created',
+      check_disc_typeId: result.insertId
     });
   } catch (err) {
     console.error(err);
@@ -76,20 +76,20 @@ exports.postUpdate = async (req, res) => {
 
   try {
     for (const emp of data) {
-      const { discgrp } = emp;
-      const id = discgrp;
+      const { discid } = emp;
+      const id = discid;
       if (!id) {
         results.push({ id, status: 'failed', reason: 'Missing fields' });
         continue;
       }
 
       const [result] = await db.query(
-        `UPDATE check_disc_group SET 
+        `UPDATE check_disc_type SET 
           desc1 = '${emp['desc1'].replace(/\s{2,}/g, ' ')}',   
         
           updateDate = '${today()}'
 
-        WHERE discgrp = ${id}`,
+        WHERE discid = ${id}`,
       );
 
 
@@ -126,8 +126,8 @@ exports.postDelete = async (req, res) => {
 
   try {
     for (const emp of data) {
-      const { discgrp, checkbox } = emp;
-      const id = discgrp;
+      const { discid, checkbox } = emp;
+      const id = discid;
       if (!id || !checkbox) {
         results.push({ id, status: 'failed', reason: 'Missing fields' });
         continue;
@@ -135,7 +135,7 @@ exports.postDelete = async (req, res) => {
 
 
       const [result] = await db.query(
-        'UPDATE check_disc_group SET presence = ?, updateDate = ? WHERE discgrp = ?',
+        'UPDATE check_disc_type SET presence = ?, updateDate = ? WHERE discid = ?',
         [checkbox == 0 ? 1 : 0, today(), id]
       );
 

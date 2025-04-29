@@ -5,6 +5,10 @@ const paymentGroup = require('../controllers/paymentGroupController');
 const cashType = require('../controllers/cashTypeController'); 
 const taxType = require('../controllers/taxTypeController'); 
 const serviceCharge = require('../controllers/serviceChargeController'); 
+const foreignCurrency = require('../controllers/foreignCurrencyController'); 
+const wbDeposit = require('../controllers/wbDepositController'); 
+const wbSvcCard = require('../controllers/wbSvcCardController'); 
+const icCard = require('../controllers/icCardController'); 
 
 router.get('/paymentType/', paymentType.getAllData); 
 router.post('/paymentType/update', paymentType.postUpdate);
@@ -31,5 +35,25 @@ router.post('/serviceCharge/update', serviceCharge.postUpdate);
 router.post('/serviceCharge/create', serviceCharge.postCreate);
 router.post('/serviceCharge/delete', serviceCharge.postDelete);
 
- 
+router.get('/foreignCurrency/', foreignCurrency.getAllData); 
+router.post('/foreignCurrency/update', foreignCurrency.postUpdate);
+router.post('/foreignCurrency/create', foreignCurrency.postCreate);
+router.post('/foreignCurrency/delete', foreignCurrency.postDelete);
+
+
+router.get('/wbDeposit/', wbDeposit.getAllData); 
+router.post('/wbDeposit/update', wbDeposit.postUpdate);
+router.post('/wbDeposit/create', wbDeposit.postCreate);
+router.post('/wbDeposit/delete', wbDeposit.postDelete);
+
+router.get('/wbSvcCard/', wbSvcCard.getAllData); 
+router.post('/wbSvcCard/update', wbSvcCard.postUpdate);
+router.post('/wbSvcCard/create', wbSvcCard.postCreate);
+router.post('/wbSvcCard/delete', wbSvcCard.postDelete);
+
+router.get('/icCard/', icCard.getAllData); 
+router.post('/icCard/update', icCard.postUpdate);
+router.post('/icCard/create', icCard.postCreate);
+router.post('/icCard/delete', icCard.postDelete);
+
 module.exports = router;

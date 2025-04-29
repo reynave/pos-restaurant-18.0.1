@@ -29,7 +29,9 @@ export class LoginComponent {
       data => {
         console.log(data);
         if (data == true) {
-          window.location.reload();
+          this.router.navigate(['/']).then(()=>{
+            window.location.reload();
+          }) 
         }
       }
     )

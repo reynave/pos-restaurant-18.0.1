@@ -15,6 +15,10 @@ import { TaxTypeComponent } from './module/payment/tax-type/tax-type.component';
 import { PaymentServiceChargeComponent } from './module/payment/payment-service-charge/payment-service-charge.component';
 import { DiscGroupComponent } from './module/discount/disc-group/disc-group.component';
 import { DiscTypeComponent } from './module/discount/disc-type/disc-type.component';
+import { ForeignCurrencyTypeComponent } from './module/payment/foreign-currency-type/foreign-currency-type.component';
+import { WpDepositComponent } from './module/payment/wp-deposit/wp-deposit.component';
+import { WpSvcCardComponent } from './module/payment/wp-svc-card/wp-svc-card.component';
+import { IcCardComponent } from './module/payment/ic-card/ic-card.component';
 
 export const routes: Routes = [
     { path: '',component: HomeComponent},
@@ -35,6 +39,10 @@ export const routes: Routes = [
     { path: 'payment/cashType', component: CashTypeComponent },
     { path: 'payment/taxType', component: TaxTypeComponent },
     { path: 'payment/serviceCharge', component: PaymentServiceChargeComponent },
+    { path: 'payment/foreignCurrency', component: ForeignCurrencyTypeComponent },
+    { path: 'payment/wpSvcCard', component: WpSvcCardComponent },
+    { path: 'payment/wbDeposit', component: WpDepositComponent },
+    { path: 'payment/icCard', component: IcCardComponent },
 
 
     { path: 'discount/discGroup', component: DiscGroupComponent },

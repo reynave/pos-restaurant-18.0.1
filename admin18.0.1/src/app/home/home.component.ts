@@ -20,6 +20,7 @@ export class Actor {
 })
 export class HomeComponent {
   env : any = environment;
+  ver : string = environment.ver;
   constructor(
     public modalService: NgbModal, 
   ) { }

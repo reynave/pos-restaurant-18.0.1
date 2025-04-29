@@ -8,17 +8,17 @@ import { NgbDatepickerModule, NgbDropdownModule, NgbModal } from '@ng-bootstrap/
 export class Actor {
   constructor(
     public desc1: string,
-    public discgrp: string, 
+    public date: number, 
   ) { }
 }
 @Component({
-  selector: 'app-disc-type',
+  selector: 'app-foreign-currency-type',
   standalone: true,
   imports: [HttpClientModule, CommonModule, FormsModule, NgbDropdownModule, NgbDatepickerModule],
-  templateUrl: './disc-type.component.html',
-  styleUrl: './disc-type.component.css'
+  templateUrl: './foreign-currency-type.component.html',
+  styleUrl: './foreign-currency-type.component.css'
 })
-export class DiscTypeComponent implements OnInit {
+export class ForeignCurrencyTypeComponent implements OnInit {
   loading: boolean = false;
   checkboxAll: number = 0;
   disabled: boolean = true;
@@ -28,7 +28,7 @@ export class DiscTypeComponent implements OnInit {
   selectOrdLevel: any = [];
 
 
-  model = new Actor('', '');
+  model = new Actor('', 0);
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
@@ -41,7 +41,7 @@ export class DiscTypeComponent implements OnInit {
 
   httpGet() {
     this.loading = true;
-    const url = environment.api + "discount/discType/";
+    const url = environment.api + "payment/foreignCurrency/";
     this.http.get<any>(url, {
       headers: this.configService.headers(),
     }).subscribe(
@@ -76,7 +76,7 @@ export class DiscTypeComponent implements OnInit {
   }
   onUpdate() {
     this.loading = true;
-    const url = environment.api + "discount/discType/update";
+    const url = environment.api + "payment/foreignCurrency/update";
     const body = this.items;
     this.http.post<any>(url, body, {
       headers: this.configService.headers(),
@@ -94,7 +94,7 @@ export class DiscTypeComponent implements OnInit {
   onDelete() {
     if (confirm("Delete this checklist?")) { 
       this.loading = true;
-      const url = environment.api + "discount/discType/delete";
+      const url = environment.api + "payment/foreignCurrency/delete";
       const body = this.items;
       this.http.post<any>(url, body, {
         headers: this.configService.headers(),
@@ -112,7 +112,7 @@ export class DiscTypeComponent implements OnInit {
 
   onSubmit() {
     this.loading = true;
-    const url = environment.api + "discount/discType/create";
+    const url = environment.api + "payment/foreignCurrency/create";
     const body = {
       model: this.model,
     };
@@ -122,7 +122,7 @@ export class DiscTypeComponent implements OnInit {
       data => {
         console.log(data);
         if (data['error'] == false) {
-          this.model = new Actor('','');
+          this.model = new Actor('',0);
           this.httpGet();
         } else {
           alert("INSERT ERROR");
@@ -140,4 +140,3 @@ export class DiscTypeComponent implements OnInit {
   }
 
 }
-

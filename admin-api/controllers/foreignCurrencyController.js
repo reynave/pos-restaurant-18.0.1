@@ -7,7 +7,7 @@ exports.getAllData = async (req, res) => {
 
     const [rows] = await db.query(`
       SELECT *, 0 as 'checkbox'
-      FROM check_disc_group  
+      FROM foreign_currency_type  
       WHERE presence =1
     `);
  
@@ -37,21 +37,20 @@ exports.postCreate = async (req, res) => {
   try {
     
     const [result] = await db.query(
-      `INSERT INTO check_disc_group (presence, inputDate, desc1 ) 
-      VALUES (?, ?, ?,? )`,
+      `INSERT INTO foreign_currency_type (presence, inputDate, desc1 ) 
+      VALUES (?, ?, ?)`,
       [
         1,
         inputDate,
         model['desc1'], 
-       
       ]
     );
 
     res.status(201).json({
       error: false,
       inputDate: inputDate,
-      message: 'check_disc_group created',
-      check_disc_groupId: result.insertId
+      message: 'foreign_currency_type created',
+      foreign_currency_typeId: result.insertId
     });
   } catch (err) {
     console.error(err);
@@ -75,20 +74,22 @@ exports.postUpdate = async (req, res) => {
 
   try {
     for (const emp of data) {
-      const { discgrp } = emp;
-      const id = discgrp;
+      const { fcyid } = emp;
+      const id = fcyid;
       if (!id) {
         results.push({ id, status: 'failed', reason: 'Missing fields' });
         continue;
       }
 
       const [result] = await db.query(
-        `UPDATE check_disc_group SET 
+        `UPDATE foreign_currency_type SET 
           desc1 = '${emp['desc1'].replace(/\s{2,}/g, ' ')}',   
+          ratefcy = '${emp['ratefcy']}',   
+         chgbakfcy = '${emp['chgbakfcy']}',    
         
           updateDate = '${today()}'
 
-        WHERE discgrp = '${id}'`,
+        WHERE fcyid = '${id}'`,
       );
 
 
@@ -125,8 +126,8 @@ exports.postDelete = async (req, res) => {
 
   try {
     for (const emp of data) {
-      const { discgrp, checkbox } = emp;
-      const id = discgrp;
+      const { fcyid, checkbox } = emp;
+      const id = fcyid;
       if (!id || !checkbox) {
         results.push({ id, status: 'failed', reason: 'Missing fields' });
         continue;
@@ -134,7 +135,7 @@ exports.postDelete = async (req, res) => {
 
 
       const [result] = await db.query(
-        'UPDATE check_disc_group SET presence = ?, updateDate = ? WHERE discgrp = ?',
+        'UPDATE foreign_currency_type SET presence = ?, updateDate = ? WHERE fcyid = ?',
         [checkbox == 0 ? 1 : 0, today(), id]
       );
 

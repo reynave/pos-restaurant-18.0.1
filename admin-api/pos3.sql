@@ -1,0 +1,1966 @@
+-- --------------------------------------------------------
+-- Host:                         localhost
+-- Server version:               10.4.28-MariaDB - mariadb.org binary distribution
+-- Server OS:                    Win64
+-- HeidiSQL Version:             12.10.0.7000
+-- --------------------------------------------------------
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET NAMES utf8 */;
+/*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+-- Dumping structure for table pos_resto.check_cash_type
+CREATE TABLE IF NOT EXISTS `check_cash_type` (
+  `cashid` smallint(6) NOT NULL AUTO_INCREMENT,
+  `desc1` varchar(20) DEFAULT NULL,
+  `desc2` varchar(20) DEFAULT NULL,
+  `desc3` varchar(20) DEFAULT NULL,
+  `value` decimal(8,2) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`cashid`)
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.check_cash_type: ~11 rows (approximately)
+INSERT INTO `check_cash_type` (`cashid`, `desc1`, `desc2`, `desc3`, `value`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, '100000 ', '100000              ', '100000              ', 100000.00, 1, '2025-01-01 00:00:00', 1, '2025-04-29 12:52:46', 1),
+	(2, '50000 ', '50000               ', '50000               ', 50000.00, 1, '2025-01-01 00:00:00', 1, '2025-04-29 12:52:46', 1),
+	(3, '20000 ', '20000               ', '20000               ', 20000.00, 1, '2025-01-01 00:00:00', 1, '2025-04-29 12:52:46', 1),
+	(4, '10000 ', '10000               ', '10000               ', 10000.00, 1, '2025-01-01 00:00:00', 1, '2025-04-29 12:52:46', 1),
+	(5, '5000 ', '5000                ', '5000                ', 5000.00, 1, '2025-01-01 00:00:00', 1, '2025-04-29 12:52:46', 1),
+	(6, '1000 ', '1000                ', '1000                ', 1000.00, 1, '2025-01-01 00:00:00', 1, '2025-04-29 12:52:46', 1),
+	(7, '500 ', '500                 ', '500                 ', 500.00, 1, '2025-01-01 00:00:00', 1, '2025-04-29 12:52:46', 1),
+	(8, '200 ', '200                 ', '200                 ', 200.00, 1, '2025-01-01 00:00:00', 1, '2025-04-29 12:52:46', 1),
+	(9, '100 ', '100                 ', '100                 ', 100.00, 1, '2025-01-01 00:00:00', 1, '2025-04-29 12:52:46', 1),
+	(10, '50 ', '50                  ', '50                  ', 50.00, 1, '2025-01-01 00:00:00', 1, '2025-04-29 12:52:46', 1),
+	(11, '64', NULL, NULL, 54.00, 0, '2025-04-29 12:53:50', 1, '2025-04-29 12:53:55', 1);
+
+-- Dumping structure for table pos_resto.check_disc_group
+CREATE TABLE IF NOT EXISTS `check_disc_group` (
+  `discgrp` varchar(20) NOT NULL DEFAULT '',
+  `desc1` varchar(20) DEFAULT NULL,
+  `desc2` varchar(20) DEFAULT NULL,
+  `desc3` varchar(20) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`discgrp`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.check_disc_group: ~8 rows (approximately)
+INSERT INTO `check_disc_group` (`discgrp`, `desc1`, `desc2`, `desc3`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	('D01', 'Drink Discount 2', 'Drink Discount      ', 'Drink Discount      ', 1, '2025-01-01 00:00:00', 1, '2025-04-29 14:41:21', 1),
+	('F01', 'Food Discount 3', 'Food Discount       ', 'Food Discount       ', 1, '2025-01-01 00:00:00', 1, '2025-04-29 14:41:21', 1),
+	('F02', 'DimSum Discount 4', 'DimSum Discount     ', 'DimSum Discount     ', 1, '2025-01-01 00:00:00', 1, '2025-04-29 14:41:21', 1),
+	('F03', 'Cake Discount ', 'Cake Discount       ', 'Cake Discount       ', 1, '2025-01-01 00:00:00', 1, '2025-04-29 14:41:21', 1),
+	('F04', 'Dessert Discount ', 'Dessert Discount    ', 'Dessert Discount    ', 1, '2025-01-01 00:00:00', 1, '2025-04-29 14:41:21', 1),
+	('F05', 'Pastry Discount ', 'Pastry Discount     ', 'Pastry Discount     ', 1, '2025-01-01 00:00:00', 1, '2025-04-29 14:41:21', 1),
+	('gg5', '232323', NULL, NULL, 0, '2025-04-29 14:57:59', 1, '2025-04-29 14:58:04', 1),
+	('N01', 'No Discount ', 'No Discount         ', 'No Discount         ', 1, '2025-01-01 00:00:00', 1, '2025-04-29 14:41:21', 1);
+
+-- Dumping structure for table pos_resto.check_disc_type
+CREATE TABLE IF NOT EXISTS `check_disc_type` (
+  `discid` smallint(6) NOT NULL AUTO_INCREMENT,
+  `desc1` varchar(20) DEFAULT NULL,
+  `desc2` varchar(20) DEFAULT NULL,
+  `desc3` varchar(20) DEFAULT NULL,
+  `discrate` decimal(5,2) DEFAULT NULL,
+  `discamt` decimal(9,2) DEFAULT NULL,
+  `discmeth` tinyint(4) DEFAULT NULL,
+  `peritem` varchar(1) DEFAULT NULL,
+  `isdiscpre` tinyint(4) DEFAULT NULL,
+  `isinctax` varchar(1) DEFAULT NULL,
+  `isincsc` tinyint(4) DEFAULT NULL,
+  `grprange1` varchar(6) DEFAULT NULL,
+  `grprange2` varchar(6) DEFAULT NULL,
+  `grprange3` varchar(6) DEFAULT NULL,
+  `grprange4` varchar(6) DEFAULT NULL,
+  `grprange5` varchar(6) DEFAULT NULL,
+  `notonck` varchar(1) DEFAULT NULL,
+  `notonitem` varchar(1) DEFAULT NULL,
+  `disclevel` varchar(4) DEFAULT NULL,
+  `script` varchar(30) DEFAULT NULL,
+  `useref` varchar(1) DEFAULT NULL,
+  `notcount` varchar(1) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`discid`)
+) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.check_disc_type: ~31 rows (approximately)
+INSERT INTO `check_disc_type` (`discid`, `desc1`, `desc2`, `desc3`, `discrate`, `discamt`, `discmeth`, `peritem`, `isdiscpre`, `isinctax`, `isincsc`, `grprange1`, `grprange2`, `grprange3`, `grprange4`, `grprange5`, `notonck`, `notonitem`, `disclevel`, `script`, `useref`, `notcount`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, '10% Disc All ', '10% Disc all        ', '10% Disc all        ', 10.00, 0.00, 1, '1', 1, ' ', 1, 'D01F05', '      ', '      ', '      ', '      ', '1', ' ', '0   ', '                              ', ' ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-29 15:32:23', 1),
+	(2, '15% Disc all ', '15% Disc all        ', '15% Disc all        ', 15.00, 0.00, 1, '1', 1, ' ', 1, 'B01F05', '      ', '      ', '      ', '      ', '1', ' ', '0   ', '                              ', ' ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-29 15:32:23', 1),
+	(3, '20% Disc all ', '20% Disc all        ', '20% Disc all        ', 20.00, 0.00, 1, '1', 1, ' ', 1, 'B01F05', '      ', '      ', '      ', '      ', '1', ' ', '0   ', '                              ', ' ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-29 15:32:23', 1),
+	(4, '25% Disc all ', '25% Disc all        ', '25% Disc all        ', 25.00, 0.00, 1, '1', 1, ' ', 1, 'B01F05', '      ', '      ', '      ', '      ', '1', ' ', '0   ', '                              ', ' ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-29 15:32:23', 1),
+	(5, '30% Disc All ', '30% Disc All        ', '30% Disc All        ', 30.00, 0.00, 1, '1', 1, ' ', 1, 'B01F05', '      ', '      ', '      ', '      ', '1', ' ', '0   ', '                              ', ' ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-29 15:32:23', 1),
+	(6, '35% Disc All ', '35% Disc All        ', '35% Disc All        ', 35.00, 0.00, 1, '1', 1, ' ', 1, 'B01F05', '      ', '      ', '      ', '      ', '1', ' ', '0   ', '                              ', ' ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-29 15:32:23', 1),
+	(7, '50% Disc All ', '50% Disc All        ', '50% Disc All        ', 50.00, 0.00, 1, '1', 1, ' ', 1, 'B01F05', '      ', '      ', '      ', '      ', '1', ' ', '0   ', '                              ', ' ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-29 15:32:23', 1),
+	(8, '100% Disc All ', '100% Disc All       ', '100% Disc All       ', 100.00, 0.00, 1, '1', 1, ' ', 1, 'B01F05', '      ', '      ', '      ', '      ', '1', ' ', '0   ', '                              ', ' ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-29 15:32:23', 1),
+	(9, '50% + 10 % Disc ', '50% + 10 % Disc     ', '50% + 10 % Disc     ', 100.00, 0.00, 1, '1', 1, ' ', 1, 'B01F05', '      ', '      ', '      ', '      ', '1', ' ', '0   ', '                              ', ' ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-29 15:32:23', 1),
+	(10, 'O C ', 'O C                 ', 'O C                 ', 100.00, 0.00, 1, '1', 1, ' ', 1, 'B01F05', '      ', '      ', '      ', '      ', '1', ' ', '0   ', '                              ', ' ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-29 15:32:23', 1),
+	(11, 'ENT ', 'ENT                 ', 'ENT                 ', 100.00, 0.00, 1, '1', 1, ' ', 1, 'B01F05', '      ', '      ', '      ', '      ', '1', ' ', '0   ', '                              ', ' ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-29 15:32:23', 1),
+	(12, 'COMPLIMENT ', 'COMPLIMENT          ', 'COMPLIMENT          ', 100.00, 0.00, 1, '1', 1, ' ', 1, 'B01F05', '      ', '      ', '      ', '      ', '1', ' ', '0   ', '                              ', ' ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-29 15:32:23', 1),
+	(13, '25% + 25% Disc ', '25% + 25% Disc      ', '25% + 25% Disc      ', 43.75, 0.00, 1, '1', 1, ' ', 1, 'B01F05', '      ', '      ', '      ', '      ', '1', ' ', '0   ', '                              ', ' ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-29 15:32:23', 1),
+	(14, '17% Disc all ', '17% Disc all        ', '17% Disc all        ', 17.00, 0.00, 1, '1', 1, ' ', 1, 'F01F01', '      ', '      ', '      ', '      ', '1', ' ', '0   ', '                              ', ' ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-29 15:32:23', 1),
+	(15, '40% Disc All ', '40% Disc All        ', '40% Disc All        ', 40.00, 0.00, 1, '1', 1, ' ', 1, 'B01F05', '      ', '      ', '      ', '      ', '1', ' ', '0   ', '                              ', ' ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-29 15:32:23', 1),
+	(16, '50% Disc Member ', '50% Disc Member     ', '50% Disc Member     ', 50.00, 0.00, 1, '1', 1, ' ', 1, 'B01F05', '      ', '      ', '      ', '      ', '1', ' ', '0   ', '                              ', ' ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-29 15:32:23', 1),
+	(17, '100% Disc Member ', '100% Disc Member    ', '100% Disc Member    ', 100.00, 0.00, 1, '1', 1, ' ', 1, 'B01F05', '      ', '      ', '      ', '      ', '1', ' ', '0   ', '                              ', ' ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-29 15:32:23', 1),
+	(18, 'DISC MAX 100 ', 'DISC MAX 100        ', 'DISC MAX 100        ', 0.00, 100000.00, 0, ' ', 1, ' ', 1, 'B01F05', '      ', '      ', '      ', '      ', ' ', '1', '0   ', '                              ', ' ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-29 15:32:23', 1),
+	(19, 'DISC MAX 200 ', 'DISC MAX 200        ', 'DISC MAX 200        ', 0.00, 200000.00, 0, ' ', 1, ' ', 1, 'B01F05', '      ', '      ', '      ', '      ', ' ', '1', '0   ', '                              ', ' ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-29 15:32:23', 1),
+	(20, 'DISC MAX 300 ', 'DISC MAX 300        ', 'DISC MAX 300        ', 0.00, 300000.00, 0, ' ', 1, ' ', 1, 'B01F05', '      ', '      ', '      ', '      ', ' ', '1', '0   ', '                              ', ' ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-29 15:32:23', 1),
+	(21, '27% Disc all ', '27% Disc all        ', '27% Disc all        ', 27.00, 0.00, 1, '1', 1, ' ', 1, 'B01F05', '      ', '      ', '      ', '      ', '1', ' ', '0   ', '                              ', ' ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-29 15:32:23', 1),
+	(22, '45% Disc all ', '45% Disc all        ', '45% Disc all        ', 45.00, 0.00, 1, '1', 1, ' ', 1, 'B01F05', '      ', '      ', '      ', '      ', '1', ' ', '0   ', '                              ', ' ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-29 15:32:23', 1),
+	(25, 'DISC MAX 75 34', 'DISC MAX 75         ', 'DISC MAX 75         ', 0.00, 75000.00, 0, ' ', 1, ' ', 1, 'B01F05', '      ', '      ', '      ', '      ', ' ', '1', '0   ', '                              ', ' ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-29 15:32:23', 1),
+	(26, 'DISC MAX 50 ', 'DISC MAX 50         ', 'DISC MAX 50         ', 0.00, 50000.00, 0, ' ', 1, ' ', 1, 'B01F05', '      ', '      ', '      ', '      ', ' ', '1', '0   ', '                              ', ' ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-29 15:32:23', 1),
+	(27, 'DISC MAX 1000 ', 'DISC MAX 1000       ', 'DISC MAX 1000       ', 0.00, 1000000.00, 0, ' ', 1, ' ', 1, 'B01F05', '      ', '      ', '      ', '      ', ' ', '1', '0   ', '                              ', ' ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-29 15:32:23', 1),
+	(28, 'DISC MAX BCA 105 ', 'DISC MAX BCA 105    ', 'DISC MAX BCA 105    ', 0.00, 105000.00, 0, ' ', 1, ' ', 1, 'B01F05', '      ', '      ', '      ', '      ', ' ', '1', '0   ', '                              ', ' ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-29 15:32:23', 1),
+	(29, 'DISC MAX BRI 150 ', 'DISC MAX BRI 150    ', 'DISC MAX BRI 150    ', 0.00, 150000.00, 0, ' ', 1, ' ', 1, 'B01F05', '      ', '      ', '      ', '      ', ' ', '1', '0   ', '                              ', ' ', ' ', 0, '2025-01-01 00:00:00', 1, '2025-04-29 15:31:13', 1),
+	(30, 'DISC MAX 150 ', 'DISC MAX 150        ', 'DISC MAX 150        ', 0.00, 150000.00, 0, ' ', 1, ' ', 1, 'B01F05', '      ', '      ', '      ', '      ', ' ', '1', '0   ', '                              ', ' ', ' ', 0, '2025-01-01 00:00:00', 1, '2025-04-29 15:31:13', 1),
+	(31, 'DISC MAX OCBC 150 ', 'DISC MAX OCBC 150   ', 'DISC MAX OCBC 150   ', 0.00, 150000.00, 0, ' ', 1, ' ', 1, 'B01F05', '      ', '      ', '      ', '      ', ' ', '1', '0   ', '                              ', ' ', ' ', 0, '2025-01-01 00:00:00', 1, '2025-04-29 15:31:05', 1),
+	(32, 'DISC 50% OCBC ', 'DISC 50% OCBC       ', 'DISC 50% OCBC       ', 50.00, 0.00, 1, '1', 1, ' ', 1, 'B01F05', '      ', '      ', '      ', '      ', '1', ' ', '0   ', '                              ', ' ', ' ', 0, '2025-01-01 00:00:00', 1, '2025-04-29 15:31:05', 1),
+	(33, 'test 34', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, '2025-04-29 15:32:12', 1, '2025-04-29 15:32:23', 1);
+
+-- Dumping structure for table pos_resto.check_payment_group
+CREATE TABLE IF NOT EXISTS `check_payment_group` (
+  `paygrpid` tinyint(4) NOT NULL AUTO_INCREMENT,
+  `desc1` varchar(200) DEFAULT NULL,
+  `desc2` varchar(200) DEFAULT NULL,
+  `desc3` varchar(200) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`paygrpid`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.check_payment_group: ~2 rows (approximately)
+INSERT INTO `check_payment_group` (`paygrpid`, `desc1`, `desc2`, `desc3`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, '', NULL, NULL, 0, '2025-04-29 12:05:06', 1, '2025-04-29 12:05:44', 1),
+	(2, '4234234', NULL, NULL, 1, '2025-04-29 12:06:45', 1, '2025-04-29 12:07:26', 1);
+
+-- Dumping structure for table pos_resto.check_payment_type
+CREATE TABLE IF NOT EXISTS `check_payment_type` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `payid` varchar(3) DEFAULT NULL,
+  `desc1` varchar(200) DEFAULT NULL,
+  `desc2` varchar(200) DEFAULT NULL,
+  `desc3` varchar(200) DEFAULT NULL,
+  `fcyid` varchar(200) DEFAULT NULL,
+  `havetips` varchar(200) DEFAULT NULL,
+  `tipsaltr` tinyint(4) DEFAULT NULL,
+  `payclass` tinyint(4) DEFAULT NULL,
+  `paymeth` smallint(6) DEFAULT NULL,
+  `maxlimit` decimal(3,2) DEFAULT NULL,
+  `nonsales` varchar(200) DEFAULT NULL,
+  `opendrw` varchar(200) DEFAULT NULL,
+  `prefix` varchar(200) DEFAULT NULL,
+  `paysign` varchar(200) DEFAULT NULL,
+  `prtvoid` varchar(200) DEFAULT NULL,
+  `reftype` varchar(200) DEFAULT NULL,
+  `haveccac` varchar(200) DEFAULT NULL,
+  `isguitype` varchar(200) DEFAULT NULL,
+  `extpath` varchar(200) DEFAULT NULL,
+  `discid` varchar(200) DEFAULT NULL,
+  `paygrpid` varchar(200) DEFAULT NULL,
+  `disctype` varchar(200) DEFAULT NULL,
+  `drwmulti` tinyint(4) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `payid` (`payid`)
+) ENGINE=InnoDB AUTO_INCREMENT=102 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.check_payment_type: ~101 rows (approximately)
+INSERT INTO `check_payment_type` (`id`, `payid`, `desc1`, `desc2`, `desc3`, `fcyid`, `havetips`, `tipsaltr`, `payclass`, `paymeth`, `maxlimit`, `nonsales`, `opendrw`, `prefix`, `paysign`, `prtvoid`, `reftype`, `haveccac`, `isguitype`, `extpath`, `discid`, `paygrpid`, `disctype`, `drwmulti`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, 'C01', 'CASH 1', 'CASH                ', 'CASH                ', '   fcyid', ' havetips', 1, 2, 0, 0.00, ' ', '1', '          ', '          ', ' ', ' ', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(2, 'B03', 'BCA CREDIT ', 'BCA CREDIT          ', 'BCA CREDIT          ', '   ', ' ', 0, 6, 1, 0.00, ' ', ' ', '          ', '          ', ' ', ' ', ' ', ' ', '"C:QRCodeBCAEDCEDCBCA.exe" NONFLAZZ                                ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(3, 'B02', 'BCA DEBIT ', 'BCA DEBIT           ', 'BCA DEBIT           ', '   ', ' ', 0, 6, 0, 0.00, ' ', ' ', '          ', '          ', ' ', ' ', ' ', ' ', '"C:QRCodeBCAEDCEDCBCA.exe" NONFLAZZ                                ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(4, 'E01', 'ENTERTAIN ', 'ENTERTAIN           ', 'ENTERTAIN           ', '   ', ' ', 0, 0, 0, 0.00, ' ', ' ', '          ', '          ', ' ', ' ', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(5, 'C21', 'CITILEDGER ', 'CITILEDGER          ', 'CITILEDGER          ', '   ', ' ', 0, 0, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(6, 'O21', 'OFFICER CHECK ', 'OFFICER CHECK       ', 'OFFICER CHECK       ', '   ', ' ', 0, 0, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(7, 'C31', 'COMPLIMENT ', 'COMPLIMENT          ', 'COMPLIMENT          ', '   ', ' ', 0, 0, 0, 0.00, ' ', ' ', '          ', '          ', ' ', ' ', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(8, 'O11', 'OVO ', 'OVO                 ', 'OVO                 ', '   ', ' ', 0, 3, 0, 0.00, ' ', ' ', '          ', '          ', ' ', ' ', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(9, 'V08', 'VOUCHER EZ MGM ', 'VOUCHER EZ MGM      ', 'VOUCHER EZ MGM      ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(10, 'V12', 'VOUCHER FAVE ', 'VOUCHER FAVE        ', 'VOUCHER FAVE        ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(11, 'V09', 'VOUCHER EZ BIRTHDAY ', 'VOUCHER EZ BIRTHDAY ', 'VOUCHER EZ BIRTHDAY ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(12, 'B01', 'BCA FLAZZ ', 'BCA FLAZZ           ', 'BCA FLAZZ           ', '   ', ' ', 0, 6, 0, 0.00, ' ', ' ', '          ', '          ', ' ', ' ', ' ', ' ', '"C:QRCodeBCAEDCEDCBCA.exe" FLAZZ                                   ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(13, 'B11', 'BNI DEBIT ', 'BNI DEBIT           ', 'BNI DEBIT           ', '   ', ' ', 0, 3, 0, 0.00, ' ', ' ', '          ', '          ', ' ', ' ', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(14, 'B12', 'BNI CREDIT ', 'BNI CREDIT          ', 'BNI CREDIT          ', '   ', ' ', 0, 1, 1, 0.00, ' ', ' ', '          ', '          ', ' ', ' ', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(15, 'C12', 'CIMB CREDIT ', 'CIMB CREDIT         ', 'CIMB CREDIT         ', '   ', ' ', 0, 1, 1, 0.00, ' ', ' ', '          ', '          ', ' ', ' ', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(16, 'C11', 'CIMB DEBIT ', 'CIMB DEBIT          ', 'CIMB DEBIT          ', '   ', ' ', 0, 3, 0, 0.00, ' ', ' ', '          ', '          ', ' ', ' ', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(17, 'M01', 'MANDIRI DEBIT ON US ', 'MANDIRI DEBIT ON US ', 'MANDIRI DEBIT ON US ', '   ', ' ', 0, 6, 0, 0.00, ' ', ' ', '          ', '          ', ' ', ' ', ' ', ' ', '"C:QRCodeMandiriEDCEDCMandiri.exe" Mandiri                         ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(18, 'M02', 'MANDIRI CREDIT ON/OF', 'MANDIRI CREDIT ON/OF', 'MANDIRI CREDIT ON/OF', '   ', ' ', 0, 6, 1, 0.00, ' ', ' ', '          ', '          ', ' ', ' ', ' ', ' ', '"C:QRCodeMandiriEDCEDCMandiri.exe" Mandiri                         ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(19, 'P02', 'PERMATA CREDIT ', 'PERMATA CREDIT      ', 'PERMATA CREDIT      ', '   ', ' ', 0, 1, 1, 0.00, ' ', ' ', '          ', '          ', ' ', ' ', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(20, 'P01', 'PERMATA DEBIT ', 'PERMATA DEBIT       ', 'PERMATA DEBIT       ', '   ', ' ', 0, 3, 0, 0.00, ' ', ' ', '          ', '          ', ' ', ' ', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(21, 'O01', 'OTHERS DEBIT ', 'OTHERS DEBIT        ', 'OTHERS DEBIT        ', '   ', ' ', 0, 3, 0, 0.00, ' ', ' ', '          ', '          ', ' ', ' ', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(22, 'O02', 'OTHERS CREDIT ', 'OTHERS CREDIT       ', 'OTHERS CREDIT       ', '   ', ' ', 0, 1, 1, 0.00, ' ', ' ', '          ', '          ', ' ', ' ', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(23, 'G01', 'GOJEK CASH ', 'GOJEK CASH          ', 'GOJEK CASH          ', '   ', ' ', 0, 0, 0, 0.00, ' ', '1', '          ', '          ', ' ', ' ', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(24, 'G02', 'GOJEK DEBIT ', 'GOJEK DEBIT         ', 'GOJEK DEBIT         ', '   ', ' ', 0, 3, 0, 0.00, ' ', ' ', '          ', '          ', ' ', ' ', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(25, 'G03', 'GOJEK CREDIT ', 'GOJEK CREDIT        ', 'GOJEK CREDIT        ', '   ', ' ', 0, 1, 1, 0.00, ' ', ' ', '          ', '          ', ' ', ' ', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(26, 'G04', 'GOJEK PAY ', 'GOJEK PAY           ', 'GOJEK PAY           ', '   ', ' ', 0, 0, 0, 0.00, ' ', ' ', '          ', '          ', ' ', ' ', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(27, 'G05', 'GO BIZ ', 'GO BIZ              ', 'GO BIZ              ', '   ', ' ', 0, 0, 0, 0.00, ' ', ' ', '          ', '          ', ' ', ' ', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(28, 'V01', 'VOUCHER GROUP ', 'VOUCHER GROUP       ', 'VOUCHER GROUP       ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(29, 'V02', 'VOUCHER MAL ', 'VOUCHER MAL         ', 'VOUCHER MAL         ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(30, 'V03', 'VOUCHER BNI ', 'VOUCHER BNI         ', 'VOUCHER BNI         ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(31, 'V04', 'VOUCHER HSBC ', 'VOUCHER HSBC        ', 'VOUCHER HSBC        ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(32, 'V05', 'VOUCHER EZ STARTERPA', 'VOUCHER EZ STARTERPA', 'VOUCHER EZ STARTERPA', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(33, 'V06', 'VOUCHER EZ TOP UP ', 'VOUCHER EZ TOP UP   ', 'VOUCHER EZ TOP UP   ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(34, 'V07', 'VOUCHER EZ CASH BACK', 'VOUCHER EZ CASH BACK', 'VOUCHER EZ CASH BACK', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(35, 'V10', 'VOUCHER GRAB ', 'VOUCHER GRAB        ', 'VOUCHER GRAB        ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(36, 'V11', 'VOUCHER MFG ', 'VOUCHER MFG         ', 'VOUCHER MFG         ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(37, 'V13', 'VOUCHER TADA STARTER', 'VOUCHER TADA STARTER', 'VOUCHER TADA STARTER', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(38, 'V14', 'VOUCHER TADA TOP UP ', 'VOUCHER TADA TOP UP ', 'VOUCHER TADA TOP UP ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(39, 'V15', 'VOUCHER TADACASHBACK', 'VOUCHER TADACASHBACK', 'VOUCHER TADACASHBACK', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(40, 'V16', 'VOUCHER TADA MGM ', 'VOUCHER TADA MGM    ', 'VOUCHER TADA MGM    ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(41, 'V17', 'VOUCHER TADABIRTHDA ', 'VOUCHER TADABIRTHDA ', 'VOUCHER TADABIRTHDA ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(42, 'C41', 'COMPLIMENT EZ ', 'COMPLIMENT EZ       ', 'COMPLIMENT EZ       ', '   ', ' ', 0, 0, 0, 0.00, ' ', ' ', '          ', '          ', ' ', ' ', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(43, 'C42', 'COMPLIMENT TADA ', 'COMPLIMENT TADA     ', 'COMPLIMENT TADA     ', '   ', ' ', 0, 0, 0, 0.00, ' ', ' ', '          ', '          ', ' ', ' ', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(44, 'C43', 'COMPLIMENT MAL ', 'COMPLIMENT MAL      ', 'COMPLIMENT MAL      ', '   ', ' ', 0, 0, 0, 0.00, ' ', ' ', '          ', '          ', ' ', ' ', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(45, 'C44', 'COMPLIMENT PROMO ', 'COMPLIMENT PROMO    ', 'COMPLIMENT PROMO    ', '   ', ' ', 0, 0, 0, 0.00, ' ', ' ', '          ', '          ', ' ', ' ', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(46, 'C51', 'MEGA DEBIT ON US ', 'MEGA DEBIT ON US    ', 'MEGA DEBIT ON US    ', '   ', ' ', 0, 3, 0, 0.00, ' ', ' ', '          ', '          ', ' ', ' ', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(47, 'C52', 'MEGA CREDIT ON US ', 'MEGA CREDIT ON US   ', 'MEGA CREDIT ON US   ', '   ', ' ', 0, 1, 1, 0.00, ' ', ' ', '          ', '          ', ' ', ' ', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(48, 'V18', 'VOUCHER GOJEK ', 'VOUCHER GOJEK       ', 'VOUCHER GOJEK       ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(49, 'V19', 'VOUCHER EZ EXTRA ', 'VOUCHER EZ EXTRA    ', 'VOUCHER EZ EXTRA    ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(50, 'V20', 'VOUCHER EATIGO ', 'VOUCHER EATIGO      ', 'VOUCHER EATIGO      ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(51, 'V21', 'VOUCHER GIFTN ', 'VOUCHER GIFTN       ', 'VOUCHER GIFTN       ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(52, 'V22', 'VOUCHER JD.ID ', 'VOUCHER JD.ID       ', 'VOUCHER JD.ID       ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(53, 'V23', 'VOUCHER TRAVELOKA ', 'VOUCHER TRAVELOKA   ', 'VOUCHER TRAVELOKA   ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(54, 'GR1', 'GRAB CASH ', 'GRAB CASH           ', 'GRAB CASH           ', '   ', ' ', 0, 0, 0, 0.00, ' ', '1', '          ', '          ', ' ', ' ', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(55, 'GR2', 'GRAB DEBIT ', 'GRAB DEBIT          ', 'GRAB DEBIT          ', '   ', ' ', 0, 3, 0, 0.00, ' ', ' ', '          ', '          ', ' ', ' ', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(56, 'GR3', 'GRAB CREDIT ', 'GRAB CREDIT         ', 'GRAB CREDIT         ', '   ', ' ', 0, 1, 1, 0.00, ' ', ' ', '          ', '          ', ' ', ' ', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(57, 'GR4', 'GRAB PAY ', 'GRAB PAY            ', 'GRAB PAY            ', '   ', ' ', 0, 0, 0, 0.00, ' ', ' ', '          ', '          ', ' ', ' ', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(58, 'GR5', 'GRAB RESTO ', 'GRAB RESTO          ', 'GRAB RESTO          ', '   ', ' ', 0, 0, 0, 0.00, ' ', ' ', '          ', '          ', ' ', ' ', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(59, 'V24', 'KVOUCHER ', 'KVOUCHER            ', 'KVOUCHER            ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(60, 'C61', 'COUPON FAVE ', 'COUPON FAVE         ', 'COUPON FAVE         ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(61, 'C62', 'COUPON GRAB ', 'COUPON GRAB         ', 'COUPON GRAB         ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(62, 'C63', 'COUPON GOJEK ', 'COUPON GOJEK        ', 'COUPON GOJEK        ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(63, 'C64', 'COUPON GIFTN ', 'COUPON GIFTN        ', 'COUPON GIFTN        ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(64, 'C65', 'COUPON JD ID ', 'COUPON JD ID        ', 'COUPON JD ID        ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(65, 'C66', 'COUPON TRAVELOKA ', 'COUPON TRAVELOKA    ', 'COUPON TRAVELOKA    ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(66, 'C67', 'COUPON BLIBLI ', 'COUPON BLIBLI       ', 'COUPON BLIBLI       ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(67, 'C68', 'COUPON LOCARD ', 'COUPON LOCARD       ', 'COUPON LOCARD       ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(68, 'C69', 'COUPON DANA ', 'COUPON DANA         ', 'COUPON DANA         ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(69, 'V25', 'VOUCHER BLIBLI ', 'VOUCHER BLIBLI      ', 'VOUCHER BLIBLI      ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(70, 'V26', 'VOUCHER LOCARD ', 'VOUCHER LOCARD      ', 'VOUCHER LOCARD      ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(71, 'V27', 'VOUCHER DANA ', 'VOUCHER DANA        ', 'VOUCHER DANA        ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(72, 'D01', 'DANA DEBIT ', 'DANA DEBIT          ', 'DANA DEBIT          ', '   ', ' ', 0, 3, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(73, 'D02', 'DANA CREDIT ', 'DANA CREDIT         ', 'DANA CREDIT         ', '   ', ' ', 0, 1, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(74, 'C70', 'COUPON EZEELINK ', 'COUPON EZEELINK     ', 'COUPON EZEELINK     ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(75, 'D03', 'DANA BALANCE ', 'DANA BALANCE        ', 'DANA BALANCE        ', '   ', ' ', 0, 3, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(76, 'V28', 'VOUCHER SODEXO ', 'VOUCHER SODEXO      ', 'VOUCHER SODEXO      ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(77, 'C71', 'COUPON SHOPEE ', 'COUPON SHOPEE       ', 'COUPON SHOPEE       ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(78, 'C72', 'COUPON LINK AJA ', 'COUPON LINK AJA     ', 'COUPON LINK AJA     ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(79, 'V29', 'VOUCHER SHOPEE ', 'VOUCHER SHOPEE      ', 'VOUCHER SHOPEE      ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(80, 'V30', 'VOUCHER LINK AJA ', 'VOUCHER LINK AJA    ', 'VOUCHER LINK AJA    ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(81, 'L01', 'LINK AJA PAY ', 'LINK AJA PAY        ', 'LINK AJA PAY        ', '   ', ' ', 0, 0, 0, 0.00, ' ', ' ', '          ', '          ', ' ', ' ', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(82, 'S01', 'SHOPEE PAY ', 'SHOPEE PAY          ', 'SHOPEE PAY          ', '   ', ' ', 0, 0, 0, 0.00, ' ', ' ', '          ', '          ', ' ', ' ', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(83, 'E02', 'E-VOUCHER SODEXO ', 'E-VOUCHER SODEXO    ', 'E-VOUCHER SODEXO    ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(84, 'V31', 'VOUCHER MAGIC PIN ', 'VOUCHER MAGIC PIN   ', 'VOUCHER MAGIC PIN   ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(85, 'C73', 'COUPON MAGIC PIN ', 'COUPON MAGIC PIN    ', 'COUPON MAGIC PIN    ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(86, 'B21', 'BALANCE I.CLUB ', 'BALANCE I.CLUB      ', 'BALANCE I.CLUB      ', '   ', ' ', 0, 0, 0, 0.00, ' ', '1', '          ', '          ', ' ', ' ', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(87, 'V32', 'VOUCHER I.CLUB ', 'VOUCHER I.CLUB      ', 'VOUCHER I.CLUB      ', '   ', ' ', 0, 6, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '2', ' ', ' ', '"C:QRCodeImperialClubImperialClub.exe" Voucher                     ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(88, 'V33', 'VOUCHER I.CLUB START', 'VOUCHER I.CLUB START', 'VOUCHER I.CLUB START', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(89, 'V34', 'VOUCHER I.CLUB B.DAY', 'VOUCHER I.CLUB B.DAY', 'VOUCHER I.CLUB B.DAY', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(90, 'C74', 'COUPON I.CLUB ', 'COUPON I.CLUB       ', 'COUPON I.CLUB       ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(91, 'C75', 'COUPON I.CLUB WELPAC', 'COUPON I.CLUB WELPAC', 'COUPON I.CLUB WELPAC', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(92, 'F01', 'FAVE PAY ', 'FAVE PAY            ', 'FAVE PAY            ', '   ', ' ', 0, 0, 0, 0.00, ' ', ' ', '          ', '          ', ' ', ' ', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(93, 'F02', 'FAVE E-CARD ', 'FAVE E-CARD         ', 'FAVE E-CARD         ', '   ', ' ', 0, 0, 0, 0.00, ' ', ' ', '          ', '          ', ' ', ' ', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(94, 'V35', 'VOUCHER TADA ', 'VOUCHER TADA        ', 'VOUCHER TADA        ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(95, 'D04', 'DELIVERY I.CLUB ', 'DELIVERY I.CLUB     ', 'DELIVERY I.CLUB     ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', ' ', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 1, '2025-01-01 00:00:00', 1, '2025-04-28 18:43:24', 1),
+	(96, '001', 'MP TOKPED ', 'MP TOKPED           ', 'MP TOKPED           ', '   ', ' ', 0, 3, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '0', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 0, '2025-01-01 00:00:00', 1, '2025-04-28 18:46:10', 1),
+	(97, '002', 'MP SHOPEE ', 'MP SHOPEE           ', 'MP SHOPEE           ', '   ', ' ', 0, 3, 0, 0.00, ' ', ' ', '          ', '          ', ' ', ' ', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 0, '2025-01-01 00:00:00', 1, '2025-04-28 18:46:10', 1),
+	(98, '003', 'MP BLI BLI ', 'MP BLI BLI          ', 'MP BLI BLI          ', '   ', ' ', 0, 3, 0, 0.00, ' ', ' ', '          ', '          ', ' ', ' ', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 0, '2025-01-01 00:00:00', 1, '2025-04-28 18:46:10', 1),
+	(99, '004', 'MP JD.ID ', 'MP JD.ID            ', 'MP JD.ID            ', '   ', ' ', 0, 3, 0, 0.00, ' ', ' ', '          ', '          ', ' ', ' ', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 0, '2025-01-01 00:00:00', 1, '2025-04-28 18:46:10', 1),
+	(100, 'C76', 'COUPON TIKET.COM ', 'COUPON TIKET.COM    ', 'COUPON TIKET.COM    ', '   ', ' ', 0, 2, 0, 0.00, ' ', ' ', '          ', '          ', ' ', '1', ' ', ' ', '                                                                      ', '   ', '    ', ' ', 0, 0, '2025-01-01 00:00:00', 1, '2025-04-28 18:46:10', 1),
+	(101, 'OC1', 'Description123', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, '2025-04-28 18:49:07', 1, '2025-01-01 00:00:00', 1);
+
+-- Dumping structure for table pos_resto.check_sc_type
+CREATE TABLE IF NOT EXISTS `check_sc_type` (
+  `scid` tinyint(4) NOT NULL AUTO_INCREMENT,
+  `desc1` varchar(20) DEFAULT NULL,
+  `desc2` varchar(20) DEFAULT NULL,
+  `desc3` varchar(20) DEFAULT NULL,
+  `scrate` decimal(5,4) DEFAULT NULL,
+  `onsc1` varchar(20) DEFAULT NULL,
+  `onsc2` varchar(20) DEFAULT NULL,
+  `nopredisc` varchar(20) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`scid`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.check_sc_type: ~4 rows (approximately)
+INSERT INTO `check_sc_type` (`scid`, `desc1`, `desc2`, `desc3`, `scrate`, `onsc1`, `onsc2`, `nopredisc`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, 'S.C. 6%', 'S.C. 6%             ', 'S.C. 6%             ', 6.0000, '1', ' ', 'a', 1, '2025-01-01 00:00:00', 1, '2025-04-29 14:04:41', 1),
+	(2, 'No S.C.', 'No  S.C.            ', 'No  S.C.            ', 1.0000, ' 3', ' ', ' b', 1, '2025-01-01 00:00:00', 1, '2025-04-29 14:04:41', 1),
+	(3, 'No S.C.', 'No  S.C.            ', 'No  S.C.            ', 1.0000, ' 45', ' ', ' c', 1, '2025-01-01 00:00:00', 1, '2025-04-29 14:04:41', 1),
+	(4, 'test3', NULL, NULL, 3.0000, NULL, NULL, NULL, 0, '2025-04-29 14:05:27', 1, '2025-04-29 14:05:36', 1);
+
+-- Dumping structure for table pos_resto.check_tax_type
+CREATE TABLE IF NOT EXISTS `check_tax_type` (
+  `taxid` tinyint(4) NOT NULL AUTO_INCREMENT,
+  `desc1` varchar(200) DEFAULT NULL,
+  `desc2` varchar(200) DEFAULT NULL,
+  `desc3` varchar(200) DEFAULT NULL,
+  `taxrate` decimal(6,4) DEFAULT NULL,
+  `tier1` decimal(3,2) DEFAULT NULL,
+  `taxrate1` decimal(4,2) DEFAULT NULL,
+  `tier2` decimal(3,2) DEFAULT NULL,
+  `taxrate2` decimal(3,2) DEFAULT NULL,
+  `tier3` decimal(3,2) DEFAULT NULL,
+  `taxrate3` decimal(3,2) DEFAULT NULL,
+  `tier4` decimal(3,2) DEFAULT NULL,
+  `taxrate4` decimal(3,2) DEFAULT NULL,
+  `tier5` decimal(3,2) DEFAULT NULL,
+  `taxrate5` decimal(3,2) DEFAULT NULL,
+  `ontax1` varchar(200) DEFAULT NULL,
+  `ontax2` varchar(200) DEFAULT NULL,
+  `ontax3` varchar(200) DEFAULT NULL,
+  `ontax4` varchar(200) DEFAULT NULL,
+  `onsc1` varchar(200) DEFAULT NULL,
+  `onsc2` varchar(200) DEFAULT NULL,
+  `onsc3` varchar(200) DEFAULT NULL,
+  `nopredisc` varchar(200) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`taxid`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.check_tax_type: ~6 rows (approximately)
+INSERT INTO `check_tax_type` (`taxid`, `desc1`, `desc2`, `desc3`, `taxrate`, `tier1`, `taxrate1`, `tier2`, `taxrate2`, `tier3`, `taxrate3`, `tier4`, `taxrate4`, `tier5`, `taxrate5`, `ontax1`, `ontax2`, `ontax3`, `ontax4`, `onsc1`, `onsc2`, `onsc3`, `nopredisc`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, '10% Tax ', '10% Tax             ', '10% Tax             ', 10.0000, 0.00, 10.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '1', ' ', ' ', ' ', '1', ' ', ' ', '1', 1, '2025-01-01 00:00:00', 1, '2025-04-29 13:30:04', 1),
+	(2, '10% no sc ', '10% no sc           ', '10% no sc           ', 10.0000, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '1', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-29 13:30:04', 1),
+	(3, 'Include Tax ', 'Include Tax         ', 'Include Tax         ', 10.0000, 0.00, 10.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '1', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-29 13:30:04', 1),
+	(4, 'NO TAX ', 'NO TAX              ', 'NO TAX              ', 0.0000, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '0', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-29 13:30:04', 1),
+	(5, 'NO TAX 1 ', 'NO TAX              ', 'NO TAX              ', 0.0000, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '1', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 0, '2025-01-01 00:00:00', 1, '2025-04-29 13:28:53', 1),
+	(6, 'test 3', NULL, NULL, 2.0000, 0.00, 3.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, NULL, NULL, '4', 'null', 'null', 'null', 'null', 'null', 'null', NULL, 1, '2025-04-29 13:29:58', 1, '2025-04-29 13:30:04', 1);
+
+-- Dumping structure for table pos_resto.complaint_category
+CREATE TABLE IF NOT EXISTS `complaint_category` (
+  `category` varchar(0) DEFAULT NULL,
+  `desc1` varchar(0) DEFAULT NULL,
+  `desc2` varchar(0) DEFAULT NULL,
+  `desc3` varchar(0) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.complaint_category: ~0 rows (approximately)
+
+-- Dumping structure for table pos_resto.complaint_type
+CREATE TABLE IF NOT EXISTS `complaint_type` (
+  `type` varchar(0) DEFAULT NULL,
+  `desc1` varchar(0) DEFAULT NULL,
+  `desc2` varchar(0) DEFAULT NULL,
+  `desc3` varchar(0) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.complaint_type: ~0 rows (approximately)
+
+-- Dumping structure for table pos_resto.cost_centre
+CREATE TABLE IF NOT EXISTS `cost_centre` (
+  `costno` varchar(0) DEFAULT NULL,
+  `desc1` varchar(0) DEFAULT NULL,
+  `desc2` varchar(0) DEFAULT NULL,
+  `desc3` varchar(0) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.cost_centre: ~0 rows (approximately)
+
+-- Dumping structure for table pos_resto.customer_info
+CREATE TABLE IF NOT EXISTS `customer_info` (
+  `id` varchar(0) DEFAULT NULL,
+  `desc1` varchar(0) DEFAULT NULL,
+  `desc2` varchar(0) DEFAULT NULL,
+  `desc3` varchar(0) DEFAULT NULL,
+  `grp` varchar(0) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.customer_info: ~0 rows (approximately)
+
+-- Dumping structure for table pos_resto.customer_info_grp
+CREATE TABLE IF NOT EXISTS `customer_info_grp` (
+  `id` varchar(0) DEFAULT NULL,
+  `desc1` varchar(0) DEFAULT NULL,
+  `desc2` varchar(0) DEFAULT NULL,
+  `desc3` varchar(0) DEFAULT NULL,
+  `active` varchar(0) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.customer_info_grp: ~0 rows (approximately)
+
+-- Dumping structure for table pos_resto.employee
+CREATE TABLE IF NOT EXISTS `employee` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `login` varchar(20) NOT NULL DEFAULT 'R',
+  `passwd` varchar(20) DEFAULT NULL,
+  `first1` varchar(200) DEFAULT NULL,
+  `first2` varchar(200) DEFAULT NULL,
+  `first3` varchar(200) DEFAULT NULL,
+  `last1` varchar(200) DEFAULT NULL,
+  `last2` varchar(200) DEFAULT NULL,
+  `last3` varchar(200) DEFAULT NULL,
+  `name1` varchar(200) DEFAULT NULL,
+  `name2` varchar(200) DEFAULT NULL,
+  `name3` varchar(200) DEFAULT NULL,
+  `tel` varchar(20) DEFAULT NULL,
+  `contact` varchar(200) DEFAULT NULL,
+  `addr1` varchar(200) DEFAULT NULL,
+  `addr2` varchar(30) DEFAULT NULL,
+  `birthday` date NOT NULL DEFAULT '2000-01-01',
+  `dob` varchar(20) DEFAULT NULL,
+  `sex` varchar(1) DEFAULT NULL,
+  `socialid` varchar(200) DEFAULT NULL,
+  `email` varchar(200) DEFAULT NULL,
+  `empdept` smallint(6) DEFAULT NULL,
+  `authlevel` smallint(6) DEFAULT NULL,
+  `ordlevel` smallint(6) DEFAULT NULL,
+  `disclevel` tinyint(4) DEFAULT NULL,
+  `actdate` varchar(8) DEFAULT NULL,
+  `card` varchar(40) DEFAULT NULL,
+  `emptype` tinyint(4) DEFAULT NULL,
+  `presence` tinyint(4) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` int(11) NOT NULL DEFAULT 0,
+  `updteDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` int(11) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `flogin` (`login`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=60 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.employee: ~43 rows (approximately)
+INSERT INTO `employee` (`id`, `login`, `passwd`, `first1`, `first2`, `first3`, `last1`, `last2`, `last3`, `name1`, `name2`, `name3`, `tel`, `contact`, `addr1`, `addr2`, `birthday`, `dob`, `sex`, `socialid`, `email`, `empdept`, `authlevel`, `ordlevel`, `disclevel`, `actdate`, `card`, `emptype`, `presence`, `inputDate`, `inputBy`, `updteDate`, `updateBy`) VALUES
+	(1, '78951               ', '78951               ', 'IT', 'IT                  ', 'IT                  ', ' asdfasdf tewst  ', '                    ', '                    ', 'IT  ', 'IT                  ', 'IT                  ', 'tel  ', '  ', 'addr1  ', ' addr2  ', '1999-12-30', 'dob    ', 'M', 'socialid    ', 'email    ', 1, 1, 1, 9, '        ', '                                        ', 0, 1, '2025-01-01 00:00:00', 0, '2025-01-01 00:00:00', 0),
+	(2, '00                  ', '00                  ', 'Bu Eka ', 'Bu Eka              ', 'Bu Eka              ', ' dfgwertwert  ', '                    ', '                    ', 'Bu Eka  ', 'Bu Eka              ', 'Bu Eka              ', '  ', '  ', '  ', '  ', '2000-02-01', '               ', 'F', '                           ', '                                               ', 2, 2, 1, 9, '        ', '                                        ', 0, 1, '2025-01-01 00:00:00', 0, '2025-01-01 00:00:00', 0),
+	(3, '01                  ', '01                  ', 'Eko TO ', 'Eko TO              ', 'Eko TO              ', ' ', '                    ', '                    ', 'Eko TO              ', 'Eko TO              ', 'Eko TO              ', '                    ', '                    ', '                              ', '                              ', '2000-01-01', '        ', 'M', '                    ', '                                        ', 2, 2, 1, 9, '        ', '                                        ', 0, 0, '2025-01-01 00:00:00', 0, '2025-01-01 00:00:00', 0),
+	(4, '02                  ', '02                  ', 'Febryan TO ', 'Febryan TO          ', 'Febryan TO          ', ' ', '                    ', '                    ', 'Febryan TO          ', 'Febryan TO          ', 'Febryan TO          ', '                    ', '                    ', '                              ', '                              ', '2000-01-01', '        ', 'M', '                    ', '                                        ', 2, 2, 1, 9, '        ', '                                        ', 0, 0, '2025-01-01 00:00:00', 0, '2025-01-01 00:00:00', 0),
+	(5, '90                  ', '90                  ', 'Febri TO ', 'Febri TO            ', 'Febri TO            ', ' ', '                    ', '                    ', 'Febri TO            ', 'Febri TO            ', 'Febri TO            ', '                    ', '                    ', '                              ', '                              ', '2000-01-01', '        ', 'M', '                    ', '                                        ', 2, 2, 1, 9, '        ', '                                        ', 0, 0, '2025-01-01 00:00:00', 0, '2025-01-01 00:00:00', 0),
+	(6, '69                  ', '69                  ', 'Dimas TO ', 'Dimas TO            ', 'Dimas TO            ', ' ', '                    ', '                    ', 'Dimas TO            ', 'Dimas TO            ', 'Dimas TO            ', '                    ', '                    ', '                              ', '                              ', '2000-01-01', '        ', 'M', '                    ', '                                        ', 2, 2, 1, 9, '        ', '                                        ', 0, 0, '2025-01-01 00:00:00', 0, '2025-01-01 00:00:00', 0),
+	(7, '202                 ', '202                 ', 'Asep TO ', 'Asep TO             ', 'Asep TO             ', ' ', '                    ', '                    ', 'Asep TO             ', 'Asep TO             ', 'Asep TO             ', '                    ', '                    ', '                              ', '                              ', '2000-01-01', '        ', 'M', '                    ', '                                        ', 2, 2, 1, 9, '        ', '                                        ', 0, 0, '2025-01-01 00:00:00', 0, '2025-01-01 00:00:00', 0),
+	(8, '04                  ', '04                  ', 'Reza TO ', 'Reza TO             ', 'Reza TO             ', ' ', '                    ', '                    ', 'Reza TO             ', 'Reza TO             ', 'Reza TO             ', '                    ', '                    ', '                              ', '                              ', '2000-01-01', '        ', 'M', '                    ', '                                        ', 2, 2, 1, 9, '        ', '                                        ', 0, 0, '2025-01-01 00:00:00', 0, '2025-01-01 00:00:00', 0),
+	(9, '888                 ', '888                 ', 'Yuni TO ', 'Yuni TO             ', 'Yuni TO             ', ' ', '                    ', '                    ', 'Yuni TO             ', 'Yuni TO             ', 'Yuni TO             ', '                    ', '                    ', '                              ', '                              ', '2000-01-01', '        ', 'F', '                    ', '                                        ', 2, 2, 1, 9, '        ', '                                        ', 0, 0, '2025-01-01 00:00:00', 0, '2025-01-01 00:00:00', 0),
+	(10, '55                  ', '55                  ', 'Amel TO ', 'Amel TO             ', 'Amel TO             ', ' 123123  ', '                    ', '                    ', 'Amel TO  ', 'Amel TO             ', 'Amel TO             ', '  ', '  ', '  ', '  ', '1999-12-30', '               ', 'M', '                           ', '                                               ', 2, 2, 1, 9, '        ', '                                        ', 0, 1, '2025-01-01 00:00:00', 0, '2025-01-01 00:00:00', 0),
+	(11, '28                  ', '28                  ', 'Udjo TO ', 'Udjo TO             ', 'Udjo TO             ', ' 2333333  ', '                    ', '                    ', 'Udjo TO  ', 'Udjo TO             ', 'Udjo TO             ', '  ', '  ', '  ', '  ', '1999-12-30', '               ', 'M', '                           ', '                                               ', 2, 2, 1, 9, '        ', '                                        ', 0, 1, '2025-01-01 00:00:00', 0, '2025-01-01 00:00:00', 0),
+	(12, '21                  ', '21                  ', 'Adien TO ', 'Adien TO            ', 'Adien TO            ', 'bianca  ', '                    ', '                    ', 'Adien TO  ', 'Adien TO            ', 'Adien TO            ', '  ', '  ', '  ', '  ', '1999-12-30', '               ', 'F', '                           ', '                                               ', 2, 2, 1, 9, '        ', '                                        ', 0, 1, '2025-01-01 00:00:00', 0, '2025-01-01 00:00:00', 0),
+	(13, '82                  ', '82                  ', 'Andi TO ', 'Andi TO             ', 'Andi TO             ', '  ', '                    ', '                    ', 'Andi TO  ', 'Andi TO             ', 'Andi TO             ', '  ', '  ', '  ', '  ', '1999-12-30', '               ', 'M', '                           ', '                                               ', 2, 2, 1, 9, '        ', '                                        ', 0, 1, '2025-01-01 00:00:00', 0, '2025-01-01 00:00:00', 0),
+	(14, '4321                ', '777                 ', 'ARIYO ST ', 'ARIYO ST            ', 'ARIYO ST            ', '  ', '                    ', '                    ', 'ARIYO ST  ', 'ARIYO ST            ', 'ARIYO ST            ', '  ', '  ', '  ', '  ', '1999-12-30', '               ', 'M', '                           ', '                                               ', 2, 2, 1, 9, '        ', '                                        ', 0, 1, '2025-01-01 00:00:00', 0, '2025-01-01 00:00:00', 0),
+	(15, '77                  ', '77                  ', 'Ikhsan TO ', 'Ikhsan TO           ', 'Ikhsan TO           ', '  ', '                    ', '                    ', 'Ikhsan TO  ', 'Ikhsan TO           ', 'Ikhsan TO           ', '  ', '  ', '  ', '  ', '1999-12-30', '               ', 'M', '                           ', '                                               ', 2, 2, 1, 9, '        ', '                                        ', 0, 1, '2025-01-01 00:00:00', 0, '2025-01-01 00:00:00', 0),
+	(16, '333                 ', '248                 ', 'Hera ', 'Hera                ', 'Hera                ', '  ', '                    ', '                    ', 'Hera  ', 'Hera                ', 'Hera                ', '  ', '  ', '  ', '  ', '1999-12-30', '               ', 'F', '                           ', '                                               ', 2, 2, 1, 9, '        ', '                                        ', 0, 1, '2025-01-01 00:00:00', 0, '2025-01-01 00:00:00', 0),
+	(17, '0551                ', '                    ', 'OSSY ', 'OSSY                ', 'OSSY                ', '  ', '                    ', '                    ', 'OSSY  ', 'OSSY                ', 'OSSY                ', '  ', '  ', '  ', '  ', '1999-12-30', '               ', ' ', '                           ', '                                               ', 2, 2, 1, 0, '        ', '                                        ', 0, 1, '2025-01-01 00:00:00', 0, '2025-01-01 00:00:00', 0),
+	(18, '991                 ', '                    ', 'YUNI ', 'YUNI                ', 'YUNI                ', '  ', '                    ', '                    ', 'YUNI  ', 'YUNI                ', 'YUNI                ', '  ', '  ', '  ', '  ', '1999-12-30', '               ', ' ', '                           ', '                                               ', 3, 3, 1, 0, '        ', '991                                     ', 0, 1, '2025-01-01 00:00:00', 0, '2025-01-01 00:00:00', 0),
+	(19, '99                  ', '                    ', 'FANMI ', 'FANMI               ', 'FANMI               ', '  ', '                    ', '                    ', 'FANMI  ', 'FANMI               ', 'FANMI               ', '  ', '  ', '  ', '  ', '1999-12-30', '               ', ' ', '                           ', '                                               ', 4, 4, 1, 0, '        ', '                                        ', 0, 1, '2025-01-01 00:00:00', 0, '2025-01-01 00:00:00', 0),
+	(21, '002                 ', '                    ', 'VIO ', 'VIO                 ', 'VIO                 ', '  ', '                    ', '                    ', 'VIO  ', 'VIO                 ', 'VIO                 ', '  ', '  ', '  ', '  ', '1999-12-30', '               ', ' ', '                           ', '                                               ', 4, 4, 1, 0, '        ', '                                        ', 0, 1, '2025-01-01 00:00:00', 0, '2025-01-01 00:00:00', 0),
+	(24, '005                 ', '005                 ', 'GITA ', 'GITA                ', 'GITA                ', '  ', '                    ', '                    ', 'GITA  ', 'GITA                ', 'GITA                ', '  ', '  ', '  ', '  ', '1999-12-30', '               ', ' ', '                           ', '                                               ', 4, 4, 1, 0, '        ', '                                        ', 0, 1, '2025-01-01 00:00:00', 0, '2025-01-01 00:00:00', 0),
+	(30, '1                   ', '                    ', 'SELFI ', 'SELFI               ', 'SELFI               ', '  ', '                    ', '                    ', 'SELFI  ', 'SELFI               ', 'SELFI               ', '  ', '  ', '  ', '  ', '1999-12-30', '               ', ' ', '                           ', '                                               ', 2, 2, 1, 0, '        ', '1                                       ', 0, 1, '2025-01-01 00:00:00', 0, '2025-01-01 00:00:00', 0),
+	(31, '0                   ', '                    ', 'KHARIS ', 'KHARIS              ', 'KHARIS              ', '  ', '                    ', '                    ', 'KHARIS  ', 'KHARIS              ', 'KHARIS              ', '  ', '  ', '  ', '  ', '1999-12-30', '               ', ' ', '                           ', '                                               ', 2, 2, 1, 0, '        ', '                                        ', 0, 1, '2025-01-01 00:00:00', 0, '2025-01-01 00:00:00', 0),
+	(32, '011                 ', '                    ', 'IRPAN ', 'IRPAN               ', 'IRPAN               ', '  ', '                    ', '                    ', 'IRPAN  ', 'IRPAN               ', 'IRPAN               ', '  ', '  ', '  ', '  ', '1999-12-30', '               ', ' ', '                           ', '                                               ', 5, 5, 1, 0, '        ', '                                        ', 0, 1, '2025-01-01 00:00:00', 0, '2025-01-01 00:00:00', 0),
+	(33, '111                 ', '                    ', 'HENI ', 'HENI                ', 'HENI                ', '  ', '                    ', '                    ', 'HENI  ', 'HENI                ', 'HENI                ', '  ', '  ', '  ', '  ', '1999-12-30', '               ', ' ', '                           ', '                                               ', 4, 4, 1, 0, '        ', '111                                     ', 0, 1, '2025-01-01 00:00:00', 0, '2025-01-01 00:00:00', 0),
+	(34, '007                 ', '                    ', 'ADIH ', 'ADIH                ', 'ADIH                ', ' LastName ', '                    ', '                    ', 'ADIH  ', 'ADIH                ', 'ADIH                ', '  ', '  ', '  ', '  ', '1999-12-29', '                ', ' ', '                            ', '                                                ', 6, 6, 1, 0, '        ', '                                        ', 0, 1, '2025-01-01 00:00:00', 0, '2025-01-01 00:00:00', 0),
+	(35, '11                  ', '                    ', 'RAHMAT ', 'RAHMAT              ', 'RAHMAT              ', ' LastName ', '                    ', '                    ', 'RAHMAT  ', 'RAHMAT              ', 'RAHMAT              ', '  ', '  ', '  ', '  ', '1999-12-29', '                ', ' ', '                            ', '                                                ', 6, 6, 1, 0, '        ', '                                        ', 0, 1, '2025-01-01 00:00:00', 0, '2025-01-01 00:00:00', 0),
+	(36, '12                  ', '                    ', 'RHIDAN ', 'RHIDAN              ', 'RHIDAN              ', '  ', '                    ', '                    ', 'RHIDAN  ', 'RHIDAN              ', 'RHIDAN              ', '  ', '  ', '  ', '  ', '1999-12-29', '                ', ' ', '                            ', '                                                ', 6, 6, 1, 0, '        ', '                                        ', 0, 1, '2025-01-01 00:00:00', 0, '2025-01-01 00:00:00', 0),
+	(37, '116                 ', '                    ', 'RAHMAWATI ', 'RAHMAWATI           ', 'RAHMAWATI           ', '  ', '                    ', '                    ', 'RAHMAWATI  ', 'RAHMAWATI           ', 'RAHMAWATI           ', '  ', '  ', '  ', '  ', '1999-12-30', '               ', ' ', '                           ', '                                               ', 5, 5, 1, 0, '        ', '                                        ', 0, 1, '2025-01-01 00:00:00', 0, '2025-01-01 00:00:00', 0),
+	(38, '113                 ', '                    ', 'RIZKY ', 'RIZKY               ', 'RIZKY               ', '  ', '                    ', '                    ', 'RIZKY  ', 'RIZKY               ', 'RIZKY               ', '  ', '  ', '  ', '  ', '1999-12-30', '               ', ' ', '                           ', '                                               ', 3, 5, 1, 0, '        ', '                                        ', 0, 1, '2025-01-01 00:00:00', 0, '2025-01-01 00:00:00', 0),
+	(39, '101                 ', '                    ', 'LILIS ', 'LILIS               ', 'LILIS               ', '  ', '                    ', '                    ', 'LILIS  ', 'LILIS               ', 'LILIS               ', '  ', '  ', '  ', '  ', '1999-12-30', '               ', ' ', '                           ', '                                               ', 5, 5, 1, 0, '        ', '                                        ', 0, 1, '2025-01-01 00:00:00', 0, '2025-01-01 00:00:00', 0),
+	(40, '012                 ', '                    ', 'HILDA ', 'HILDA               ', 'HILDA               ', '  ', '                    ', '                    ', 'HILDA  ', 'HILDA               ', 'HILDA               ', '  ', '  ', '  ', '  ', '1999-12-30', '               ', ' ', '                           ', '                                               ', 4, 4, 1, 0, '        ', '                                        ', 0, 1, '2025-01-01 00:00:00', 0, '2025-01-01 00:00:00', 0),
+	(41, '555                 ', '555                 ', 'ALFIAN ', 'ALFIAN              ', 'ALFIAN              ', '  ', '                    ', '                    ', 'ALFIAN  ', 'ALFIAN              ', 'ALFIAN              ', '  ', '  ', '  ', '  ', '1999-12-30', '               ', ' ', '                           ', '                                               ', 2, 2, 1, 0, '        ', '555                                     ', 0, 1, '2025-01-01 00:00:00', 0, '2025-01-01 00:00:00', 0),
+	(42, '10                  ', '                    ', 'RISKI ', 'RISKI               ', 'RISKI               ', '  ', '                    ', '                    ', 'RISKI  ', 'RISKI               ', 'RISKI               ', '  ', '  ', '  ', '  ', '1999-12-30', '               ', ' ', '                           ', '                                               ', 3, 3, 1, 0, '        ', '                                        ', 0, 1, '2025-01-01 00:00:00', 0, '2025-01-01 00:00:00', 0),
+	(43, '1420                ', '1420                ', 'RIRIS ', 'RIRIS               ', 'RIRIS               ', '  ', '                    ', '                    ', 'RIRIS  ', 'RIRIS               ', 'RIRIS               ', '  ', '  ', '  ', '  ', '1999-12-30', '               ', ' ', '                           ', '                                               ', 4, 4, 1, 0, '        ', '                                        ', 0, 1, '2025-01-01 00:00:00', 0, '2025-01-01 00:00:00', 0),
+	(44, '010                 ', '010                 ', 'DIKA ', 'DIKA                ', 'DIKA                ', '  ', '                    ', '                    ', 'DIKA  ', 'DIKA                ', 'DIKA                ', '  ', '  ', '  ', '  ', '1999-12-30', '               ', ' ', '                           ', '                                               ', 3, 3, 1, 0, '        ', '                                        ', 0, 1, '2025-01-01 00:00:00', 0, '2025-01-01 00:00:00', 0),
+	(45, '003                 ', '                    ', 'ADITIA ', 'ADITIA              ', 'ADITIA              ', ' LastName ', '                    ', '                    ', 'ADITIA  ', 'ADITIA              ', 'ADITIA              ', '  ', '  ', '  ', '  ', '1999-12-29', '                ', ' ', '                            ', '                                                ', 6, 6, 1, 0, '        ', '                                        ', 0, 1, '2025-01-01 00:00:00', 0, '2025-01-01 00:00:00', 0),
+	(46, '020                 ', '                    ', 'DALLI ', 'DALLI               ', 'DALLI               ', '  ', '                    ', '                    ', 'DALLI  ', 'DALLI               ', 'DALLI               ', '  ', '  ', '  ', '  ', '1999-12-30', '               ', ' ', '                           ', '                                               ', 4, 4, 1, 0, '        ', '                                        ', 0, 1, '2025-01-01 00:00:00', 0, '2025-01-01 00:00:00', 0),
+	(47, '08                  ', '                    ', 'SABIL ', 'SABIL               ', 'SABIL               ', '  ', '                    ', '                    ', 'SABIL  ', 'SABIL               ', 'SABIL               ', '  ', '  ', '  ', '  ', '1999-12-30', '               ', ' ', '                           ', '                                               ', 5, 5, 1, 0, '        ', '                                        ', 0, 1, '2025-01-01 00:00:00', 0, '2025-01-01 00:00:00', 0),
+	(48, '001                 ', '                    ', 'GISEL ', 'GISEL               ', 'GISEL               ', '  ', '                    ', '                    ', 'GISEL  ', 'GISEL               ', 'GISEL               ', '  ', '  ', '  ', '  ', '1999-12-30', '               ', ' ', '                           ', '                                               ', 4, 4, 1, 0, '        ', '                                        ', 0, 1, '2025-01-01 00:00:00', 0, '2025-01-01 00:00:00', 0),
+	(49, '008                 ', '                    ', 'YADI ', 'YADI                ', 'YADI                ', '  ', '                    ', '                    ', 'YADI  ', 'YADI                ', 'YADI                ', '  ', '  ', '  ', '  ', '1999-12-30', '               ', ' ', '                           ', '                                               ', 5, 5, 1, 0, '        ', '                                        ', 0, 1, '2025-01-01 00:00:00', 0, '2025-01-01 00:00:00', 0),
+	(50, '009                 ', '                    ', 'SILVA ', 'SILVA               ', 'SILVA               ', '  ', '                    ', '                    ', 'SILVA  ', 'SILVA               ', 'SILVA               ', '  ', '  ', '  ', '  ', '1999-12-30', '               ', ' ', '                           ', '                                               ', 5, 5, 1, 0, '        ', '                                        ', 0, 1, '2025-01-01 00:00:00', 0, '2025-01-01 00:00:00', 0),
+	(58, '112232', '54435', NULL, NULL, NULL, NULL, NULL, NULL, '111', NULL, NULL, NULL, NULL, NULL, NULL, '2009-12-26', NULL, NULL, NULL, NULL, 1, 1, 1, 0, NULL, NULL, NULL, 1, '2025-04-28 13:03:41', 0, '2025-01-01 00:00:00', 0),
+	(59, '7886545', '54435', NULL, NULL, NULL, NULL, NULL, NULL, 'AkanShari', NULL, NULL, NULL, NULL, NULL, NULL, '2009-12-25', NULL, NULL, NULL, NULL, 1, 1, 1, 0, NULL, NULL, NULL, 1, '2025-04-28 13:04:40', 0, '2025-01-01 00:00:00', 0);
+
+-- Dumping structure for table pos_resto.employee_auth_level
+CREATE TABLE IF NOT EXISTS `employee_auth_level` (
+  `authlevel` smallint(6) NOT NULL AUTO_INCREMENT,
+  `desc1` varchar(20) DEFAULT NULL,
+  `desc2` varchar(20) DEFAULT NULL,
+  `desc3` varchar(20) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`authlevel`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.employee_auth_level: ~8 rows (approximately)
+INSERT INTO `employee_auth_level` (`authlevel`, `desc1`, `desc2`, `desc3`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, 'Administrator ', 'Administrator       ', 'Administrator       ', 1, '2025-01-01 00:00:00', 1, '2025-04-28 15:10:58', 1),
+	(2, 'General Manager ', 'General Manager     ', 'General Manager     ', 1, '2025-01-01 00:00:00', 1, '2025-04-28 15:10:58', 1),
+	(3, 'Manager sert', 'Manager             ', 'Manager             ', 1, '2025-01-01 00:00:00', 1, '2025-04-28 15:10:58', 1),
+	(4, 'Cashier ', 'Cashier             ', 'Cashier             ', 1, '2025-01-01 00:00:00', 1, '2025-04-28 15:10:58', 1),
+	(5, 'Senior Waiter ', 'Senior Waiter       ', 'Senior Waiter       ', 1, '2025-01-01 00:00:00', 1, '2025-04-28 15:10:58', 1),
+	(6, 'Waiter ', 'Waiter              ', 'Waiter              ', 1, '2025-01-01 00:00:00', 1, '2025-04-28 15:10:58', 1),
+	(7, 'Junior Waiter ', 'Junior Waiter       ', 'Junior Waiter       ', 1, '2025-01-01 00:00:00', 1, '2025-04-28 15:10:58', 1),
+	(8, 'test2', NULL, NULL, 0, '2025-04-28 14:39:17', 1, '2025-04-28 14:39:45', 1);
+
+-- Dumping structure for table pos_resto.employee_dept
+CREATE TABLE IF NOT EXISTS `employee_dept` (
+  `empdept` smallint(6) NOT NULL AUTO_INCREMENT,
+  `desc1` varchar(200) DEFAULT '',
+  `desc2` varchar(200) DEFAULT '',
+  `desc3` varchar(200) DEFAULT '',
+  `drawer` varchar(20) DEFAULT '',
+  `autopend` varchar(20) DEFAULT '',
+  `voidown` varchar(20) DEFAULT '',
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`empdept`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.employee_dept: ~6 rows (approximately)
+INSERT INTO `employee_dept` (`empdept`, `desc1`, `desc2`, `desc3`, `drawer`, `autopend`, `voidown`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, 'Administrator ', 'Administrator       ', 'Administrator       ', '2', ' a', '1', 1, '2025-01-01 00:00:00', 1, '2025-04-28 15:12:17', 1),
+	(2, 'General Manager ', 'General Manager     ', 'General Manager     ', '1', ' c', 'zcv ', 1, '2025-01-01 00:00:00', 1, '2025-04-28 15:12:17', 1),
+	(3, 'Manager ', 'Manager             ', 'Manager             ', ' 3', ' b', ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-28 15:12:17', 1),
+	(4, 'Cashier2534', 'Cashier             ', 'Cashier             ', ' 4', ' s', ' g', 1, '2025-01-01 00:00:00', 1, '2025-04-28 15:12:17', 1),
+	(5, 'Senior Waiter ', 'Senior Waiter       ', 'Senior Waiter       ', ' 5', ' e', ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-28 15:12:17', 1),
+	(6, 'Waiter ', 'Waiter              ', 'Waiter              ', ' 6', ' e', ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-28 15:12:17', 1),
+	(9, 'SPG woman', '', '', '2', '4', '56', 1, '2025-04-28 14:53:59', 1, '2025-04-28 15:12:17', 1);
+
+-- Dumping structure for table pos_resto.employee_order_level
+CREATE TABLE IF NOT EXISTS `employee_order_level` (
+  `ordlevel` smallint(6) NOT NULL AUTO_INCREMENT,
+  `desc1` varchar(20) DEFAULT NULL,
+  `desc2` varchar(20) DEFAULT NULL,
+  `desc3` varchar(20) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`ordlevel`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.employee_order_level: ~4 rows (approximately)
+INSERT INTO `employee_order_level` (`ordlevel`, `desc1`, `desc2`, `desc3`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, 'Department Head ', 'Department Head     ', 'Department Head     ', 1, '2025-01-01 00:00:00', 1, '2025-04-28 15:22:28', 1),
+	(2, 'Senior Waiter ', 'Senior Waiter       ', 'Senior Waiter       ', 1, '2025-01-01 00:00:00', 1, '2025-04-28 15:22:28', 1),
+	(3, 'Junior Waiter', 'Junior Waiter       ', 'Junior Waiter       ', 1, '2025-01-01 00:00:00', 1, '2025-04-28 15:22:28', 1),
+	(4, 'SPG 2', NULL, NULL, 0, '2025-04-28 15:22:34', 1, '2025-04-28 15:22:38', 1);
+
+-- Dumping structure for table pos_resto.foreign_currency_type
+CREATE TABLE IF NOT EXISTS `foreign_currency_type` (
+  `fcyid` smallint(6) NOT NULL AUTO_INCREMENT,
+  `desc1` varchar(20) DEFAULT NULL,
+  `desc2` varchar(20) DEFAULT NULL,
+  `desc3` varchar(20) DEFAULT NULL,
+  `ratefcy` decimal(5,4) DEFAULT NULL,
+  `chgbakfcy` tinyint(4) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`fcyid`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.foreign_currency_type: ~3 rows (approximately)
+INSERT INTO `foreign_currency_type` (`fcyid`, `desc1`, `desc2`, `desc3`, `ratefcy`, `chgbakfcy`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, 'HK Dollars ', 'HK Dollars          ', 'HK Dollars          ', 0.1282, 1, 1, '2025-01-01 00:00:00', 1, '2025-04-29 16:05:30', 1),
+	(2, 'CNY Dollars ', 'CNY Dollars         ', 'CNY Dollars         ', 0.1410, 1, 1, '2025-01-01 00:00:00', 1, '2025-04-29 16:05:30', 1),
+	(3, 'ID Currency', NULL, NULL, 1.0000, 1, 0, '2025-04-29 16:05:12', 1, '2025-04-29 16:05:34', 1);
+
+-- Dumping structure for table pos_resto.holiday_list
+CREATE TABLE IF NOT EXISTS `holiday_list` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `date` tinyint(4) NOT NULL DEFAULT 0,
+  `desc1` varchar(200) DEFAULT NULL,
+  `desc2` varchar(200) DEFAULT NULL,
+  `desc3` varchar(200) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.holiday_list: ~2 rows (approximately)
+INSERT INTO `holiday_list` (`id`, `date`, `desc1`, `desc2`, `desc3`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, 13, 'test434', NULL, NULL, 1, '2025-01-01 00:00:00', 1, '2025-04-28 17:44:06', 1),
+	(2, 12, 'test5', NULL, NULL, 0, '2025-04-28 17:44:18', 1, '2025-04-28 17:44:23', 1);
+
+-- Dumping structure for table pos_resto.ic_card_add_value_type
+CREATE TABLE IF NOT EXISTS `ic_card_add_value_type` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `desc1` varchar(200) DEFAULT NULL,
+  `desc2` varchar(200) DEFAULT NULL,
+  `desc3` varchar(200) DEFAULT NULL,
+  `seq` varchar(200) DEFAULT NULL,
+  `amount` int(11) DEFAULT NULL,
+  `free` varchar(200) DEFAULT NULL,
+  `extmonth` varchar(200) DEFAULT NULL,
+  `openamt` varchar(200) DEFAULT NULL,
+  `opendrw` varchar(200) DEFAULT NULL,
+  `item` varchar(200) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.ic_card_add_value_type: ~0 rows (approximately)
+INSERT INTO `ic_card_add_value_type` (`id`, `desc1`, `desc2`, `desc3`, `seq`, `amount`, `free`, `extmonth`, `openamt`, `opendrw`, `item`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, 'IC 1', NULL, NULL, '12', 3, '4', '5', '6', '8', '90', 0, '2025-04-29 17:05:04', 1, '2025-04-29 17:06:45', 1);
+
+-- Dumping structure for table pos_resto.member
+CREATE TABLE IF NOT EXISTS `member` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `member` varchar(200) DEFAULT NULL,
+  `first` varchar(200) DEFAULT NULL,
+  `last` varchar(200) DEFAULT NULL,
+  `name` varchar(200) DEFAULT NULL,
+  `pharea1` varchar(200) DEFAULT NULL,
+  `pharea2` varchar(200) DEFAULT NULL,
+  `pharea3` varchar(200) DEFAULT NULL,
+  `phone1` varchar(200) DEFAULT NULL,
+  `phone2` varchar(200) DEFAULT NULL,
+  `phone3` varchar(200) DEFAULT NULL,
+  `phoneext1` varchar(200) DEFAULT NULL,
+  `phoneext2` varchar(200) DEFAULT NULL,
+  `phoneext3` varchar(200) DEFAULT NULL,
+  `addr1` varchar(200) DEFAULT NULL,
+  `addr2` varchar(200) DEFAULT NULL,
+  `city` varchar(200) DEFAULT NULL,
+  `fax` varchar(200) DEFAULT NULL,
+  `state` varchar(200) DEFAULT NULL,
+  `zip` varchar(200) DEFAULT NULL,
+  `deliaddr1` varchar(200) DEFAULT NULL,
+  `deliaddr2` varchar(200) DEFAULT NULL,
+  `dob` varchar(200) DEFAULT NULL,
+  `sex` varchar(200) DEFAULT NULL,
+  `socialid` varchar(200) DEFAULT NULL,
+  `email` varchar(200) DEFAULT NULL,
+  `joindate` varchar(200) DEFAULT NULL,
+  `mclass` varchar(200) DEFAULT NULL,
+  `mtype` varchar(200) DEFAULT NULL,
+  `status` varchar(200) DEFAULT NULL,
+  `memo1` varchar(200) DEFAULT NULL,
+  `memo2` varchar(200) DEFAULT NULL,
+  `autodisc` varchar(200) DEFAULT NULL,
+  `active` tinyint(4) DEFAULT NULL,
+  `empid` varchar(200) DEFAULT NULL,
+  `costno` varchar(200) DEFAULT NULL,
+  `nodeduct` varchar(200) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.member: ~9 rows (approximately)
+INSERT INTO `member` (`id`, `member`, `first`, `last`, `name`, `pharea1`, `pharea2`, `pharea3`, `phone1`, `phone2`, `phone3`, `phoneext1`, `phoneext2`, `phoneext3`, `addr1`, `addr2`, `city`, `fax`, `state`, `zip`, `deliaddr1`, `deliaddr2`, `dob`, `sex`, `socialid`, `email`, `joindate`, `mclass`, `mtype`, `status`, `memo1`, `memo2`, `autodisc`, `active`, `empid`, `costno`, `nodeduct`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, '00000000000000000003', 'COMPLIMENT          ', 'COMPLIMENT          ', 'COMPLIMENT                                ', '     ', '     ', '     ', '            ', '            ', '            ', '      ', '      ', '      ', '                                                  ', '                                                  ', '                    ', '                    ', '      ', '          ', '                                                  ', '                                                  ', '        ', ' ', '                    ', '                                        ', '        ', '    ', '    ', '  ', '                                                                           ', '                                                                           ', ' ', 1, '      ', '          ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(2, '00000000000000000001', 'OC                  ', 'OC                  ', 'OC                                        ', '     ', '     ', '     ', '            ', '            ', '            ', '      ', '      ', '      ', '                                                  ', '                                                  ', '                    ', '                    ', '      ', '          ', '                                                  ', '                                                  ', '        ', ' ', '                    ', '                                        ', '        ', '    ', '    ', '  ', '                                                                           ', '                                                                           ', ' ', 1, '      ', '          ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(3, '00000000000000000002', 'ENTERTAINT          ', 'ENTRTAINT           ', 'ENTERTAINT                                ', '     ', '     ', '     ', '            ', '            ', '            ', '      ', '      ', '      ', '                                                  ', '                                                  ', '                    ', '                    ', '      ', '          ', '                                                  ', '                                                  ', '        ', ' ', '                    ', '                                        ', '        ', '    ', '    ', '  ', '                                                                           ', '                                                                           ', ' ', 1, '      ', '          ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(4, '00000000000000000004', 'EZEELINK            ', 'EZEELINK            ', 'EZEELINK                                  ', '     ', '     ', '     ', '            ', '            ', '            ', '      ', '      ', '      ', '                                                  ', '                                                  ', '                    ', '                    ', '      ', '          ', '                                                  ', '                                                  ', '        ', ' ', '                    ', '                                        ', '        ', '    ', '    ', '  ', '                                                                           ', '                                                                           ', ' ', 1, '      ', '          ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(5, '00000000000000000005', 'COMPLIMENT TADA     ', 'COMPLIMENT TADA     ', 'COMPLIMENT TADA                           ', '     ', '     ', '     ', '            ', '            ', '            ', '      ', '      ', '      ', '                                                  ', '                                                  ', '                    ', '                    ', '      ', '          ', '                                                  ', '                                                  ', '        ', ' ', '                    ', '                                        ', '        ', '    ', '    ', '  ', '                                                                           ', '                                                                           ', ' ', 1, '      ', '          ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(6, '00000000000000000006', 'POINT TADA          ', 'POINT TADA          ', 'POINT TADA                                ', '     ', '     ', '     ', '            ', '            ', '            ', '      ', '      ', '      ', '                                                  ', '                                                  ', '                    ', '                    ', '      ', '          ', '                                                  ', '                                                  ', '        ', ' ', '                    ', '                                        ', '        ', '    ', '    ', '  ', '                                                                           ', '                                                                           ', ' ', 1, '      ', '          ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(7, '00000000000000000007', 'COMPLIMENT ICLUB    ', 'COMPLIMENT ICLUB    ', 'COMPLIMENT ICLUB                          ', '     ', '     ', '     ', '            ', '            ', '            ', '      ', '      ', '      ', '                                                  ', '                                                  ', '                    ', '                    ', '      ', '          ', '                                                  ', '                                                  ', '        ', ' ', '                    ', '                                        ', '        ', '    ', '    ', '  ', '                                                                           ', '                                                                           ', ' ', 1, '      ', '          ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(8, '00000000000000000008', 'POINT ICLUB         ', 'POINT ICLUB         ', 'EZEELINK                                  ', '     ', '     ', '     ', '            ', '            ', '            ', '      ', '      ', '      ', '                                                  ', '                                                  ', '                    ', '                    ', '      ', '          ', '                                                  ', '                                                  ', '        ', ' ', '                    ', '                                        ', '        ', '    ', '    ', '  ', '                                                                           ', '                                                                           ', ' ', 1, '      ', '          ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(9, '00000000000000000009', 'CUSTOMER CARE       ', 'CUSTOMER CARE       ', 'CUSTOMER CARE                             ', '     ', '     ', '     ', '            ', '            ', '            ', '      ', '      ', '      ', '                                                  ', '                                                  ', '                    ', '                    ', '      ', '          ', '                                                  ', '                                                  ', '        ', ' ', '                    ', '                                        ', '        ', '    ', '    ', '  ', '                                                                           ', '                                                                           ', ' ', 1, '      ', '          ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1);
+
+-- Dumping structure for table pos_resto.member_account
+CREATE TABLE IF NOT EXISTS `member_account` (
+  `accid` varchar(0) DEFAULT NULL,
+  `desc1` varchar(0) DEFAULT NULL,
+  `desc2` varchar(0) DEFAULT NULL,
+  `desc3` varchar(0) DEFAULT NULL,
+  `date` varchar(0) DEFAULT NULL,
+  `empid` varchar(0) DEFAULT NULL,
+  `active` varchar(0) DEFAULT NULL,
+  `amount` varchar(0) DEFAULT NULL,
+  `credlimit` varchar(0) DEFAULT NULL,
+  `void` varchar(0) DEFAULT NULL,
+  `voidcode` varchar(0) DEFAULT NULL,
+  `voidtime` varchar(0) DEFAULT NULL,
+  `voidempid` varchar(0) DEFAULT NULL,
+  `lckstatid` varchar(0) DEFAULT NULL,
+  `lckempid` varchar(0) DEFAULT NULL,
+  `renewdate` varchar(0) DEFAULT NULL,
+  `usagedate` varchar(0) DEFAULT NULL,
+  `refundate` varchar(0) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.member_account: ~0 rows (approximately)
+
+-- Dumping structure for table pos_resto.member_account_holder
+CREATE TABLE IF NOT EXISTS `member_account_holder` (
+  `accid` varchar(0) DEFAULT NULL,
+  `member` varchar(0) DEFAULT NULL,
+  `date` varchar(0) DEFAULT NULL,
+  `empid` varchar(0) DEFAULT NULL,
+  `void` varchar(0) DEFAULT NULL,
+  `voidcode` varchar(0) DEFAULT NULL,
+  `voidtime` varchar(0) DEFAULT NULL,
+  `voidempid` varchar(0) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.member_account_holder: ~0 rows (approximately)
+
+-- Dumping structure for table pos_resto.member_class
+CREATE TABLE IF NOT EXISTS `member_class` (
+  `mclass` varchar(0) DEFAULT NULL,
+  `desc1` varchar(0) DEFAULT NULL,
+  `desc2` varchar(0) DEFAULT NULL,
+  `desc3` varchar(0) DEFAULT NULL,
+  `discid1` varchar(0) DEFAULT NULL,
+  `discid2` varchar(0) DEFAULT NULL,
+  `discid3` varchar(0) DEFAULT NULL,
+  `discid4` varchar(0) DEFAULT NULL,
+  `discid5` varchar(0) DEFAULT NULL,
+  `discid6` varchar(0) DEFAULT NULL,
+  `discid7` varchar(0) DEFAULT NULL,
+  `discid8` varchar(0) DEFAULT NULL,
+  `discid9` varchar(0) DEFAULT NULL,
+  `discid10` varchar(0) DEFAULT NULL,
+  `prilevel` varchar(0) DEFAULT NULL,
+  `pridiscid` varchar(0) DEFAULT NULL,
+  `periodra1` varchar(0) DEFAULT NULL,
+  `periodra2` varchar(0) DEFAULT NULL,
+  `periodra3` varchar(0) DEFAULT NULL,
+  `periodra4` varchar(0) DEFAULT NULL,
+  `periodra5` varchar(0) DEFAULT NULL,
+  `outletra1` varchar(0) DEFAULT NULL,
+  `outletra2` varchar(0) DEFAULT NULL,
+  `outletra3` varchar(0) DEFAULT NULL,
+  `outletra4` varchar(0) DEFAULT NULL,
+  `outletra5` varchar(0) DEFAULT NULL,
+  `starange1` varchar(0) DEFAULT NULL,
+  `starange2` varchar(0) DEFAULT NULL,
+  `starange3` varchar(0) DEFAULT NULL,
+  `starange4` varchar(0) DEFAULT NULL,
+  `starange5` varchar(0) DEFAULT NULL,
+  `minremain` varchar(0) DEFAULT NULL,
+  `accexpday` varchar(0) DEFAULT NULL,
+  `balexpday` varchar(0) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.member_class: ~0 rows (approximately)
+
+-- Dumping structure for table pos_resto.member_period
+CREATE TABLE IF NOT EXISTS `member_period` (
+  `outlet` varchar(0) DEFAULT NULL,
+  `periodid` varchar(0) DEFAULT NULL,
+  `desc1` varchar(0) DEFAULT NULL,
+  `desc2` varchar(0) DEFAULT NULL,
+  `desc3` varchar(0) DEFAULT NULL,
+  `sttime` varchar(0) DEFAULT NULL,
+  `endtime` varchar(0) DEFAULT NULL,
+  `consumcnt` varchar(0) DEFAULT NULL,
+  `weekmask` varchar(0) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.member_period: ~0 rows (approximately)
+
+-- Dumping structure for table pos_resto.member_transaction_type
+CREATE TABLE IF NOT EXISTS `member_transaction_type` (
+  `transtype` varchar(0) DEFAULT NULL,
+  `desc1` varchar(0) DEFAULT NULL,
+  `desc2` varchar(0) DEFAULT NULL,
+  `desc3` varchar(0) DEFAULT NULL,
+  `seq` varchar(0) DEFAULT NULL,
+  `type` varchar(0) DEFAULT NULL,
+  `opendesc` varchar(0) DEFAULT NULL,
+  `opendrw` varchar(0) DEFAULT NULL,
+  `payid` varchar(0) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.member_transaction_type: ~0 rows (approximately)
+
+-- Dumping structure for table pos_resto.outlet
+CREATE TABLE IF NOT EXISTS `outlet` (
+  `outlet` smallint(6) NOT NULL AUTO_INCREMENT,
+  `descl1` varchar(30) DEFAULT NULL,
+  `descl2` varchar(30) DEFAULT NULL,
+  `descl3` varchar(30) DEFAULT NULL,
+  `descs1` varchar(20) DEFAULT NULL,
+  `descs2` varchar(20) DEFAULT NULL,
+  `descs3` varchar(20) DEFAULT NULL,
+  `tel` varchar(20) DEFAULT NULL,
+  `fax` varchar(20) DEFAULT NULL,
+  `comname1` varchar(30) DEFAULT NULL,
+  `comname2` varchar(30) DEFAULT NULL,
+  `comname3` varchar(30) DEFAULT NULL,
+  `addr1` varchar(40) DEFAULT NULL,
+  `addr2` varchar(40) DEFAULT NULL,
+  `addr3` varchar(40) DEFAULT NULL,
+  `street1` varchar(40) DEFAULT NULL,
+  `street2` varchar(40) DEFAULT NULL,
+  `street3` varchar(40) DEFAULT NULL,
+  `cityname1` varchar(20) DEFAULT NULL,
+  `cityname2` varchar(20) DEFAULT NULL,
+  `cityname3` varchar(20) DEFAULT NULL,
+  `country1` varchar(20) DEFAULT NULL,
+  `country2` varchar(20) DEFAULT NULL,
+  `country3` varchar(20) DEFAULT NULL,
+  `greeta1` varchar(30) DEFAULT NULL,
+  `greeta2` varchar(30) DEFAULT NULL,
+  `greeta3` varchar(30) DEFAULT NULL,
+  `greetb1` varchar(30) DEFAULT NULL,
+  `greetb2` varchar(30) DEFAULT NULL,
+  `greetb3` varchar(30) DEFAULT NULL,
+  `greetc1` varchar(30) DEFAULT NULL,
+  `greetc2` varchar(30) DEFAULT NULL,
+  `greetc3` varchar(30) DEFAULT NULL,
+  `greetd1` varchar(30) DEFAULT NULL,
+  `greetd2` varchar(30) DEFAULT NULL,
+  `greetd3` varchar(30) DEFAULT NULL,
+  `greete1` varchar(30) DEFAULT NULL,
+  `greete2` varchar(30) DEFAULT NULL,
+  `greete3` varchar(30) DEFAULT NULL,
+  `dpoleu1` varchar(20) DEFAULT NULL,
+  `dpoleu2` varchar(20) DEFAULT NULL,
+  `dpoleu3` varchar(20) DEFAULT NULL,
+  `dpolel1` varchar(20) DEFAULT NULL,
+  `dpolel2` varchar(20) DEFAULT NULL,
+  `dpolel3` varchar(20) DEFAULT NULL,
+  `panelid` smallint(6) DEFAULT NULL,
+  `price` tinyint(4) DEFAULT NULL,
+  `sendpend` varchar(1) DEFAULT NULL,
+  `itmrnd` tinyint(4) DEFAULT NULL,
+  `taxrnd` tinyint(4) DEFAULT NULL,
+  `scrnd` tinyint(4) DEFAULT NULL,
+  `discrnd` tinyint(4) DEFAULT NULL,
+  `ckrnd` tinyint(4) DEFAULT NULL,
+  `itmdec` tinyint(4) DEFAULT NULL,
+  `taxdec` tinyint(4) DEFAULT NULL,
+  `scdec` tinyint(4) DEFAULT NULL,
+  `discdec` tinyint(4) DEFAULT NULL,
+  `ckdec` tinyint(4) DEFAULT NULL,
+  `begchk` mediumint(9) DEFAULT NULL,
+  `endchk` mediumint(9) DEFAULT NULL,
+  `nextchk` varchar(5) DEFAULT NULL,
+  `bizbegchk` varchar(5) DEFAULT NULL,
+  `drwprefix` varchar(2) DEFAULT NULL,
+  `drwamt` decimal(3,2) DEFAULT NULL,
+  `drwmethod` varchar(1) DEFAULT NULL,
+  `drwrun` tinyint(4) DEFAULT NULL,
+  `drwmem` varchar(1) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`outlet`)
+) ENGINE=InnoDB AUTO_INCREMENT=1003 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.outlet: ~3 rows (approximately)
+INSERT INTO `outlet` (`outlet`, `descl1`, `descl2`, `descl3`, `descs1`, `descs2`, `descs3`, `tel`, `fax`, `comname1`, `comname2`, `comname3`, `addr1`, `addr2`, `addr3`, `street1`, `street2`, `street3`, `cityname1`, `cityname2`, `cityname3`, `country1`, `country2`, `country3`, `greeta1`, `greeta2`, `greeta3`, `greetb1`, `greetb2`, `greetb3`, `greetc1`, `greetc2`, `greetc3`, `greetd1`, `greetd2`, `greetd3`, `greete1`, `greete2`, `greete3`, `dpoleu1`, `dpoleu2`, `dpoleu3`, `dpolel1`, `dpolel2`, `dpolel3`, `panelid`, `price`, `sendpend`, `itmrnd`, `taxrnd`, `scrnd`, `discrnd`, `ckrnd`, `itmdec`, `taxdec`, `scdec`, `discdec`, `ckdec`, `begchk`, `endchk`, `nextchk`, `bizbegchk`, `drwprefix`, `drwamt`, `drwmethod`, `drwrun`, `drwmem`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(15, 'Imperial Kitchen              ', 'Imperial Kitchen              ', 'Imperial Kitchen              ', 'IK MTA-TAMAN ANGGREK', 'IK MTA-TAMAN ANGGREK', 'IK MTA-TAMAN ANGGREK', '08119228412         ', '                    ', 'Imperial Kitchen & Dimsum     ', 'Imperial Kitchen & Dimsum     ', 'Imperial Kitchen & Dimsum     ', 'Mall Taman Anggrek                      ', 'Jakarta                                 ', 'Lantai 1 Unit F12-F12A                  ', 'Lantai 1 Unit F12-F12A                  ', '                                        ', '                                        ', 'Jakarta Barat       ', '                    ', '                    ', '                    ', '                    ', '                    ', 'Thank You                     ', 'Thank You                     ', 'Thank You                     ', '                              ', '                              ', '                              ', '                              ', '                              ', '                              ', '                              ', '                              ', '                              ', '                              ', '                              ', '                              ', '* Imperial Kitchen *', '* Imperial Kitchen *', '* Imperial Kitchen *', 'Margo City          ', 'Margo City          ', 'Margo City          ', 4, 2, ' ', 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 99999, '     ', '     ', '  ', 0.00, ' ', 0, ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(1001, 'Imperial Kitchen Delivery     ', 'Imperial Kitchen Delivery     ', 'Imperial Kitchen Delivery     ', 'Delivery            ', 'Delivery            ', 'Delivery            ', '08119228412         ', '                    ', 'Imperial Kitchen & Dimsum     ', 'Imperial Kitchen & Dimsum     ', 'Imperial Kitchen & Dimsum     ', 'Mall Taman Anggrek                      ', 'Jakarta                                 ', 'Lantai 1 Unit F12-F12A                  ', 'Lantai 1 Unit F12-F12A                  ', '                                        ', '                                        ', 'Jakarta Barat       ', '                    ', '                    ', '                    ', '                    ', '                    ', 'Thank You                     ', 'Thank You                     ', 'Thank You                     ', '                              ', '                              ', '                              ', '                              ', '                              ', '                              ', '                              ', '                              ', '                              ', '                              ', '                              ', '                              ', '* Imperial Kitchen *', '* Imperial Kitchen *', '* Imperial Kitchen *', 'Supermal Karawaci   ', 'Supermal Karawaci   ', 'Supermal Karawaci   ', 2, 2, ' ', 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 99999, '     ', '     ', '  ', 0.00, ' ', 0, ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(1002, 'Imperial Kitcehn DH           ', 'Delivery Hotline              ', 'Delivery Hotline              ', 'Delivery Hotline    ', 'Delivery Hotline    ', 'Delivery Hotline    ', '08119228412         ', '                    ', 'Imperial Kitchen & Dimsum     ', 'Imperial Kitchen & Dimsum     ', 'Imperial Kitchen & Dimsum     ', 'Mall Taman Anggrek                      ', 'Jakarta                                 ', 'Lantai 1 Unit F12-F12A                  ', 'Lantai 1 Unit F12-F12A                  ', '                                        ', '                                        ', 'Jakarta Barat       ', '                    ', '                    ', '                    ', '                    ', '                    ', 'Thank You                     ', 'Thank You                     ', 'Thank You                     ', '                              ', '                              ', '                              ', '                              ', '                              ', '                              ', '                              ', '                              ', '                              ', '                              ', '                              ', '                              ', '* Imperial Kitchen *', '* Imperial Kitchen *', '* Imperial Kitchen *', 'Margo City          ', 'Margo City          ', 'Margo City          ', 4, 2, ' ', 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 99999, '     ', '     ', '  ', 0.00, ' ', 0, ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1);
+
+-- Dumping structure for table pos_resto.outlet_bonus_rule
+CREATE TABLE IF NOT EXISTS `outlet_bonus_rule` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `outlet` varchar(250) DEFAULT NULL,
+  `ruleid` varchar(250) DEFAULT NULL,
+  `desc1` varchar(250) DEFAULT NULL,
+  `desc2` varchar(250) DEFAULT NULL,
+  `desc3` varchar(250) DEFAULT NULL,
+  `weekmask` varchar(250) DEFAULT NULL,
+  `stdate` varchar(250) DEFAULT NULL,
+  `enddate` varchar(250) DEFAULT NULL,
+  `sttime` varchar(250) DEFAULT NULL,
+  `endtime` varchar(250) DEFAULT NULL,
+  `level` varchar(250) DEFAULT NULL,
+  `plu` varchar(250) DEFAULT NULL,
+  `type` varchar(250) DEFAULT NULL,
+  `mode` varchar(250) DEFAULT NULL,
+  `rate` varchar(250) DEFAULT NULL,
+  `amount` varchar(250) DEFAULT NULL,
+  `checkamt` varchar(250) DEFAULT NULL,
+  `active` varchar(250) DEFAULT NULL,
+  `discid` varchar(250) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.outlet_bonus_rule: ~0 rows (approximately)
+
+-- Dumping structure for table pos_resto.outlet_cash_type
+CREATE TABLE IF NOT EXISTS `outlet_cash_type` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `outlet` smallint(6) DEFAULT NULL,
+  `cashid` smallint(6) DEFAULT NULL,
+  `seq` smallint(6) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.outlet_cash_type: ~30 rows (approximately)
+INSERT INTO `outlet_cash_type` (`id`, `outlet`, `cashid`, `seq`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, 1001, 1, 1, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(2, 1001, 2, 2, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(3, 1001, 3, 3, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(4, 1001, 4, 4, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(5, 1001, 5, 5, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(6, 1001, 6, 6, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(7, 1001, 7, 7, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(8, 1001, 8, 8, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(9, 1001, 9, 9, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(10, 1001, 10, 10, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(11, 15, 1, 1, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(12, 15, 2, 2, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(13, 15, 3, 3, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(14, 15, 4, 4, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(15, 15, 5, 5, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(16, 15, 6, 6, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(17, 15, 7, 7, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(18, 15, 8, 8, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(19, 15, 9, 9, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(20, 15, 10, 10, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(21, 1002, 1, 1, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(22, 1002, 2, 2, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(23, 1002, 3, 3, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(24, 1002, 4, 4, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(25, 1002, 5, 5, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(26, 1002, 6, 6, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(27, 1002, 7, 7, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(28, 1002, 8, 8, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(29, 1002, 9, 9, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(30, 1002, 10, 10, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1);
+
+-- Dumping structure for table pos_resto.outlet_check_disc
+CREATE TABLE IF NOT EXISTS `outlet_check_disc` (
+  `id` smallint(6) NOT NULL AUTO_INCREMENT,
+  `outlet` smallint(6) DEFAULT NULL,
+  `discid` smallint(6) DEFAULT NULL,
+  `seq` varchar(3) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.outlet_check_disc: ~100 rows (approximately)
+INSERT INTO `outlet_check_disc` (`id`, `outlet`, `discid`, `seq`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, 1001, 24, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(2, 1002, 24, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(3, 1001, 23, '028', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(4, 1002, 23, '030', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(5, 15, 1, '001', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(6, 15, 2, '002', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(7, 15, 3, '003', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(8, 15, 4, '004', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(9, 15, 5, '005', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(10, 15, 6, '006', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(11, 15, 7, '007', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(12, 15, 8, '008', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(13, 15, 9, '009', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(14, 15, 10, '010', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(15, 15, 11, '011', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(16, 15, 12, '012', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(17, 15, 13, '013', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(18, 15, 14, '014', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(19, 15, 15, '015', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(20, 15, 16, '016', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(21, 15, 17, '017', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(22, 15, 18, '018', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(23, 15, 19, '019', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(24, 15, 20, '020', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(25, 15, 21, '021', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(26, 15, 22, '022', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(27, 15, 25, '023', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(28, 1001, 1, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(29, 1001, 2, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(30, 1001, 3, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(31, 1001, 4, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(32, 1001, 5, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(33, 1001, 6, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(34, 1001, 7, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(35, 1001, 8, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(36, 1001, 9, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(37, 1001, 10, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(38, 1001, 11, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(39, 1001, 12, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(40, 1001, 13, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(41, 1001, 14, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(42, 1001, 15, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(43, 1001, 16, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(44, 1001, 17, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(45, 1001, 18, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(46, 1001, 19, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(47, 1001, 20, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(48, 1001, 21, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(49, 1001, 22, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(50, 1001, 25, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(51, 1002, 1, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(52, 1002, 2, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(53, 1002, 3, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(54, 1002, 4, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(55, 1002, 5, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(56, 1002, 6, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(57, 1002, 7, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(58, 1002, 8, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(59, 1002, 9, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(60, 1002, 10, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(61, 1002, 11, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(62, 1002, 12, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(63, 1002, 13, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(64, 1002, 14, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(65, 1002, 15, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(66, 1002, 16, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(67, 1002, 17, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(68, 1002, 18, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(69, 1002, 19, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(70, 1002, 20, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(71, 1002, 21, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(72, 1002, 22, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(73, 1002, 25, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(74, 1003, 1, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(75, 1003, 2, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(76, 1003, 3, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(77, 1003, 4, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(78, 1003, 5, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(79, 1003, 6, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(80, 1003, 7, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(81, 1003, 8, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(82, 1003, 9, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(83, 1003, 10, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(84, 1003, 11, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(85, 1003, 12, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(86, 1003, 13, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(87, 1003, 14, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(88, 1003, 15, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(89, 1003, 16, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(90, 1003, 17, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(91, 1003, 18, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(92, 1003, 19, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(93, 1003, 20, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(94, 1003, 21, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(95, 1003, 22, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(96, 1003, 25, '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(97, 1004, 1, '001', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(98, 1004, 2, '002', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(99, 1004, 3, '003', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(100, 1004, 4, '004', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1);
+
+-- Dumping structure for table pos_resto.outlet_check_period
+CREATE TABLE IF NOT EXISTS `outlet_check_period` (
+  `id` smallint(6) NOT NULL AUTO_INCREMENT,
+  `outlet` smallint(6) DEFAULT NULL,
+  `periodid` smallint(6) DEFAULT NULL,
+  `desc1` varchar(20) DEFAULT NULL,
+  `desc2` varchar(20) DEFAULT NULL,
+  `desc3` varchar(20) DEFAULT NULL,
+  `sttime` mediumint(9) DEFAULT NULL,
+  `endtime` mediumint(9) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.outlet_check_period: ~9 rows (approximately)
+INSERT INTO `outlet_check_period` (`id`, `outlet`, `periodid`, `desc1`, `desc2`, `desc3`, `sttime`, `endtime`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, 1001, 2, 'Lunch               ', 'Lunch               ', 'Lunch               ', 110000, 165959, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(2, 1001, 3, 'Dinner              ', 'Dinner              ', 'Dinner              ', 170000, 45959, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(3, 15, 2, 'Lunch               ', 'Lunch               ', 'Lunch               ', 110000, 165959, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(4, 15, 3, 'Dinner              ', 'Dinner              ', 'Dinner              ', 170000, 45959, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(5, 15, 1, 'Breakfast           ', 'Breakfast           ', 'Breakfast           ', 50000, 105959, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(6, 1002, 2, 'Lunch               ', 'Lunch               ', 'Lunch               ', 110000, 165959, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(7, 1002, 3, 'Dinner              ', 'Dinner              ', 'Dinner              ', 170000, 45959, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(8, 1001, 1, 'Breakfast           ', 'Breakfast           ', 'Breakfast           ', 50000, 105959, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(9, 1002, 1, 'Breakfast           ', 'Breakfast           ', 'Breakfast           ', 50000, 105959, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1);
+
+-- Dumping structure for table pos_resto.outlet_floor_plan
+CREATE TABLE IF NOT EXISTS `outlet_floor_plan` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `outlet` smallint(6) DEFAULT NULL,
+  `planid` smallint(6) DEFAULT NULL,
+  `desc1` varchar(20) DEFAULT NULL,
+  `desc2` varchar(20) DEFAULT NULL,
+  `desc3` varchar(20) DEFAULT NULL,
+  `stdate` varchar(8) DEFAULT NULL,
+  `enddate` varchar(8) DEFAULT NULL,
+  `sttime` varchar(6) DEFAULT NULL,
+  `endtime` varchar(6) DEFAULT NULL,
+  `weekmask` varchar(7) DEFAULT NULL,
+  `public` varchar(1) DEFAULT NULL,
+  `type` varchar(2) DEFAULT NULL,
+  `bkcolor` varchar(6) DEFAULT NULL,
+  `image` varchar(30) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.outlet_floor_plan: ~4 rows (approximately)
+INSERT INTO `outlet_floor_plan` (`id`, `outlet`, `planid`, `desc1`, `desc2`, `desc3`, `stdate`, `enddate`, `sttime`, `endtime`, `weekmask`, `public`, `type`, `bkcolor`, `image`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, 15, 2, 'Other               ', 'Other               ', 'Other               ', '        ', '        ', '      ', '      ', '       ', ' ', '  ', '000000', '                              ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(2, 15, 3, 'Dine In             ', 'Dine In             ', 'Dine In             ', '        ', '        ', '0     ', '0     ', '0      ', '0', '0 ', '0     ', 'FPIMAGE_P19                   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(3, 1001, 4, 'Delivery            ', 'Delivery            ', 'Delivery            ', '        ', '        ', '      ', '      ', '       ', ' ', '  ', '      ', '                              ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(4, 1002, 1, 'HOTLINE             ', 'HOTLINE             ', 'HOTLINE             ', '        ', '        ', '      ', '      ', '       ', ' ', '  ', '000000', '                              ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1);
+
+-- Dumping structure for table pos_resto.outlet_func_authority
+CREATE TABLE IF NOT EXISTS `outlet_func_authority` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `outlet` smallint(6) DEFAULT NULL,
+  `authlevel` smallint(6) DEFAULT NULL,
+  `funcgrp` smallint(6) DEFAULT NULL,
+  `funcsgrp` smallint(6) DEFAULT NULL,
+  `funcauth` smallint(6) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.outlet_func_authority: ~100 rows (approximately)
+INSERT INTO `outlet_func_authority` (`id`, `outlet`, `authlevel`, `funcgrp`, `funcsgrp`, `funcauth`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, 1001, 1, 0, 1, 1, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(2, 1001, 2, 0, 1, 1, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(3, 1001, 2, 1, 0, 0, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(4, 1001, 2, 1, 1, 0, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(5, 1001, 2, 1, 1, 1, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(6, 1001, 2, 1, 1, 2, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(7, 1001, 2, 1, 1, 3, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(8, 1001, 2, 1, 1, 4, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(9, 1001, 2, 1, 1, 5, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(10, 1001, 2, 1, 1, 6, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(11, 1001, 2, 1, 1, 7, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(12, 1001, 2, 1, 2, 0, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(13, 1001, 2, 1, 2, 1, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(14, 1001, 2, 1, 2, 2, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(15, 1001, 2, 1, 2, 3, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(16, 1001, 2, 1, 2, 4, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(17, 1001, 2, 1, 2, 5, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(18, 1001, 2, 1, 2, 6, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(19, 1001, 2, 1, 2, 7, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(20, 1001, 2, 1, 2, 8, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(21, 1001, 2, 1, 2, 9, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(22, 1001, 2, 1, 2, 10, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(23, 1001, 2, 1, 2, 11, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(24, 1001, 2, 1, 2, 12, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(25, 1001, 2, 1, 2, 13, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(26, 1001, 2, 1, 2, 14, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(27, 1001, 2, 1, 2, 15, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(28, 1001, 2, 1, 2, 16, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(29, 1001, 2, 1, 2, 17, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(30, 1001, 2, 1, 2, 18, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(31, 1001, 2, 1, 2, 19, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(32, 1001, 2, 1, 3, 0, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(33, 1001, 2, 1, 3, 1, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(34, 1001, 2, 1, 3, 2, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(35, 1001, 2, 1, 4, 0, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(36, 1001, 2, 1, 4, 1, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(37, 1001, 2, 1, 4, 2, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(38, 1001, 2, 1, 4, 3, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(39, 1001, 2, 1, 4, 4, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(40, 1001, 2, 1, 4, 5, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(41, 1001, 2, 1, 4, 6, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(42, 1001, 2, 1, 4, 7, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(43, 1001, 2, 1, 4, 8, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(44, 1001, 2, 1, 4, 9, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(45, 1001, 2, 1, 4, 10, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(46, 1001, 2, 1, 4, 11, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(47, 1001, 2, 1, 4, 12, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(48, 1001, 2, 1, 5, 0, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(49, 1001, 2, 1, 5, 1, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(50, 1001, 2, 1, 5, 2, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(51, 1001, 2, 1, 5, 3, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(52, 1001, 2, 1, 5, 4, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(53, 1001, 2, 1, 5, 5, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(54, 1001, 2, 1, 5, 6, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(55, 1001, 2, 1, 5, 7, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(56, 1001, 2, 1, 5, 8, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(57, 1001, 2, 1, 5, 9, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(58, 1001, 2, 1, 6, 0, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(59, 1001, 2, 1, 6, 1, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(60, 1001, 2, 1, 6, 2, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(61, 1001, 2, 1, 6, 3, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(62, 1001, 2, 1, 6, 4, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(63, 1001, 2, 1, 6, 5, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(64, 1001, 2, 1, 6, 6, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(65, 1001, 2, 1, 6, 7, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(66, 1001, 2, 1, 6, 8, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(67, 1001, 2, 1, 6, 9, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(68, 1001, 2, 1, 6, 10, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(69, 1001, 2, 1, 7, 0, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(70, 1001, 2, 1, 7, 1, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(71, 1001, 2, 1, 7, 2, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(72, 1001, 2, 1, 7, 3, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(73, 1001, 2, 1, 8, 0, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(74, 1001, 2, 1, 8, 1, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(75, 1001, 2, 1, 8, 2, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(76, 1001, 2, 1, 8, 3, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(77, 1001, 2, 1, 8, 4, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(78, 1001, 2, 1, 10, 0, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(79, 1001, 2, 1, 10, 1, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(80, 1001, 2, 1, 10, 2, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(81, 1001, 2, 1, 11, 0, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(82, 1001, 2, 1, 11, 1, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(83, 1001, 2, 1, 11, 2, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(84, 1001, 2, 1, 11, 3, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(85, 1001, 2, 1, 11, 4, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(86, 1001, 2, 1, 11, 5, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(87, 1001, 2, 1, 11, 6, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(88, 1001, 2, 1, 11, 7, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(89, 1001, 2, 1, 11, 8, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(90, 1001, 2, 1, 11, 9, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(91, 1001, 2, 2, 0, 0, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(92, 1001, 2, 2, 1, 0, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(93, 1001, 2, 2, 1, 1, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(94, 1001, 2, 2, 1, 2, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(95, 1001, 2, 2, 2, 0, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(96, 1001, 2, 2, 2, 1, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(97, 1001, 2, 2, 2, 2, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(98, 1001, 2, 2, 2, 3, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(99, 1001, 2, 2, 2, 4, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(100, 1001, 2, 2, 2, 5, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1);
+
+-- Dumping structure for table pos_resto.outlet_item_group
+CREATE TABLE IF NOT EXISTS `outlet_item_group` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `outlet` smallint(6) DEFAULT NULL,
+  `menuid` varchar(0) DEFAULT NULL,
+  `itemgrp` varchar(0) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.outlet_item_group: ~0 rows (approximately)
+
+-- Dumping structure for table pos_resto.outlet_item_period
+CREATE TABLE IF NOT EXISTS `outlet_item_period` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `outlet` smallint(6) DEFAULT NULL,
+  `periodid` smallint(6) DEFAULT NULL,
+  `desc1` varchar(30) DEFAULT NULL,
+  `desc2` varchar(30) DEFAULT NULL,
+  `desc3` varchar(30) DEFAULT NULL,
+  `sttime` mediumint(9) DEFAULT NULL,
+  `endtime` mediumint(9) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.outlet_item_period: ~9 rows (approximately)
+INSERT INTO `outlet_item_period` (`id`, `outlet`, `periodid`, `desc1`, `desc2`, `desc3`, `sttime`, `endtime`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, 1001, 2, 'Lunch                         ', 'Lunch                         ', 'Lunch                         ', 110000, 165959, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(2, 1001, 3, 'Dinner                        ', 'Dinner                        ', 'Dinner                        ', 170000, 45959, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(3, 15, 2, 'Lunch                         ', 'Lunch                         ', 'Lunch                         ', 110000, 165959, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(4, 15, 3, 'Dinner                        ', 'Dinner                        ', 'Dinner                        ', 170000, 45959, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(5, 1001, 1, 'Breakfast                     ', 'Breakfast                     ', 'Breakfast                     ', 50000, 105959, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(6, 15, 1, 'Breakfast                     ', 'Breakfast                     ', 'Breakfast                     ', 50000, 105959, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(7, 1002, 1, 'Breakfast                     ', 'Breakfast                     ', 'Breakfast                     ', 50000, 105959, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(8, 1002, 2, 'Lunch                         ', 'Lunch                         ', 'Lunch                         ', 110000, 165959, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(9, 1002, 3, 'Dinner                        ', 'Dinner                        ', 'Dinner                        ', 170000, 45959, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1);
+
+-- Dumping structure for table pos_resto.outlet_mix_n_match
+CREATE TABLE IF NOT EXISTS `outlet_mix_n_match` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `outlet` smallint(6) DEFAULT NULL,
+  `mmrule` varchar(0) DEFAULT NULL,
+  `desc1` varchar(0) DEFAULT NULL,
+  `desc2` varchar(0) DEFAULT NULL,
+  `desc3` varchar(0) DEFAULT NULL,
+  `priority` varchar(0) DEFAULT NULL,
+  `stdate` varchar(0) DEFAULT NULL,
+  `enddate` varchar(0) DEFAULT NULL,
+  `sttime` varchar(0) DEFAULT NULL,
+  `endtime` varchar(0) DEFAULT NULL,
+  `weekmask` varchar(0) DEFAULT NULL,
+  `public` varchar(0) DEFAULT NULL,
+  `mqty` varchar(0) DEFAULT NULL,
+  `mtype` varchar(0) DEFAULT NULL,
+  `mluid` varchar(0) DEFAULT NULL,
+  `mitem` varchar(0) DEFAULT NULL,
+  `cqty` varchar(0) DEFAULT NULL,
+  `ctype` varchar(0) DEFAULT NULL,
+  `cluid` varchar(0) DEFAULT NULL,
+  `citem` varchar(0) DEFAULT NULL,
+  `discmeth` varchar(0) DEFAULT NULL,
+  `discamt` varchar(0) DEFAULT NULL,
+  `useitemtm` varchar(0) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.outlet_mix_n_match: ~0 rows (approximately)
+
+-- Dumping structure for table pos_resto.outlet_op_log
+CREATE TABLE IF NOT EXISTS `outlet_op_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `outlet` smallint(6) DEFAULT NULL,
+  `funcgrp` smallint(6) DEFAULT NULL,
+  `funcsgrp` smallint(6) DEFAULT NULL,
+  `funcauth` smallint(6) DEFAULT NULL,
+  `attempt` tinyint(4) DEFAULT NULL,
+  `trans` varchar(1) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.outlet_op_log: ~1 rows (approximately)
+INSERT INTO `outlet_op_log` (`id`, `outlet`, `funcgrp`, `funcsgrp`, `funcauth`, `attempt`, `trans`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, 1, 1, 1, 1, 1, ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1);
+
+-- Dumping structure for table pos_resto.outlet_order_level
+CREATE TABLE IF NOT EXISTS `outlet_order_level` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `outlet` smallint(6) DEFAULT NULL,
+  `ordlevgrp` smallint(6) DEFAULT NULL,
+  `ordlevel` smallint(6) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.outlet_order_level: ~12 rows (approximately)
+INSERT INTO `outlet_order_level` (`id`, `outlet`, `ordlevgrp`, `ordlevel`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, 1001, 1, 1, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(2, 1001, 1, 2, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(3, 1001, 1, 3, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(4, 1001, 2, 1, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(5, 15, 1, 1, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(6, 15, 1, 2, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(7, 15, 1, 3, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(8, 15, 2, 1, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(9, 1002, 1, 1, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(10, 1002, 1, 2, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(11, 1002, 1, 3, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(12, 1002, 2, 1, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1);
+
+-- Dumping structure for table pos_resto.outlet_payment
+CREATE TABLE IF NOT EXISTS `outlet_payment` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `outlet` smallint(6) DEFAULT NULL,
+  `payid` varchar(3) DEFAULT NULL,
+  `seq` varchar(3) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.outlet_payment: ~100 rows (approximately)
+INSERT INTO `outlet_payment` (`id`, `outlet`, `payid`, `seq`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, 1001, '006', '002', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(2, 1001, '007', '003', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(3, 1001, '008', '004', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(4, 1001, '009', '005', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(5, 1001, '010', '006', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(6, 1001, '011', '007', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(7, 1001, '012', '008', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(8, 1001, '013', '009', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(9, 1001, '014', '010', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(10, 1001, '015', '011', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(11, 1001, '016', '012', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(12, 1001, '017', '013', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(13, 1001, '018', '014', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(14, 1001, '019', '015', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(15, 1001, '020', '016', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(16, 1001, '021', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(17, 1001, '022', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(18, 1001, '025', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(19, 1001, '026', '017', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(20, 1001, '027', '018', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(21, 1001, '028', '019', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(22, 1001, '032', '020', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(23, 1001, '031', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(24, 1001, '030', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(25, 1001, '029', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(26, 1001, '033', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(27, 1001, '034', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(28, 1001, '035', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(29, 1001, '037', '021', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(30, 1001, '038', '022', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(31, 1001, '036', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(32, 1001, '039', '023', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(33, 1001, '040', '024', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(34, 1001, '041', '025', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(35, 1001, 'T02', '037', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(36, 1001, 'Q02', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(37, 1002, '006', '002', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(38, 1002, '007', '003', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(39, 1002, '008', '004', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(40, 1002, '009', '005', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(41, 1002, '010', '006', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(42, 1002, '011', '007', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(43, 1002, '012', '008', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(44, 1002, '013', '009', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(45, 1002, '014', '010', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(46, 1002, '015', '011', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(47, 1002, '016', '012', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(48, 1002, '017', '013', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(49, 1002, '018', '014', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(50, 1002, '019', '015', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(51, 1002, '020', '016', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(52, 1002, '021', '017', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(53, 1002, '022', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(54, 1002, '025', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(55, 1002, '026', '018', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(56, 1002, '027', '019', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(57, 1002, '028', '020', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(58, 1002, '029', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(59, 1002, '030', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(60, 1002, '031', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(61, 1002, '032', '021', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(62, 1002, '033', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(63, 1002, '034', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(64, 1002, '035', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(65, 1002, '036', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(66, 1002, '037', '022', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(67, 1002, '038', '023', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(68, 1002, '039', '024', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(69, 1002, '040', '025', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(70, 1002, '041', '026', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(71, 1002, 'Q02', '052', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(72, 1002, 'T02', '053', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(73, 15, '001', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(74, 15, '002', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(75, 15, '003', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(76, 15, '004', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(77, 15, 'A01', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(78, 15, 'B01', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(79, 15, 'B02', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(80, 15, 'B03', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(81, 15, 'B04', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(82, 15, 'B05', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(83, 15, 'B06', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(84, 15, 'B07', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(85, 15, 'B08', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(86, 15, 'B09', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(87, 15, 'B10', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(88, 15, 'B11', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(89, 15, 'B12', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(90, 15, 'B21', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(91, 15, 'B31', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(92, 15, 'B32', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(93, 15, 'B33', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(94, 15, 'B34', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(95, 15, 'B35', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(96, 15, 'B36', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(97, 15, 'C01', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(98, 15, 'C11', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(99, 15, 'C12', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(100, 15, 'C21', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1);
+
+-- Dumping structure for table pos_resto.outlet_rep_authority
+CREATE TABLE IF NOT EXISTS `outlet_rep_authority` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `outlet` smallint(6) DEFAULT NULL,
+  `authlevel` smallint(6) DEFAULT NULL,
+  `repguid` varchar(32) DEFAULT NULL,
+  `repuiid` varchar(10) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.outlet_rep_authority: ~100 rows (approximately)
+INSERT INTO `outlet_rep_authority` (`id`, `outlet`, `authlevel`, `repguid`, `repuiid`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, 1, 1, '0E693A456E7A45F7B6C9DBA9AF01C203', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(2, 1, 2, '0E693A456E7A45F7B6C9DBA9AF01C203', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(3, 1, 3, '0E693A456E7A45F7B6C9DBA9AF01C203', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(4, 1, 4, '0E693A456E7A45F7B6C9DBA9AF01C203', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(5, 1, 5, '0E693A456E7A45F7B6C9DBA9AF01C203', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(6, 1, 6, '0E693A456E7A45F7B6C9DBA9AF01C203', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(7, 1, 7, '0E693A456E7A45F7B6C9DBA9AF01C203', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(8, 1, 1, '0E693A456E7A45F7B6C9DBA9AF01C203', 'SRV       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(9, 1, 2, '0E693A456E7A45F7B6C9DBA9AF01C203', 'SRV       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(10, 1, 3, '0E693A456E7A45F7B6C9DBA9AF01C203', 'SRV       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(11, 1, 4, '0E693A456E7A45F7B6C9DBA9AF01C203', 'SRV       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(12, 1, 5, '0E693A456E7A45F7B6C9DBA9AF01C203', 'SRV       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(13, 1, 6, '0E693A456E7A45F7B6C9DBA9AF01C203', 'SRV       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(14, 1, 7, '0E693A456E7A45F7B6C9DBA9AF01C203', 'SRV       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(15, 1, 1, '45B5BF6FC78948DF89157B495B7658EC', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(16, 1, 1, '45B5BF6FC78948DF89157B495B7658EC', 'SRV       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(17, 1, 1, '7777A0E144734CAEBA336872AD626E9F', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(18, 1, 1, '7777A0E144734CAEBA336872AD626E9F', 'SRV       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(19, 1, 1, 'F37A0297E830439CA18DCB413CBD12E2', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(20, 1, 1, 'F37A0297E830439CA18DCB413CBD12E2', 'SRV       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(21, 1, 2, 'F37A0297E830439CA18DCB413CBD12E2', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(22, 1, 2, 'F37A0297E830439CA18DCB413CBD12E2', 'SRV       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(23, 1, 1, '4021D32DBC084156ADE285C6D10CCCB3', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(24, 1, 1, '038A37C75CFF4F818761409D936D3C3A', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(25, 1, 1, '9E4E038907974B7D8F52F4C404A512E0', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(26, 1, 1, '92178C566DB9470D80B4D12513A8120E', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(27, 1, 1, 'D133B61A96B94806A36642A9424EFC08', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(28, 1, 1, '1EBEB2B2323E4204AC19480D0C9C57F1', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(29, 1, 1, '1EBEB2B2323E4204AC19480D0C9C57F1', 'SRV       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(30, 1, 1, '8BCEEE6F3980423F84ADEDAF13B8C879', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(31, 1, 1, '8BCEEE6F3980423F84ADEDAF13B8C879', 'SRV       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(32, 1, 1, 'AED067BBB29F4941BAC993A1E2DBD5A1', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(33, 1, 1, 'AED067BBB29F4941BAC993A1E2DBD5A1', 'SRV       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(34, 1, 1, '90C54BEAB3054FD394A46298B586BF76', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(35, 1, 1, '90C54BEAB3054FD394A46298B586BF76', 'SRV       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(36, 1, 1, 'B42CF53C0C50417E9EB9ACFA49A99AA4', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(37, 1, 1, 'B42CF53C0C50417E9EB9ACFA49A99AA4', 'SRV       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(38, 1, 1, '7F311105C0F74DDB8140D077863184BB', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(39, 1, 1, '7F311105C0F74DDB8140D077863184BB', 'SRV       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(40, 1, 1, 'AE4D5E1E89EE4000A51153DA98785C62', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(41, 1, 1, 'AE4D5E1E89EE4000A51153DA98785C62', 'SRV       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(42, 1, 1, 'D1A588CFD0384F18B36A13BE682B5D33', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(43, 1, 1, 'D1A588CFD0384F18B36A13BE682B5D33', 'SRV       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(44, 1, 1, '05A8F54F3B1841E6AB58546EFF92A313', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(45, 1, 1, '05A8F54F3B1841E6AB58546EFF92A313', 'SRV       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(46, 1, 1, '2DF5495949EB4450AFE8078D9621D9AE', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(47, 1, 1, '2DF5495949EB4450AFE8078D9621D9AE', 'SRV       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(48, 1, 1, '5F78B7F57A8E4D418A345521AE338A55', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(49, 1, 1, '5F78B7F57A8E4D418A345521AE338A55', 'SRV       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(50, 1, 1, '0A35DF7556564BBB8A8486E470BA80AB', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(51, 1, 1, '0A35DF7556564BBB8A8486E470BA80AB', 'SRV       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(52, 1, 1, 'EF8A6C6D79F24D33B5554C6408B21324', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(53, 1, 1, 'EF8A6C6D79F24D33B5554C6408B21324', 'SRV       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(54, 1, 1, 'DDEA7D0BAFB64B11B95436E9A351EEE5', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(55, 1, 1, 'DDEA7D0BAFB64B11B95436E9A351EEE5', 'SRV       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(56, 1, 2, 'DDEA7D0BAFB64B11B95436E9A351EEE5', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(57, 1, 2, 'DDEA7D0BAFB64B11B95436E9A351EEE5', 'SRV       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(58, 1, 2, 'EF8A6C6D79F24D33B5554C6408B21324', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(59, 1, 2, 'EF8A6C6D79F24D33B5554C6408B21324', 'SRV       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(60, 1, 2, '0A35DF7556564BBB8A8486E470BA80AB', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(61, 1, 2, '0A35DF7556564BBB8A8486E470BA80AB', 'SRV       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(62, 1, 2, '5F78B7F57A8E4D418A345521AE338A55', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(63, 1, 2, '5F78B7F57A8E4D418A345521AE338A55', 'SRV       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(64, 1, 2, '2DF5495949EB4450AFE8078D9621D9AE', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(65, 1, 2, '2DF5495949EB4450AFE8078D9621D9AE', 'SRV       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(66, 1, 2, '05A8F54F3B1841E6AB58546EFF92A313', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(67, 1, 2, '05A8F54F3B1841E6AB58546EFF92A313', 'SRV       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(68, 1, 2, 'D1A588CFD0384F18B36A13BE682B5D33', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(69, 1, 2, 'D1A588CFD0384F18B36A13BE682B5D33', 'SRV       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(70, 1, 2, 'AE4D5E1E89EE4000A51153DA98785C62', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(71, 1, 2, 'AE4D5E1E89EE4000A51153DA98785C62', 'SRV       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(72, 1, 2, '7F311105C0F74DDB8140D077863184BB', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(73, 1, 2, '7F311105C0F74DDB8140D077863184BB', 'SRV       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(74, 1, 2, 'B42CF53C0C50417E9EB9ACFA49A99AA4', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(75, 1, 2, 'B42CF53C0C50417E9EB9ACFA49A99AA4', 'SRV       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(76, 1, 2, '90C54BEAB3054FD394A46298B586BF76', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(77, 1, 2, '90C54BEAB3054FD394A46298B586BF76', 'SRV       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(78, 1, 2, 'AED067BBB29F4941BAC993A1E2DBD5A1', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(79, 1, 2, 'AED067BBB29F4941BAC993A1E2DBD5A1', 'SRV       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(80, 1, 2, '8BCEEE6F3980423F84ADEDAF13B8C879', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(81, 1, 2, '8BCEEE6F3980423F84ADEDAF13B8C879', 'SRV       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(82, 1, 2, '1EBEB2B2323E4204AC19480D0C9C57F1', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(83, 1, 2, '1EBEB2B2323E4204AC19480D0C9C57F1', 'SRV       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(84, 1, 2, 'D133B61A96B94806A36642A9424EFC08', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(85, 1, 2, '92178C566DB9470D80B4D12513A8120E', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(86, 1, 2, '9E4E038907974B7D8F52F4C404A512E0', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(87, 1, 2, '038A37C75CFF4F818761409D936D3C3A', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(88, 1, 2, '4021D32DBC084156ADE285C6D10CCCB3', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(89, 1, 2, '7777A0E144734CAEBA336872AD626E9F', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(90, 1, 2, '7777A0E144734CAEBA336872AD626E9F', 'SRV       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(91, 1, 2, '45B5BF6FC78948DF89157B495B7658EC', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(92, 1, 2, '45B5BF6FC78948DF89157B495B7658EC', 'SRV       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(93, 1, 3, '45B5BF6FC78948DF89157B495B7658EC', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(94, 1, 3, '45B5BF6FC78948DF89157B495B7658EC', 'SRV       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(95, 1, 3, '7777A0E144734CAEBA336872AD626E9F', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(96, 1, 3, '7777A0E144734CAEBA336872AD626E9F', 'SRV       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(97, 1, 3, '4021D32DBC084156ADE285C6D10CCCB3', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(98, 1, 3, '038A37C75CFF4F818761409D936D3C3A', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(99, 1, 3, '9E4E038907974B7D8F52F4C404A512E0', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(100, 1, 3, '92178C566DB9470D80B4D12513A8120E', 'MGR       ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1);
+
+-- Dumping structure for table pos_resto.outlet_special_hour
+CREATE TABLE IF NOT EXISTS `outlet_special_hour` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `outlet` smallint(6) DEFAULT NULL,
+  `periodid` smallint(6) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.outlet_special_hour: ~9 rows (approximately)
+INSERT INTO `outlet_special_hour` (`id`, `outlet`, `periodid`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, 1001, 2, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(2, 1001, 3, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(3, 1001, 1, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(4, 15, 1, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(5, 15, 2, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(6, 15, 3, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(7, 1002, 1, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(8, 1002, 2, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(9, 1002, 3, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1);
+
+-- Dumping structure for table pos_resto.outlet_table_map
+CREATE TABLE IF NOT EXISTS `outlet_table_map` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `outlet` smallint(6) DEFAULT NULL,
+  `table` varchar(5) DEFAULT NULL,
+  `tableext` varchar(3) DEFAULT NULL,
+  `desc1` varchar(20) DEFAULT NULL,
+  `desc2` varchar(20) DEFAULT NULL,
+  `desc3` varchar(20) DEFAULT NULL,
+  `planid` smallint(6) DEFAULT NULL,
+  `class` tinyint(4) DEFAULT NULL,
+  `seatcnt` tinyint(4) DEFAULT NULL,
+  `top` smallint(6) DEFAULT NULL,
+  `left` smallint(6) DEFAULT NULL,
+  `width` tinyint(4) DEFAULT NULL,
+  `height` tinyint(4) DEFAULT NULL,
+  `capacity` tinyint(4) DEFAULT NULL,
+  `shape` tinyint(4) DEFAULT NULL,
+  `seatpos` tinyint(4) DEFAULT NULL,
+  `seatarr` tinyint(4) DEFAULT NULL,
+  `default` varchar(2) DEFAULT NULL,
+  `consume` decimal(3,2) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.outlet_table_map: ~100 rows (approximately)
+INSERT INTO `outlet_table_map` (`id`, `outlet`, `table`, `tableext`, `desc1`, `desc2`, `desc3`, `planid`, `class`, `seatcnt`, `top`, `left`, `width`, `height`, `capacity`, `shape`, `seatpos`, `seatarr`, `default`, `consume`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, 15, '00TA5', '   ', '                    ', '                    ', '                    ', 2, 0, 0, 1, 639, 80, 80, 4, 2, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(2, 15, '00TA4', '   ', '                    ', '                    ', '                    ', 2, 0, 0, 1, 489, 80, 80, 4, 2, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(3, 15, '00TA3', '   ', '                    ', '                    ', '                    ', 2, 0, 0, 1, 342, 80, 80, 4, 2, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(4, 15, '00TA2', '   ', '                    ', '                    ', '                    ', 2, 0, 0, 1, 200, 80, 80, 4, 2, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(5, 15, '00OC5', '   ', '                    ', '                    ', '                    ', 2, 0, 0, 179, 642, 80, 80, 4, 1, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(6, 15, '00OC4', '   ', '                    ', '                    ', '                    ', 2, 0, 0, 180, 488, 80, 80, 4, 1, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(7, 15, '00OC3', '   ', '                    ', '                    ', '                    ', 2, 0, 0, 179, 342, 80, 80, 4, 1, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(8, 15, '00OC2', '   ', '                    ', '                    ', '                    ', 2, 0, 0, 178, 198, 80, 80, 4, 1, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(9, 15, '00500', '   ', '                    ', '                    ', '                    ', 2, 0, 0, 369, 644, 80, 80, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(10, 15, '00400', '   ', '                    ', '                    ', '                    ', 2, 0, 0, 369, 488, 80, 80, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(11, 15, '00300', '   ', '                    ', '                    ', '                    ', 2, 0, 0, 369, 343, 80, 80, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(12, 15, '00200', '   ', '                    ', '                    ', '                    ', 2, 0, 0, 369, 197, 80, 80, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(13, 15, '00100', '   ', '                    ', '                    ', '                    ', 2, 0, 0, 369, 37, 80, 80, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(14, 15, '00OC1', '   ', '                    ', '                    ', '                    ', 2, 0, 0, 177, 41, 80, 80, 4, 1, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(15, 15, '00TA1', '   ', '                    ', '                    ', '                    ', 2, 0, 0, 1, 41, 80, 80, 4, 2, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(16, 15, '00001', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 1, 22, 60, 60, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(17, 15, '00002', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 37, 22, 60, 60, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(18, 15, '00003', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 88, 22, 60, 60, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(19, 15, '00004', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 124, 23, 60, 60, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(20, 15, '00005', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 177, 22, 60, 60, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(21, 15, '00006', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 214, 22, 60, 60, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(22, 15, '00007', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 267, 22, 60, 60, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(23, 15, '00008', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 304, 22, 60, 60, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(24, 15, '00017', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 275, 315, 70, 70, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(25, 15, '00018', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 321, 315, 70, 70, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(26, 15, '00011', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 389, 65, 60, 60, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(27, 15, '00012', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 389, 101, 60, 60, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(28, 15, '00013', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 202, 192, 80, 80, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(29, 15, '00016', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 202, 310, 80, 80, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(30, 15, '00014', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 275, 197, 70, 70, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(31, 15, '00015', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 321, 197, 70, 70, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(32, 15, '00029', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 140, 429, 60, 60, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(33, 15, '00030', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 140, 393, 60, 60, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(34, 15, '00031', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 140, 343, 60, 60, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(35, 15, '00032', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 140, 307, 60, 60, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(36, 15, '00033', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 140, 258, 60, 60, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(37, 15, '00034', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 140, 223, 60, 60, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(38, 15, '00035', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 140, 176, 60, 60, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(39, 15, '00036', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 140, 141, 60, 60, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(40, 15, '00041', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 56, 339, 70, 70, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(41, 15, '00042', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 10, 338, 70, 70, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(42, 15, '00025', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 183, 684, 70, 70, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(43, 15, '00026', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 183, 637, 70, 70, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(44, 15, '00027', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 184, 555, 70, 70, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(45, 15, '00028', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 184, 508, 70, 70, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(46, 15, '00024', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 275, 507, 70, 70, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(47, 15, '00023', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 275, 554, 70, 70, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(48, 15, '00022', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 276, 636, 70, 70, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(49, 15, '00021', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 276, 683, 70, 70, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(50, 15, '00043', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 9, 256, 70, 70, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(51, 15, '00009', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 349, 66, 60, 60, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(52, 15, '00010', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 349, 102, 60, 60, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(53, 15, '00044', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 56, 256, 70, 70, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(54, 15, '00051', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 101, 537, 80, 80, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(55, 15, '00052', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 36, 543, 60, 60, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(56, 15, '00059', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 1, 693, 60, 60, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(57, 15, '00058', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 37, 693, 60, 60, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(58, 15, '00057', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 1, 644, 60, 60, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(59, 15, '00055', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 1, 594, 60, 60, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(60, 15, '00053', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 1, 543, 60, 60, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(61, 15, '00056', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 37, 645, 60, 60, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(62, 15, '00054', '   ', '                    ', '                    ', '                    ', 3, 0, 0, 37, 594, 60, 60, 4, 0, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(63, 1001, 'DEL01', '   ', '                    ', '                    ', '                    ', 4, 0, 0, 1, 1, 95, 95, 4, 2, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(64, 1001, 'DEL02', '   ', '                    ', '                    ', '                    ', 4, 0, 0, 1, 76, 95, 95, 4, 2, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(65, 1001, 'DEL03', '   ', '                    ', '                    ', '                    ', 4, 0, 0, 1, 151, 95, 95, 4, 2, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(66, 1001, 'DEL04', '   ', '                    ', '                    ', '                    ', 4, 0, 0, 1, 226, 95, 95, 4, 2, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(67, 1001, 'DEL05', '   ', '                    ', '                    ', '                    ', 4, 0, 0, 1, 302, 95, 95, 4, 2, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(68, 1001, 'DEL06', '   ', '                    ', '                    ', '                    ', 4, 0, 0, 1, 377, 95, 95, 4, 2, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(69, 1001, 'DEL07', '   ', '                    ', '                    ', '                    ', 4, 0, 0, 1, 451, 95, 95, 4, 2, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(70, 1001, 'DEL08', '   ', '                    ', '                    ', '                    ', 4, 0, 0, 1, 526, 95, 95, 4, 2, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(71, 1001, 'DEL09', '   ', '                    ', '                    ', '                    ', 4, 0, 0, 1, 601, 95, 95, 4, 2, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(72, 1001, 'DEL10', '   ', '                    ', '                    ', '                    ', 4, 0, 0, 1, 675, 95, 95, 4, 2, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(73, 1002, 'HOT01', '   ', '                    ', '                    ', '                    ', 1, 0, 0, 290, 1, 85, 85, 4, 2, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(74, 1002, 'HOT06', '   ', '                    ', '                    ', '                    ', 1, 0, 0, 364, 1, 85, 85, 4, 2, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(75, 1002, 'HOT07', '   ', '                    ', '                    ', '                    ', 1, 0, 0, 364, 77, 85, 85, 4, 2, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(76, 1002, 'HOT08', '   ', '                    ', '                    ', '                    ', 1, 0, 0, 364, 153, 85, 85, 4, 2, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(77, 1002, 'HOT09', '   ', '                    ', '                    ', '                    ', 1, 0, 0, 364, 230, 85, 85, 4, 2, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(78, 1002, 'HOT10', '   ', '                    ', '                    ', '                    ', 1, 0, 0, 364, 306, 85, 85, 4, 2, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(79, 1002, 'HOT02', '   ', '                    ', '                    ', '                    ', 1, 0, 0, 291, 77, 85, 85, 4, 2, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(80, 1002, 'HOT03', '   ', '                    ', '                    ', '                    ', 1, 0, 0, 290, 153, 85, 85, 4, 2, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(81, 1002, 'HOT04', '   ', '                    ', '                    ', '                    ', 1, 0, 0, 291, 226, 85, 85, 4, 2, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(82, 1002, 'HOT05', '   ', '                    ', '                    ', '                    ', 1, 0, 0, 290, 302, 85, 85, 4, 2, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(83, 1001, 'DEL11', '   ', '                    ', '                    ', '                    ', 4, 0, 0, 80, 1, 95, 95, 4, 2, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(84, 1001, 'DEL12', '   ', '                    ', '                    ', '                    ', 4, 0, 0, 80, 76, 95, 95, 4, 2, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(85, 1001, 'DEL13', '   ', '                    ', '                    ', '                    ', 4, 0, 0, 80, 151, 95, 95, 4, 2, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(86, 1001, 'DEL14', '   ', '                    ', '                    ', '                    ', 4, 0, 0, 80, 226, 95, 95, 4, 2, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(87, 1001, 'DEL15', '   ', '                    ', '                    ', '                    ', 4, 0, 0, 80, 301, 95, 95, 4, 2, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(88, 1001, 'DEL16', '   ', '                    ', '                    ', '                    ', 4, 0, 0, 80, 377, 95, 95, 4, 2, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(89, 1001, 'DEL17', '   ', '                    ', '                    ', '                    ', 4, 0, 0, 80, 452, 95, 95, 4, 2, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(90, 1001, 'DEL18', '   ', '                    ', '                    ', '                    ', 4, 0, 0, 80, 527, 95, 95, 4, 2, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(91, 1001, 'DEL19', '   ', '                    ', '                    ', '                    ', 4, 0, 0, 80, 602, 95, 95, 4, 2, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(92, 1001, 'DEL20', '   ', '                    ', '                    ', '                    ', 4, 0, 0, 80, 677, 95, 95, 4, 2, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(93, 1001, 'DEL21', '   ', '                    ', '                    ', '                    ', 4, 0, 0, 158, 1, 95, 95, 4, 2, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(94, 1001, 'DEL22', '   ', '                    ', '                    ', '                    ', 4, 0, 0, 158, 75, 95, 95, 4, 2, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(95, 1001, 'DEL23', '   ', '                    ', '                    ', '                    ', 4, 0, 0, 158, 150, 95, 95, 4, 2, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(96, 1001, 'DEL24', '   ', '                    ', '                    ', '                    ', 4, 0, 0, 158, 226, 95, 95, 4, 2, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(97, 1001, 'DEL25', '   ', '                    ', '                    ', '                    ', 4, 0, 0, 158, 301, 95, 95, 4, 2, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(98, 1001, 'DEL26', '   ', '                    ', '                    ', '                    ', 4, 0, 0, 158, 376, 95, 95, 4, 2, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(99, 1001, 'DEL27', '   ', '                    ', '                    ', '                    ', 4, 0, 0, 158, 451, 95, 95, 4, 2, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(100, 1001, 'DEL28', '   ', '                    ', '                    ', '                    ', 4, 0, 0, 158, 526, 95, 95, 4, 2, 2, 0, '  ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1);
+
+-- Dumping structure for table pos_resto.outlet_tips_pool
+CREATE TABLE IF NOT EXISTS `outlet_tips_pool` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `outlet` smallint(6) DEFAULT NULL,
+  `mjdept` varchar(4) DEFAULT NULL,
+  `empdept` varchar(4) DEFAULT NULL,
+  `rate` decimal(3,2) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.outlet_tips_pool: ~6 rows (approximately)
+INSERT INTO `outlet_tips_pool` (`id`, `outlet`, `mjdept`, `empdept`, `rate`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, 1, '0001', '0002', 3.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(2, 1, '    ', '    ', 3.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(3, 1, '    ', '    ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(4, 1, '    ', '    ', 3.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(5, 1, '    ', '    ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(6, 1, '    ', '    ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1);
+
+-- Dumping structure for table pos_resto.special_hour
+CREATE TABLE IF NOT EXISTS `special_hour` (
+  `periodid` smallint(6) NOT NULL AUTO_INCREMENT,
+  `desc1` varchar(200) DEFAULT NULL,
+  `desc2` varchar(200) DEFAULT NULL,
+  `desc3` varchar(200) DEFAULT NULL,
+  `stdate` date DEFAULT NULL,
+  `enddate` date DEFAULT NULL,
+  `sttime` time DEFAULT NULL,
+  `endtime` time DEFAULT NULL,
+  `weekmask` int(11) DEFAULT NULL,
+  `public` varchar(200) DEFAULT NULL,
+  `type` tinyint(4) DEFAULT NULL,
+  `stremind` tinyint(4) DEFAULT NULL,
+  `endremind` tinyint(4) DEFAULT NULL,
+  `bkcolor` mediumint(9) DEFAULT NULL,
+  `autodisc` varchar(200) DEFAULT NULL,
+  `disctoold` varchar(200) DEFAULT NULL,
+  `setup1` tinyint(4) DEFAULT NULL,
+  `sttime1` mediumint(9) DEFAULT NULL,
+  `endtime1` mediumint(9) DEFAULT NULL,
+  `rngtype1` tinyint(4) DEFAULT NULL,
+  `strange1` smallint(6) DEFAULT NULL,
+  `endrange1` smallint(6) DEFAULT NULL,
+  `fmprintq1` varchar(200) DEFAULT NULL,
+  `toprintq1` varchar(200) DEFAULT NULL,
+  `fmprice1` tinyint(4) DEFAULT NULL,
+  `toprice1` tinyint(4) DEFAULT NULL,
+  `itemdisc1` smallint(6) DEFAULT NULL,
+  `idiscnoo1` varchar(200) DEFAULT NULL,
+  `setup2` varchar(200) DEFAULT NULL,
+  `sttime2` varchar(200) DEFAULT NULL,
+  `endtime2` varchar(200) DEFAULT NULL,
+  `rngtype2` varchar(200) DEFAULT NULL,
+  `strange2` varchar(200) DEFAULT NULL,
+  `endrange2` varchar(200) DEFAULT NULL,
+  `fmprintq2` varchar(200) DEFAULT NULL,
+  `toprintq2` varchar(200) DEFAULT NULL,
+  `fmprice2` tinyint(4) DEFAULT NULL,
+  `toprice2` tinyint(4) DEFAULT NULL,
+  `itemdisc2` varchar(200) DEFAULT NULL,
+  `idiscnoo2` varchar(200) DEFAULT NULL,
+  `setup3` varchar(200) DEFAULT NULL,
+  `sttime3` varchar(200) DEFAULT NULL,
+  `endtime3` varchar(200) DEFAULT NULL,
+  `rngtype3` varchar(200) DEFAULT NULL,
+  `strange3` varchar(200) DEFAULT NULL,
+  `endrange3` varchar(200) DEFAULT NULL,
+  `fmprintq3` varchar(200) DEFAULT NULL,
+  `toprintq3` varchar(200) DEFAULT NULL,
+  `fmprice3` tinyint(4) DEFAULT NULL,
+  `toprice3` tinyint(4) DEFAULT NULL,
+  `itemdisc3` varchar(200) DEFAULT NULL,
+  `idiscnoo3` varchar(200) DEFAULT NULL,
+  `setup4` varchar(200) DEFAULT NULL,
+  `sttime4` varchar(200) DEFAULT NULL,
+  `endtime4` varchar(200) DEFAULT NULL,
+  `rngtype4` varchar(200) DEFAULT NULL,
+  `strange4` varchar(200) DEFAULT NULL,
+  `endrange4` varchar(200) DEFAULT NULL,
+  `fmprintq4` varchar(200) DEFAULT NULL,
+  `toprintq4` varchar(200) DEFAULT NULL,
+  `fmprice4` tinyint(4) DEFAULT NULL,
+  `toprice4` tinyint(4) DEFAULT NULL,
+  `itemdisc4` varchar(200) DEFAULT NULL,
+  `idiscnoo4` varchar(200) DEFAULT NULL,
+  `setup5` varchar(200) DEFAULT NULL,
+  `sttime5` varchar(200) DEFAULT NULL,
+  `endtime5` varchar(200) DEFAULT NULL,
+  `rngtype5` varchar(200) DEFAULT NULL,
+  `strange5` varchar(200) DEFAULT NULL,
+  `endrange5` varchar(200) DEFAULT NULL,
+  `fmprintq5` varchar(200) DEFAULT NULL,
+  `toprintq5` varchar(200) DEFAULT NULL,
+  `fmprice5` tinyint(4) DEFAULT NULL,
+  `toprice5` tinyint(4) DEFAULT NULL,
+  `itemdisc5` varchar(200) DEFAULT NULL,
+  `idiscnoo5` varchar(200) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`periodid`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.special_hour: ~4 rows (approximately)
+INSERT INTO `special_hour` (`periodid`, `desc1`, `desc2`, `desc3`, `stdate`, `enddate`, `sttime`, `endtime`, `weekmask`, `public`, `type`, `stremind`, `endremind`, `bkcolor`, `autodisc`, `disctoold`, `setup1`, `sttime1`, `endtime1`, `rngtype1`, `strange1`, `endrange1`, `fmprintq1`, `toprintq1`, `fmprice1`, `toprice1`, `itemdisc1`, `idiscnoo1`, `setup2`, `sttime2`, `endtime2`, `rngtype2`, `strange2`, `endrange2`, `fmprintq2`, `toprintq2`, `fmprice2`, `toprice2`, `itemdisc2`, `idiscnoo2`, `setup3`, `sttime3`, `endtime3`, `rngtype3`, `strange3`, `endrange3`, `fmprintq3`, `toprintq3`, `fmprice3`, `toprice3`, `itemdisc3`, `idiscnoo3`, `setup4`, `sttime4`, `endtime4`, `rngtype4`, `strange4`, `endrange4`, `fmprintq4`, `toprintq4`, `fmprice4`, `toprice4`, `itemdisc4`, `idiscnoo4`, `setup5`, `sttime5`, `endtime5`, `rngtype5`, `strange5`, `endrange5`, `fmprintq5`, `toprintq5`, `fmprice5`, `toprice5`, `itemdisc5`, `idiscnoo5`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, 'Sep 25 ', 'Sep 25                                  ', 'Sep 25                                  ', '2018-09-23', '2028-09-23', '09:00:00', '23:59:59', 1111111, '34343', 2, 1, 1, 0, '   ', ' ', 1, 90000, 235959, 1, 3, 5, '   ', '   ', 1, 1, 5, ' ', ' ', '      ', '      ', '  ', '    ', '    ', '   ', '   ', 0, 0, '   ', ' ', ' ', '      ', '      ', '  ', '    ', '    ', '   ', '   ', 0, 0, '   ', ' ', ' ', '      ', '      ', '  ', '    ', '    ', '   ', '   ', 0, 0, '          ', ' ', ' ', '      ', '      ', '  ', '    ', '    ', '   ', '   ', 0, 0, '   ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-28 17:28:38', 1),
+	(2, 'sep 26 ', 'sep 26                                  ', 'sep 26                                  ', '2018-09-24', '2028-09-23', '09:10:00', '23:59:59', 1111111, ' ', 2, 1, 1, 0, '   ', ' ', 1, 90000, 235959, 1, 1, 3, '   ', '   ', 1, 1, 6, ' ', ' ', '      ', '      ', '  ', '    ', '    ', '   ', '   ', 0, 0, '   ', ' ', ' ', '      ', '      ', '  ', '    ', '    ', '   ', '   ', 0, 0, '   ', ' ', ' ', '      ', '      ', '  ', '    ', '    ', '   ', '   ', 0, 0, '          ', ' ', ' ', '      ', '      ', '  ', '    ', '    ', '   ', '   ', 0, 0, '   ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-28 17:28:38', 1),
+	(3, '27 - 3 ', '27 - 3                                  ', '27 - 3                                  ', '2018-09-25', '2028-09-23', '09:30:00', '23:59:59', 2, ' public', 2, 1, 1, 0, '   ', ' ', 1, 90000, 235959, 1, 1, 3, '   ', '   ', 1, 1, 7, ' ', ' ', '      ', '      ', '  ', '    ', '    ', '   ', '   ', 0, 0, '   ', ' ', ' ', '      ', '      ', '  ', '    ', '    ', '   ', '   ', 0, 0, '   ', ' ', ' ', '      ', '      ', '  ', '    ', '    ', '   ', '   ', 0, 0, '          ', ' ', ' ', '      ', '      ', '  ', '    ', '    ', '   ', '   ', 0, 0, '   ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-28 17:28:38', 1),
+	(4, 'test 2', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '2025-04-28 17:31:41', 1, '2025-04-28 17:33:17', 1),
+	(5, 'test4', NULL, NULL, '2025-04-28', '2025-04-28', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '2025-04-28 17:33:03', 1, '2025-04-28 17:33:17', 1);
+
+-- Dumping structure for table pos_resto.wb_deposit_add_value_type
+CREATE TABLE IF NOT EXISTS `wb_deposit_add_value_type` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `desc1` varchar(200) DEFAULT NULL,
+  `desc2` varchar(200) DEFAULT NULL,
+  `desc3` varchar(200) DEFAULT NULL,
+  `seq` varchar(200) DEFAULT NULL,
+  `amount` varchar(200) DEFAULT NULL,
+  `free` varchar(200) DEFAULT NULL,
+  `extmonth` varchar(200) DEFAULT NULL,
+  `openamt` varchar(200) DEFAULT NULL,
+  `opendrw` varchar(200) DEFAULT NULL,
+  `item` varchar(200) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.wb_deposit_add_value_type: ~2 rows (approximately)
+INSERT INTO `wb_deposit_add_value_type` (`id`, `desc1`, `desc2`, `desc3`, `seq`, `amount`, `free`, `extmonth`, `openamt`, `opendrw`, `item`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, 'test', NULL, NULL, '2', '2', '4', '4', '2', '3', 'null2', 1, '2025-04-29 16:15:45', 1, '2025-04-29 16:19:41', 1),
+	(2, 'we 2', NULL, NULL, '3', '3', '3', '2', '34', '2', 'null324', 1, '2025-04-29 16:15:53', 1, '2025-04-29 16:19:41', 1);
+
+-- Dumping structure for table pos_resto.wb_svc_card_add_value_type
+CREATE TABLE IF NOT EXISTS `wb_svc_card_add_value_type` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `desc1` varchar(200) DEFAULT NULL,
+  `desc2` varchar(200) DEFAULT NULL,
+  `desc3` varchar(200) DEFAULT NULL,
+  `seq` varchar(200) DEFAULT NULL,
+  `amount` varchar(200) DEFAULT NULL,
+  `free` varchar(200) DEFAULT NULL,
+  `extmonth` varchar(200) DEFAULT NULL,
+  `openamt` varchar(200) DEFAULT NULL,
+  `opendrw` varchar(200) DEFAULT NULL,
+  `item` varchar(200) DEFAULT NULL,
+  `svcclass` varchar(200) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.wb_svc_card_add_value_type: ~1 rows (approximately)
+INSERT INTO `wb_svc_card_add_value_type` (`id`, `desc1`, `desc2`, `desc3`, `seq`, `amount`, `free`, `extmonth`, `openamt`, `opendrw`, `item`, `svcclass`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, 'tte2', NULL, NULL, '3', '4', '5', '6', '7', 'null', 'null', NULL, 0, '2025-04-29 16:24:33', 1, '2025-04-29 16:24:48', 1);
+
+/*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
+/*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
+/*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40111 SET SQL_NOTES=IFNULL(@OLD_SQL_NOTES, 1) */;
