@@ -159,11 +159,11 @@
          </div>
 
          <div class="mb-2">
-            <label for="date">Date*</label>
-            <input type="number" id="date" class="form-control form-control-sm" name="date" [(ngModel)]="model.date"
-               required #date="ngModel" />
-            <small [hidden]="date.valid || date.pristine" class="text-danger">
-               *date is required
+            <label for="payid">payid*</label>
+            <input type="text" id="payid" class="form-control form-control-sm" name="payid" [(ngModel)]="model.payid"
+               required #payid="ngModel" />
+            <small [hidden]="payid.valid || payid.pristine" class="text-danger">
+               *payid is required
             </small>
          </div>
          <div class="d-grid">

@@ -34,15 +34,25 @@ export class AppComponent implements OnInit {
     {
       name: 'Holiday List', href: 'holidayList', icon:'<i class="bi bi-calendar-week"></i>',
     },
+
+    {
+      name: 'Discount', href: '', icon:'<i class="bi bi-percent"></i>',
+      children: [
+        { name: 'Discount Group', href: 'discount/discGroup', icon:'' },  
+        { name: 'Discount Type', href: 'discount/discType', icon:'' },   
+      ]
+    },
+
+
     {
       name: 'Payment', href: 'payment', icon:'<i class="bi bi-currency-dollar"></i>',
       children: [
         { name: 'Payment Type', href: 'payment/paymentType', icon:'' }, //check_payment_type
         { name: 'Payment Group', href: 'payment/paymentGroup', icon:'' }, //check_payment_group
         { name: 'Foreign Currency', href: '', icon:'' },
-        { name: 'Cash Type', href: '', icon:'' }, 
-        { name: 'Tax', href: '', icon:'' }, 
-        { name: 'Service Charge (SC)', href: '', icon:'' }, 
+        { name: 'Cash Type', href: 'payment/cashType', icon:'' }, 
+        { name: 'Tax', href: 'payment/taxType', icon:'' }, 
+        { name: 'Service Charge (SC)', href: 'payment/serviceCharge', icon:'' }, 
         { name: 'Pay In and Out', href: '', icon:'' }, 
         { name: 'Member Deposit', href: '', icon:'' }, 
         { name: 'IC Card Add Value', href: '', icon:'' }, 

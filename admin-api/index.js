@@ -5,6 +5,7 @@ const employeeRoutes = require('./routes/employee');
 const specialHour = require('./routes/specialHour');
 const holidayList = require('./routes/holidayList');
 const payment = require('./routes/payment');
+const discount = require('./routes/discount');
 
 const fs = require('fs');
 
@@ -26,6 +27,7 @@ app.use('/specialHour', specialHour);
 app.use('/holidayList', holidayList); 
 app.use('/employee', employeeRoutes);
 app.use('/payment', payment);
+app.use('/discount', discount);
  
 app.use('/',  (req, res) => {
     const data = {

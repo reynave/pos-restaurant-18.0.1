@@ -8,17 +8,17 @@ import { NgbDatepickerModule, NgbDropdownModule, NgbModal } from '@ng-bootstrap/
 export class Actor {
   constructor(
     public desc1: string,
-    public payid: string, 
+    public value: number, 
   ) { }
 }
 @Component({
-  selector: 'app-payment-type',
+  selector: 'app-payment-service-charge',
   standalone: true,
   imports: [HttpClientModule, CommonModule, FormsModule, NgbDropdownModule, NgbDatepickerModule],
-  templateUrl: './payment-type.component.html',
-  styleUrl: './payment-type.component.css'
+  templateUrl: './payment-service-charge.component.html',
+  styleUrl: './payment-service-charge.component.css'
 })
-export class PaymentTypeComponent implements OnInit {
+export class PaymentServiceChargeComponent implements OnInit {
   loading: boolean = false;
   checkboxAll: number = 0;
   disabled: boolean = true;
@@ -28,7 +28,7 @@ export class PaymentTypeComponent implements OnInit {
   selectOrdLevel: any = [];
 
 
-  model = new Actor('', '');
+  model = new Actor('', 0);
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
@@ -41,7 +41,7 @@ export class PaymentTypeComponent implements OnInit {
 
   httpGet() {
     this.loading = true;
-    const url = environment.api + "payment/paymentType/";
+    const url = environment.api + "payment/serviceCharge/";
     this.http.get<any>(url, {
       headers: this.configService.headers(),
     }).subscribe(
@@ -76,7 +76,7 @@ export class PaymentTypeComponent implements OnInit {
   }
   onUpdate() {
     this.loading = true;
-    const url = environment.api + "payment/paymentType/update";
+    const url = environment.api + "payment/serviceCharge/update";
     const body = this.items;
     this.http.post<any>(url, body, {
       headers: this.configService.headers(),
@@ -94,7 +94,7 @@ export class PaymentTypeComponent implements OnInit {
   onDelete() {
     if (confirm("Delete this checklist?")) { 
       this.loading = true;
-      const url = environment.api + "payment/paymentType/delete";
+      const url = environment.api + "payment/serviceCharge/delete";
       const body = this.items;
       this.http.post<any>(url, body, {
         headers: this.configService.headers(),
@@ -112,7 +112,7 @@ export class PaymentTypeComponent implements OnInit {
 
   onSubmit() {
     this.loading = true;
-    const url = environment.api + "payment/paymentType/create";
+    const url = environment.api + "payment/serviceCharge/create";
     const body = {
       model: this.model,
     };
@@ -122,7 +122,7 @@ export class PaymentTypeComponent implements OnInit {
       data => {
         console.log(data);
         if (data['error'] == false) {
-          this.model = new Actor('','');
+          this.model = new Actor('',0);
           this.httpGet();
         } else {
           alert("INSERT ERROR");

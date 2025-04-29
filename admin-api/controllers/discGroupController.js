@@ -1,19 +1,18 @@
 const db = require('../config/db');
 const { today, formatDateOnly } = require('../helpers/global');
 
+
 exports.getAllData = async (req, res) => {
   try {
 
     const [rows] = await db.query(`
       SELECT *, 0 as 'checkbox'
-      FROM check_payment_type  
+      FROM check_disc_group  
       WHERE presence =1
     `);
-
+ 
     const formattedRows = rows.map(row => ({
-      ...row,
-      stdate: formatDateOnly(row.stdate),
-      enddate: formatDateOnly(row.enddate),
+      ...row, 
     }));
 
 
@@ -36,23 +35,24 @@ exports.postCreate = async (req, res) => {
   const inputDate = today();
 
   try {
-
+    
     const [result] = await db.query(
-      `INSERT INTO check_payment_type (presence, inputDate, desc1, payid ) 
-      VALUES (?, ?, ?, ?)`,
+      `INSERT INTO check_disc_group (presence, inputDate, desc1, discgrp ) 
+      VALUES (?, ?, ?,? )`,
       [
         1,
         inputDate,
         model['desc1'],
-        model['payid']
+        model['discgrp'],
+       
       ]
     );
 
     res.status(201).json({
       error: false,
       inputDate: inputDate,
-      message: 'check_payment_type created',
-      check_payment_typeId: result.insertId
+      message: 'check_disc_group created',
+      check_disc_groupId: result.insertId
     });
   } catch (err) {
     console.error(err);
@@ -76,40 +76,20 @@ exports.postUpdate = async (req, res) => {
 
   try {
     for (const emp of data) {
-      const { id } = emp;
+      const { discgrp } = emp;
+      const id = discgrp;
       if (!id) {
         results.push({ id, status: 'failed', reason: 'Missing fields' });
         continue;
       }
 
       const [result] = await db.query(
-        `UPDATE check_payment_type SET 
+        `UPDATE check_disc_group SET 
           desc1 = '${emp['desc1'].replace(/\s{2,}/g, ' ')}',   
-          fcyid =  '${emp['fcyid']}', 
-          havetips =  '${emp['havetips']}',
-          tipsaltr =  '${emp['tipsaltr']}',
-          payclass =  '${emp['payclass']}',
-          paymeth =  '${emp['paymeth']}',
-          maxlimit =  '${emp['maxlimit']}',
-          nonsales =  '${emp['nonsales']}',
-          opendrw =  '${emp['opendrw']}',
-          prefix =  '${emp['prefix']}',
-          paysign =  '${emp['paysign']}',
-          prtvoid =  '${emp['prtvoid']}',
-            reftype =  '${emp['reftype']}',
-          haveccac =  '${emp['haveccac']}',
-          isguitype =  '${emp['isguitype']}',
-          extpath =  '${emp['extpath']}',
-          discid =  '${emp['discid']}',
-          paygrpid =  '${emp['paygrpid']}',
-
-          disctype =  '${emp['disctype']}',
-          drwmulti =  '${emp['drwmulti']}',
-  
-          
+        
           updateDate = '${today()}'
 
-        WHERE id = ${id}`,
+        WHERE discgrp = '${id}'`,
       );
 
 
@@ -146,7 +126,8 @@ exports.postDelete = async (req, res) => {
 
   try {
     for (const emp of data) {
-      const { id, checkbox } = emp; 
+      const { discgrp, checkbox } = emp;
+      const id = discgrp;
       if (!id || !checkbox) {
         results.push({ id, status: 'failed', reason: 'Missing fields' });
         continue;
@@ -154,7 +135,7 @@ exports.postDelete = async (req, res) => {
 
 
       const [result] = await db.query(
-        'UPDATE check_payment_type SET presence = ?, updateDate = ? WHERE id = ?',
+        'UPDATE check_disc_group SET presence = ?, updateDate = ? WHERE discgrp = ?',
         [checkbox == 0 ? 1 : 0, today(), id]
       );
 

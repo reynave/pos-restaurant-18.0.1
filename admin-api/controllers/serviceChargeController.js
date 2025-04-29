@@ -6,14 +6,12 @@ exports.getAllData = async (req, res) => {
 
     const [rows] = await db.query(`
       SELECT *, 0 as 'checkbox'
-      FROM check_payment_type  
+      FROM check_sc_type  
       WHERE presence =1
     `);
 
     const formattedRows = rows.map(row => ({
-      ...row,
-      stdate: formatDateOnly(row.stdate),
-      enddate: formatDateOnly(row.enddate),
+      ...row, 
     }));
 
 
@@ -34,25 +32,37 @@ exports.getAllData = async (req, res) => {
 exports.postCreate = async (req, res) => {
   const model = req.body['model'];
   const inputDate = today();
-
   try {
-
     const [result] = await db.query(
-      `INSERT INTO check_payment_type (presence, inputDate, desc1, payid ) 
-      VALUES (?, ?, ?, ?)`,
+      `INSERT INTO check_sc_type (presence, inputDate, desc1, discrate, discamt, discmeth, peritem, isdiscpre,
+      isinctax, isincsc, grprange1, notonck, notonitem,disclevel,script,useref, notcount  ) 
+      VALUES (?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ? )`,
       [
         1,
         inputDate,
         model['desc1'],
-        model['payid']
+        model['discrate'],
+        model['discamt'],
+        model['discmeth'], 
+        model['peritem'], 
+        model['isdiscpre'], 
+        model['isinctax'], 
+        model['isincsc'], 
+        model['grprange1'], 
+        model['notonck'], 
+        model['notonitem'], 
+        model['disclevel'], 
+        model['script'], 
+        model['useref'], 
+        model['notcount'],   
       ]
     );
 
     res.status(201).json({
       error: false,
       inputDate: inputDate,
-      message: 'check_payment_type created',
-      check_payment_typeId: result.insertId
+      message: 'check_sc_type created',
+      check_sc_typeId: result.insertId
     });
   } catch (err) {
     console.error(err);
@@ -76,40 +86,20 @@ exports.postUpdate = async (req, res) => {
 
   try {
     for (const emp of data) {
-      const { id } = emp;
+      const { scid } = emp;
+      const id = scid;
       if (!id) {
         results.push({ id, status: 'failed', reason: 'Missing fields' });
         continue;
       }
 
       const [result] = await db.query(
-        `UPDATE check_payment_type SET 
+        `UPDATE check_sc_type SET 
           desc1 = '${emp['desc1'].replace(/\s{2,}/g, ' ')}',   
-          fcyid =  '${emp['fcyid']}', 
-          havetips =  '${emp['havetips']}',
-          tipsaltr =  '${emp['tipsaltr']}',
-          payclass =  '${emp['payclass']}',
-          paymeth =  '${emp['paymeth']}',
-          maxlimit =  '${emp['maxlimit']}',
-          nonsales =  '${emp['nonsales']}',
-          opendrw =  '${emp['opendrw']}',
-          prefix =  '${emp['prefix']}',
-          paysign =  '${emp['paysign']}',
-          prtvoid =  '${emp['prtvoid']}',
-            reftype =  '${emp['reftype']}',
-          haveccac =  '${emp['haveccac']}',
-          isguitype =  '${emp['isguitype']}',
-          extpath =  '${emp['extpath']}',
-          discid =  '${emp['discid']}',
-          paygrpid =  '${emp['paygrpid']}',
-
-          disctype =  '${emp['disctype']}',
-          drwmulti =  '${emp['drwmulti']}',
-  
-          
+         
           updateDate = '${today()}'
 
-        WHERE id = ${id}`,
+        WHERE scid = ${id}`,
       );
 
 
@@ -146,7 +136,9 @@ exports.postDelete = async (req, res) => {
 
   try {
     for (const emp of data) {
-      const { id, checkbox } = emp; 
+      const { scid, checkbox } = emp;
+
+      const id = scid;
       if (!id || !checkbox) {
         results.push({ id, status: 'failed', reason: 'Missing fields' });
         continue;
@@ -154,7 +146,7 @@ exports.postDelete = async (req, res) => {
 
 
       const [result] = await db.query(
-        'UPDATE check_payment_type SET presence = ?, updateDate = ? WHERE id = ?',
+        'UPDATE check_sc_type SET presence = ?, updateDate = ? WHERE scid = ?',
         [checkbox == 0 ? 1 : 0, today(), id]
       );
 

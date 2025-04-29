@@ -10,6 +10,11 @@ import { SpecialHoursComponent } from './module/special-hours/special-hours.comp
 import { HolidayListComponent } from './module/holiday-list/holiday-list.component';
 import { PaymentTypeComponent } from './module/payment/payment-type/payment-type.component';
 import { PaymentGroupComponent } from './module/payment/payment-group/payment-group.component';
+import { CashTypeComponent } from './module/payment/cash-type/cash-type.component';
+import { TaxTypeComponent } from './module/payment/tax-type/tax-type.component';
+import { PaymentServiceChargeComponent } from './module/payment/payment-service-charge/payment-service-charge.component';
+import { DiscGroupComponent } from './module/discount/disc-group/disc-group.component';
+import { DiscTypeComponent } from './module/discount/disc-type/disc-type.component';
 
 export const routes: Routes = [
     { path: '',component: HomeComponent},
@@ -26,6 +31,14 @@ export const routes: Routes = [
 
     { path: 'payment/paymentType', component: PaymentTypeComponent },
     { path: 'payment/paymentGroup', component: PaymentGroupComponent },
+
+    { path: 'payment/cashType', component: CashTypeComponent },
+    { path: 'payment/taxType', component: TaxTypeComponent },
+    { path: 'payment/serviceCharge', component: PaymentServiceChargeComponent },
+
+
+    { path: 'discount/discGroup', component: DiscGroupComponent },
+    { path: 'discount/discType', component: DiscTypeComponent },
 
     
     { path: '**', component: PageNotFoundComponent },

@@ -1,66 +1,72 @@
 @if(login == true){
-<div class="container-fluid">
-  <div class="row g-2">
-    <div class="col-md-2">
-      <div class="mainNavigator">
-        <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
-          <li [ngbNavItem]="1">
-            <button ngbNavLink class="px-2 py-1"><small>General</small></button>
-            <ng-template ngbNavContent>
 
 
-              <tree-root #treeComponent [nodes]="nodes" [options]="options"   (activate)="onEvent($event)">
-                <ng-template #treeNodeTemplate let-node let-index="index"> 
-                    <span class="file-icon" [innerHTML]="node.data.icon"></span>
-                    {{ node.data.name }} 
-                </ng-template>
-      
-              </tree-root>
 
-            </ng-template>
-          </li>
-          <li [ngbNavItem]="2">
-            <button ngbNavLink class="px-2 py-1"><small>Station</small></button>
-            <ng-template ngbNavContent>
-              <p>
-                soon
-              </p>
-            </ng-template>
-          </li>
-          <li [ngbNavItem]="3">
-            <button ngbNavLink class="px-2 py-1"><small>Menu</small></button>
-            <ng-template ngbNavContent>
-              <p>
-                soon
-              </p>
-            </ng-template>
-          </li>
-          <li [ngbNavItem]="4">
-            <button ngbNavLink class="px-2 py-1"><small>Outlet</small></button>
-            <ng-template ngbNavContent>
-              <p>
-               soon
-              </p>
-            </ng-template>
-          </li>
-        </ul>
+<div class="wrapper">
+  <nav class="sidebar px-1">
 
-        <div [ngbNavOutlet]="nav" class="mt-2"></div>
 
-        <div class="d-grid">
-          <button class="btn btn-sm btn-light border" (click)="onLogout()" type="button">Logout</button>
-        </div>
 
-      
-      </div>
+    <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
+      <li [ngbNavItem]="1">
+        <button ngbNavLink class="px-2 py-1"><small>General</small></button>
+        <ng-template ngbNavContent>
+
+          <div class="mx-3">
+            <tree-root #treeComponent [nodes]="nodes" [options]="options" (activate)="onEvent($event)">
+              <ng-template #treeNodeTemplate let-node let-index="index">
+                <span class="file-icon" [innerHTML]="node.data.icon"></span>
+                {{ node.data.name }}
+              </ng-template>
+
+            </tree-root>
+          </div>
+        </ng-template>
+      </li>
+      <li [ngbNavItem]="2">
+        <button ngbNavLink class="px-2 py-1"><small>Station</small></button>
+        <ng-template ngbNavContent>
+          <p>
+            soon
+          </p>
+        </ng-template>
+      </li>
+      <li [ngbNavItem]="3">
+        <button ngbNavLink class="px-2 py-1"><small>Menu</small></button>
+        <ng-template ngbNavContent>
+          <p>
+            soon
+          </p>
+        </ng-template>
+      </li>
+      <li [ngbNavItem]="4">
+        <button ngbNavLink class="px-2 py-1"><small>Outlet</small></button>
+        <ng-template ngbNavContent>
+          <p>
+            soon
+          </p>
+        </ng-template>
+      </li>
+    </ul>
+
+    <div [ngbNavOutlet]="nav" class="mt-2"></div>
+
+    <div class="d-grid">
+      <button class="btn btn-sm btn-light border" (click)="onLogout()" type="button">Logout</button>
     </div>
-    <div class="col-md-10">
 
-      <router-outlet />
+  </nav>
 
-    </div>
-  </div>
+  <main class="content">
+
+    <router-outlet />
+  </main>
 </div>
+
+
+
+
+
 }
 @else {
 <app-login></app-login>

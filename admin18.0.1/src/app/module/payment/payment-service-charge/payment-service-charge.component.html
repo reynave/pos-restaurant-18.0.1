@@ -5,7 +5,7 @@
        <div class="header py-2">
           <div class="row">
              <div class="col-4">
-                <strong>PAYMENT GROUP</strong>
+                <strong>SERVICE CHARGE</strong>
                 <span class="mx-1" *ngIf="loading">
                    <img src="./gif/Pulse@1x-1.0s-200px-200px.gif" height="30">
                 </span>
@@ -48,6 +48,12 @@
                       </th>
                       <th>#</th>  
                       <th>desc1</th> 
+                      <th>scrate</th> 
+
+                      <th>onsc1</th> 
+                      <th>nopredisc</th> 
+
+
                       <th>inputDate</th>
  
                    </tr>
@@ -64,6 +70,10 @@
                       </td>
                       <td>{{i+1}}</td> 
                       <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.desc1"   [disabled]="disabled"> </td>  
+                      <td><input   type="text" class="form-control form-control-sm" [(ngModel)]="x.scrate"   [disabled]="disabled"></td>
+                      <td><input   type="text" class="form-control form-control-sm" [(ngModel)]="x.onsc1"   [disabled]="disabled"></td>
+                      <td><input   type="text" class="form-control form-control-sm" [(ngModel)]="x.nopredisc"   [disabled]="disabled"></td> 
+                    
                       <td>{{ x.inputDate | date:'medium'}} </td>
  
                    </tr>
@@ -78,7 +88,7 @@
  
  <ng-template #content let-modal>
     <div class="modal-header">
-       <strong class="modal-title" id="modal-basic-title">New Payment Group</strong>
+       <strong class="modal-title" id="modal-basic-title">New Service Charge</strong>
        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
     </div>
     <div class="modal-body">
@@ -91,7 +101,16 @@
                 *desc1 is required
              </small>
           </div>
- 
+
+          <div class="mb-2">
+            <label for="value">SCrate*</label>
+            <input type="number" id="value" class="form-control form-control-sm" name="value" [(ngModel)]="model.value" required
+               #value="ngModel" />
+            <small [hidden]="value.valid || value.pristine" class="text-danger">
+               *value is required
+            </small>
+         </div>
+
           
           <div class="d-grid">
              <button type="submit" class="btn btn-sm btn-dark" [disabled]="!actorForm.form.valid">Save</button>
