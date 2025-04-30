@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const discGroup = require('../controllers/discGroupController');
-const discType = require('../controllers/discTypeController');
+const discGroup = require('./../../controllers/discGroupController');
+const discType = require('./../../controllers/discTypeController');
 
 router.get('/discGroup', discGroup.getAllData);
 router.post('/discGroup/update', discGroup.postUpdate);

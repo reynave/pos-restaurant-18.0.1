@@ -361,55 +361,107 @@ INSERT INTO `check_tax_type` (`taxid`, `desc1`, `desc2`, `desc3`, `taxrate`, `ti
 
 -- Dumping structure for table pos_resto.complaint_category
 CREATE TABLE IF NOT EXISTS `complaint_category` (
-  `category` varchar(0) DEFAULT NULL,
-  `desc1` varchar(0) DEFAULT NULL,
-  `desc2` varchar(0) DEFAULT NULL,
-  `desc3` varchar(0) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `category` varchar(200) DEFAULT NULL,
+  `desc1` varchar(200) DEFAULT NULL,
+  `desc2` varchar(200) DEFAULT NULL,
+  `desc3` varchar(200) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
--- Dumping data for table pos_resto.complaint_category: ~0 rows (approximately)
+-- Dumping data for table pos_resto.complaint_category: ~3 rows (approximately)
+INSERT INTO `complaint_category` (`id`, `category`, `desc1`, `desc2`, `desc3`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, '424', '123123', NULL, NULL, 0, '2025-04-30 17:13:23', 1, '2025-04-30 17:17:02', 1),
+	(2, '123', 'Description', NULL, NULL, 0, '2025-04-30 17:15:36', 1, '2025-04-30 17:17:02', 1),
+	(3, 'Category', 'Description', NULL, NULL, 1, '2025-04-30 17:16:52', 1, '2025-04-30 17:16:57', 1);
 
 -- Dumping structure for table pos_resto.complaint_type
 CREATE TABLE IF NOT EXISTS `complaint_type` (
-  `type` varchar(0) DEFAULT NULL,
-  `desc1` varchar(0) DEFAULT NULL,
-  `desc2` varchar(0) DEFAULT NULL,
-  `desc3` varchar(0) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `type` varchar(200) DEFAULT NULL,
+  `desc1` varchar(200) DEFAULT NULL,
+  `desc2` varchar(200) DEFAULT NULL,
+  `desc3` varchar(200) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
--- Dumping data for table pos_resto.complaint_type: ~0 rows (approximately)
+-- Dumping data for table pos_resto.complaint_type: ~2 rows (approximately)
+INSERT INTO `complaint_type` (`id`, `type`, `desc1`, `desc2`, `desc3`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, 'test23', '123123123123123', NULL, NULL, 0, '2025-04-30 17:19:11', 1, '2025-04-30 17:19:27', 1),
+	(2, 'asdfa', 'sdfasdf', NULL, NULL, 0, '2025-04-30 17:19:21', 1, '2025-04-30 17:19:27', 1);
 
 -- Dumping structure for table pos_resto.cost_centre
 CREATE TABLE IF NOT EXISTS `cost_centre` (
-  `costno` varchar(0) DEFAULT NULL,
-  `desc1` varchar(0) DEFAULT NULL,
-  `desc2` varchar(0) DEFAULT NULL,
-  `desc3` varchar(0) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `costno` varchar(200) DEFAULT NULL,
+  `desc1` varchar(200) DEFAULT NULL,
+  `desc2` varchar(200) DEFAULT NULL,
+  `desc3` varchar(200) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
--- Dumping data for table pos_resto.cost_centre: ~0 rows (approximately)
+-- Dumping data for table pos_resto.cost_centre: ~2 rows (approximately)
+INSERT INTO `cost_centre` (`id`, `costno`, `desc1`, `desc2`, `desc3`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, '13123123', 'sadfsdf2323', NULL, NULL, 0, '2025-04-30 16:42:48', 1, '2025-04-30 16:43:21', 1),
+	(2, '3123', '123123', NULL, NULL, 0, '2025-04-30 16:43:17', 1, '2025-04-30 16:43:21', 1);
 
 -- Dumping structure for table pos_resto.customer_info
 CREATE TABLE IF NOT EXISTS `customer_info` (
-  `id` varchar(0) DEFAULT NULL,
-  `desc1` varchar(0) DEFAULT NULL,
-  `desc2` varchar(0) DEFAULT NULL,
-  `desc3` varchar(0) DEFAULT NULL,
-  `grp` varchar(0) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `customerInfoGrpId` smallint(3) NOT NULL,
+  `desc1` varchar(200) DEFAULT NULL,
+  `desc2` varchar(200) DEFAULT NULL,
+  `desc3` varchar(200) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
--- Dumping data for table pos_resto.customer_info: ~0 rows (approximately)
+-- Dumping data for table pos_resto.customer_info: ~4 rows (approximately)
+INSERT INTO `customer_info` (`id`, `customerInfoGrpId`, `desc1`, `desc2`, `desc3`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, 0, '123123', NULL, NULL, 0, '2025-04-30 17:42:03', 1, '2025-04-30 17:42:18', 1),
+	(2, 0, '23123', NULL, NULL, 0, '2025-04-30 17:42:14', 1, '2025-04-30 17:42:18', 1),
+	(3, 0, '1231231', NULL, NULL, 0, '2025-04-30 17:42:20', 1, '2025-04-30 17:42:30', 1),
+	(4, 2, '12', NULL, NULL, 1, '2025-04-30 17:42:22', 1, '2025-04-30 17:57:12', 1),
+	(5, 3, 'Test3', NULL, NULL, 1, '2025-04-30 17:57:08', 1, '2025-04-30 17:57:12', 1);
 
 -- Dumping structure for table pos_resto.customer_info_grp
 CREATE TABLE IF NOT EXISTS `customer_info_grp` (
-  `id` varchar(0) DEFAULT NULL,
-  `desc1` varchar(0) DEFAULT NULL,
-  `desc2` varchar(0) DEFAULT NULL,
-  `desc3` varchar(0) DEFAULT NULL,
-  `active` varchar(0) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+  `id` smallint(6) NOT NULL AUTO_INCREMENT,
+  `desc1` varchar(200) DEFAULT NULL,
+  `desc2` varchar(200) DEFAULT NULL,
+  `desc3` varchar(200) DEFAULT NULL,
+  `active` varchar(200) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
--- Dumping data for table pos_resto.customer_info_grp: ~0 rows (approximately)
+-- Dumping data for table pos_resto.customer_info_grp: ~2 rows (approximately)
+INSERT INTO `customer_info_grp` (`id`, `desc1`, `desc2`, `desc3`, `active`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(2, 'G12', NULL, NULL, '1', 1, '2025-04-30 17:46:49', 1, '2025-04-30 17:47:28', 1),
+	(3, 'G2', NULL, NULL, '1', 1, '2025-04-30 17:46:53', 1, '2025-04-30 17:47:28', 1);
 
 -- Dumping structure for table pos_resto.employee
 CREATE TABLE IF NOT EXISTS `employee` (
@@ -586,11 +638,278 @@ CREATE TABLE IF NOT EXISTS `foreign_currency_type` (
   PRIMARY KEY (`fcyid`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
--- Dumping data for table pos_resto.foreign_currency_type: ~3 rows (approximately)
+-- Dumping data for table pos_resto.foreign_currency_type: ~2 rows (approximately)
 INSERT INTO `foreign_currency_type` (`fcyid`, `desc1`, `desc2`, `desc3`, `ratefcy`, `chgbakfcy`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
 	(1, 'HK Dollars ', 'HK Dollars          ', 'HK Dollars          ', 0.1282, 1, 1, '2025-01-01 00:00:00', 1, '2025-04-29 16:05:30', 1),
 	(2, 'CNY Dollars ', 'CNY Dollars         ', 'CNY Dollars         ', 0.1410, 1, 1, '2025-01-01 00:00:00', 1, '2025-04-29 16:05:30', 1),
 	(3, 'ID Currency', NULL, NULL, 1.0000, 1, 0, '2025-04-29 16:05:12', 1, '2025-04-29 16:05:34', 1);
+
+-- Dumping structure for table pos_resto.func_auth_on_off
+CREATE TABLE IF NOT EXISTS `func_auth_on_off` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `funcgrp` smallint(6) DEFAULT NULL,
+  `funcsgrp` smallint(6) DEFAULT NULL,
+  `funcauth` smallint(6) DEFAULT NULL,
+  `askauth` varchar(200) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=102 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.func_auth_on_off: ~101 rows (approximately)
+INSERT INTO `func_auth_on_off` (`id`, `funcgrp`, `funcsgrp`, `funcauth`, `askauth`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, 1, 2, 2, ' 2', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(2, 1, 1, 0, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(3, 1, 1, 1, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(4, 1, 1, 2, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(5, 1, 1, 3, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(6, 1, 1, 4, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(7, 1, 1, 5, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(8, 1, 1, 6, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(9, 1, 2, 0, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(10, 1, 2, 1, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(11, 1, 2, 2, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(12, 1, 2, 3, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(13, 1, 2, 4, '1', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(14, 1, 2, 5, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(15, 1, 2, 6, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(16, 1, 2, 7, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(17, 1, 2, 8, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(18, 1, 2, 9, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(19, 1, 2, 10, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(20, 1, 2, 11, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(21, 1, 2, 12, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(22, 1, 2, 13, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(23, 1, 3, 0, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(24, 1, 3, 1, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(25, 1, 3, 2, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(26, 1, 4, 0, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(27, 1, 4, 1, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(28, 1, 4, 2, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(29, 1, 4, 3, '1', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(30, 1, 4, 4, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(31, 1, 4, 5, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(32, 1, 4, 6, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(33, 1, 4, 7, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(34, 1, 4, 8, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(35, 1, 4, 9, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(36, 1, 4, 10, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(37, 1, 4, 11, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(38, 1, 4, 12, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(39, 1, 5, 0, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(40, 1, 5, 1, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(41, 1, 5, 2, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(42, 1, 5, 3, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(43, 1, 5, 4, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(44, 1, 5, 5, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(45, 1, 5, 6, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(46, 1, 5, 7, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(47, 1, 6, 0, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(48, 1, 6, 1, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(49, 1, 6, 2, '1', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(50, 1, 6, 3, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(51, 1, 6, 4, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(52, 1, 6, 5, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(53, 1, 6, 6, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(54, 2, 0, 0, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(55, 2, 1, 0, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(56, 2, 1, 1, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(57, 2, 1, 2, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(58, 2, 2, 0, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(59, 2, 2, 1, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(60, 2, 2, 2, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(61, 2, 2, 3, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(62, 2, 2, 4, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(63, 2, 2, 5, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(64, 2, 2, 6, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(65, 2, 2, 7, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(66, 2, 2, 8, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(67, 2, 2, 9, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(68, 2, 2, 10, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(69, 2, 2, 11, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(70, 2, 3, 0, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(71, 2, 3, 1, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(72, 2, 3, 2, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(73, 2, 3, 3, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(74, 2, 3, 4, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(75, 2, 3, 5, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(76, 2, 4, 0, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(77, 2, 4, 1, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(78, 2, 4, 2, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(79, 2, 4, 3, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(80, 2, 4, 4, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(81, 2, 4, 5, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(82, 2, 4, 6, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(83, 2, 4, 7, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(84, 2, 4, 8, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(85, 2, 4, 9, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(86, 2, 4, 10, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(87, 2, 4, 11, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(88, 2, 4, 12, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(89, 2, 5, 0, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(90, 2, 5, 1, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(91, 2, 6, 0, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(92, 2, 6, 1, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(93, 2, 6, 2, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(94, 2, 6, 3, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(95, 2, 6, 4, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(96, 2, 6, 5, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(97, 2, 6, 6, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(98, 2, 6, 7, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(99, 2, 6, 8, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(100, 2, 6, 9, ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 13:09:20', 1),
+	(101, 2, 4, 4, 'null', 1, '2025-04-30 13:00:44', 1, '2025-04-30 13:09:20', 1);
+
+-- Dumping structure for table pos_resto.func_short_cut
+CREATE TABLE IF NOT EXISTS `func_short_cut` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `mode` tinyint(4) DEFAULT NULL,
+  `buttonkey` smallint(6) DEFAULT NULL,
+  `seq` smallint(6) DEFAULT NULL,
+  `desc1` varchar(200) DEFAULT NULL,
+  `desc2` varchar(200) DEFAULT NULL,
+  `desc3` varchar(200) DEFAULT NULL,
+  `ispopup` varchar(200) DEFAULT NULL,
+  `func` varchar(200) DEFAULT NULL,
+  `param1` varchar(200) DEFAULT NULL,
+  `finactive` varchar(200) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.func_short_cut: ~29 rows (approximately)
+INSERT INTO `func_short_cut` (`id`, `mode`, `buttonkey`, `seq`, `desc1`, `desc2`, `desc3`, `ispopup`, `func`, `param1`, `finactive`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, 1, 1, 1, 'Send Check                              ', 'Send Check                              ', 'Send Check                              ', ' ', '002001', '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(2, 1, 2, 2, 'Print Check                             ', 'Print Check                             ', 'Print Check                             ', ' ', '002006', '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(3, 1, 3, 3, 'Quit Order                              ', 'Quit Order                              ', 'Quit Order                              ', ' ', '002012', '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(4, 1, 4, 4, 'Copy                                    ', 'Copy                                    ', 'Copy                                    ', ' ', '009001', '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(5, 1, 5, 5, 'Paste                                   ', 'Paste                                   ', 'Paste                                   ', ' ', '009002', '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(6, 1, 6, 6, 'Delete                                  ', 'Delete                                  ', 'Delete                                  ', ' ', '009003', '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(7, 1, 7, 7, 'Discount                                ', 'Discount                                ', 'Discount                                ', ' ', '002008', '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(8, 1, 8, 8, 'Apply Modifiers                         ', 'Apply Modifiers                         ', 'Apply Modifiers                         ', ' ', '004008', '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(9, 1, 9, 9, 'Gen                                     ', 'Gen                                     ', 'Gen                                     ', '1', '      ', '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(10, 1, 10, 10, 'Chk                                     ', 'Chk                                     ', 'Chk                                     ', '1', '      ', '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(11, 1, 11, 11, 'Itm                                     ', 'Itm                                     ', 'Itm                                     ', '1', '      ', '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(12, 1, 12, 12, 'Adv                                     ', 'Adv                                     ', 'Adv                                     ', '1', '      ', '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(13, 1, 13, 13, 'Pay                                     ', 'Pay                                     ', 'Pay                                     ', '1', '      ', '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(14, 1, 14, 14, 'Mgr                                     ', 'Mgr                                     ', 'Mgr                                     ', '1', '      ', '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(15, 0, 1, 1, 'Open New Table                          ', 'Open New Table                          ', 'Open New Table                          ', ' ', '002017', '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(16, 0, 2, 2, 'Recall Old Check                        ', 'Recall Old Check                        ', 'Recall Old Check                        ', ' ', '002018', '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(17, 0, 3, 3, 'Create Free Table                       ', 'Create Free Table                       ', 'Create Free Table                       ', ' ', '002019', '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(18, 0, 4, 4, 'Print Check                             ', 'Print Check                             ', 'Print Check                             ', ' ', '002006', '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(19, 0, 5, 5, 'Change Display Mode                     ', 'Change Display Mode                     ', 'Change Display Mode                     ', ' ', '009005', '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(20, 0, 6, 6, 'Chk                                     ', 'Chk                                     ', 'Chk                                     ', '1', '      ', '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(21, 0, 7, 7, 'Pay                                     ', 'Pay                                     ', 'Pay                                     ', '1', '      ', '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(22, 0, 8, 8, 'Other                                   ', 'Other                                   ', 'Other                                   ', '1', '      ', '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(23, 2, 1, 1, 'Redo Payment                            ', 'Redo Payment                            ', 'Redo Payment                            ', ' ', 'CAREDO', '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(24, 2, 2, 2, 'Release Payments                        ', 'Release Payments                        ', 'Release Payments                        ', ' ', '005007', '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(25, 2, 3, 3, 'Adjust Tips                             ', 'Adjust Tips                             ', 'Adjust Tips                             ', ' ', '005004', '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(26, 2, 4, 4, 'Void Payment                            ', 'Void Payment                            ', 'Void Payment                            ', ' ', '009003', '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(27, 2, 5, 5, 'Close Check                             ', 'Close Check                             ', 'Close Check                             ', ' ', '002012', '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(28, 1, 15, 15, 'Mem                                     ', 'Mem                                     ', 'Mem                                     ', '1', '      ', '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(29, NULL, NULL, NULL, 'test 23', NULL, NULL, NULL, NULL, NULL, NULL, 0, '2025-04-30 13:40:47', 1, '2025-04-30 13:40:58', 1);
+
+-- Dumping structure for table pos_resto.func_short_cut_popup
+CREATE TABLE IF NOT EXISTS `func_short_cut_popup` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `mode` tinyint(4) DEFAULT NULL,
+  `buttonkey` smallint(6) DEFAULT NULL,
+  `seq` smallint(6) DEFAULT NULL,
+  `desc1` varchar(200) DEFAULT NULL,
+  `desc2` varchar(200) DEFAULT NULL,
+  `desc3` varchar(200) DEFAULT NULL,
+  `func` mediumint(9) DEFAULT NULL,
+  `param1` varchar(200) DEFAULT NULL,
+  `inactive` varchar(10) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=73 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.func_short_cut_popup: ~72 rows (approximately)
+INSERT INTO `func_short_cut_popup` (`id`, `mode`, `buttonkey`, `seq`, `desc1`, `desc2`, `desc3`, `func`, `param1`, `inactive`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, 1, 9, 1, 'Switch Order Mode                       ', 'Switch Order Mode                       ', 'Switch Order Mode                       ', 1007, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(2, 1, 9, 2, 'Station Details                         ', 'Station Details                         ', 'Station Details                         ', 1002, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(3, 1, 9, 3, 'Change Language                         ', 'Change Language                         ', 'Change Language                         ', 1003, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(4, 1, 9, 4, 'Hold/Release Staff                      ', 'Hold/Release Staff                      ', 'Hold/Release Staff                      ', 1004, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(5, 1, 9, 5, 'View Tables                             ', 'View Tables                             ', 'View Tables                             ', 1005, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(6, 1, 9, 6, 'Log Off                                 ', 'Log Off                                 ', 'Log Off                                 ', 1006, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(7, 1, 9, 7, 'Change Password                         ', 'Change Password                         ', 'Change Password                         ', 1008, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(8, 1, 10, 1, 'Send Order                              ', 'Send Order                              ', 'Send Order                              ', 2001, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(9, 1, 10, 2, 'Quit Order                              ', 'Quit Order                              ', 'Quit Order                              ', 2012, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(10, 1, 10, 3, 'Check Details                           ', 'Check Details                           ', 'Check Details                           ', 2003, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(11, 1, 10, 4, 'Change Table                            ', 'Change Table                            ', 'Change Table                            ', 2004, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(12, 1, 10, 5, 'Change Cover                            ', 'Change Cover                            ', 'Change Cover                            ', 2005, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(13, 1, 10, 6, 'Print Check                             ', 'Print Check                             ', 'Print Check                             ', 2006, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(14, 1, 10, 7, 'Print Detail Check                      ', 'Print Detail Check                      ', 'Print Detail Check                      ', 2007, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(15, 1, 10, 8, 'Check Discount                          ', 'Check Discount                          ', 'Check Discount                          ', 2008, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(16, 1, 10, 9, 'Merge Check                             ', 'Merge Check                             ', 'Merge Check                             ', 2009, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(17, 1, 10, 10, 'Transfer Check                          ', 'Transfer Check                          ', 'Transfer Check                          ', 2010, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(18, 1, 10, 11, 'Void Check                              ', 'Void Check                              ', 'Void Check                              ', 2002, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(19, 1, 10, 12, 'Add Check Sub-Group                     ', 'Add Check Sub-Group                     ', 'Add Check Sub-Group                     ', 2014, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(20, 1, 10, 13, 'Void Check Sub-Group                    ', 'Void Check Sub-Group                    ', 'Void Check Sub-Group                    ', 2015, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(21, 1, 10, 14, 'Split Sub-Group Items                   ', 'Split Sub-Group Items                   ', 'Split Sub-Group Items                   ', 2016, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(22, 1, 11, 1, 'PLU                                     ', 'PLU                                     ', 'PLU                                     ', 3001, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(23, 1, 11, 2, 'Apply Modifier                          ', 'Apply Modifier                          ', 'Apply Modifier                          ', 4008, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(24, 1, 11, 3, 'Change Qty                              ', 'Change Qty                              ', 'Change Qty                              ', 4001, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(25, 1, 11, 4, 'Item Discount                           ', 'Item Discount                           ', 'Item Discount                           ', 4004, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(26, 1, 11, 5, 'Item Details                            ', 'Item Details                            ', 'Item Details                            ', 4007, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(27, 1, 11, 6, 'Assign Seat                             ', 'Assign Seat                             ', 'Assign Seat                             ', 4006, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(28, 1, 11, 7, 'Repeat Item                             ', 'Repeat Item                             ', 'Repeat Item                             ', 3002, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(29, 1, 11, 8, 'Item Takeout                            ', 'Item Takeout                            ', 'Item Takeout                            ', 4012, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(30, 1, 11, 9, 'Replace Set Menu Item                   ', 'Replace Set Menu Item                   ', 'Replace Set Menu Item                   ', 3007, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(31, 1, 11, 10, 'Resequence Item                         ', 'Resequence Item                         ', 'Resequence Item                         ', 2011, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(32, 1, 11, 11, 'Void Item                               ', 'Void Item                               ', 'Void Item                               ', 4003, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(33, 1, 12, 1, 'Rush Order                              ', 'Rush Order                              ', 'Rush Order                              ', 4002, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(34, 1, 12, 2, 'Pantry Msg                              ', 'Pantry Msg                              ', 'Pantry Msg                              ', 4005, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(35, 1, 12, 3, 'Add Tax/SC                              ', 'Add Tax/SC                              ', 'Add Tax/SC                              ', 4009, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(36, 1, 12, 4, 'Partial Search                          ', 'Partial Search                          ', 'Partial Search                          ', 3003, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(37, 1, 12, 5, 'Category Search                         ', 'Category Search                         ', 'Category Search                         ', 3004, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(38, 1, 12, 6, 'Department Search                       ', 'Department Search                       ', 'Department Search                       ', 3005, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(39, 1, 12, 7, 'Class Search                            ', 'Class Search                            ', 'Class Search                            ', 3006, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(40, 1, 13, 1, 'Cashier Function                        ', 'Cashier Function                        ', 'Cashier Function                        ', 5001, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(41, 1, 13, 2, 'Print And Settle                        ', 'Print And Settle                        ', 'Print And Settle                        ', 5003, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(42, 1, 13, 3, 'Partial Payment                         ', 'Partial Payment                         ', 'Partial Payment                         ', 5008, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(43, 1, 13, 4, 'Cashier Settlement                      ', 'Cashier Settlement                      ', 'Cashier Settlement                      ', 5009, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(44, 1, 14, 1, 'Daily Close                             ', 'Daily Close                             ', 'Daily Close                             ', 6002, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(45, 1, 14, 2, 'Test Printer                            ', 'Test Printer                            ', 'Test Printer                            ', 6003, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(46, 1, 14, 3, 'Switch Panel                            ', 'Switch Panel                            ', 'Switch Panel                            ', 6004, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(47, 1, 14, 4, 'Switch Outlet                           ', 'Switch Outlet                           ', 'Switch Outlet                           ', 6005, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(48, 1, 14, 5, 'Reset Workstation                       ', 'Reset Workstation                       ', 'Reset Workstation                       ', 6007, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(49, 1, 14, 6, 'View General Report                     ', 'View General Report                     ', 'View General Report                     ', 7001, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(50, 1, 14, 7, 'View Manager Report                     ', 'View Manager Report                     ', 'View Manager Report                     ', 7002, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(51, 0, 6, 1, 'Open New Table                          ', 'Open New Table                          ', 'Open New Table                          ', 2017, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(52, 0, 6, 2, 'Recall Old Table                        ', 'Recall Old Table                        ', 'Recall Old Table                        ', 2018, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(53, 0, 6, 3, 'Create Free Table                       ', 'Create Free Table                       ', 'Create Free Table                       ', 2019, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(54, 0, 6, 4, 'Print Check                             ', 'Print Check                             ', 'Print Check                             ', 2006, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(55, 0, 6, 5, 'Take Ownership                          ', 'Take Ownership                          ', 'Take Ownership                          ', 2020, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(56, 0, 6, 6, 'Transfer Ownership                      ', 'Transfer Ownership                      ', 'Transfer Ownership                      ', 2021, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(57, 0, 6, 7, 'Emp View Tbl                            ', 'Emp View Tbl                            ', 'Emp View Tbl                            ', 1005, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(58, 0, 6, 8, 'Manager View Table                      ', 'Manager View Table                      ', 'Manager View Table                      ', 1009, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(59, 0, 7, 1, 'Cashier Function                        ', 'Cashier Function                        ', 'Cashier Function                        ', 5001, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(60, 0, 7, 2, 'Print And Settle                        ', 'Print And Settle                        ', 'Print And Settle                        ', 5003, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(61, 0, 7, 3, 'Partial Payment                         ', 'Partial Payment                         ', 'Partial Payment                         ', 5008, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(62, 0, 7, 4, 'Cashier Settlement                      ', 'Cashier Settlement                      ', 'Cashier Settlement                      ', 5009, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(63, 0, 8, 1, 'Refresh Page                            ', 'Refresh Page                            ', 'Refresh Page                            ', 9004, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(64, 0, 8, 2, 'Change Display Mode                     ', 'Change Display Mode                     ', 'Change Display Mode                     ', 9005, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(65, 1, 15, 1, 'Edit Member Profile                     ', 'Edit Member Profile                     ', 'Edit Member Profile                     ', 11002, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(66, 1, 15, 2, 'Read Member Profile                     ', 'Read Member Profile                     ', 'Read Member Profile                     ', 11003, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(67, 1, 12, 8, 'Set item soldout / resell               ', 'Set item soldout / resell               ', 'Set item soldout / resell               ', 4013, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(68, 1, 13, 5, 'Fast Food Payment                       ', 'Fast Food Payment                       ', 'Fast Food Payment                       ', 5002, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(69, 1, 14, 8, 'Browse Last Access Check                ', 'Browse Last Access Check                ', 'Browse Last Access Check                ', 6010, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(70, 1, 15, 3, 'Assign Member To Check                  ', 'Assign Member To Check                  ', 'Assign Member To Check                  ', 11004, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(71, 1, 15, 4, 'Sign Delivery Orders                    ', 'Sign Delivery Orders                    ', 'Sign Delivery Orders                    ', 11006, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(72, 0, 8, 3, 'Edit Floor Plan                         ', 'Edit Floor Plan                         ', 'Edit Floor Plan                         ', 1014, '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1);
 
 -- Dumping structure for table pos_resto.holiday_list
 CREATE TABLE IF NOT EXISTS `holiday_list` (
@@ -631,18 +950,17 @@ CREATE TABLE IF NOT EXISTS `ic_card_add_value_type` (
   `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
   `updateBy` smallint(6) NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
--- Dumping data for table pos_resto.ic_card_add_value_type: ~0 rows (approximately)
+-- Dumping data for table pos_resto.ic_card_add_value_type: ~1 rows (approximately)
 INSERT INTO `ic_card_add_value_type` (`id`, `desc1`, `desc2`, `desc3`, `seq`, `amount`, `free`, `extmonth`, `openamt`, `opendrw`, `item`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
-	(1, 'IC 1', NULL, NULL, '12', 3, '4', '5', '6', '8', '90', 0, '2025-04-29 17:05:04', 1, '2025-04-29 17:06:45', 1);
+	(1, 'IC 1', NULL, NULL, '12', 3, '4', '5', '6', '8', '90', 0, '2025-04-29 17:05:04', 1, '2025-04-29 17:06:45', 1),
+	(2, 'tyer', NULL, NULL, '1', 23, '42', 'null', 'null', 'null', 'null', 1, '2025-04-30 11:35:36', 1, '2025-04-30 11:35:41', 1);
 
 -- Dumping structure for table pos_resto.member
 CREATE TABLE IF NOT EXISTS `member` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `member` varchar(200) DEFAULT NULL,
-  `first` varchar(200) DEFAULT NULL,
-  `last` varchar(200) DEFAULT NULL,
+  `member` varchar(200) NOT NULL DEFAULT '',
   `name` varchar(200) DEFAULT NULL,
   `pharea1` varchar(200) DEFAULT NULL,
   `pharea2` varchar(200) DEFAULT NULL,
@@ -653,7 +971,7 @@ CREATE TABLE IF NOT EXISTS `member` (
   `phoneext1` varchar(200) DEFAULT NULL,
   `phoneext2` varchar(200) DEFAULT NULL,
   `phoneext3` varchar(200) DEFAULT NULL,
-  `addr1` varchar(200) DEFAULT NULL,
+  `addr1` text DEFAULT NULL,
   `addr2` varchar(200) DEFAULT NULL,
   `city` varchar(200) DEFAULT NULL,
   `fax` varchar(200) DEFAULT NULL,
@@ -681,116 +999,159 @@ CREATE TABLE IF NOT EXISTS `member` (
   `inputBy` smallint(6) NOT NULL DEFAULT 1,
   `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
   `updateBy` smallint(6) NOT NULL DEFAULT 1,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `member` (`member`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
--- Dumping data for table pos_resto.member: ~9 rows (approximately)
-INSERT INTO `member` (`id`, `member`, `first`, `last`, `name`, `pharea1`, `pharea2`, `pharea3`, `phone1`, `phone2`, `phone3`, `phoneext1`, `phoneext2`, `phoneext3`, `addr1`, `addr2`, `city`, `fax`, `state`, `zip`, `deliaddr1`, `deliaddr2`, `dob`, `sex`, `socialid`, `email`, `joindate`, `mclass`, `mtype`, `status`, `memo1`, `memo2`, `autodisc`, `active`, `empid`, `costno`, `nodeduct`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
-	(1, '00000000000000000003', 'COMPLIMENT          ', 'COMPLIMENT          ', 'COMPLIMENT                                ', '     ', '     ', '     ', '            ', '            ', '            ', '      ', '      ', '      ', '                                                  ', '                                                  ', '                    ', '                    ', '      ', '          ', '                                                  ', '                                                  ', '        ', ' ', '                    ', '                                        ', '        ', '    ', '    ', '  ', '                                                                           ', '                                                                           ', ' ', 1, '      ', '          ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
-	(2, '00000000000000000001', 'OC                  ', 'OC                  ', 'OC                                        ', '     ', '     ', '     ', '            ', '            ', '            ', '      ', '      ', '      ', '                                                  ', '                                                  ', '                    ', '                    ', '      ', '          ', '                                                  ', '                                                  ', '        ', ' ', '                    ', '                                        ', '        ', '    ', '    ', '  ', '                                                                           ', '                                                                           ', ' ', 1, '      ', '          ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
-	(3, '00000000000000000002', 'ENTERTAINT          ', 'ENTRTAINT           ', 'ENTERTAINT                                ', '     ', '     ', '     ', '            ', '            ', '            ', '      ', '      ', '      ', '                                                  ', '                                                  ', '                    ', '                    ', '      ', '          ', '                                                  ', '                                                  ', '        ', ' ', '                    ', '                                        ', '        ', '    ', '    ', '  ', '                                                                           ', '                                                                           ', ' ', 1, '      ', '          ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
-	(4, '00000000000000000004', 'EZEELINK            ', 'EZEELINK            ', 'EZEELINK                                  ', '     ', '     ', '     ', '            ', '            ', '            ', '      ', '      ', '      ', '                                                  ', '                                                  ', '                    ', '                    ', '      ', '          ', '                                                  ', '                                                  ', '        ', ' ', '                    ', '                                        ', '        ', '    ', '    ', '  ', '                                                                           ', '                                                                           ', ' ', 1, '      ', '          ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
-	(5, '00000000000000000005', 'COMPLIMENT TADA     ', 'COMPLIMENT TADA     ', 'COMPLIMENT TADA                           ', '     ', '     ', '     ', '            ', '            ', '            ', '      ', '      ', '      ', '                                                  ', '                                                  ', '                    ', '                    ', '      ', '          ', '                                                  ', '                                                  ', '        ', ' ', '                    ', '                                        ', '        ', '    ', '    ', '  ', '                                                                           ', '                                                                           ', ' ', 1, '      ', '          ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
-	(6, '00000000000000000006', 'POINT TADA          ', 'POINT TADA          ', 'POINT TADA                                ', '     ', '     ', '     ', '            ', '            ', '            ', '      ', '      ', '      ', '                                                  ', '                                                  ', '                    ', '                    ', '      ', '          ', '                                                  ', '                                                  ', '        ', ' ', '                    ', '                                        ', '        ', '    ', '    ', '  ', '                                                                           ', '                                                                           ', ' ', 1, '      ', '          ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
-	(7, '00000000000000000007', 'COMPLIMENT ICLUB    ', 'COMPLIMENT ICLUB    ', 'COMPLIMENT ICLUB                          ', '     ', '     ', '     ', '            ', '            ', '            ', '      ', '      ', '      ', '                                                  ', '                                                  ', '                    ', '                    ', '      ', '          ', '                                                  ', '                                                  ', '        ', ' ', '                    ', '                                        ', '        ', '    ', '    ', '  ', '                                                                           ', '                                                                           ', ' ', 1, '      ', '          ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
-	(8, '00000000000000000008', 'POINT ICLUB         ', 'POINT ICLUB         ', 'EZEELINK                                  ', '     ', '     ', '     ', '            ', '            ', '            ', '      ', '      ', '      ', '                                                  ', '                                                  ', '                    ', '                    ', '      ', '          ', '                                                  ', '                                                  ', '        ', ' ', '                    ', '                                        ', '        ', '    ', '    ', '  ', '                                                                           ', '                                                                           ', ' ', 1, '      ', '          ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
-	(9, '00000000000000000009', 'CUSTOMER CARE       ', 'CUSTOMER CARE       ', 'CUSTOMER CARE                             ', '     ', '     ', '     ', '            ', '            ', '            ', '      ', '      ', '      ', '                                                  ', '                                                  ', '                    ', '                    ', '      ', '          ', '                                                  ', '                                                  ', '        ', ' ', '                    ', '                                        ', '        ', '    ', '    ', '  ', '                                                                           ', '                                                                           ', ' ', 1, '      ', '          ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1);
+-- Dumping data for table pos_resto.member: ~10 rows (approximately)
+INSERT INTO `member` (`id`, `member`, `name`, `pharea1`, `pharea2`, `pharea3`, `phone1`, `phone2`, `phone3`, `phoneext1`, `phoneext2`, `phoneext3`, `addr1`, `addr2`, `city`, `fax`, `state`, `zip`, `deliaddr1`, `deliaddr2`, `dob`, `sex`, `socialid`, `email`, `joindate`, `mclass`, `mtype`, `status`, `memo1`, `memo2`, `autodisc`, `active`, `empid`, `costno`, `nodeduct`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, '00000000000000000003', 'COMPLIMENT ', 'pharea1', '     ', '     ', 'phone1', 'phone2 ', 'phone3            ', '      ', '      ', '      ', '    addr1                                              ', '                                                  ', '     city               ', '              fax      ', '      state', 'zip', 'deliaddr1', '                                                  ', '        dob', ' 1', '        socialid            ', '       email                                 ', '        joindate', '   mclass ', '    mtype', '  status', '                memo1                                                           ', '                                                                           ', ' autodisc', 1, '      empid', '          costno', ' nodeduct', 1, '2025-01-01 00:00:00', 1, '2025-04-30 14:25:44', 1),
+	(2, '00000000000000000001', 'OC ', '     ', '     ', '     ', '            ', '            ', '            ', '      ', '      ', '      ', '                                                  ', '                                                  ', '                    ', '                    ', '      ', '          ', '                                                  ', '                                                  ', '        ', ' ', '                    ', '                                        ', '        ', '    ', '    ', '  ', '                                                                           ', '                                                                           ', ' ', 1, '      ', '          ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 14:25:44', 1),
+	(3, '00000000000000000002', 'ENTERTAINT ', '     ', '     ', '     ', '            ', '            ', '            ', '      ', '      ', '      ', '                                                  ', '                                                  ', '                    ', '                    ', '      ', '          ', '                                                  ', '                                                  ', '        ', ' ', '                    ', '                                        ', '        ', '    ', '    ', '  ', '                                                                           ', '                                                                           ', ' ', 1, '      ', '          ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 14:25:44', 1),
+	(4, '00000000000000000004', 'EZEELINK ', '     ', '     ', '     ', '            ', '            ', '            ', '      ', '      ', '      ', '                                                  ', '                                                  ', '                    ', '                    ', '      ', '          ', '                                                  ', '                                                  ', '        ', ' ', '                    ', '                                        ', '        ', '    ', '    ', '  ', '                                                                           ', '                                                                           ', ' ', 1, '      ', '          ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 14:25:44', 1),
+	(5, '00000000000000000005', 'COMPLIMENT TADA ', '     ', '     ', '     ', '            ', '            ', '            ', '      ', '      ', '      ', '                                                  ', '                                                  ', '                    ', '                    ', '      ', '          ', '                                                  ', '                                                  ', '        ', ' ', '                    ', '                                        ', '        ', '    ', '    ', '  ', '                                                                           ', '                                                                           ', ' ', 1, '      ', '          ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 14:25:44', 1),
+	(6, '00000000000000000006', 'POINT TADA ', '     ', '     ', '     ', '            ', '            ', '            ', '      ', '      ', '      ', '                                                  ', '                                                  ', '                    ', '                    ', '      ', '          ', '                                                  ', '                                                  ', '        ', ' ', '                    ', '                                        ', '        ', '    ', '    ', '  ', '                                                                           ', '                                                                           ', ' ', 1, '      ', '          ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 14:25:44', 1),
+	(7, '00000000000000000007', 'COMPLIMENT ICLUB ', '     ', '     ', '     ', '            ', '            ', '            ', '      ', '      ', '      ', '                                                  ', '                                                  ', '                    ', '                    ', '      ', '          ', '                                                  ', '                                                  ', '        ', ' ', '                    ', '                                        ', '        ', '    ', '    ', '  ', '                                                                           ', '                                                                           ', ' ', 1, '      ', '          ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-04-30 14:25:44', 1),
+	(8, 'delete-Wed Apr 30 2025 14:29:03 GMT+0700 (Indochina Time)-00000000000000000008', 'EZEELINK ', '     ', '     ', '     ', '            ', '            ', '            ', '      ', '      ', '      ', '                                                  ', '                                                  ', '                    ', '                    ', '      ', '          ', '                                                  ', '                                                  ', '        ', ' ', '                    ', '                                        ', '        ', '    ', '    ', '  ', '                                                                           ', '                                                                           ', ' ', 1, '      ', '          ', ' ', 0, '2025-01-01 00:00:00', 1, '2025-04-30 14:29:03', 1),
+	(9, 'delete00000000000000000009', 'CUSTOMER CARE ', '     ', '     ', '     ', '            ', '            ', '            ', '      ', '      ', '      ', '                                                  ', '                                                  ', '                    ', '                    ', '      ', '          ', '                                                  ', '                                                  ', '        ', ' ', '                    ', '                                        ', '        ', '    ', '    ', '  ', '                                                                           ', '                                                                           ', ' ', 1, '      ', '          ', ' ', 0, '2025-01-01 00:00:00', 1, '2025-04-30 14:27:28', 1),
+	(10, 'delete', 'rwea', 'null', NULL, NULL, 'null', 'null', 'null', NULL, NULL, NULL, 'null', NULL, 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', NULL, 'null', 0, 'null', 'null', 'null', 0, '2025-04-30 14:25:33', 1, '2025-04-30 14:25:59', 1);
 
 -- Dumping structure for table pos_resto.member_account
 CREATE TABLE IF NOT EXISTS `member_account` (
-  `accid` varchar(0) DEFAULT NULL,
-  `desc1` varchar(0) DEFAULT NULL,
-  `desc2` varchar(0) DEFAULT NULL,
-  `desc3` varchar(0) DEFAULT NULL,
-  `date` varchar(0) DEFAULT NULL,
-  `empid` varchar(0) DEFAULT NULL,
-  `active` varchar(0) DEFAULT NULL,
-  `amount` varchar(0) DEFAULT NULL,
-  `credlimit` varchar(0) DEFAULT NULL,
-  `void` varchar(0) DEFAULT NULL,
-  `voidcode` varchar(0) DEFAULT NULL,
-  `voidtime` varchar(0) DEFAULT NULL,
-  `voidempid` varchar(0) DEFAULT NULL,
-  `lckstatid` varchar(0) DEFAULT NULL,
-  `lckempid` varchar(0) DEFAULT NULL,
-  `renewdate` varchar(0) DEFAULT NULL,
-  `usagedate` varchar(0) DEFAULT NULL,
-  `refundate` varchar(0) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+  `accid` int(11) NOT NULL AUTO_INCREMENT,
+  `desc1` varchar(200) DEFAULT NULL,
+  `desc2` varchar(200) DEFAULT NULL,
+  `desc3` varchar(200) DEFAULT NULL,
+  `date` varchar(200) DEFAULT NULL,
+  `empid` varchar(200) DEFAULT NULL,
+  `active` varchar(200) DEFAULT NULL,
+  `amount` varchar(200) DEFAULT NULL,
+  `credlimit` varchar(200) DEFAULT NULL,
+  `void` varchar(200) DEFAULT NULL,
+  `voidcode` varchar(200) DEFAULT NULL,
+  `voidtime` varchar(200) DEFAULT NULL,
+  `voidempid` varchar(200) DEFAULT NULL,
+  `lckstatid` varchar(200) DEFAULT NULL,
+  `lckempid` varchar(200) DEFAULT NULL,
+  `renewdate` varchar(200) DEFAULT NULL,
+  `usagedate` varchar(200) DEFAULT NULL,
+  `refundate` varchar(200) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`accid`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
--- Dumping data for table pos_resto.member_account: ~0 rows (approximately)
+-- Dumping data for table pos_resto.member_account: ~3 rows (approximately)
+INSERT INTO `member_account` (`accid`, `desc1`, `desc2`, `desc3`, `date`, `empid`, `active`, `amount`, `credlimit`, `void`, `voidcode`, `voidtime`, `voidempid`, `lckstatid`, `lckempid`, `renewdate`, `usagedate`, `refundate`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, '2', NULL, NULL, '43', '43', '4', '434', '423', '34', '34', '34', 'null', 'null', 'null', 'null', 'null', 'null', 1, '2025-04-30 16:13:46', 1, '2025-04-30 16:17:51', 1),
+	(2, '33', NULL, NULL, '43', '43', '3', '3', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 1, '2025-04-30 16:13:50', 1, '2025-04-30 16:17:51', 1),
+	(3, 'testsere', NULL, NULL, 'null', 'null', '34', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 0, '2025-04-30 16:17:34', 1, '2025-04-30 16:21:00', 1);
 
 -- Dumping structure for table pos_resto.member_account_holder
 CREATE TABLE IF NOT EXISTS `member_account_holder` (
-  `accid` varchar(0) DEFAULT NULL,
-  `member` varchar(0) DEFAULT NULL,
-  `date` varchar(0) DEFAULT NULL,
-  `empid` varchar(0) DEFAULT NULL,
-  `void` varchar(0) DEFAULT NULL,
-  `voidcode` varchar(0) DEFAULT NULL,
-  `voidtime` varchar(0) DEFAULT NULL,
-  `voidempid` varchar(0) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+  `accid` int(11) NOT NULL AUTO_INCREMENT,
+  `member` varchar(200) DEFAULT NULL,
+  `date` varchar(200) DEFAULT NULL,
+  `empid` varchar(200) DEFAULT NULL,
+  `void` varchar(200) DEFAULT NULL,
+  `voidcode` varchar(200) DEFAULT NULL,
+  `voidtime` varchar(200) DEFAULT NULL,
+  `voidempid` varchar(200) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`accid`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
--- Dumping data for table pos_resto.member_account_holder: ~0 rows (approximately)
+-- Dumping data for table pos_resto.member_account_holder: ~1 rows (approximately)
+INSERT INTO `member_account_holder` (`accid`, `member`, `date`, `empid`, `void`, `voidcode`, `voidtime`, `voidempid`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, '2323', '122', '3', '23', '23', 'null', 'null', 1, '2025-04-30 16:29:27', 1, '2025-04-30 16:29:53', 1),
+	(2, '2323123', 'null', 'null', 'null', 'null', 'null', 'null', 0, '2025-04-30 16:29:45', 1, '2025-04-30 16:29:59', 1);
 
 -- Dumping structure for table pos_resto.member_class
 CREATE TABLE IF NOT EXISTS `member_class` (
-  `mclass` varchar(0) DEFAULT NULL,
-  `desc1` varchar(0) DEFAULT NULL,
-  `desc2` varchar(0) DEFAULT NULL,
-  `desc3` varchar(0) DEFAULT NULL,
-  `discid1` varchar(0) DEFAULT NULL,
-  `discid2` varchar(0) DEFAULT NULL,
-  `discid3` varchar(0) DEFAULT NULL,
-  `discid4` varchar(0) DEFAULT NULL,
-  `discid5` varchar(0) DEFAULT NULL,
-  `discid6` varchar(0) DEFAULT NULL,
-  `discid7` varchar(0) DEFAULT NULL,
-  `discid8` varchar(0) DEFAULT NULL,
-  `discid9` varchar(0) DEFAULT NULL,
-  `discid10` varchar(0) DEFAULT NULL,
-  `prilevel` varchar(0) DEFAULT NULL,
-  `pridiscid` varchar(0) DEFAULT NULL,
-  `periodra1` varchar(0) DEFAULT NULL,
-  `periodra2` varchar(0) DEFAULT NULL,
-  `periodra3` varchar(0) DEFAULT NULL,
-  `periodra4` varchar(0) DEFAULT NULL,
-  `periodra5` varchar(0) DEFAULT NULL,
-  `outletra1` varchar(0) DEFAULT NULL,
-  `outletra2` varchar(0) DEFAULT NULL,
-  `outletra3` varchar(0) DEFAULT NULL,
-  `outletra4` varchar(0) DEFAULT NULL,
-  `outletra5` varchar(0) DEFAULT NULL,
-  `starange1` varchar(0) DEFAULT NULL,
-  `starange2` varchar(0) DEFAULT NULL,
-  `starange3` varchar(0) DEFAULT NULL,
-  `starange4` varchar(0) DEFAULT NULL,
-  `starange5` varchar(0) DEFAULT NULL,
-  `minremain` varchar(0) DEFAULT NULL,
-  `accexpday` varchar(0) DEFAULT NULL,
-  `balexpday` varchar(0) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+  `mclass` int(11) NOT NULL AUTO_INCREMENT,
+  `desc1` varchar(200) DEFAULT NULL,
+  `desc2` varchar(200) DEFAULT NULL,
+  `desc3` varchar(200) DEFAULT NULL,
+  `discid1` varchar(200) DEFAULT NULL,
+  `discid2` varchar(200) DEFAULT NULL,
+  `discid3` varchar(200) DEFAULT NULL,
+  `discid4` varchar(200) DEFAULT NULL,
+  `discid5` varchar(200) DEFAULT NULL,
+  `discid6` varchar(200) DEFAULT NULL,
+  `discid7` varchar(200) DEFAULT NULL,
+  `discid8` varchar(200) DEFAULT NULL,
+  `discid9` varchar(200) DEFAULT NULL,
+  `discid10` varchar(200) DEFAULT NULL,
+  `prilevel` varchar(200) DEFAULT NULL,
+  `pridiscid` varchar(200) DEFAULT NULL,
+  `periodra1` varchar(200) DEFAULT NULL,
+  `periodra2` varchar(200) DEFAULT NULL,
+  `periodra3` varchar(200) DEFAULT NULL,
+  `periodra4` varchar(200) DEFAULT NULL,
+  `periodra5` varchar(200) DEFAULT NULL,
+  `outletra1` varchar(200) DEFAULT NULL,
+  `outletra2` varchar(200) DEFAULT NULL,
+  `outletra3` varchar(200) DEFAULT NULL,
+  `outletra4` varchar(200) DEFAULT NULL,
+  `outletra5` varchar(200) DEFAULT NULL,
+  `starange1` varchar(200) DEFAULT NULL,
+  `starange2` varchar(200) DEFAULT NULL,
+  `starange3` varchar(200) DEFAULT NULL,
+  `starange4` varchar(200) DEFAULT NULL,
+  `starange5` varchar(200) DEFAULT NULL,
+  `minremain` varchar(200) DEFAULT NULL,
+  `accexpday` varchar(200) DEFAULT NULL,
+  `balexpday` varchar(200) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`mclass`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
--- Dumping data for table pos_resto.member_class: ~0 rows (approximately)
+-- Dumping data for table pos_resto.member_class: ~2 rows (approximately)
+INSERT INTO `member_class` (`mclass`, `desc1`, `desc2`, `desc3`, `discid1`, `discid2`, `discid3`, `discid4`, `discid5`, `discid6`, `discid7`, `discid8`, `discid9`, `discid10`, `prilevel`, `pridiscid`, `periodra1`, `periodra2`, `periodra3`, `periodra4`, `periodra5`, `outletra1`, `outletra2`, `outletra3`, `outletra4`, `outletra5`, `starange1`, `starange2`, `starange3`, `starange4`, `starange5`, `minremain`, `accexpday`, `balexpday`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, 'test', NULL, NULL, '1', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2', '3', '4', NULL, NULL, NULL, NULL, '5', NULL, NULL, NULL, NULL, '6', NULL, NULL, NULL, NULL, '7', '8', '9', 1, '2025-04-30 15:36:44', 1, '2025-04-30 15:36:56', 1),
+	(2, 'test4', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '2025-04-30 15:37:01', 1, '2025-04-30 15:37:06', 1);
 
 -- Dumping structure for table pos_resto.member_period
 CREATE TABLE IF NOT EXISTS `member_period` (
-  `outlet` varchar(0) DEFAULT NULL,
-  `periodid` varchar(0) DEFAULT NULL,
-  `desc1` varchar(0) DEFAULT NULL,
-  `desc2` varchar(0) DEFAULT NULL,
-  `desc3` varchar(0) DEFAULT NULL,
-  `sttime` varchar(0) DEFAULT NULL,
-  `endtime` varchar(0) DEFAULT NULL,
-  `consumcnt` varchar(0) DEFAULT NULL,
-  `weekmask` varchar(0) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `outlet` varchar(200) DEFAULT NULL,
+  `periodid` varchar(200) DEFAULT NULL,
+  `desc1` varchar(200) DEFAULT NULL,
+  `desc2` varchar(200) DEFAULT NULL,
+  `desc3` varchar(200) DEFAULT NULL,
+  `sttime` varchar(200) DEFAULT NULL,
+  `endtime` varchar(200) DEFAULT NULL,
+  `consumcnt` varchar(200) DEFAULT NULL,
+  `weekmask` varchar(200) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
--- Dumping data for table pos_resto.member_period: ~0 rows (approximately)
+-- Dumping data for table pos_resto.member_period: ~4 rows (approximately)
+INSERT INTO `member_period` (`id`, `outlet`, `periodid`, `desc1`, `desc2`, `desc3`, `sttime`, `endtime`, `consumcnt`, `weekmask`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, '2', '3', '12', NULL, NULL, '45', '56', '23', '12', 0, '2025-04-30 15:57:33', 1, '2025-04-30 15:58:27', 1),
+	(2, NULL, NULL, '23', NULL, NULL, NULL, NULL, NULL, NULL, 0, '2025-04-30 15:58:21', 1, '2025-04-30 15:58:27', 1),
+	(3, 'null', 'null', 'test', NULL, NULL, 'null', 'null', 'null', 'null', 1, '2025-04-30 16:10:30', 1, '2025-04-30 16:10:47', 1),
+	(4, NULL, NULL, 'test', NULL, NULL, NULL, NULL, NULL, NULL, 1, '2025-04-30 16:11:28', 1, '2025-01-01 00:00:00', 1);
 
 -- Dumping structure for table pos_resto.member_transaction_type
 CREATE TABLE IF NOT EXISTS `member_transaction_type` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `transtype` varchar(0) DEFAULT NULL,
   `desc1` varchar(0) DEFAULT NULL,
   `desc2` varchar(0) DEFAULT NULL,
@@ -799,7 +1160,13 @@ CREATE TABLE IF NOT EXISTS `member_transaction_type` (
   `type` varchar(0) DEFAULT NULL,
   `opendesc` varchar(0) DEFAULT NULL,
   `opendrw` varchar(0) DEFAULT NULL,
-  `payid` varchar(0) DEFAULT NULL
+  `payid` varchar(0) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
 -- Dumping data for table pos_resto.member_transaction_type: ~0 rows (approximately)
@@ -1813,6 +2180,35 @@ INSERT INTO `outlet_tips_pool` (`id`, `outlet`, `mjdept`, `empdept`, `rate`, `pr
 	(5, 1, '    ', '    ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
 	(6, 1, '    ', '    ', 0.00, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1);
 
+-- Dumping structure for table pos_resto.pantry_message
+CREATE TABLE IF NOT EXISTS `pantry_message` (
+  `id` mediumint(9) NOT NULL AUTO_INCREMENT,
+  `desc1` varchar(200) DEFAULT NULL,
+  `desc2` varchar(200) DEFAULT NULL,
+  `desc3` varchar(200) DEFAULT NULL,
+  `seq` smallint(6) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.pantry_message: ~11 rows (approximately)
+INSERT INTO `pantry_message` (`id`, `desc1`, `desc2`, `desc3`, `seq`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, 'Immediate ', 'Immediate           ', 'Immediate           ', 1, 1, '2025-01-01 00:00:00', 1, '2025-04-30 12:50:51', 1),
+	(2, 'Suspended ', 'Suspended           ', 'Suspended           ', 2, 1, '2025-01-01 00:00:00', 1, '2025-04-30 12:50:51', 1),
+	(3, 'Wait For Callup ', 'Wait For Callup     ', 'Wait For Callup     ', 3, 1, '2025-01-01 00:00:00', 1, '2025-04-30 12:50:51', 1),
+	(4, 'Take Away ', 'Take Away           ', 'Take Away           ', 4, 1, '2025-01-01 00:00:00', 1, '2025-04-30 12:50:51', 1),
+	(5, 'BE QUICK ', 'BE QUICK            ', 'BE QUICK            ', 5, 1, '2025-01-01 00:00:00', 1, '2025-04-30 12:50:51', 1),
+	(6, 'Come Together ', 'Come Together       ', 'Come Together       ', 6, 1, '2025-01-01 00:00:00', 1, '2025-04-30 12:50:51', 1),
+	(7, 'Prepare ', 'Prepare             ', 'Prepare             ', 7, 1, '2025-01-01 00:00:00', 1, '2025-04-30 12:50:51', 1),
+	(8, 'Add Later ', 'Add Later           ', 'Add Later           ', 8, 1, '2025-01-01 00:00:00', 1, '2025-04-30 12:50:51', 1),
+	(9, 'Rice Come First ', 'Rice Come First     ', 'Rice Come First     ', 9, 1, '2025-01-01 00:00:00', 1, '2025-04-30 12:50:51', 1),
+	(10, 'Noodle First ', 'Noodle First        ', 'Noodle First        ', 10, 1, '2025-01-01 00:00:00', 1, '2025-04-30 12:50:51', 1),
+	(11, 'test334', NULL, NULL, 24, 0, '2025-04-30 12:50:46', 1, '2025-04-30 12:50:56', 1);
+
 -- Dumping structure for table pos_resto.special_hour
 CREATE TABLE IF NOT EXISTS `special_hour` (
   `periodid` smallint(6) NOT NULL AUTO_INCREMENT,
@@ -1907,6 +2303,90 @@ INSERT INTO `special_hour` (`periodid`, `desc1`, `desc2`, `desc3`, `stdate`, `en
 	(4, 'test 2', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '2025-04-28 17:31:41', 1, '2025-04-28 17:33:17', 1),
 	(5, 'test4', NULL, NULL, '2025-04-28', '2025-04-28', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '2025-04-28 17:33:03', 1, '2025-04-28 17:33:17', 1);
 
+-- Dumping structure for table pos_resto.template
+CREATE TABLE IF NOT EXISTS `template` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(200) NOT NULL DEFAULT '',
+  `category` varchar(200) NOT NULL DEFAULT '',
+  `message` text NOT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf16 COLLATE=utf16_bin;
+
+-- Dumping data for table pos_resto.template: ~7 rows (approximately)
+INSERT INTO `template` (`id`, `name`, `category`, `message`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, 'ChangeItemQty', 'KitchenMessages', '~IPL 1.1\r\n~H\r\n01=efont:Tahoma;vdensity:low;hdensity:high;charset:Big5;\r\n02=efont:Tahoma;vdensity:low;hdensity:high;charset:Big5;color:red;\r\n03=efont:Tahoma,bold;ofont:bold;vdensity:low;hdensity:high;\r\n04=efont:Tahoma,bold;ofont:bold;vdensity:low;hdensity:high;color:red;\r\n05=vdensity:low;hdensity:high;charset:Big5;\r\n06=vdensity:low;hdensity:high;charset:Big5;color:red;\r\n07=width:4;align:left;\r\n08=align:center;\r\n09=efont:Tahoma,bold;ofont:bold;vdensity:low;hdensity:high;color:red;\r\n~H\r\n\r\n<INFSTYLE>\r\n	STrimZero		{type=\'S\' method="TrimZero"}\r\n</INFSTYLE>\r\n\r\n~L101 列印機 [$sQueueDesc$] ([$sQueueNum$])\r\n~L304~S08***更改數量***\r\n<INFDIV name="FineDinDiv" visible="hidden">\r\n	~L303檯 :[$sTable,STrimZero$]\r\n</INFDIV>\r\n<INFDIV name="FastFoodDiv" visible="hidden">\r\n	~L309快餐\r\n	~L201單#:[$sCheckID$]\r\n</INFDIV>\r\n<INFDIV name="DeliveryDiv" visible="hidden">\r\n	~L309外賣送貨單\r\n	~L201單#:[$sCheckID$]\r\n</INFDIV>\r\n~L201[$tCurrentTime$]    [$sEmpName2$]\r\n<INFLIST name="PrintItemList" method="single">\r\n	<INFROW>\r\n		<INFDIV name="ChildDiv" visible="hidden">\r\n        	~L201[$sItemNameS2$]\r\n			<INFDIV name="NonParentOnSameQDiv" visible="hidden">\r\n				~L101~S07~S00([$sItemParentNameS2$])\r\n			</INFDIV>\r\n		</INFDIV>\r\n		<INFDIV name="NonChildDiv" visible="hidden">\r\n			~L201[$sItemNameS2$]\r\n		</INFDIV>		\r\n		<INFDIV name="TakeAwayDiv" visible="hidden">\r\n			~L201~S07~S00*外賣\r\n		</INFDIV>\r\n		\r\n		<INFLIST name="ModifierList" method="single">\r\n			<INFROW>\r\n				~L201~S07~S00*[$sModifierNameS2$]\r\n			</INFROW>\r\n		</INFLIST>\r\n		\r\n		~L201舊數量 : [$nOldItemQty$]\r\n		~L202新數量 : [$nItemQty$]\r\n	</INFROW>\r\n</INFLIST>\r\n~C08\r\n', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(2, 'ChangeTable', 'KitchenMessages', '', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(3, 'EngChangeItemQty', 'KitchenMessages', '', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(4, 'EngChangeTable', 'KitchenMessages', '', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(5, 'EngMergeCheck', 'KitchenMessages', '', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(6, 'BarKitchenSlip', 'KitchenSlips', '', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(7, 'Job', 'KitMonTpls', '', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1);
+
+-- Dumping structure for table pos_resto.void_code
+CREATE TABLE IF NOT EXISTS `void_code` (
+  `id` tinyint(4) NOT NULL AUTO_INCREMENT,
+  `mode` tinyint(4) DEFAULT NULL,
+  `void_Code` varchar(200) DEFAULT NULL,
+  `desc1` varchar(200) DEFAULT NULL,
+  `desc2` varchar(200) DEFAULT NULL,
+  `desc3` varchar(200) DEFAULT NULL,
+  `seq` varchar(200) DEFAULT NULL,
+  `presence` tinyint(2) NOT NULL DEFAULT 1,
+  `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `inputBy` smallint(6) NOT NULL DEFAULT 1,
+  `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
+  `updateBy` smallint(6) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+-- Dumping data for table pos_resto.void_code: ~40 rows (approximately)
+INSERT INTO `void_code` (`id`, `mode`, `void_Code`, `desc1`, `desc2`, `desc3`, `seq`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
+	(1, 2, '001', 'Problem Food        ', 'Problem Food        ', 'Problem Food        ', '001', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(2, 2, '002', 'Testing             ', 'Testing             ', 'Testing             ', '002', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(3, 2, '003', 'Too Late            ', 'Too Late            ', 'Too Late            ', '003', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(4, 2, '004', 'Guest Request       ', 'Guest Request       ', 'Guest Request       ', '004', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(5, 2, '005', 'Wrong Order         ', 'Wrong Order         ', 'Wrong Order         ', '005', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(6, 2, '006', 'Data Error          ', 'Data Error          ', 'Data Error          ', '006', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(7, 2, '007', 'Sold Out            ', 'Sold Out            ', 'Sold Out            ', '007', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(8, 2, '008', 'Wrong Price         ', 'Wrong Price         ', 'Wrong Price         ', '008', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(9, 2, '009', 'Repeat Item         ', 'Repeat Item         ', 'Repeat Item         ', '009', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(10, 2, '010', 'Reject Item         ', 'Reject Item         ', 'Reject Item         ', '010', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(11, 2, '011', 'Other Reason        ', 'Other Reason        ', 'Other Reason        ', '011', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(12, 1, '001', 'Data Error          ', 'Data Error          ', 'Data Error          ', '001', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(13, 1, '002', 'Wrong Table         ', 'Wrong Table         ', 'Wrong Table         ', '002', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(14, 1, '003', 'Testing             ', 'Testing             ', 'Testing             ', '003', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(15, 1, '004', 'Other Reason        ', 'Other Reason        ', 'Other Reason        ', '004', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(16, 3, '001', 'Data Error          ', 'Data Error          ', 'Data Error          ', '001', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(17, 3, '002', 'Testing             ', 'Testing             ', 'Testing             ', '002', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(18, 3, '003', 'Adjust Payment      ', 'Adjust Payment      ', 'Adjust Payment      ', '003', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(19, 3, '004', 'Adjust Check Info.  ', 'Adjust Check Info.  ', 'Adjust Check Info.  ', '004', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(20, 3, '005', 'Other Reason        ', 'Other Reason        ', 'Other Reason        ', '005', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(21, 4, '001', 'Data Error          ', 'Data Error          ', 'Data Error          ', '001', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(22, 4, '002', 'Adjust Discount     ', 'Adjust Discount     ', 'Adjust Discount     ', '002', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(23, 4, '003', 'Guest Request       ', 'Guest Request       ', 'Guest Request       ', '003', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(24, 4, '004', 'Reject Discount     ', 'Reject Discount     ', 'Reject Discount     ', '004', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(25, 4, '005', 'Testing             ', 'Testing             ', 'Testing             ', '005', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(26, 4, '006', 'Other Reason        ', 'Other Reason        ', 'Other Reason        ', '006', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(27, 5, '001', 'Data Error          ', 'Data Error          ', 'Data Error          ', '001', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(28, 5, '002', 'Adjust Discount     ', 'Adjust Discount     ', 'Adjust Discount     ', '002', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(29, 5, '003', 'Guest Request       ', 'Guest Request       ', 'Guest Request       ', '003', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(30, 5, '004', 'Reject Discount     ', 'Reject Discount     ', 'Reject Discount     ', '004', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(31, 5, '005', 'Testing             ', 'Testing             ', 'Testing             ', '005', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(32, 5, '006', 'Other Reason        ', 'Other Reason        ', 'Other Reason        ', '006', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(33, 0, 'V01', 'Merge Sub-Group     ', 'Merge Sub-Group     ', 'Merge Sub-Group     ', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(34, 0, 'V02', 'Replace Set Menu    ', 'Replace Set Menu    ', 'Replace Set Menu    ', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(35, 0, 'V03', 'Void Check/Sub-Group', 'Void Check/Sub-Group', 'Void Check/Sub-Group', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(36, 0, 'V04', 'Split Check         ', 'Split Check         ', 'Split Check         ', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(37, 0, 'V05', 'Item Is Voided      ', 'Item Is Voided      ', 'Item Is Voided      ', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(38, 0, 'V06', 'Merge Check         ', 'Merge Check         ', 'Merge Check         ', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(39, 0, 'V07', 'Transfer Item       ', 'Transfer Item       ', 'Transfer Item       ', '   ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
+	(40, NULL, NULL, 'rwar', NULL, NULL, NULL, 0, '2025-04-30 12:33:01', 1, '2025-04-30 12:33:17', 1);
+
 -- Dumping structure for table pos_resto.wb_deposit_add_value_type
 CREATE TABLE IF NOT EXISTS `wb_deposit_add_value_type` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -1955,7 +2435,7 @@ CREATE TABLE IF NOT EXISTS `wb_svc_card_add_value_type` (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
--- Dumping data for table pos_resto.wb_svc_card_add_value_type: ~1 rows (approximately)
+-- Dumping data for table pos_resto.wb_svc_card_add_value_type: ~0 rows (approximately)
 INSERT INTO `wb_svc_card_add_value_type` (`id`, `desc1`, `desc2`, `desc3`, `seq`, `amount`, `free`, `extmonth`, `openamt`, `opendrw`, `item`, `svcclass`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
 	(1, 'tte2', NULL, NULL, '3', '4', '5', '6', '7', 'null', 'null', NULL, 0, '2025-04-29 16:24:33', 1, '2025-04-29 16:24:48', 1);
 

@@ -19,6 +19,21 @@ import { ForeignCurrencyTypeComponent } from './module/payment/foreign-currency-
 import { WpDepositComponent } from './module/payment/wp-deposit/wp-deposit.component';
 import { WpSvcCardComponent } from './module/payment/wp-svc-card/wp-svc-card.component';
 import { IcCardComponent } from './module/payment/ic-card/ic-card.component';
+import { VoidCodeComponent } from './module/others/void-code/void-code.component';
+import { PantryMessageComponent } from './module/others/pantry-message/pantry-message.component';
+import { FunctionAuthorityComponent } from './module/others/function-authority/function-authority.component';
+import { FunctionListComponent } from './module/others/function-list/function-list.component';
+import { FunctionShortCutsComponent } from './module/others/function-short-cuts/function-short-cuts.component';
+import { MemberProfileComponent } from './module/member/member-profile/member-profile.component';
+import { MemberClassesComponent } from './module/member/member-classes/member-classes.component';
+import { MemberPeriodComponent } from './module/member/member-period/member-period.component';
+import { MemberAccountComponent } from './module/member/member-account/member-account.component';
+import { MemberAccountHolderComponent } from './module/member/member-account-holder/member-account-holder.component';
+import { CostCentreComponent } from './module/member/cost-centre/cost-centre.component';
+import { ComplaintCategoryComponent } from './module/complaint/complaint-category/complaint-category.component';
+import { ComplaintTypeComponent } from './module/complaint/complaint-type/complaint-type.component';
+import { CustomerInfoComponent } from './module/customer/customer-info/customer-info.component';
+import { CustomerGrpComponent } from './module/customer/customer-grp/customer-grp.component';
 
 export const routes: Routes = [
     { path: '',component: HomeComponent},
@@ -48,6 +63,26 @@ export const routes: Routes = [
     { path: 'discount/discGroup', component: DiscGroupComponent },
     { path: 'discount/discType', component: DiscTypeComponent },
 
-    
+
+    { path: 'other/voidCode', component: VoidCodeComponent },
+    { path: 'other/pantryMessage', component: PantryMessageComponent },
+    { path: 'other/functionAuthority', component: FunctionAuthorityComponent },
+    { path: 'other/functionList', component: FunctionListComponent },
+    { path: 'other/functionShortCuts', component: FunctionShortCutsComponent },
+
+
+    { path: 'member/profile', component: MemberProfileComponent },
+    { path: 'member/classes', component: MemberClassesComponent },
+    { path: 'member/period', component: MemberPeriodComponent },
+    { path: 'member/account', component: MemberAccountComponent },
+    { path: 'member/accountHolder', component: MemberAccountHolderComponent },
+    { path: 'member/costCentre', component: CostCentreComponent },
+
+    { path: 'complaint/category', component: ComplaintCategoryComponent },
+    { path: 'complaint/type', component: ComplaintTypeComponent },
+
+    { path: 'customer/info', component: CustomerInfoComponent },
+    { path: 'customer/grp', component: CustomerGrpComponent },
+ 
     { path: '**', component: PageNotFoundComponent },
 ];

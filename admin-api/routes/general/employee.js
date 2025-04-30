@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const employee = require('../controllers/employeeController');
-const employeeAuthLevel = require('../controllers/employeeAuthLevelController');
-const employeeDept = require('../controllers/employeeDeptController');
-const employeeOrderLevel = require('../controllers/employeeOrderLevelController');
+const employee = require('./../../controllers/employeeController');
+const employeeAuthLevel = require('./../../controllers/employeeAuthLevelController');
+const employeeDept = require('./../../controllers/employeeDeptController');
+const employeeOrderLevel = require('./../../controllers/employeeOrderLevelController');
 
 router.get('/', employee.getAllData);
 router.get('/select', employee.getSelect); 

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const holidayList = require('../controllers/holidayListController');
+const holidayList = require('./../../controllers/holidayListController');
 
 router.get('/', holidayList.getAllData);
 router.post('/update', holidayList.postUpdate);

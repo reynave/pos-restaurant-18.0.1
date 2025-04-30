@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const specialHour = require('../controllers/specialHourController');
+const specialHour = require('./../../controllers/specialHourController');
 
 router.get('/', specialHour.getAllData);
 router.post('/update', specialHour.postUpdate);

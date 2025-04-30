@@ -61,11 +61,11 @@ export class AppComponent implements OnInit {
     },
 
     {
-      name: 'Kitchen', href: '', icon:'<i class="bi bi-fire"></i>',
+      name: 'Kitchen', href: 'template', icon:'<i class="bi bi-fire"></i>',
       children: [
-        { name: 'Kitchen Slip', href: '', icon:'' },
-        { name: 'Kitchen Message', href: '', icon:'' },
-        { name: 'Kitchen Monitor', href: '', icon:'' },  
+        { name: 'Kitchen Slip', href: 'template/kitchenSlip', icon:'' },
+        { name: 'Kitchen Message', href: 'template/kitchenMessage', icon:'' },
+        { name: 'Kitchen Monitor', href: 'template/kitchenMonitor', icon:'' },  
       ]
     },
 
@@ -73,40 +73,41 @@ export class AppComponent implements OnInit {
     {
       name: 'Other', href: '', icon:'<i class="bi bi-folder"></i>',
       children: [
-        { name: 'Void Code', href: '', icon:'' },
-        { name: 'Pantry Message', href: '', icon:'' },
-        { name: 'Function Authority', href: '', icon:'' },  
-        { name: 'Function List', href: '', icon:'' },  
-        { name: 'Function Short Cuts', href: '', icon:'' },   
+        { name: 'Void Code', href: 'other/voidCode', icon:'' },
+        { name: 'Pantry Message', href: 'other/pantryMessage', icon:'' },
+        { name: 'Function Authority', href: 'other/functionAuthority', icon:'' },  
+        { name: 'Function List', href: 'other/functionList', icon:'' },  
+        { name: 'Function Short Cuts', href: 'other/functionShortCuts', icon:'' },   
       ]
-    },
-
-
+    }, 
+ 
     {
-      name: 'Membership', href: '', icon:'<i class="bi bi-postcard-heart"></i>',
+      name: 'Membership', href: 'member/profile', icon:'<i class="bi bi-postcard-heart"></i>',
       children: [
-        { name: 'Member Profiles', href: '', icon:'' }, 
-        { name: 'Member Classes', href: '', icon:'' }, 
-        { name: 'Member Period', href: '', icon:'' }, 
-        { name: 'Member Account', href: '', icon:'' }, 
-        { name: 'Member Account Holder', href: '', icon:'' }, 
-        { name: 'Member Cost Centre', href: '', icon:'' }, 
+        { name: 'Member Profiles', href: 'member/profile', icon:'' }, 
+        { name: 'Member Classes', href: 'member/classes', icon:'' }, 
+        { name: 'Member Period', href: 'member/period', icon:'' }, 
+        { name: 'Member Account', href: 'member/account', icon:'' }, 
+        { name: 'Member Account Holder', href: 'member/accountHolder', icon:'' }, 
+        { name: 'Cost Centre', href: 'member/costCentre', icon:'' }, 
         
       ]
     },
 
     {
-      name: 'Complaint', href: '', icon:'<i class="bi bi-people"></i>',
+      name: 'Complaint', href: 'complaint/type', icon:'<i class="bi bi-people"></i>',
       children: [
-        { name: 'Complaint Type', href: '', icon:'' }, 
-        { name: 'Complaint Category', href: '', icon:'' },    
+        { name: 'Complaint Type', href: 'complaint/type', icon:'' }, 
+        { name: 'Complaint Category', href: 'complaint/category', icon:'' },    
       ]
     },
 
     {
-      name: 'Customer', href: '', icon:'<i class="bi bi-people"></i>',
+      name: 'Customer', href: 'customer/info', icon:'<i class="bi bi-people"></i>',
       children: [
-        { name: 'Customer Information', href: '', icon:'' },  
+        { name: 'Customer Info', href: 'customer/info', icon:'' },  
+        { name: 'Customer Group', href: 'customer/grp', icon:'' },  
+        
       ]
     },
   ];

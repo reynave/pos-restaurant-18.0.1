@@ -1,14 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const paymentType = require('../controllers/paymentTypeController'); 
-const paymentGroup = require('../controllers/paymentGroupController'); 
-const cashType = require('../controllers/cashTypeController'); 
-const taxType = require('../controllers/taxTypeController'); 
-const serviceCharge = require('../controllers/serviceChargeController'); 
-const foreignCurrency = require('../controllers/foreignCurrencyController'); 
-const wbDeposit = require('../controllers/wbDepositController'); 
-const wbSvcCard = require('../controllers/wbSvcCardController'); 
-const icCard = require('../controllers/icCardController'); 
+const paymentType = require('./../../controllers/paymentTypeController'); 
+const paymentGroup = require('./../../controllers/paymentGroupController'); 
+const cashType = require('./../../controllers/cashTypeController'); 
+const taxType = require('./../../controllers/taxTypeController'); 
+const serviceCharge = require('./../../controllers/serviceChargeController'); 
+const foreignCurrency = require('./../../controllers/foreignCurrencyController'); 
+const wbDeposit = require('./../../controllers/wbDepositController'); 
+const wbSvcCard = require('./../../controllers/wbSvcCardController'); 
+const icCard = require('./../../controllers/icCardController'); 
 
 router.get('/paymentType/', paymentType.getAllData); 
 router.post('/paymentType/update', paymentType.postUpdate);

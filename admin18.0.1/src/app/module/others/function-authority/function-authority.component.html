@@ -1,0 +1,87 @@
+<div class="row">
+    <div class="col-12 ">
+ 
+ 
+       <div class="header py-2">
+          <div class="row">
+             <div class="col-4">
+                <strong>FUNCTION AUTHORITY</strong>
+                <span class="mx-1" *ngIf="loading">
+                   <img src="./gif/Pulse@1x-1.0s-200px-200px.gif" height="30">
+                </span>
+             </div>
+             <div class="col-8 text-end">
+                @if(disabled==false){
+                <button type="button" class="btn btn-sm btn-light border me-2" (click)="cancel()">Close</button>
+                <button type="button" class="btn btn-sm btn-light border me-2" (click)="onUpdate();">Update</button>
+ 
+                <button type="button" class="btn btn-sm btn-dark border me-2" (click)="onSubmit()">Create</button>
+                <button type="button" class="btn btn-sm btn-danger border me-2" (click)="onDelete();">Delete</button>
+ 
+                }
+                @else {
+                <button type="button" class="btn btn-sm btn-light border me-2"
+                   (click)="disabled= false">Editable</button>
+ 
+                }
+ 
+             </div>
+          </div>
+ 
+       </div>
+       <div class="mainContent border">
+          <div class="">
+ 
+             <div class="table table-sm table-editable table-hover" style="width: max-content;">
+                <thead class="sticky-top ">
+                   <tr>
+ 
+                      <th *ngIf="disabled==false">
+                         <a href="javascript:;" (click)="checkAll();">
+                            @if(checkboxAll == 1){
+                            <i class="bi bi-check-square"></i>
+                            }@else {
+                            <i class="bi bi-square"></i>
+                            }
+ 
+                         </a>
+                      </th>
+                      <th>#</th>   
+                      <th>funcgrp</th> 
+                      <th>funcsgrp</th> 
+                      <th>funcauth</th> 
+                      <th>askauth</th> 
+                       
+                      <th>inputDate</th>
+ 
+                   </tr>
+                </thead>
+                <tbody>
+                   <tr *ngFor="let x of items; let i = index">
+ 
+                      <td *ngIf="disabled==false">
+                         <a href="javascript:;" (click)=" x.checkbox == 0 ? x.checkbox = 1 : x.checkbox = 0">
+                            <i *ngIf="x.checkbox == 0" class="bi bi-square"></i>
+ 
+                            <i *ngIf="x.checkbox == 1" class="bi bi-check-square"></i>
+                         </a>
+                      </td>
+                      <td>{{i+1}}</td>
+ 
+                      <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.funcgrp"   [disabled]="disabled"> </td>
+                      <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.funcsgrp"   [disabled]="disabled"> </td> 
+                      <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.funcauth"   [disabled]="disabled"> </td>  
+                    <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.askauth"   [disabled]="disabled"> </td>  
+ 
+                      <td>{{ x.inputDate | date:'medium'}} </td>
+ 
+                   </tr>
+                </tbody>
+             </div>
+ 
+          </div>
+       </div>
+    </div>
+ </div>
+ 
+  
