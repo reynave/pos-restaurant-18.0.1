@@ -10,6 +10,7 @@ const other = require('./routes/general/other');
 const member = require('./routes/general/member');
 const complaint = require('./routes/general/complaint');
 const customer = require('./routes/general/customer');
+const template = require('./routes/general/template');
 
 const fs = require('fs');
 
@@ -36,6 +37,7 @@ app.use('/other',other );
 app.use('/member',member );
 app.use('/complaint',complaint );
 app.use('/customer',customer );
+ app.use('/template',template );
  
 app.use('/',  (req, res) => {
     const data = {

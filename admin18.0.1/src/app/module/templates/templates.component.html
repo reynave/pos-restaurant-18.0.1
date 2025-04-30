@@ -1,1 +1,101 @@
-<p>templates works!</p>
+<div class="row">
+    <div class="col-12 ">
+
+
+        <div class="header py-2">
+            <div class="row">
+                <div class="col-4">
+                    <strong>TAMPLATE KITCHEN</strong>
+                    <span class="mx-1" *ngIf="loading">
+                        <img src="./gif/Pulse@1x-1.0s-200px-200px.gif" height="30">
+                    </span>
+                </div>
+                <div class="col-8 text-end">
+
+
+                </div>
+            </div>
+
+        </div>
+        <div class="mainContent  ">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+
+                        <div class="table table-sm  table-hover" >
+                            <thead class="sticky-top ">
+                                <tr>
+
+                                    <th *ngIf="disabled==false">
+                                        <a href="javascript:;" (click)="checkAll();">
+                                            @if(checkboxAll == 1){
+                                            <i class="bi bi-check-square"></i>
+                                            }@else {
+                                            <i class="bi bi-square"></i>
+                                            }
+
+                                        </a>
+                                    </th>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Update Date</th>
+                                    <th>Action</th>
+
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let x of items; let i = index">
+
+                                    <td *ngIf="disabled==false">
+                                        <a href="javascript:;"
+                                            (click)=" x.checkbox == 0 ? x.checkbox = 1 : x.checkbox = 0">
+                                            <i *ngIf="x.checkbox == 0" class="bi bi-square"></i>
+
+                                            <i *ngIf="x.checkbox == 1" class="bi bi-check-square"></i>
+                                        </a>
+                                    </td>
+                                    <td>{{i+1}}</td>
+
+                                    <td>{{x.name }}</td>
+                                    <td>{{ x.updateDate | date:'medium'}} </td>
+
+                                    <td> <a  class="btn btn-sm btn-primary py-0" [routerLink]="['/template/detail']" [queryParams]="{id:x.id}"
+                                            routerLinkActive="router-link-active">Detail</a> </td>
+
+                                </tr>
+                            </tbody>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <strong class="modal-title" id="modal-basic-title">New Void Code</strong>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <form (ngSubmit)="onSubmit()" #actorForm="ngForm">
+            <div class="mb-2">
+                <label for="desc1">Description*</label>
+                <input id="desc1" class="form-control form-control-sm" name="desc1" [(ngModel)]="model.desc1" required
+                    #desc1="ngModel" />
+                <small [hidden]="desc1.valid || desc1.pristine" class="text-danger">
+                    *desc1 is required
+                </small>
+            </div>
+
+
+            <div class="d-grid">
+                <button type="submit" class="btn btn-sm btn-dark" [disabled]="!actorForm.form.valid">Save</button>
+            </div>
+        </form>
+    </div>
+
+</ng-template>

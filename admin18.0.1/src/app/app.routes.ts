@@ -34,6 +34,8 @@ import { ComplaintCategoryComponent } from './module/complaint/complaint-categor
 import { ComplaintTypeComponent } from './module/complaint/complaint-type/complaint-type.component';
 import { CustomerInfoComponent } from './module/customer/customer-info/customer-info.component';
 import { CustomerGrpComponent } from './module/customer/customer-grp/customer-grp.component';
+import { TemplatesComponent } from './module/templates/templates.component';
+import { TemplateDetailComponent } from './module/templates/template-detail/template-detail.component';
 
 export const routes: Routes = [
     { path: '',component: HomeComponent},
@@ -84,5 +86,12 @@ export const routes: Routes = [
     { path: 'customer/info', component: CustomerInfoComponent },
     { path: 'customer/grp', component: CustomerGrpComponent },
  
+    { path: 'template', component: TemplatesComponent },
+    { path: 'template/detail', component: TemplateDetailComponent },
+    // { path: 'template/kitchenMessage', component: TemplatesComponent },
+    // { path: 'template/kitchenMonitor', component: TemplatesComponent },
+    // { path: 'template/kitchenSlip', component: TemplatesComponent },
+ 
+
     { path: '**', component: PageNotFoundComponent },
 ];
