@@ -14,11 +14,11 @@ import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
   styleUrl: './app.component.css'
 })
 export class AppComponent implements OnInit {
-  active = 1;
+  active = 2;
   login : boolean = false;
   
   title = 'admin18.0.1';
-  nodes : any  = [
+  generalTab : any  = [
     {
       name: 'Employees', href: 'employee', icon:'<i class="bi bi-person-vcard"></i> ',
       children: [
@@ -63,9 +63,9 @@ export class AppComponent implements OnInit {
     {
       name: 'Kitchen', href: 'template', icon:'<i class="bi bi-fire"></i>',
       children: [
-        { name: 'Kitchen Slip', href: 'template/kitchenSlip', icon:'' },
-        { name: 'Kitchen Message', href: 'template/kitchenMessage', icon:'' },
-        { name: 'Kitchen Monitor', href: 'template/kitchenMonitor', icon:'' },  
+        { name: 'Kitchen Slip', href: 'template', params : {idCategory:'100'}, icon:'' },
+        { name: 'Kitchen Message', href: 'template',  params : {idCategory:'200'}, icon:'' },
+        { name: 'Kitchen Monitor', href: 'template',  params : {idCategory:'300'},  icon:'' },  
       ]
     },
 
@@ -111,6 +111,55 @@ export class AppComponent implements OnInit {
       ]
     },
   ];
+  stationTab : any  = [
+    {
+      name: 'WorkStation', href: 'station/station', icon:'<i class="bi bi-display"></i>',
+      children: [
+        { name: 'Account Config', href: '', icon:'' }, 
+        { name: 'Outlet Config', href: '', icon:'' }, 
+        { name: 'General Config', href: '', icon:'' }, 
+        { name: 'Guest Check ', href: '', icon:'' }, 
+        { name: 'Receipt', href: '', icon:'' }, 
+        { name: 'World Bonus', href: '', icon:'' },  
+      ]
+    }, 
+
+    {
+      name: 'Pantry Station', href: '', icon:'<i class="bi bi-display"></i>',
+      children: [
+        { name: 'Pantry Station Details', href: 'workStation/pantryStation', icon:'' }, 
+        { name: 'Pantry Queue', href: 'workStation/printQueue', icon:'' },  
+      ]
+    },  
+    {
+      name: 'WorkStation Tax Run', href: 'workStation/stationTaxRun', icon:'<i class="bi bi-display"></i>', 
+    },  
+  ];
+  outletTab : any  = [
+    {
+      name: 'WorkStation', href: '', icon:'<i class="bi bi-display"></i>',
+      children: [
+        { name: 'Account Config', href: '', icon:'' }, 
+        { name: 'Outlet Config', href: '', icon:'' }, 
+        { name: 'General Config', href: '', icon:'' }, 
+        { name: 'Guest Check ', href: '', icon:'' }, 
+        { name: 'Receipt', href: '', icon:'' }, 
+        { name: 'World Bonus', href: '', icon:'' },  
+      ]
+    }, 
+
+    {
+      name: 'Pantry Station', href: '', icon:'<i class="bi bi-display"></i>',
+      children: [
+        { name: 'Pantry Station Details', href: '', icon:'' }, 
+        { name: 'Pantry Queue', href: '', icon:'' },  
+      ]
+    },  
+    {
+      name: 'WorkStation Tax Run', href: '', icon:'<i class="bi bi-display"></i>', 
+    },  
+  ];
+
 
   options : any = {};
   constructor(
@@ -134,7 +183,8 @@ export class AppComponent implements OnInit {
 
   onEvent(data : any){
     console.log('onEvent', data.node.data);
-    this.router.navigate([data.node.data.href]);
+    const params : any = data.node.data.params ? data.node.data.params  : '' ;
+    this.router.navigate([data.node.data.href], {queryParams:params});
   }
 
   onLogout(){

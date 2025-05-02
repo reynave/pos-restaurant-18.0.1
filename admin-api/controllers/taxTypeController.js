@@ -84,7 +84,7 @@ exports.postUpdate = async (req, res) => {
 
       const [result] = await db.query(
         `UPDATE check_tax_type SET 
-          desc1 = '${emp['desc1'].replace(/\s{2,}/g, ' ')}',   
+          desc1 = '${emp['desc1']}',   
           taxrate = '${emp['taxrate']}', 
 
           tier1 = '${emp['tier1']}',    

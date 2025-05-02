@@ -82,7 +82,7 @@ exports.postUpdate = async (req, res) => {
 
       const [result] = await db.query(
         `UPDATE pantry_message SET 
-            desc1 = '${emp['desc1'].replace(/\s{2,}/g, ' ')}',   
+            desc1 = '${emp['desc1']}',   
             seq = '${emp['seq']}',    
         
           updateDate = '${today()}'

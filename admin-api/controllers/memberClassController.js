@@ -83,8 +83,8 @@ exports.postUpdate = async (req, res) => {
 
       const [result] = await db.query(
         `UPDATE member_class SET 
-          desc1 = '${emp['desc1'].replace(/\s{2,}/g, '')}',   
-          discid1 = '${emp['discid1'].replace(/\s{2,}/g, ' ')}',   
+          desc1 = '${emp['desc1']}',   
+          discid1 = '${emp['discid1']}',   
           prilevel = '${emp['prilevel']}',     
           pridiscid = '${emp['pridiscid']}',    
           periodra1 = '${emp['periodra1']}',    

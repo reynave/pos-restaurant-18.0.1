@@ -36,6 +36,9 @@ import { CustomerInfoComponent } from './module/customer/customer-info/customer-
 import { CustomerGrpComponent } from './module/customer/customer-grp/customer-grp.component';
 import { TemplatesComponent } from './module/templates/templates.component';
 import { TemplateDetailComponent } from './module/templates/template-detail/template-detail.component';
+import { StationTaxRunComponent } from './module/workstation/station-tax-run/station-tax-run.component';
+import { PantryStationQueueComponent } from './module/workstation/pantry-station-queue/pantry-station-queue.component';
+import { PantryStationComponent } from './module/workstation/pantry-station/pantry-station.component';
 
 export const routes: Routes = [
     { path: '',component: HomeComponent},
@@ -91,6 +94,11 @@ export const routes: Routes = [
     // { path: 'template/kitchenMessage', component: TemplatesComponent },
     // { path: 'template/kitchenMonitor', component: TemplatesComponent },
     // { path: 'template/kitchenSlip', component: TemplatesComponent },
+    { path: 'workStation/pantryStation', component: PantryStationComponent },
+    { path: 'workStation/printQueue', component: PantryStationQueueComponent },
+    
+    { path: 'workStation/stationTaxRun', component: StationTaxRunComponent },
+    
  
 
     { path: '**', component: PageNotFoundComponent },

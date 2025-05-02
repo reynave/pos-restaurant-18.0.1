@@ -1,18 +1,18 @@
 const db = require('../config/db');
 const { today, formatDateOnly } = require('../helpers/global');
 
-
 exports.getAllData = async (req, res) => {
-  try {
-
+  try { 
     const [rows] = await db.query(`
       SELECT *, 0 as 'checkbox'
-      FROM customer_info_grp  
+      FROM station_tax_run  
       WHERE presence =1
     `);
 
     const formattedRows = rows.map(row => ({
       ...row,
+      stdate: formatDateOnly(row.stdate),
+      enddate: formatDateOnly(row.enddate),
     }));
 
 
@@ -37,20 +37,19 @@ exports.postCreate = async (req, res) => {
   try {
 
     const [result] = await db.query(
-      `INSERT INTO customer_info_grp (presence, inputDate, desc1 ) 
-      VALUES (?, ?, ?)`,
+      `INSERT INTO station_tax_run (presence, inputDate ) 
+      VALUES (?, ?)`,
       [
         1,
         inputDate,
-        model['desc1'],
       ]
     );
 
     res.status(201).json({
       error: false,
       inputDate: inputDate,
-      message: 'customer_info_grp created',
-      customer_info_grpId: result.insertId
+      message: 'station_tax_run created',
+      station_tax_runId: result.insertId
     });
   } catch (err) {
     console.error(err);
@@ -74,23 +73,23 @@ exports.postUpdate = async (req, res) => {
 
   try {
     for (const emp of data) {
-      const { id } = emp; 
+      const { statid } = emp;
+      const id = statid;
       if (!id) {
         results.push({ id, status: 'failed', reason: 'Missing fields' });
         continue;
       }
 
       const [result] = await db.query(
-        `UPDATE customer_info_grp SET 
-            desc1 = '${emp['desc1']}',   
-            active = '${emp['active']}',   
-           
+        `UPDATE station_tax_run SET 
+          paygrpid = '${emp['paygrpid']}',   
+          taxbeg = '${emp['taxbeg']}',    
+           taxend = '${emp['taxend']}',    
+           taxrun = '${emp['taxrun']}',      
           updateDate = '${today()}'
 
-        WHERE id = '${id}'`,
+        WHERE statid = ${id}`,
       );
-
-      
 
 
       if (result.affectedRows === 0) {
@@ -126,8 +125,9 @@ exports.postDelete = async (req, res) => {
 
   try {
     for (const emp of data) {
-      const { id, checkbox } = emp;
-    
+      const { statid, checkbox } = emp;
+
+      const id = statid;
       if (!id || !checkbox) {
         results.push({ id, status: 'failed', reason: 'Missing fields' });
         continue;
@@ -135,7 +135,7 @@ exports.postDelete = async (req, res) => {
 
 
       const [result] = await db.query(
-        'UPDATE customer_info_grp SET presence = ?, updateDate = ? WHERE id = ?',
+        'UPDATE station_tax_run SET presence = ?, updateDate = ? WHERE statid = ?',
         [checkbox == 0 ? 1 : 0, today(), id]
       );
 

@@ -83,8 +83,8 @@ exports.postUpdate = async (req, res) => {
 
       const [result] = await db.query(
         `UPDATE member SET 
-            member = '${emp['member'].replace(/\s{2,}/g, '')}',   
-            name = '${emp['name'].replace(/\s{2,}/g, ' ')}',   
+            member = '${emp['member']}',   
+            name = '${emp['name']}',   
             pharea1 = '${emp['pharea1']}',    
             phone1 = '${emp['phone1']}',    
             phone2 = '${emp['phone2']}',    

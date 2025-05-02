@@ -1,9 +1,12 @@
 <div class="container mt-5">
     <div class="row">
         <div class="col-8 text-center">
-            IMG
+            <img src="./imgs/intro.jpg" width="90%" >
         </div>
         <div class="col-4">
+            <h4>LOGIN ADMIN</h4>
+            <h3>POS RESTO 3</h3>
+            <div class="py-3"><small>username : bebas, password : bebas</small></div>
             <form (ngSubmit)="onSubmit()" #actorForm="ngForm">
                 <div class="form-group mb-3">
                     <label for="name">Username</label>
@@ -27,6 +30,9 @@
                 </div>
 
             </form>
+            <div class="p-3 text-center">
+                <small>Ver {{ver}} </small>
+            </div>
         </div>
     </div>
 </div>

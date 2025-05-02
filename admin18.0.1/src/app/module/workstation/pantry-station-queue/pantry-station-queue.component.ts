@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { ConfigService } from '../../service/config.service';
+import { ConfigService } from '../../../service/config.service';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { environment } from '../../../environments/environment.development';
+import { environment } from '../../../../environments/environment.development';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgbDatepickerModule, NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ActivatedRoute, RouterLink } from '@angular/router';
 export class Actor {
   constructor(
     public desc1: string,
@@ -13,13 +12,13 @@ export class Actor {
   ) { }
 }
 @Component({
-  selector: 'app-templates',
+  selector: 'app-pantry-station-queue',
   standalone: true,
-  imports: [HttpClientModule,RouterLink, CommonModule, FormsModule, NgbDropdownModule, NgbDatepickerModule],
-  templateUrl: './templates.component.html',
-  styleUrl: './templates.component.css'
+  imports: [HttpClientModule, CommonModule, FormsModule, NgbDropdownModule, NgbDatepickerModule],
+  templateUrl: './pantry-station-queue.component.html',
+  styleUrl: './pantry-station-queue.component.css'
 })
-export class TemplatesComponent  implements OnInit {
+export class PantryStationQueueComponent  implements OnInit {
   loading: boolean = false;
   checkboxAll: number = 0;
   disabled: boolean = true;
@@ -30,26 +29,17 @@ export class TemplatesComponent  implements OnInit {
     public configService: ConfigService,
     private http: HttpClient,
     public modalService: NgbModal,
-    private activatedRoute: ActivatedRoute,
   ) { }
 
   ngOnInit(): void {
     this.httpGet();
-
-    this.activatedRoute.queryParams.subscribe(params => {
-      // Contoh: Ambil query param `id`
-       
-        this.httpGet();
-      
-    });
   }
 
   httpGet() {
     this.loading = true;
-    const url = environment.api + "template/";
+    const url = environment.api + "workstation/printQueue";
     this.http.get<any>(url, {
       headers: this.configService.headers(),
-      params : this.activatedRoute.snapshot.queryParams
     }).subscribe(
       data => {
         console.log(data);
@@ -82,7 +72,7 @@ export class TemplatesComponent  implements OnInit {
   }
   onUpdate() {
     this.loading = true;
-    const url = environment.api + "template/update";
+    const url = environment.api + "workstation/printQueue/update";
     const body = this.items;
     this.http.post<any>(url, body, {
       headers: this.configService.headers(),
@@ -100,7 +90,7 @@ export class TemplatesComponent  implements OnInit {
   onDelete() {
     if (confirm("Delete this checklist?")) { 
       this.loading = true;
-      const url = environment.api + "template/delete";
+      const url = environment.api + "workstation/printQueue/delete";
       const body = this.items;
       this.http.post<any>(url, body, {
         headers: this.configService.headers(),
@@ -118,7 +108,7 @@ export class TemplatesComponent  implements OnInit {
 
   onSubmit() {
     this.loading = true;
-    const url = environment.api + "template/create";
+    const url = environment.api + "workstation/printQueue/create";
     const body = {
       model: this.model,
     };

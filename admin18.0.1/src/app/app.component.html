@@ -13,7 +13,7 @@
         <ng-template ngbNavContent>
 
           <div class="mx-3">
-            <tree-root #treeComponent [nodes]="nodes" [options]="options" (activate)="onEvent($event)">
+            <tree-root #treeComponent [nodes]="generalTab" [options]="options" (activate)="onEvent($event)">
               <ng-template #treeNodeTemplate let-node let-index="index">
                 <span class="file-icon" [innerHTML]="node.data.icon"></span>
                 {{ node.data.name }}
@@ -26,9 +26,16 @@
       <li [ngbNavItem]="2">
         <button ngbNavLink class="px-2 py-1"><small>Station</small></button>
         <ng-template ngbNavContent>
-          <p>
-            soon
-          </p>
+
+          <div class="mx-3">
+            <tree-root #treeComponent [nodes]="stationTab" [options]="options" (activate)="onEvent($event)">
+              <ng-template #treeNodeTemplate let-node let-index="index">
+                <span class="file-icon" [innerHTML]="node.data.icon"></span>
+                {{ node.data.name }}
+              </ng-template>
+
+            </tree-root>
+          </div>
         </ng-template>
       </li>
       <li [ngbNavItem]="3">

@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ConfigService } from '../service/config.service';
 import { Router, RouterLink } from '@angular/router';
+import { environment } from '../../environments/environment';
 
 
 export class Mylogin {
@@ -20,6 +21,7 @@ export class Mylogin {
 })
 export class LoginComponent {
   model = new Mylogin('', '');
+  ver : string = environment.ver;
   constructor(
     private config: ConfigService,
     private router: Router,

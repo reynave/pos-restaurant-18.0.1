@@ -82,8 +82,8 @@ exports.postUpdate = async (req, res) => {
 
       const [result] = await db.query(
         `UPDATE cost_centre SET 
-            costno = '${emp['costno'].replace(/\s{2,}/g, '')}',   
-            desc1 = '${emp['desc1'].replace(/\s{2,}/g, ' ')}',    
+            costno = '${emp['costno']}',   
+            desc1 = '${emp['desc1']}',    
              
           updateDate = '${today()}'
 

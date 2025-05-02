@@ -83,7 +83,7 @@ exports.postUpdate = async (req, res) => {
 
       const [result] = await db.query(
         `UPDATE foreign_currency_type SET 
-          desc1 = '${emp['desc1'].replace(/\s{2,}/g, ' ')}',   
+          desc1 = '${emp['desc1']}',   
           ratefcy = '${emp['ratefcy']}',   
          chgbakfcy = '${emp['chgbakfcy']}',    
         

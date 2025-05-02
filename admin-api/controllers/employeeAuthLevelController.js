@@ -79,7 +79,7 @@ exports.postUpdate = async (req, res) => {
  
       const [result] = await db.query(
         `UPDATE employee_auth_level SET 
-          desc1 = '${emp['desc1'].replace(/\s{2,}/g, ' ')}',  
+          desc1 = '${emp['desc1']}',  
           updateDate = '${today()}'
 
         WHERE authlevel = ${id}`,

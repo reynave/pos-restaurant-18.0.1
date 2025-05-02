@@ -87,7 +87,7 @@ exports.postUpdate = async (req, res) => {
 
       const [result] = await db.query(
         `UPDATE special_hour SET 
-          desc1 = '${emp['desc1'].replace(/\s{2,}/g, ' ')}',   
+          desc1 = '${emp['desc1']}',   
           stdate = '${emp['stdate']}',   
           enddate = '${emp['enddate']}',   
           sttime = '${emp['sttime']}',   

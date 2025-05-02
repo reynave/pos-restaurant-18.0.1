@@ -95,7 +95,7 @@ exports.postUpdate = async (req, res) => {
 
       const [result] = await db.query(
         `UPDATE customer_info SET 
-            desc1 = '${emp['desc1'].replace(/\s{2,}/g, ' ')}',   
+            desc1 = '${emp['desc1']}',   
             customerInfoGrpId = '${emp['customerInfoGrpId']}',   
            
           updateDate = '${today()}'

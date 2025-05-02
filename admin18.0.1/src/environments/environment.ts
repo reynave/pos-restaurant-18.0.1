@@ -4,5 +4,5 @@ declare var api: string;
 export const environment = {
     ver: packageJson.version,
     production: true,
-    api : 'http://localhost:3000/',
+    api : api,
 };

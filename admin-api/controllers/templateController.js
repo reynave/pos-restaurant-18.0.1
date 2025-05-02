@@ -3,12 +3,14 @@ const { today, formatDateOnly } = require('../helpers/global');
 
 
 exports.getAllData = async (req, res) => {
+  const idCategory = req.query.idCategory;
+
   try {
 
     const [rows] = await db.query(`
       SELECT *, 0 as 'checkbox'
       FROM template  
-      WHERE presence =1
+      WHERE presence =1 ${idCategory ? ' and templateCategoryId = '+idCategory : ''}
     `);
 
     const formattedRows = rows.map(row => ({
@@ -19,7 +21,8 @@ exports.getAllData = async (req, res) => {
     const data = {
       error: false,
       items: formattedRows,
-      get: req.query
+      get: req.query,
+      idCategory : idCategory,
     }
 
     res.json(data);

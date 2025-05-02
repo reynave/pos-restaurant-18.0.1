@@ -139,20 +139,20 @@ exports.postUpdate = async (req, res) => {
 
       // const [result] = await db.query(
       //   'UPDATE employee SET first1 = ?, last1 = ?  WHERE id = ?',
-      //   [emp['first1'].replace(/\s{2,}/g, ' '), emp['last1'].replace(/\s{2,}/g, ' '), id]
+      //   [emp['first1'], emp['last1'], id]
       // );
 
       const [result] = await db.query(
         `UPDATE employee SET 
-          first1 = '${emp['first1'].replace(/\s{2,}/g, ' ')}', 
-          last1 = '${emp['last1'].replace(/\s{2,}/g, ' ')} ',
-          name1 = '${emp['name1'].replace(/\s{2,}/g, ' ')} ',
-          tel = '${emp['tel'].replace(/\s{2,}/g, ' ')} ',
-          sex = '${emp['sex'].replace(/\s{2,}/g, ' ')} ',
+          first1 = '${emp['first1']}', 
+          last1 = '${emp['last1']} ',
+          name1 = '${emp['name1']} ',
+          tel = '${emp['tel']} ',
+          sex = '${emp['sex']} ',
           
-          contact = '${emp['contact'].replace(/\s{2,}/g, ' ')} ',
-          addr1 = '${emp['addr1'].replace(/\s{2,}/g, ' ')} ',
-          addr2 = '${emp['addr2'].replace(/\s{2,}/g, ' ')} ',
+          contact = '${emp['contact']} ',
+          addr1 = '${emp['addr1']} ',
+          addr2 = '${emp['addr2']} ',
           birthday = '${emp['birthday']} ',
           dob = '${emp['dob']} ',
           sex = '${emp['sex']} ',
