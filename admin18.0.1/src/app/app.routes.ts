@@ -39,6 +39,7 @@ import { TemplateDetailComponent } from './module/templates/template-detail/temp
 import { StationTaxRunComponent } from './module/workstation/station-tax-run/station-tax-run.component';
 import { PantryStationQueueComponent } from './module/workstation/pantry-station-queue/pantry-station-queue.component';
 import { PantryStationComponent } from './module/workstation/pantry-station/pantry-station.component';
+import { TableMapComponent } from './module/table-map/table-map.component';
 
 export const routes: Routes = [
     { path: '',component: HomeComponent},
@@ -98,6 +99,8 @@ export const routes: Routes = [
     { path: 'workStation/printQueue', component: PantryStationQueueComponent },
     
     { path: 'workStation/stationTaxRun', component: StationTaxRunComponent },
+
+    { path: 'tableMap', component: TableMapComponent },
     
  
 

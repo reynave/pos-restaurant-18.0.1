@@ -1,0 +1,18 @@
+
+
+<div id="contentDiv" class="layout-container">
+    <div
+      *ngFor="let table of tables"
+      class="draggable"
+      #tableEl
+      [attr.data-id]="table.id"
+      [style.transform]="'translate(' + table.x + 'px,' + table.y + 'px)'"
+      [style.width.px]="table.width"
+      [style.height.px]="table.height"
+      [style.backgroundImage]="'url(' + table.icon + ')'"
+      style="background-size: cover;">
+      {{ table.name }}
+    </div>
+  </div>
+
+  <button type="button" (click)="onEditable()">editable</button> {{editable}}

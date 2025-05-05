@@ -137,7 +137,7 @@ export class AppComponent implements OnInit {
   ];
   outletTab : any  = [
     {
-      name: 'WorkStation', href: '', icon:'<i class="bi bi-display"></i>',
+      name: 'Table Map', href: 'tableMap', icon:'<i class="bi bi-display"></i>',
       children: [
         { name: 'Account Config', href: '', icon:'' }, 
         { name: 'Outlet Config', href: '', icon:'' }, 

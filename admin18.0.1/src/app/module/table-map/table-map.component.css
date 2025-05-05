@@ -1,0 +1,26 @@
+#contentDiv {
+    position: relative;
+    width: 1000px;
+    height: 900px;
+    border: 1px solid #ccc;
+    background-color: #f5f5f5;
+    overflow: hidden;
+  }
+
+.draggable {
+    width: 100px;
+    height: 100px;
+    background-color: #4CAF50;
+    color: white;
+    text-align: center;
+    line-height: 100px;
+    position: absolute;
+    user-select: none;
+    border-radius: 8px;
+  }
+  
+  .resizable {
+    resize: both;
+    overflow: hidden;
+  }
+  
