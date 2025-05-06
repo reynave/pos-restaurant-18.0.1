@@ -14,9 +14,10 @@ const complaint = require('./routes/general/complaint');
 const customer = require('./routes/general/customer');
 const template = require('./routes/general/template');
 const workStation = require('./routes/station/workStation');
+const tableMap = require('./routes/outlet/tableMap');
+const global = require('./routes/global/global');
 
-
-
+ 
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -51,6 +52,9 @@ app.get(process.env.PREFIX+'checkdb', async (req, res) => {
     }
 });
 app.use(process.env.PREFIX+'public', express.static('public'));
+app.use(process.env.PREFIX+'global', global);
+
+
 app.use(process.env.PREFIX+'specialHour', specialHour);
 app.use(process.env.PREFIX+'holidayList', holidayList);
 app.use(process.env.PREFIX+'employee', employeeRoutes);
@@ -62,6 +66,7 @@ app.use(process.env.PREFIX+'complaint', complaint);
 app.use(process.env.PREFIX+'customer', customer);
 app.use(process.env.PREFIX+'template', template);
 app.use(process.env.PREFIX+'workStation', workStation);
+app.use(process.env.PREFIX+'tableMap', tableMap);
 
 app.use('/', (req, res) => {
     const data = {

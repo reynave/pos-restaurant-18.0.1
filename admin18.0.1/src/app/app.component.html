@@ -49,9 +49,15 @@
       <li [ngbNavItem]="4">
         <button ngbNavLink class="px-2 py-1"><small>Outlet</small></button>
         <ng-template ngbNavContent>
-          <p>
-            soon
-          </p>
+          <div class="mx-3">
+            <tree-root #treeComponent [nodes]="outletTab" [options]="options" (activate)="onEvent($event)">
+              <ng-template #treeNodeTemplate let-node let-index="index">
+                <span class="file-icon" [innerHTML]="node.data.icon"></span>
+                {{ node.data.name }}
+              </ng-template>
+
+            </tree-root>
+          </div>
         </ng-template>
       </li>
     </ul>

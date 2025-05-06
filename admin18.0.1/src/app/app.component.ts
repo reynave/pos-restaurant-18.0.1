@@ -137,27 +137,39 @@ export class AppComponent implements OnInit {
   ];
   outletTab : any  = [
     {
-      name: 'Table Map', href: 'tableMap', icon:'<i class="bi bi-display"></i>',
+      name: 'Basic Outlet Setup', href: '', icon:'<i class="bi bi-display"></i>',
       children: [
-        { name: 'Account Config', href: '', icon:'' }, 
-        { name: 'Outlet Config', href: '', icon:'' }, 
-        { name: 'General Config', href: '', icon:'' }, 
-        { name: 'Guest Check ', href: '', icon:'' }, 
-        { name: 'Receipt', href: '', icon:'' }, 
-        { name: 'World Bonus', href: '', icon:'' },  
-      ]
-    }, 
+        { name: 'Outlet Details', href: 'outlet', icon:'<i class="bi bi-credit-card"></i>', }, 
+       
 
-    {
-      name: 'Pantry Station', href: '', icon:'<i class="bi bi-display"></i>',
-      children: [
-        { name: 'Pantry Station Details', href: '', icon:'' }, 
-        { name: 'Pantry Queue', href: '', icon:'' },  
+
       ]
     },  
     {
-      name: 'WorkStation Tax Run', href: '', icon:'<i class="bi bi-display"></i>', 
+      name: 'Advance Outlet Setup', href: '', icon:'<i class="bi bi-display"></i>',
+      children: [
+        { name: 'Payment', href: 'tableMap', icon:'<i class="bi bi-credit-card"></i>', }, 
+        { name: 'Cash Types', href: 'tableMap', icon:'<i class="bi bi-credit-card"></i>', }, 
+        { name: 'Autority', href: 'tableMap', icon:'<i class="bi bi-person-fill-gear"></i>', }, 
+        { name: 'Order level', href: 'tableMap', icon:'<i class="bi bi-person-fill-gear"></i>', },  
+        { name: 'Discount', href: 'tableMap', icon:'<i class="bi bi-percent"></i>', },  
+        { name: 'Special Hours', href: 'tableMap', icon:'<i class="bi bi-clock"></i>', },  
+
+        { name: 'Table Map', href: 'tableMap', icon:'<i class="bi bi-display"></i>', 
+          children: [
+        
+          ] 
+        }, 
+        { name: 'Floor Map', href: 'floorMap', icon:'<i class="bi bi-display"></i>',  },  
+
+        { name: 'Tips Pool', href: 'floorMap', icon:'<i class="bi bi-display"></i>',  },  
+        { name: 'Mix & Match Rules', href: 'floorMap', icon:'<i class="bi bi-display"></i>',  },  
+        { name: 'Bonus Rules', href: 'floorMap', icon:'<i class="bi bi-display"></i>',  },  
+
+
+      ]
     },  
+    
   ];
 
 
@@ -168,7 +180,7 @@ export class AppComponent implements OnInit {
   ){
   }
   ngOnInit(): void {
-      this.checkLogin()
+      this.checkLogin(); 
   }
 
   checkLogin(){

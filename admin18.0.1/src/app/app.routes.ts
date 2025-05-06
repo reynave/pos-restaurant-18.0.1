@@ -40,6 +40,7 @@ import { StationTaxRunComponent } from './module/workstation/station-tax-run/sta
 import { PantryStationQueueComponent } from './module/workstation/pantry-station-queue/pantry-station-queue.component';
 import { PantryStationComponent } from './module/workstation/pantry-station/pantry-station.component';
 import { TableMapComponent } from './module/table-map/table-map.component';
+import { FloorMapComponent } from './module/floor-map/floor-map.component';
 
 export const routes: Routes = [
     { path: '',component: HomeComponent},
@@ -100,7 +101,11 @@ export const routes: Routes = [
     
     { path: 'workStation/stationTaxRun', component: StationTaxRunComponent },
 
+
+    { path: 'outlet', component: OutletComponent },
+    
     { path: 'tableMap', component: TableMapComponent },
+    { path: 'floorMap', component: FloorMapComponent },
     
  
 

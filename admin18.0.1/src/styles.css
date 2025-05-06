@@ -93,6 +93,35 @@ body, html {
 
 
 
+
+
+.container-fix {
+  display: flex; 
+  min-width: 1110px; /* 850 + 200 */
+  overflow-x: auto; 
+}
+
+.left {
+  width: 810px; 
+  overflow-y: auto;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.right {
+  min-width: 300px;  
+      overflow-y: auto;
+      flex-shrink: 0;
+      box-sizing: border-box;
+}
+
+.content-block {
+  height: 300px;
+  margin-bottom: 20px;
+  background: linear-gradient(to bottom, #fff, #ccc);
+}
+
+
 /* @media (max-width: 1180px) {
     .fixed-width-container {
       width: 1180px !important;
