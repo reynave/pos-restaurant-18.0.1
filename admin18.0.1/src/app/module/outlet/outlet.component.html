@@ -1,1 +1,379 @@
-<p>outlet works!</p>
+<div class="row">
+   <div class="col-12 ">
+
+
+      <div class="header py-2">
+         <div class="row">
+            <div class="col-4">
+               <strong>OUTLET DETAILS</strong>
+               <span class="mx-1" *ngIf="loading">
+                  <img src="./gif/Pulse@1x-1.0s-200px-200px.gif" height="30">
+               </span>
+            </div>
+            <div class="col-8 text-end">
+               @if(disabled==false){
+               <button type="button" class="btn btn-sm btn-light border me-2" (click)="cancel()">Close</button>
+
+               <button type="button" class="btn btn-sm btn-dark border me-2" (click)="open(content);">Create</button>
+               <button type="button" class="btn btn-sm btn-danger border me-2" (click)="onDelete();">Delete</button>
+
+               }
+               @else {
+               <button type="button" class="btn btn-sm btn-light border me-2"
+                  (click)="disabled= false">Editable</button>
+               }
+
+            </div>
+         </div>
+
+      </div>
+      <div class="mainContent border">
+         <div class="">
+
+            <div class="table table-sm table-hover" style="width: max-content;">
+               <thead class="sticky-top ">
+                  <tr>
+
+                     <th *ngIf="disabled==false">
+                        <a href="javascript:;" (click)="checkAll();">
+                           @if(checkboxAll == 1){
+                           <i class="bi bi-check-square"></i>
+                           }@else {
+                           <i class="bi bi-square"></i>
+                           }
+
+                        </a>
+                     </th>
+                     <th>#</th>
+                     <th>name1</th>
+                     <th>descs1</th>
+                     <th>comname1</th>
+                     <th>cityname1</th>
+                     <th>tel</th>
+                     <th>inputDate</th>
+                     <th></th>
+
+                  </tr>
+               </thead>
+               <tbody>
+                  <tr *ngFor="let x of items; let i = index"> 
+                     <td *ngIf="disabled==false">
+                        <a href="javascript:;" (click)=" x.checkbox == 0 ? x.checkbox = 1 : x.checkbox = 0">
+                           <i *ngIf="x.checkbox == 0" class="bi bi-square"></i>
+                           <i *ngIf="x.checkbox == 1" class="bi bi-check-square"></i>
+                        </a>
+                     </td>
+                     <td>{{i+1}}</td>
+                     <td>{{x.name1 }}</td>
+                     <td>{{x.descs1 }}</td>
+                     <td>{{x.comname1 }}</td>
+                     <td>{{x.cityname1 }}</td>
+                     <td>{{x.tel }}</td>
+                     <td>{{ x.updateDate | date:'medium'}} </td>
+                     <td> <button type="button" (click)="openLg(detail, x);" class="btn btn-sm btn-primary py-0">Detail</button> </td>
+
+                  </tr>
+               </tbody>
+            </div>
+
+         </div>
+      </div>
+   </div>
+</div>
+
+<ng-template #detail let-modal>
+   <div class="modal-header">
+      <strong class="modal-title" id="modal-basic-title">Outlet Detail</strong>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+   </div>
+   <div class="modal-body">
+       
+      <form (ngSubmit)="onUpdate()" #heroForm="ngForm">
+         <div class="row mb-3">
+            <div class="col-6">
+               <strong>Detail Outlet</strong>
+               <table class="table table-sm">
+                  <tbody>
+                     <tr>
+                        <td>ID</td>
+                        <td>
+                           <div class="form-control form-control-sm">{{item.id}}</div>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td width="30%"> <label for="descl1">Name *</label></td>
+                        <td>
+                           <input id="name1" class="form-control form-control-sm" name="name1" [(ngModel)]="item.name1"
+                              required #name1="ngModel" />
+                           <small [hidden]="name1.valid || name1.pristine" class="text-danger">
+                              *name is required
+                           </small>
+                        </td>
+                     </tr>
+
+                     <tr>
+                        <td> <label for="descl1">descs1*</label></td>
+                        <td>
+                           <input id="descl1" class="form-control form-control-sm" name="descl1"
+                              [(ngModel)]="item.descs1" required #descl1="ngModel" />
+                           <small [hidden]="descl1.valid || descl1.pristine" class="text-danger">
+                              *descl1 is required
+                           </small>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td> <label for="tel">tel</label></td>
+                        <td>
+                           <input id="tel" class="form-control form-control-sm" name="tel" [(ngModel)]="item.tel" />
+                        </td>
+                     </tr>
+                     <tr>
+                        <td> <label for="fax">fax</label></td>
+                        <td>
+                           <input id="fax" class="form-control form-control-sm" name="fax" [(ngModel)]="item.fax" />
+
+                        </td>
+                     </tr>
+                     <tr>
+                        <td> <label for="comname1">comname1</label></td>
+                        <td>
+                           <input id="comname1" class="form-control form-control-sm" name="comname1"
+                              [(ngModel)]="item.comname1" />
+
+                        </td>
+                     </tr>
+
+                     <tr>
+                        <td> <label for="addr1">addr1</label></td>
+                        <td>
+                           <input id="addr1" class="form-control form-control-sm mb-1" name="addr1"
+                              [(ngModel)]="item.addr1" />
+                        </td>
+                     </tr>
+
+                     <tr>
+                        <td> <label for="street1">street1</label></td>
+                        <td>
+                           <input id="street1" class="form-control form-control-sm mb-1" name="street1"
+                              [(ngModel)]="item.street1" />
+                        </td>
+                     </tr>
+
+                     <tr>
+                        <td> <label for="cityname1">cityname1</label></td>
+                        <td>
+                           <input id="cityname1" class="form-control form-control-sm mb-1" name="cityname1"
+                              [(ngModel)]="item.cityname1" />
+                        </td>
+                     </tr>
+
+                     <tr>
+                        <td> <label for="country1">country1</label></td>
+                        <td>
+                           <input id="country1" class="form-control form-control-sm mb-1" name="country1"
+                              [(ngModel)]="item.country1" />
+                        </td>
+                     </tr>
+
+                  </tbody>
+               </table>
+            </div>
+            <div class="col-6">
+               <strong>Greeting </strong>
+               <table class="table table-sm">
+                  <tbody>
+
+                     <tr>
+                        <td width="10%"> <label for="greeta1">A</label></td>
+                        <td>
+                           <input id="greeta1" class="form-control form-control-sm" name="greeta1"
+                              [(ngModel)]="item.greeta1" />
+                        </td>
+                     </tr>
+
+                     <tr>
+                        <td> <label for="greetb1">B</label></td>
+                        <td>
+                           <input id="greetb1" class="form-control form-control-sm" name="greetb1"
+                              [(ngModel)]="item.greetb1" />
+                        </td>
+                     </tr>
+
+                     <tr>
+                        <td> <label for="greetc1">C</label></td>
+                        <td>
+                           <input id="greetc1" class="form-control form-control-sm" name="greetc1"
+                              [(ngModel)]="item.greetc1" />
+                        </td>
+                     </tr>
+
+                     <tr>
+                        <td> <label for="greetd1">D</label></td>
+                        <td>
+                           <input id="greetd1" class="form-control form-control-sm" name="greetd1"
+                              [(ngModel)]="item.greetd1" />
+                        </td>
+                     </tr>
+
+                     <tr>
+                        <td> <label for="greete1">E</label></td>
+                        <td>
+                           <input id="greete1" class="form-control form-control-sm" name="greete1"
+                              [(ngModel)]="item.greete1" />
+                        </td>
+                     </tr>
+                  </tbody>
+               </table>
+               <hr>
+               <table class="table table-sm">
+                  <tbody>
+
+                     <tr>
+                        <td width="30%"> <label for="dpoleu1">dpoleu1</label></td>
+                        <td>
+                           <input id="dpoleu1" class="form-control form-control-sm" name="dpoleu1"
+                              [(ngModel)]="item.dpoleu1" />
+                        </td>
+                     </tr>
+
+                     <tr>
+                        <td> <label for="dpolel1">dpolel1</label></td>
+                        <td>
+                           <input id="dpolel1" class="form-control form-control-sm" name="dpolel1"
+                              [(ngModel)]="item.dpolel1" />
+                        </td>
+                     </tr>
+
+
+                  </tbody>
+               </table>
+
+            </div>
+
+         </div>
+
+         <div class="row">
+            <strong>Global Setting</strong>
+            <div class="col-12">
+               <table class="table table-sm">
+                  <thead>
+                     <tr> 
+                        <th>panelid</th>
+                        <th>price</th>
+                        <th>sendpend</th>
+                        <th>itmrnd</th>
+                        <th>taxrnd</th> 
+                        <th>scrnd</th>
+                        <th>discrnd</th>
+                        <th>ckrnd</th> 
+                     </tr>
+                  </thead>
+                  <tbody> 
+                     <tr> 
+                        <td> <input id="panelid" class="form-control form-control-sm" name="panelid"  [(ngModel)]="item.panelid" /> </td>
+                        <td><input id="price" class="form-control form-control-sm" name="price"  [(ngModel)]="item.price" /></td>
+                        <td><input id="sendpend" class="form-control form-control-sm" name="sendpend"  [(ngModel)]="item.sendpend" /></td>
+                        <td><input id="itmrnd" class="form-control form-control-sm" name="itmrnd"  [(ngModel)]="item.itmrnd" /></td>
+
+                        <td><input id="taxrnd" class="form-control form-control-sm" name="taxrnd"  [(ngModel)]="item.taxrnd" /></td>
+                        <td><input id="scrnd" class="form-control form-control-sm" name="scrnd"  [(ngModel)]="item.scrnd" /></td>
+                        <td><input id="discrnd" class="form-control form-control-sm" name="discrnd"  [(ngModel)]="item.discrnd" /></td>
+                        <td><input id="ckrnd" class="form-control form-control-sm" name="ckrnd"  [(ngModel)]="item.ckrnd" /></td> 
+                        
+                     </tr>
+                  </tbody>
+               </table>
+            </div>
+
+            <div class="col-12">
+               <table class="table table-sm">
+                  <thead>
+                     <tr>  
+                        <th>itmdec</th>
+                        <th>taxdec</th> 
+                        <th>scdec</th>
+                        <th>discdec</th>
+
+                        <th>ckdec</th>
+                        <th>begchk</th>
+                        <th>endchk</th>
+                        <th>nextchk</th>
+                     </tr>
+                  </thead>
+                  <tbody> 
+                     <tr> 
+                        <td><input id="itmdec" class="form-control form-control-sm" name="itmdec"  [(ngModel)]="item.itmdec" /></td>
+                        <td><input id="taxdec" class="form-control form-control-sm" name="taxdec"  [(ngModel)]="item.taxdec" /></td>
+                        <td><input id="scdec" class="form-control form-control-sm" name="scdec"  [(ngModel)]="item.scdec" /></td>
+                        <td><input id="discdec" class="form-control form-control-sm" name="discdec"  [(ngModel)]="item.discdec" /></td>
+
+                         <td><input id="ckdec" class="form-control form-control-sm" name="ckdec"  [(ngModel)]="item.ckdec" /></td>
+                         <td><input id="begchk" class="form-control form-control-sm" name="begchk"  [(ngModel)]="item.begchk" /></td>
+                         <td><input id="endchk" class="form-control form-control-sm" name="endchk"  [(ngModel)]="item.endchk" /></td>
+                         <td><input id="nextchk" class="form-control form-control-sm" name="nextchk"  [(ngModel)]="item.nextchk" /></td>
+                     </tr>
+                  </tbody>
+               </table>
+            </div>
+
+            <div class="col-12">
+               <table class="table table-sm">
+                  <thead>
+                     <tr>  
+                        <th>bizbegchk</th>
+                        <th>drwprefix</th>
+                        <th>drwamt</th>
+                        <th>drwmethod</th>
+                        <th>drwrun</th>
+                        <th>drwmem</th>
+                     </tr>
+                  </thead>
+                  <tbody> 
+                     <tr>  
+                         <td><input id="bizbegchk" class="form-control form-control-sm" name="bizbegchk"  [(ngModel)]="item.bizbegchk" /></td>
+                         <td><input id="drwprefix" class="form-control form-control-sm" name="drwprefix"  [(ngModel)]="item.drwprefix" /></td>
+                         <td><input id="drwamt" class="form-control form-control-sm" name="drwamt"  [(ngModel)]="item.drwamt" /></td>
+                         <td><input id="drwmethod" class="form-control form-control-sm" name="drwmethod"  [(ngModel)]="item.drwmethod" /></td>
+                         <td><input id="drwrun" class="form-control form-control-sm" name="drwrun"  [(ngModel)]="item.drwrun" /></td>
+                         <td><input id="drwmem" class="form-control form-control-sm" name="drwmem"  [(ngModel)]="item.drwmem" /></td>
+                       
+                     </tr>
+                  </tbody>
+               </table>
+            </div>
+         </div>
+
+
+         <div class="d-grid">
+            <button type="submit" class="btn btn-sm btn-dark" [disabled]="!heroForm.form.valid">Save</button>
+         </div>
+      </form>
+   </div>
+
+</ng-template>
+
+<ng-template #content let-modal>
+   <div class="modal-header">
+      <strong class="modal-title" id="modal-basic-title">New Outlet</strong>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+   </div>
+   <div class="modal-body">
+      <form (ngSubmit)="onSubmit()" #actorForm="ngForm">
+         <div class="mb-2">
+            <label for="descl1">Name1*</label>
+            <input id="descl1" class="form-control form-control-sm" name="descl1" [(ngModel)]="model.desc1" required
+               #descl1="ngModel" />
+            <small [hidden]="descl1.valid || descl1.pristine" class="text-danger">
+               *name1 is required
+            </small>
+         </div>
+
+
+
+         <div class="d-grid">
+            <button type="submit" class="btn btn-sm btn-dark" [disabled]="!actorForm.form.valid">Save</button>
+         </div>
+      </form>
+   </div>
+
+</ng-template>

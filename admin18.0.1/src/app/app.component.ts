@@ -5,16 +5,19 @@ import { TreeModule } from '@ali-hm/angular-tree-component';
 import { LoginComponent } from './login/login.component';
 import { ConfigService } from './service/config.service';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { environment } from '../environments/environment.development';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink,TreeModule, LoginComponent, NgbNavModule],
+  imports: [HttpClientModule, RouterOutlet, RouterLink,TreeModule, LoginComponent, NgbNavModule],
+  
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
 export class AppComponent implements OnInit {
-  active = 2;
+  active = 4;
   login : boolean = false;
   
   title = 'admin18.0.1';
@@ -135,52 +138,29 @@ export class AppComponent implements OnInit {
       name: 'WorkStation Tax Run', href: 'workStation/stationTaxRun', icon:'<i class="bi bi-display"></i>', 
     },  
   ];
-  outletTab : any  = [
-    {
-      name: 'Basic Outlet Setup', href: '', icon:'<i class="bi bi-display"></i>',
-      children: [
-        { name: 'Outlet Details', href: 'outlet', icon:'<i class="bi bi-credit-card"></i>', }, 
-       
-
-
-      ]
-    },  
-    {
-      name: 'Advance Outlet Setup', href: '', icon:'<i class="bi bi-display"></i>',
-      children: [
-        { name: 'Payment', href: 'tableMap', icon:'<i class="bi bi-credit-card"></i>', }, 
-        { name: 'Cash Types', href: 'tableMap', icon:'<i class="bi bi-credit-card"></i>', }, 
-        { name: 'Autority', href: 'tableMap', icon:'<i class="bi bi-person-fill-gear"></i>', }, 
-        { name: 'Order level', href: 'tableMap', icon:'<i class="bi bi-person-fill-gear"></i>', },  
-        { name: 'Discount', href: 'tableMap', icon:'<i class="bi bi-percent"></i>', },  
-        { name: 'Special Hours', href: 'tableMap', icon:'<i class="bi bi-clock"></i>', },  
-
-        { name: 'Table Map', href: 'tableMap', icon:'<i class="bi bi-display"></i>', 
-          children: [
-        
-          ] 
-        }, 
-        { name: 'Floor Map', href: 'floorMap', icon:'<i class="bi bi-display"></i>',  },  
-
-        { name: 'Tips Pool', href: 'floorMap', icon:'<i class="bi bi-display"></i>',  },  
-        { name: 'Mix & Match Rules', href: 'floorMap', icon:'<i class="bi bi-display"></i>',  },  
-        { name: 'Bonus Rules', href: 'floorMap', icon:'<i class="bi bi-display"></i>',  },  
-
-
-      ]
-    },  
-    
-  ];
+  outletTab : any  = [];
 
 
   options : any = {};
   constructor(
-    private router: Router,
-     private config: ConfigService,
+    private router: Router, 
+     private config: ConfigService, 
+     private http: HttpClient,
   ){
   }
   ngOnInit(): void {
       this.checkLogin(); 
+  }
+  httpGet(){
+    this.http.get<any>(environment.api+"global/menu",{
+      headers:this.config.headers(),
+    })
+    .subscribe(
+      data=>{
+        console.log(data);
+        this.outletTab = data['outletTab'];
+      }
+    )
   }
 
   checkLogin(){
@@ -189,6 +169,7 @@ export class AppComponent implements OnInit {
       this.router.navigate(['login']);
     }else{
       this.login = true;  
+      this.httpGet();
    
     }
   }

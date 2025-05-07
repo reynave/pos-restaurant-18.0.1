@@ -25,6 +25,7 @@ export class Actor {
 })
 export class TableMapComponent implements OnInit, AfterViewInit {
   resp: string = '';
+  path : string = environment.api+"public/floorMap/";
   loading: boolean = false;
   editable: boolean = false;
   outletFloorPlandId: number = 0;

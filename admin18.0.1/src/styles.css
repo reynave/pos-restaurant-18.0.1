@@ -91,7 +91,12 @@ body, html {
   padding: 0px 3px;
 }
 
-
+.table  thead th{
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #495057;
+}
 
 
 

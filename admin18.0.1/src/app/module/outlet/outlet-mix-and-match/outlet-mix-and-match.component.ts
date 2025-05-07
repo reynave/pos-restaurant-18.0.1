@@ -1,82 +1,32 @@
 import { Component, OnInit } from '@angular/core';
-import { ConfigService } from '../../service/config.service';
+import { ConfigService } from '../../../service/config.service';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { environment } from '../../../environments/environment.development';
+import { environment } from '../../../../environments/environment.development';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgbDatepickerModule, NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 export class Actor {
   constructor(
     public desc1: string,
-    public value: number,
+    public value: string, 
   ) { }
 }
-export class Hero {
-  constructor(
-    public descl1: string,
-    public descs1: string,
-    public tel: string,
-    public fax: string,
-    public comname1: string,
-    public addr1: string,
-    public street1: string,
-    public cityname1: string,
-    public country1: string,
-    public greeta1: string,
-    public greetb1: string,
-    public greetc1: string,
-    public greetd1: string,
-    public greete1: string,
-    public dpoleu1: string,
-    public dpolel1: string,
-    public panelid: number,
-    public price: number,
-    public sendpend: string,
-    public itmrnd: number,
-    public taxrnd: number,
-    public scrnd: number,
-    public discrnd: number,
-    public ckrnd: number,
-    public itmdec: number,
-    public taxdec: number,
-    public scdec: number,
-    public discdec: number,
-    public ckdec: number,
-    public begchk: number,
-    public endchk: number,
-    public nextchk: string,
-    public bizbegchk: string,
-    public drwprefix: string,
-    public drwamt: string,
-    public drwmethod: string,
-    public drwrun: string,
-    public drwmem: string,
-
-  ) { }
-}
-
-
-
 @Component({
-  selector: 'app-outlet',
+  selector: 'app-outlet-mix-and-match',
   standalone: true,
   imports: [HttpClientModule, CommonModule, FormsModule, NgbDropdownModule, NgbDatepickerModule],
-  templateUrl: './outlet.component.html',
-  styleUrl: './outlet.component.css'
+  templateUrl: './outlet-mix-and-match.component.html',
+  styleUrl: './outlet-mix-and-match.component.css'
 })
-export class OutletComponent implements OnInit {
+export class OutletMixAndMatchComponent implements OnInit {
   loading: boolean = false;
   checkboxAll: number = 0;
   disabled: boolean = true;
   items: any = [];
-  item: any = [];
+  outletSelect: any = []; 
+  api: string = environment.api;
 
-  selectorderLevel: any = [];
-  selectAuthLevel: any = [];
-  selectOrdLevel: any = [];
-
-
-  model = new Actor('', 0);
+  model = new Actor('', '');
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
@@ -84,12 +34,29 @@ export class OutletComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.httpGet();
+    this.httpMaster(); 
+  }
+  httpMaster() {
+    this.loading = true;
+    const url = environment.api + "outlet/cashType/masterData/";
+    this.http.get<any>(url, {
+      headers: this.configService.headers(),
+    }).subscribe(
+      data => {
+        console.log(data);
+        this.loading = false;
+        this.outletSelect = data['outlet']; 
+        this.httpGet();
+      },
+      error => {
+        console.log(error);
+      }
+    )
   }
 
   httpGet() {
     this.loading = true;
-    const url = environment.api + "outlet/index/";
+    const url = environment.api + "outlet/mixAndMatch/";
     this.http.get<any>(url, {
       headers: this.configService.headers(),
     }).subscribe(
@@ -124,15 +91,14 @@ export class OutletComponent implements OnInit {
   }
   onUpdate() {
     this.loading = true;
-    const url = environment.api + "outlet/index/update";
-    const body = this.item;
+    const url = environment.api + "outlet/mixAndMatch/update";
+    const body = this.items;
     this.http.post<any>(url, body, {
       headers: this.configService.headers(),
     }).subscribe(
       data => {
         console.log(data);
         this.loading = false;
-        this.httpGet();
       },
       error => {
         console.log(error);
@@ -141,9 +107,9 @@ export class OutletComponent implements OnInit {
   }
 
   onDelete() {
-    if (confirm("Delete this checklist?")) {
+    if (confirm("Delete this checklist?")) { 
       this.loading = true;
-      const url = environment.api + "outlet/index/delete";
+      const url = environment.api + "outlet/mixAndMatch/delete";
       const body = this.items;
       this.http.post<any>(url, body, {
         headers: this.configService.headers(),
@@ -161,7 +127,7 @@ export class OutletComponent implements OnInit {
 
   onSubmit() {
     this.loading = true;
-    const url = environment.api + "outlet/index/create";
+    const url = environment.api + "outlet/mixAndMatch/create";
     const body = {
       model: this.model,
     };
@@ -171,7 +137,7 @@ export class OutletComponent implements OnInit {
       data => {
         console.log(data);
         if (data['error'] == false) {
-          this.model = new Actor('', 0);
+          this.model = new Actor('','');
           this.httpGet();
         } else {
           alert("INSERT ERROR");
@@ -184,14 +150,8 @@ export class OutletComponent implements OnInit {
     )
   }
 
-
   open(content: any) {
     this.modalService.open(content);
-  }
-
-  openLg(content: any, item: any) {
-    this.item = item;
-    this.modalService.open(content, { size: 'xl' });
   }
 
 }

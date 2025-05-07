@@ -41,6 +41,13 @@ import { PantryStationQueueComponent } from './module/workstation/pantry-station
 import { PantryStationComponent } from './module/workstation/pantry-station/pantry-station.component';
 import { TableMapComponent } from './module/table-map/table-map.component';
 import { FloorMapComponent } from './module/floor-map/floor-map.component';
+import { OutletPaymentComponent } from './module/outlet/outlet-payment/outlet-payment.component';
+import { OutletCashTypeComponent } from './module/outlet/outlet-cash-type/outlet-cash-type.component';
+import { OutletDiscountComponent } from './module/outlet/outlet-discount/outlet-discount.component';
+import { OutletSpecialHourComponent } from './module/outlet/outlet-special-hour/outlet-special-hour.component';
+import { OutletTipsPoolComponent } from './module/outlet/outlet-tips-pool/outlet-tips-pool.component';
+import { OutletMixAndMatchComponent } from './module/outlet/outlet-mix-and-match/outlet-mix-and-match.component';
+import { OutletBonusRulesComponent } from './module/outlet/outlet-bonus-rules/outlet-bonus-rules.component';
 
 export const routes: Routes = [
     { path: '',component: HomeComponent},
@@ -50,7 +57,6 @@ export const routes: Routes = [
     { path: 'employee/dept', component: DeptEmployeeComponent },
     { path: 'employee/orderLevel', component: OrderLevelEmployeeComponent },
     
-    { path: 'outlet', component: OutletComponent },
 
     { path: 'specialHour', component: SpecialHoursComponent },
     { path: 'holidayList', component: HolidayListComponent },
@@ -97,13 +103,19 @@ export const routes: Routes = [
     // { path: 'template/kitchenMonitor', component: TemplatesComponent },
     // { path: 'template/kitchenSlip', component: TemplatesComponent },
     { path: 'workStation/pantryStation', component: PantryStationComponent },
-    { path: 'workStation/printQueue', component: PantryStationQueueComponent },
-    
+    { path: 'workStation/printQueue', component: PantryStationQueueComponent }, 
     { path: 'workStation/stationTaxRun', component: StationTaxRunComponent },
-
-
-    { path: 'outlet', component: OutletComponent },
+ 
+    { path: 'outlet', component: OutletComponent }, 
+    { path: 'outlet/payment', component: OutletPaymentComponent },
+    { path: 'outlet/cashType', component: OutletCashTypeComponent },
+    { path: 'outlet/discount', component: OutletDiscountComponent },
+    { path: 'outlet/specialHour', component: OutletSpecialHourComponent },
+    { path: 'outlet/tipsPool', component: OutletTipsPoolComponent },
+    { path: 'outlet/mixAndMatch', component: OutletMixAndMatchComponent },
+    { path: 'outlet/bonusRules', component: OutletBonusRulesComponent },
     
+
     { path: 'tableMap', component: TableMapComponent },
     { path: 'floorMap', component: FloorMapComponent },
     

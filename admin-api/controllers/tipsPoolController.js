@@ -4,42 +4,23 @@ const { today, formatDateOnly } = require('../helpers/global');
 exports.getAllData = async (req, res) => {
   try {
 
-    const outletTab = [
-      {
-        name: 'Basic Outlet Setup', href: '', icon:'<i class="bi bi-display"></i>',
-        children: [
-          { name: 'Outlet Details', href: 'outlet', icon:'<i class="bi bi-credit-card"></i>', },  
-        ]
-      },  
-      {
-        name: 'Advance Outlet Setup', href: '', icon:'<i class="bi bi-display"></i>',
-        children: [
-          { name: 'Payment', href: 'outlet/payment', icon:'<i class="bi bi-credit-card"></i>', }, 
-          { name: 'Cash Types', href: 'outlet/cashType', icon:'<i class="bi bi-credit-card"></i>', }, 
-          { name: 'Autority', href: '', icon:'<i class="bi bi-person-fill-gear"></i>', }, 
-          { name: 'Order level', href: '', icon:'<i class="bi bi-person-fill-gear"></i>', },  
-          { name: 'Discount', href: 'outlet/discount', icon:'<i class="bi bi-percent"></i>', },  
-          { name: 'Special Hours', href: 'outlet/specialHour', icon:'<i class="bi bi-clock"></i>', },  
-  
-          { name: 'Table Map', href: 'tableMap', icon:'<i class="bi bi-display"></i>', 
-            children: [
-          
-            ] 
-          }, 
-          { name: 'Floor Map', href: 'floorMap', icon:'<i class="bi bi-display"></i>',  },  
-  
-          { name: 'Tips Pool', href: 'outlet/tipsPool', icon:'<i class="bi bi-display"></i>',  },  
-          { name: 'Mix & Match Rules', href: 'outlet/mixAndMatch', icon:'<i class="bi bi-display"></i>',  },  
-          { name: 'Bonus Rules', href: 'outlet/bonusRules', icon:'<i class="bi bi-display"></i>',  },  
-  
-  
-        ]
-      },  
-      
-    ] 
+    const [rows] = await db.query(`
+      SELECT *, 0 as 'checkbox'
+      FROM outlet_tips_pool  
+      WHERE presence =1
+    `);
+
+    const formattedRows = rows.map(row => ({
+      ...row,
+      stdate: formatDateOnly(row.stdate),
+      enddate: formatDateOnly(row.enddate),
+    }));
+
+
     const data = {
       error: false,
-      outletTab: outletTab, 
+      items: formattedRows,
+      get: req.query
     }
 
     res.json(data);
@@ -57,12 +38,11 @@ exports.postCreate = async (req, res) => {
   try {
 
     const [result] = await db.query(
-      `INSERT INTO check_cash_type (presence, inputDate, desc1, value ) 
-      VALUES (?, ?, ?, ?)`,
+      `INSERT INTO outlet_tips_pool (presence, inputDate, outlet ) 
+      VALUES (?, ?, ?)`,
       [
         1,
         inputDate,
-        model['desc1'],
         model['value']
       ]
     );
@@ -70,8 +50,8 @@ exports.postCreate = async (req, res) => {
     res.status(201).json({
       error: false,
       inputDate: inputDate,
-      message: 'check_cash_type created',
-      check_cash_typeId: result.insertId
+      message: 'outlet_tips_pool created',
+      outlet_tips_poolId: result.insertId
     });
   } catch (err) {
     console.error(err);
@@ -103,9 +83,11 @@ exports.postUpdate = async (req, res) => {
       }
 
       const [result] = await db.query(
-        `UPDATE check_cash_type SET 
-          desc1 = '${emp['desc1']}',   
-          value = '${emp['value']}',    
+        `UPDATE outlet_tips_pool SET 
+          outlet = '${emp['outlet']}',   
+          mjdept = '${emp['mjdept']}',    
+           empdept = '${emp['empdept']}',    
+            rate = '${emp['rate']}',    
           
           updateDate = '${today()}'
 
@@ -156,7 +138,7 @@ exports.postDelete = async (req, res) => {
 
 
       const [result] = await db.query(
-        'UPDATE check_cash_type SET presence = ?, updateDate = ? WHERE cashid = ?',
+        'UPDATE outlet_tips_pool SET presence = ?, updateDate = ? WHERE cashid = ?',
         [checkbox == 0 ? 1 : 0, today(), id]
       );
 

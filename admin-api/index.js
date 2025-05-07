@@ -16,7 +16,9 @@ const template = require('./routes/general/template');
 const workStation = require('./routes/station/workStation');
 const tableMap = require('./routes/outlet/tableMap');
 const global = require('./routes/global/global');
-
+const outlet = require('./routes/outlet/outlet');
+const floorMap = require('./routes/outlet/floorMap');
+ 
  
 
 app.use((req, res, next) => {
@@ -66,7 +68,9 @@ app.use(process.env.PREFIX+'complaint', complaint);
 app.use(process.env.PREFIX+'customer', customer);
 app.use(process.env.PREFIX+'template', template);
 app.use(process.env.PREFIX+'workStation', workStation);
-app.use(process.env.PREFIX+'tableMap', tableMap);
+app.use(process.env.PREFIX+'tableMap', tableMap); 
+app.use(process.env.PREFIX+'outlet', outlet);
+app.use(process.env.PREFIX+'floorMap', floorMap);
 
 app.use('/', (req, res) => {
     const data = {

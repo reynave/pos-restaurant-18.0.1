@@ -6,7 +6,7 @@
       {{x.desc1}}
     </a>
     @if(editable == true){
-      <a href="javascript:;" [routerLink]="['/routePath']"  class="btn btn-sm btn-outline-dark mx-1" ><i class="bi bi-plus-square-fill"></i> Add Floor</a>
+      <a href="javascript:;" [routerLink]="['/floorMap']"  class="btn btn-sm btn-outline-dark mx-1" ><i class="bi bi-plus-square-fill"></i> Add Floor</a>
 
     }
     </div>
@@ -35,7 +35,7 @@
 
 <div class="container-fix " *ngIf="outletFloorPlandId != 0">
   <div class="left">
-    <div id="contentDiv" class="layout-container shadow-sm" [style]="'background-color: '+(editable? '#fefefe':'#f5f5f5')+';'">
+    <div id="contentDiv" class="layout-container shadow-sm" [style]="'background: '+(editable? '#fefefe':'#f5f5f5')+' url('+path+outletFloorPlandId+'.png) no-repeat 0 0;'">
       <div *ngFor="let table of tables" class="draggable" #tableEl [attr.data-id]="table.id"
         [style.transform]="'translate(' + table.x + 'px,' + table.y + 'px)'" [style.width.px]="table.width"
         [style.height.px]="table.height" [style.backgroundImage]="'url(' + table.icon + ')'"
