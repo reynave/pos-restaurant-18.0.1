@@ -458,7 +458,7 @@ CREATE TABLE IF NOT EXISTS `customer_info_grp` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
--- Dumping data for table pos_resto.customer_info_grp: ~1 rows (approximately)
+-- Dumping data for table pos_resto.customer_info_grp: ~2 rows (approximately)
 INSERT INTO `customer_info_grp` (`id`, `desc1`, `desc2`, `desc3`, `active`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
 	(2, 'G12', NULL, NULL, '1', 1, '2025-04-30 17:46:49', 1, '2025-04-30 17:47:28', 1),
 	(3, 'G2', NULL, NULL, '1', 1, '2025-04-30 17:46:53', 1, '2025-04-30 17:47:28', 1);
@@ -592,7 +592,7 @@ CREATE TABLE IF NOT EXISTS `employee_dept` (
   PRIMARY KEY (`empdept`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
--- Dumping data for table pos_resto.employee_dept: ~6 rows (approximately)
+-- Dumping data for table pos_resto.employee_dept: ~7 rows (approximately)
 INSERT INTO `employee_dept` (`empdept`, `desc1`, `desc2`, `desc3`, `drawer`, `autopend`, `voidown`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
 	(1, 'Administrator ', 'Administrator       ', 'Administrator       ', 'checkbox', 'checkbox', 'dropdown [order leve', 1, '2025-01-01 00:00:00', 1, '2025-05-02 14:26:51', 1),
 	(2, 'General Manager ', 'General Manager     ', 'General Manager     ', '1', ' c', 'zcv ', 1, '2025-01-01 00:00:00', 1, '2025-05-02 14:26:51', 1),
@@ -639,7 +639,7 @@ CREATE TABLE IF NOT EXISTS `foreign_currency_type` (
   PRIMARY KEY (`fcyid`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
--- Dumping data for table pos_resto.foreign_currency_type: ~2 rows (approximately)
+-- Dumping data for table pos_resto.foreign_currency_type: ~3 rows (approximately)
 INSERT INTO `foreign_currency_type` (`fcyid`, `desc1`, `desc2`, `desc3`, `ratefcy`, `chgbakfcy`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
 	(1, 'HK Dollars ', 'HK Dollars          ', 'HK Dollars          ', 0.1282, 1, 1, '2025-01-01 00:00:00', 1, '2025-04-29 16:05:30', 1),
 	(2, 'CNY Dollars ', 'CNY Dollars         ', 'CNY Dollars         ', 0.1410, 1, 1, '2025-01-01 00:00:00', 1, '2025-04-29 16:05:30', 1),
@@ -785,7 +785,7 @@ CREATE TABLE IF NOT EXISTS `func_short_cut` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
--- Dumping data for table pos_resto.func_short_cut: ~28 rows (approximately)
+-- Dumping data for table pos_resto.func_short_cut: ~29 rows (approximately)
 INSERT INTO `func_short_cut` (`id`, `mode`, `buttonkey`, `seq`, `desc1`, `desc2`, `desc3`, `ispopup`, `func`, `param1`, `finactive`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
 	(1, 1, 1, 1, 'Send Check                              ', 'Send Check                              ', 'Send Check                              ', ' ', '002001', '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
 	(2, 1, 2, 2, 'Print Check                             ', 'Print Check                             ', 'Print Check                             ', ' ', '002006', '                                                                      ', ' ', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
@@ -953,7 +953,7 @@ CREATE TABLE IF NOT EXISTS `ic_card_add_value_type` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
--- Dumping data for table pos_resto.ic_card_add_value_type: ~0 rows (approximately)
+-- Dumping data for table pos_resto.ic_card_add_value_type: ~2 rows (approximately)
 INSERT INTO `ic_card_add_value_type` (`id`, `desc1`, `desc2`, `desc3`, `seq`, `amount`, `free`, `extmonth`, `openamt`, `opendrw`, `item`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
 	(1, 'IC 1', NULL, NULL, '12', 3, '4', '5', '6', '8', '90', 0, '2025-04-29 17:05:04', 1, '2025-04-29 17:06:45', 1),
 	(2, 'tyer', NULL, NULL, '1', 23, '42', 'null', 'null', 'null', 'null', 1, '2025-04-30 11:35:36', 1, '2025-04-30 11:35:41', 1);
@@ -1045,7 +1045,7 @@ CREATE TABLE IF NOT EXISTS `member_account` (
   PRIMARY KEY (`accid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
--- Dumping data for table pos_resto.member_account: ~2 rows (approximately)
+-- Dumping data for table pos_resto.member_account: ~3 rows (approximately)
 INSERT INTO `member_account` (`accid`, `desc1`, `desc2`, `desc3`, `date`, `empid`, `active`, `amount`, `credlimit`, `void`, `voidcode`, `voidtime`, `voidempid`, `lckstatid`, `lckempid`, `renewdate`, `usagedate`, `refundate`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
 	(1, '2', NULL, NULL, '43', '43', '4', '434', '423', '34', '34', '34', 'null', 'null', 'null', 'null', 'null', 'null', 1, '2025-04-30 16:13:46', 1, '2025-04-30 16:17:51', 1),
 	(2, '33', NULL, NULL, '43', '43', '3', '3', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 1, '2025-04-30 16:13:50', 1, '2025-04-30 16:17:51', 1),
@@ -1069,7 +1069,7 @@ CREATE TABLE IF NOT EXISTS `member_account_holder` (
   PRIMARY KEY (`accid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
--- Dumping data for table pos_resto.member_account_holder: ~0 rows (approximately)
+-- Dumping data for table pos_resto.member_account_holder: ~2 rows (approximately)
 INSERT INTO `member_account_holder` (`accid`, `member`, `date`, `empid`, `void`, `voidcode`, `voidtime`, `voidempid`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
 	(1, '2323', '122', '3', '23', '23', 'null', 'null', 1, '2025-04-30 16:29:27', 1, '2025-04-30 16:29:53', 1),
 	(2, '2323123', 'null', 'null', 'null', 'null', 'null', 'null', 0, '2025-04-30 16:29:45', 1, '2025-04-30 16:29:59', 1);
@@ -1648,7 +1648,7 @@ CREATE TABLE IF NOT EXISTS `outlet_cash_type` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
--- Dumping data for table pos_resto.outlet_cash_type: ~30 rows (approximately)
+-- Dumping data for table pos_resto.outlet_cash_type: ~31 rows (approximately)
 INSERT INTO `outlet_cash_type` (`id`, `outletId`, `cashid`, `seq`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
 	(1, 1004, 1, 33, 1, '2025-01-01 00:00:00', 1, '2025-05-07 18:44:44', 1),
 	(2, 1002, 2, 2, 1, '2025-01-01 00:00:00', 1, '2025-05-07 18:44:44', 1),
@@ -1854,7 +1854,7 @@ CREATE TABLE IF NOT EXISTS `outlet_floor_plan` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5438 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
--- Dumping data for table pos_resto.outlet_floor_plan: ~4 rows (approximately)
+-- Dumping data for table pos_resto.outlet_floor_plan: ~5 rows (approximately)
 INSERT INTO `outlet_floor_plan` (`id`, `outletId`, `desc1`, `desc2`, `desc3`, `stdate`, `enddate`, `sttime`, `endtime`, `weekmask`, `public`, `type`, `bkcolor`, `image`, `sorting`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
 	(1, 1002, 'HOTLINE  34           ', 'HOTLINE             ', 'HOTLINE             ', '        ', '        ', '      ', '      ', '       ', ' ', '  ', '000000', '                              ', 1, 1, '2025-01-01 00:00:00', 1, '2025-05-07 18:37:16', 1),
 	(2, 15, 'Other               ', 'Other               ', 'Other               ', '        ', '        ', '      ', '      ', '       ', ' ', '  ', '000000', '                              ', 2, 1, '2025-01-01 00:00:00', 1, '2025-05-07 18:37:16', 1),
@@ -2411,7 +2411,7 @@ CREATE TABLE IF NOT EXISTS `outlet_table_map` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=147 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
--- Dumping data for table pos_resto.outlet_table_map: ~115 rows (approximately)
+-- Dumping data for table pos_resto.outlet_table_map: ~116 rows (approximately)
 INSERT INTO `outlet_table_map` (`id`, `outletId`, `outletFloorPlandId`, `tableName`, `tableNameExt`, `desc1`, `desc2`, `desc3`, `class`, `seatcnt`, `posY`, `posX`, `width`, `height`, `capacity`, `shape`, `seatpos`, `seatarr`, `default`, `consume`, `icon`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
 	(1, 15, 2, '00TA5', '   ', '                    ', '                    ', '                    ', 0, 0, 1, 639, 80, 80, 4, 2, 2, 0, '  ', 0.00, NULL, 1, '2025-01-01 00:00:00', 1, '2025-05-06 17:22:53', 1),
 	(2, 15, 2, '00TA4', '   ', '                    ', '                    ', '                    ', 0, 0, 1, 489, 80, 80, 4, 2, 2, 0, '  ', 0.00, NULL, 1, '2025-01-01 00:00:00', 1, '2025-05-06 17:22:53', 1),
@@ -2777,7 +2777,7 @@ CREATE TABLE IF NOT EXISTS `station_tax_run` (
   PRIMARY KEY (`statid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
--- Dumping data for table pos_resto.station_tax_run: ~3 rows (approximately)
+-- Dumping data for table pos_resto.station_tax_run: ~4 rows (approximately)
 INSERT INTO `station_tax_run` (`statid`, `paygrpid`, `taxbeg`, `taxend`, `taxrun`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
 	(1, '1', '3', '5', '7', 1, '2025-05-02 16:52:54', 1, '2025-05-02 17:08:44', 1),
 	(2, '2', '4', '6', '8', 0, '2025-05-02 16:52:57', 1, '2025-05-02 17:08:51', 1),
@@ -2842,7 +2842,7 @@ CREATE TABLE IF NOT EXISTS `template_category` (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=301 DEFAULT CHARSET=utf16 COLLATE=utf16_bin;
 
--- Dumping data for table pos_resto.template_category: ~2 rows (approximately)
+-- Dumping data for table pos_resto.template_category: ~3 rows (approximately)
 INSERT INTO `template_category` (`id`, `name`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
 	(100, 'Kitchen Slip', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
 	(200, 'Kitchen Message', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
@@ -2888,7 +2888,7 @@ CREATE TABLE IF NOT EXISTS `void_code` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
--- Dumping data for table pos_resto.void_code: ~39 rows (approximately)
+-- Dumping data for table pos_resto.void_code: ~40 rows (approximately)
 INSERT INTO `void_code` (`id`, `mode`, `void_Code`, `desc1`, `desc2`, `desc3`, `seq`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
 	(1, 2, '001', 'Problem Food        ', 'Problem Food        ', 'Problem Food        ', '001', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
 	(2, 2, '002', 'Testing             ', 'Testing             ', 'Testing             ', '002', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
@@ -2979,7 +2979,7 @@ CREATE TABLE IF NOT EXISTS `wb_svc_card_add_value_type` (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
--- Dumping data for table pos_resto.wb_svc_card_add_value_type: ~0 rows (approximately)
+-- Dumping data for table pos_resto.wb_svc_card_add_value_type: ~1 rows (approximately)
 INSERT INTO `wb_svc_card_add_value_type` (`id`, `desc1`, `desc2`, `desc3`, `seq`, `amount`, `free`, `extmonth`, `openamt`, `opendrw`, `item`, `svcclass`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
 	(1, 'tte2', NULL, NULL, '3', '4', '5', '6', '7', 'null', 'null', NULL, 0, '2025-04-29 16:24:33', 1, '2025-04-29 16:24:48', 1);
 
