@@ -106,7 +106,7 @@ exports.postUpdate = async (req, res) => {
         `UPDATE outlet_payment SET 
           outletId = '${emp['outletId']}',   
           payid = '${emp['payid']}',    
-           seq = '${emp['seq']}',     
+          seq = '${emp['seq']}',     
           
           updateDate = '${today()}'
 

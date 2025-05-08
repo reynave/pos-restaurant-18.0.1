@@ -5,6 +5,9 @@ const payment = require('../../controllers/outletPaymentController');
 const cashType = require('../../controllers/outletCashTypesController');  
 const tipsPool = require('../../controllers/tipsPoolController');  
 const mixAndMatch = require('../../controllers/mixAndMatchController');  
+const bonusRules = require('../../controllers/bonusRulesController');  
+const funcAuthority = require('../../controllers/funcAuthorityController');  
+const specialHour = require('../../controllers/outletSpecialHourController');  
 
 router.get('/index/', outlet.getAllData);
 //router.get('/list/master', outlet.getMaster); 
@@ -35,6 +38,23 @@ router.get('/mixAndMatch/', mixAndMatch.getAllData);
 router.post('/mixAndMatch/update', mixAndMatch.postUpdate);
 router.post('/mixAndMatch/create', mixAndMatch.postCreate);
 router.post('/mixAndMatch/delete', mixAndMatch.postDelete); 
+ 
+router.get('/bonusRules/', bonusRules.getAllData); 
+router.post('/bonusRules/update', bonusRules.postUpdate);
+router.post('/bonusRules/create', bonusRules.postCreate);
+router.post('/bonusRules/delete', bonusRules.postDelete); 
+ 
+ 
+router.get('/funcAuthority/', funcAuthority.getAllData); 
+router.post('/funcAuthority/update', funcAuthority.postUpdate);
+router.post('/funcAuthority/create', funcAuthority.postCreate);
+router.post('/funcAuthority/delete', funcAuthority.postDelete); 
+ 
+
+router.get('/specialHour/', specialHour.getAllData); 
+router.post('/specialHour/update', specialHour.postUpdate);
+router.post('/specialHour/create', specialHour.postCreate);
+router.post('/specialHour/delete', specialHour.postDelete); 
  
 
 

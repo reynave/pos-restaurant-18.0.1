@@ -139,6 +139,7 @@ export class AppComponent implements OnInit {
     },  
   ];
   outletTab : any  = [];
+  menuTab : any  = [];
 
 
   options : any = {};
@@ -159,6 +160,8 @@ export class AppComponent implements OnInit {
       data=>{
         console.log(data);
         this.outletTab = data['outletTab'];
+        this.menuTab = data['menuTab'];
+        
       }
     )
   }

@@ -39,9 +39,15 @@
       <li [ngbNavItem]="3">
         <button ngbNavLink class="px-2 py-1"><small>Menu</small></button>
         <ng-template ngbNavContent>
-          <p>
-            soon
-          </p>
+          <div class="mx-3">
+            <tree-root #treeComponent [nodes]="menuTab" [options]="options" (activate)="onEvent($event)">
+              <ng-template #treeNodeTemplate let-node let-index="index">
+                <span class="file-icon" [innerHTML]="node.data.icon"></span>
+                {{ node.data.name }}
+              </ng-template>
+
+            </tree-root>
+          </div>
         </ng-template>
       </li>
       <li [ngbNavItem]="4">

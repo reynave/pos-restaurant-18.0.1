@@ -12,13 +12,13 @@ export class Actor {
   ) { }
 }
 @Component({
-  selector: 'app-outlet-bonus-rules',
+  selector: 'app-outlet-func-authority',
   standalone: true,
   imports: [HttpClientModule, CommonModule, FormsModule, NgbDropdownModule, NgbDatepickerModule],
-  templateUrl: './outlet-bonus-rules.component.html',
-  styleUrl: './outlet-bonus-rules.component.css'
+  templateUrl: './outlet-func-authority.component.html',
+  styleUrl: './outlet-func-authority.component.css'
 })
-export class OutletBonusRulesComponent implements OnInit {
+export class OutletFuncAuthorityComponent implements OnInit {
   loading: boolean = false;
   checkboxAll: number = 0;
   disabled: boolean = true;
@@ -54,7 +54,7 @@ export class OutletBonusRulesComponent implements OnInit {
   }
   httpGet() {
     this.loading = true;
-    const url = environment.api + "outlet/bonusRules/";
+    const url = environment.api + "outlet/funcAuthority/";
     this.http.get<any>(url, {
       headers: this.configService.headers(),
     }).subscribe(
@@ -89,7 +89,7 @@ export class OutletBonusRulesComponent implements OnInit {
   }
   onUpdate() {
     this.loading = true;
-    const url = environment.api + "outlet/bonusRules/update";
+    const url = environment.api + "outlet/funcAuthority/update";
     const body = this.items;
     this.http.post<any>(url, body, {
       headers: this.configService.headers(),
@@ -107,7 +107,7 @@ export class OutletBonusRulesComponent implements OnInit {
   onDelete() {
     if (confirm("Delete this checklist?")) { 
       this.loading = true;
-      const url = environment.api + "outlet/bonusRules/delete";
+      const url = environment.api + "outlet/funcAuthority/delete";
       const body = this.items;
       this.http.post<any>(url, body, {
         headers: this.configService.headers(),
@@ -125,7 +125,7 @@ export class OutletBonusRulesComponent implements OnInit {
 
   onSubmit() {
     this.loading = true;
-    const url = environment.api + "outlet/bonusRules/create";
+    const url = environment.api + "outlet/funcAuthority/create";
     const body = {
       model: this.model,
     };

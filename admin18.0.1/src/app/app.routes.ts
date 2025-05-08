@@ -48,6 +48,11 @@ import { OutletSpecialHourComponent } from './module/outlet/outlet-special-hour/
 import { OutletTipsPoolComponent } from './module/outlet/outlet-tips-pool/outlet-tips-pool.component';
 import { OutletMixAndMatchComponent } from './module/outlet/outlet-mix-and-match/outlet-mix-and-match.component';
 import { OutletBonusRulesComponent } from './module/outlet/outlet-bonus-rules/outlet-bonus-rules.component';
+import { OutletFuncAuthorityComponent } from './module/outlet/outlet-func-authority/outlet-func-authority.component';
+import { MenuItemComponent } from './module/menu/menu-item/menu-item.component';
+import { MenuDeptComponent } from './module/menu/menu-dept/menu-dept.component';
+import { MenuCategoryComponent } from './module/menu/menu-category/menu-category.component';
+import { MenuClassComponent } from './module/menu/menu-class/menu-class.component';
 
 export const routes: Routes = [
     { path: '',component: HomeComponent},
@@ -114,7 +119,17 @@ export const routes: Routes = [
     { path: 'outlet/tipsPool', component: OutletTipsPoolComponent },
     { path: 'outlet/mixAndMatch', component: OutletMixAndMatchComponent },
     { path: 'outlet/bonusRules', component: OutletBonusRulesComponent },
+
+    { path: 'outlet/funcAuthority', component: OutletFuncAuthorityComponent },
+    { path: 'outlet/orderLevel', component: OutletBonusRulesComponent }, 
+    { path: 'outlet/specialHour', component: OutletSpecialHourComponent },
     
+    { path: 'menu/item', component: MenuItemComponent },
+    { path: 'menu/department', component: MenuDeptComponent },
+    { path: 'menu/category', component: MenuCategoryComponent },
+    { path: 'menu/class', component: MenuClassComponent },
+    
+
 
     { path: 'tableMap', component: TableMapComponent },
     { path: 'floorMap', component: FloorMapComponent },

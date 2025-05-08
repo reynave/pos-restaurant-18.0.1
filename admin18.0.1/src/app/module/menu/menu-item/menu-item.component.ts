@@ -8,23 +8,26 @@ import { NgbDatepickerModule, NgbDropdownModule, NgbModal } from '@ng-bootstrap/
 export class Actor {
   constructor(
     public desc1: string,
-    public outletId: string, 
+    public date: number, 
   ) { }
 }
 @Component({
-  selector: 'app-outlet-bonus-rules',
+  selector: 'app-menu-item',
   standalone: true,
   imports: [HttpClientModule, CommonModule, FormsModule, NgbDropdownModule, NgbDatepickerModule],
-  templateUrl: './outlet-bonus-rules.component.html',
-  styleUrl: './outlet-bonus-rules.component.css'
+  templateUrl: './menu-item.component.html',
+  styleUrl: './menu-item.component.css'
 })
-export class OutletBonusRulesComponent implements OnInit {
+export class MenuItemComponent implements OnInit {
   loading: boolean = false;
   checkboxAll: number = 0;
   disabled: boolean = true;
-  items: any = []; 
-  outletSelect : any = [];
-  model = new Actor('', '');
+  items: any = [];
+  selectorderLevel: any = [];
+  selectAuthLevel: any = [];
+  selectOrdLevel: any = [];
+ 
+  model = new Actor('', 0);
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
@@ -32,29 +35,12 @@ export class OutletBonusRulesComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.httpMaster();
     this.httpGet();
   }
-  httpMaster() {
-    this.loading = true;
-    const url = environment.api + "outlet/cashType/masterData/";
-    this.http.get<any>(url, {
-      headers: this.configService.headers(),
-    }).subscribe(
-      data => {
-        console.log(data);
-        this.loading = false;
-        this.outletSelect = data['outlet']; 
-        this.httpGet();
-      },
-      error => {
-        console.log(error);
-      }
-    )
-  }
+
   httpGet() {
     this.loading = true;
-    const url = environment.api + "outlet/bonusRules/";
+    const url = environment.api + "menu/item/";
     this.http.get<any>(url, {
       headers: this.configService.headers(),
     }).subscribe(
@@ -89,7 +75,7 @@ export class OutletBonusRulesComponent implements OnInit {
   }
   onUpdate() {
     this.loading = true;
-    const url = environment.api + "outlet/bonusRules/update";
+    const url = environment.api + "menu/item/update";
     const body = this.items;
     this.http.post<any>(url, body, {
       headers: this.configService.headers(),
@@ -107,7 +93,7 @@ export class OutletBonusRulesComponent implements OnInit {
   onDelete() {
     if (confirm("Delete this checklist?")) { 
       this.loading = true;
-      const url = environment.api + "outlet/bonusRules/delete";
+      const url = environment.api + "menu/item/delete";
       const body = this.items;
       this.http.post<any>(url, body, {
         headers: this.configService.headers(),
@@ -125,7 +111,7 @@ export class OutletBonusRulesComponent implements OnInit {
 
   onSubmit() {
     this.loading = true;
-    const url = environment.api + "outlet/bonusRules/create";
+    const url = environment.api + "menu/item/create";
     const body = {
       model: this.model,
     };
@@ -135,7 +121,7 @@ export class OutletBonusRulesComponent implements OnInit {
       data => {
         console.log(data);
         if (data['error'] == false) {
-          this.model = new Actor('','');
+          this.model = new Actor('',0);
           this.httpGet();
         } else {
           alert("INSERT ERROR");
