@@ -58,8 +58,7 @@
               <ng-template #treeNodeTemplate let-node let-index="index">
                 <span class="file-icon" [innerHTML]="node.data.icon"></span>
                 {{ node.data.name }}
-              </ng-template>
-
+              </ng-template> 
             </tree-root>
           </div>
         </ng-template>
@@ -68,9 +67,9 @@
 
     <div [ngbNavOutlet]="nav" class="mt-2"></div>
 
-    <div class="d-grid">
+    <!-- <div class="d-grid">
       <button class="btn btn-sm btn-light border" (click)="onLogout()" type="button">Logout</button>
-    </div>
+    </div> -->
 
   </nav>
 

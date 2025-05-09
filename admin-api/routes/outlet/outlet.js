@@ -9,8 +9,8 @@ const bonusRules = require('../../controllers/bonusRulesController');
 const funcAuthority = require('../../controllers/funcAuthorityController');  
 const specialHour = require('../../controllers/outletSpecialHourController');  
 
-router.get('/index/', outlet.getAllData);
-//router.get('/list/master', outlet.getMaster); 
+router.get('/index', outlet.getAllData);
+router.get('/select', outlet.getSelect); 
 router.post('/index/update', outlet.postUpdate);
 router.post('/index/create', outlet.postCreate);
 router.post('/index/delete', outlet.postDelete); 

@@ -5,7 +5,8 @@
         <div class="header py-2">
             <div class="row">
                 <div class="col-4">
-                    <strong>MENU ITEMS</strong>
+                    <strong>PRINTER SETTING</strong>
+
                     <span class="mx-1" *ngIf="loading">
                         <img src="./gif/Pulse@1x-1.0s-200px-200px.gif" height="30">
                     </span>
@@ -28,13 +29,19 @@
                     }
 
                 </div>
+
             </div>
 
         </div>
-        <div class="mainContent border">
-            <div class="">
+        <div class="mainContent ">
+            <div class="row">
+                <div class="col-12">
+                    <small>only runs on local server, if you use cloud server, please using printer service</small>
+                </div>
+            </div>
+            <div class="border">
 
-                <div class="table table-sm table-editable table-hover" style="width: max-content;">
+                <div class="table table-sm table-editable table-hover" style="width: 100%">
                     <thead class="sticky-top ">
                         <tr>
 
@@ -48,19 +55,12 @@
                                 </a>
                             </th>
                             <th>#</th>
+                            <th>outlet </th>
                             <th>name</th>
-                            <th class="text-end">price1</th>
-                            <th class="text-end">price2</th>
-                            <th class="text-end">price3</th>
-                            <th class="text-end">price4</th>
-                            
-                            <th class="text-end">special Price1</th>
-
-                            <th>Department</th>
-                            <th>Category</th>
-                            <th>Class</th>
-
-                            <th>inputDate</th>
+                            <th>ip Address</th>
+                            <th class="text-end">port</th>
+ 
+                            <th> </th>
 
                         </tr>
                     </thead>
@@ -76,38 +76,20 @@
                             </td>
                             <td>{{i+1}}</td>
 
-                            <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.name" (focus)="onHere(x)"
-                                    [disabled]="disabled"> </td>
-                            <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.price1" currencyMask 
-                                    [disabled]="disabled"> </td>
-                                    
-                            <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.price2" currencyMask 
-                                    [disabled]="disabled"> </td>
-                            <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.price3" currencyMask 
-                                    [disabled]="disabled"> </td>
-                            <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.price4" currencyMask 
-                                    [disabled]="disabled"> </td>
-                            <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.specialPrice1" currencyMask 
-                                    [disabled]="disabled"> </td>
                             <td>
-                                <select  class="form-control form-control-sm" [(ngModel)]="x.menuDepartmentId"   [disabled]="disabled">
-                                    <option *ngFor="let a of selectDept" [value]="a.id">{{a.desc1}}</option>
-                                </select>    
+                                <select   class="form-control form-control-sm" name="outletId"
+                                    [(ngModel)]="x.outletId" [disabled]="disabled">
+                                    <option *ngFor="let h of selectOutlet" [value]="h.id">{{h.name1}}</option>
+                                </select>
                             </td>
+                     
+                            <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.name"   [disabled]="disabled"> </td>
+                            <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.ipAddress"   [disabled]="disabled"> </td>
+                            <td><input type="number" class="form-control form-control-sm" [(ngModel)]="x.port"   [disabled]="disabled"> </td>
+                     
 
-                            <td>
-                                <select  class="form-control form-control-sm" [(ngModel)]="x.menuCategoryId"   [disabled]="disabled">
-                                    <option *ngFor="let a of selectCategory" [value]="a.id">{{a.desc1}}</option>
-                                </select>    
-                            </td>
+                            <td> <a href="javascript:;"  class="text-primary">Test Print</a> </td>
 
-                            <td>
-                                <select  class="form-control form-control-sm" [(ngModel)]="x.menuClassId"   [disabled]="disabled">
-                                    <option *ngFor="let a of selectClass" [value]="a.id">{{a.desc1}}</option>
-                                </select>    
-                            </td>
-    
-                            <td>{{ x.inputDate | date:'medium'}} </td>
 
                         </tr>
                     </tbody>
@@ -121,13 +103,24 @@
 
 <ng-template #content let-modal>
     <div class="modal-header">
-        <strong class="modal-title" id="modal-basic-title">New Item</strong>
+        <strong class="modal-title" id="modal-basic-title">New IP Printer Setting</strong>
         <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
     </div>
     <div class="modal-body">
         <form (ngSubmit)="onSubmit()" #actorForm="ngForm">
             <div class="mb-2">
-                <label for="desc1">Description*</label>
+                <label for="outletId">Outlet*</label>
+                <select id="outletId" class="form-control form-control-sm" name="outletId" [(ngModel)]="model.outletId"
+                    required #outletId="ngModel">
+                    <option *ngFor="let h of selectOutlet" [value]="h.id">{{h.name1}}</option>
+                </select>
+                <small [hidden]="outletId.valid || outletId.pristine" class="text-danger">
+                    *outletId is required
+                </small>
+            </div>
+
+            <div class="mb-2">
+                <label for="desc1">Printer Name *</label>
                 <input id="desc1" class="form-control form-control-sm" name="desc1" [(ngModel)]="model.desc1" required
                     #desc1="ngModel" />
                 <small [hidden]="desc1.valid || desc1.pristine" class="text-danger">
@@ -135,6 +128,26 @@
                 </small>
             </div>
 
+            <div class="mb-4">
+                <div class="row g-1">
+                    <div class="col-6">
+                        <label for="ip">IP Address printer*</label>
+                        <input id="ip" class="form-control form-control-sm" name="ip" [(ngModel)]="model.ip" required
+                            #ip="ngModel" placeholder="10.51.122.20" />
+                        <small [hidden]="ip.valid || ip.pristine" class="text-danger">
+                            *ip is required
+                        </small>
+                    </div>
+                    <div class="col-4">
+                        <label for="port">Port*</label>
+                        <input type="number" id="port" class="form-control form-control-sm" name="port"
+                            [(ngModel)]="model.port" required placeholder="9100" #port="ngModel" />
+                        <small [hidden]="port.valid || port.pristine" class="text-danger">
+                            *port is required
+                        </small>
+                    </div>
+                </div>
+            </div>
 
             <div class="d-grid">
                 <button type="submit" class="btn btn-sm btn-dark" [disabled]="!actorForm.form.valid">Save</button>

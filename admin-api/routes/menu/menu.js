@@ -24,6 +24,8 @@ router.post('/class/delete', menuClass.postDelete);
   
 
 router.get('/item/', menuItem.getAllData);
+router.get('/master/', menuItem.getMasterData);
+
 router.post('/item/update', menuItem.postUpdate);
 router.post('/item/create', menuItem.postCreate);
 router.post('/item/delete', menuItem.postDelete); 

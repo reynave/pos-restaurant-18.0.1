@@ -27,6 +27,7 @@
     "datatables.net-bs5": "^1.11.3",
     "interactjs": "^1.10.27",
     "jquery": "^3.6.0",
+    "ngx-currency": "^18.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.3"

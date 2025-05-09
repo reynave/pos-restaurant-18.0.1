@@ -29,6 +29,33 @@ exports.getAllData = async (req, res) => {
     res.status(500).json({ error: 'Database error' });
   }
 };
+exports.getSelect = async (req, res) => {
+  try {
+
+    const [rows] = await db.query(`
+      SELECT  id, name1
+      FROM outlet  
+      WHERE presence =1 order by name1 ASC
+    `);
+ 
+    const formattedRows = rows.map(row => ({
+      ...row,
+     
+    }));
+
+
+    const data = {
+      error: false,
+      items: formattedRows,
+      get: req.query
+    }
+
+    res.json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+};
 
 
 exports.postCreate = async (req, res) => {

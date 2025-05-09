@@ -136,6 +136,13 @@ export class AppComponent implements OnInit {
     },  
     {
       name: 'WorkStation Tax Run', href: 'workStation/stationTaxRun', icon:'<i class="bi bi-display"></i>', 
+    }, 
+    
+    {
+      name: 'Printer', href: '', icon:'<i class="bi bi-printer"></i>',
+      children: [
+        { name: 'Setting Printer', href: 'printer', icon:'' },  
+      ]
     },  
   ];
   outletTab : any  = [];
@@ -179,8 +186,11 @@ export class AppComponent implements OnInit {
 
   onEvent(data : any){
     console.log('onEvent', data.node.data);
-    const params : any = data.node.data.params ? data.node.data.params  : '' ;
-    this.router.navigate([data.node.data.href], {queryParams:params});
+    if(data.node.data.href != ''){
+      const params : any = data.node.data.params ? data.node.data.params  : '' ;
+      this.router.navigate([data.node.data.href], {queryParams:params});
+    }
+  
   }
 
   onLogout(){

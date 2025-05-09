@@ -19,6 +19,7 @@ const global = require('./routes/global/global');
 const outlet = require('./routes/outlet/outlet');
 const floorMap = require('./routes/outlet/floorMap');
 const menu = require('./routes/menu/menu');
+const printer = require('./routes/station/printer');
  
  
  
@@ -74,6 +75,7 @@ app.use(process.env.PREFIX+'tableMap', tableMap);
 app.use(process.env.PREFIX+'outlet', outlet);
 app.use(process.env.PREFIX+'floorMap', floorMap);
 app.use(process.env.PREFIX+'menu', menu);
+app.use(process.env.PREFIX+'printer', printer);
 
 app.use('/', (req, res) => {
     const data = {

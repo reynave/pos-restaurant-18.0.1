@@ -1,35 +1,36 @@
 import { Component, OnInit } from '@angular/core';
-import { ConfigService } from '../../../service/config.service';
+import { ConfigService } from '../../service/config.service';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../environments/environment.development';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgbDatepickerModule, NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { NgxCurrencyDirective } from "ngx-currency";
-
 export class Actor {
   constructor(
     public desc1: string,
-    public date: number, 
+    public outletId: string,
+    public ip: string,
+    public port: string,
+    public name: string,
+    
   ) { }
 }
 @Component({
-  selector: 'app-menu-item',
+  selector: 'app-printer',
   standalone: true,
-  imports: [HttpClientModule, CommonModule, FormsModule, NgbDropdownModule, NgbDatepickerModule, NgxCurrencyDirective],
-  templateUrl: './menu-item.component.html',
-  styleUrl: './menu-item.component.css'
+  imports: [HttpClientModule, CommonModule, FormsModule, NgbDropdownModule, NgbDatepickerModule],
+  templateUrl: './printer.component.html',
+  styleUrl: './printer.component.css'
 })
-export class MenuItemComponent implements OnInit {
+export class PrinterComponent implements OnInit {
   loading: boolean = false;
   checkboxAll: number = 0;
   disabled: boolean = true;
   items: any = [];
-  selectCategory: any = [];
-  selectClass: any = [];
-  selectDept: any = [];
- 
-  model = new Actor('', 0);
+  selectOutlet: any = []; 
+
+
+  model = new Actor('', '', '','','');
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
@@ -37,32 +38,29 @@ export class MenuItemComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.httpMaster();
-   
-    
+    this.httpOutlet(); 
   }
-  httpMaster(){
+  httpOutlet(){
     this.loading = true;
-    const url = environment.api + "menu/master/";
+    const url = environment.api + "outlet/select";
     this.http.get<any>(url, {
       headers: this.configService.headers(),
     }).subscribe(
       data => {
-        console.log(data); 
-        this.httpGet();
-        this.selectCategory = data['category'];
-        this.selectClass = data['class'];
-        this.selectDept = data['dept'];
+        console.log(data);
+        this.loading = false;
+        this.selectOutlet = data['items'];
         this.modalService.dismissAll();
+        this.httpGet()
       },
       error => {
         console.log(error);
       }
-    ) 
+    )
   }
   httpGet() {
     this.loading = true;
-    const url = environment.api + "menu/item/";
+    const url = environment.api + "printer/";
     this.http.get<any>(url, {
       headers: this.configService.headers(),
     }).subscribe(
@@ -70,7 +68,7 @@ export class MenuItemComponent implements OnInit {
         console.log(data);
         this.loading = false;
         this.items = data['items'];
-        this.modalService.dismissAll();
+      //  this.modalService.dismissAll();
       },
       error => {
         console.log(error);
@@ -97,26 +95,25 @@ export class MenuItemComponent implements OnInit {
   }
   onUpdate() {
     this.loading = true;
-    this.sendInChunks(this.items, 30);
-    // const url = environment.api + "menu/item/update";
-    // const body = this.items;
-    // this.http.post<any>(url, body, {
-    //   headers: this.configService.headers(),
-    // }).subscribe(
-    //   data => {
-    //     console.log(data);
-    //     this.loading = false;
-    //   },
-    //   error => {
-    //     console.log(error);
-    //   }
-    // )
+    const url = environment.api + "printer/update";
+    const body = this.items;
+    this.http.post<any>(url, body, {
+      headers: this.configService.headers(),
+    }).subscribe(
+      data => {
+        console.log(data);
+        this.loading = false;
+      },
+      error => {
+        console.log(error);
+      }
+    )
   }
 
   onDelete() {
     if (confirm("Delete this checklist?")) { 
       this.loading = true;
-      const url = environment.api + "menu/item/delete";
+      const url = environment.api + "printer/delete";
       const body = this.items;
       this.http.post<any>(url, body, {
         headers: this.configService.headers(),
@@ -134,7 +131,7 @@ export class MenuItemComponent implements OnInit {
 
   onSubmit() {
     this.loading = true;
-    const url = environment.api + "menu/item/create";
+    const url = environment.api + "printer/create";
     const body = {
       model: this.model,
     };
@@ -144,7 +141,7 @@ export class MenuItemComponent implements OnInit {
       data => {
         console.log(data);
         if (data['error'] == false) {
-          this.model = new Actor('',0);
+          //this.model = new Actor('', '', '','','');
           this.httpGet();
         } else {
           alert("INSERT ERROR");
@@ -161,39 +158,4 @@ export class MenuItemComponent implements OnInit {
     this.modalService.open(content);
   }
 
-
-  onHere(x:any){
-    console.log(x);
-  }
-
-
-
-  sendInChunks(data: any[], chunkSize: number) {
-    const url = environment.api + "menu/item/update";
-    let currentIndex = 0;
-  
-    const sendNextChunk = () => {
-      if (currentIndex >= data.length) {
-        console.log('✅ All data was sent successfully.');
-        this.loading = false;
-        return;
-      }
-  
-      const chunk = data.slice(currentIndex, currentIndex + chunkSize);
-      this.http.post<any>(url, chunk,{
-        headers:this.configService.headers(),
-      }).subscribe({
-        next: () => {
-          console.log(`✅ Chunk send: ${currentIndex} - ${currentIndex + chunk.length - 1}`);
-          currentIndex += chunkSize;
-          sendNextChunk(); // Kirim berikutnya setelah sukses
-        },
-        error: (err) => {
-          console.error(`❌ Failed to send chunk starting index ${currentIndex}:`, err);
-        }
-      });
-    };
-  
-    sendNextChunk();
-  }
 }
