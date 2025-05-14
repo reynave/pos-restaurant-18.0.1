@@ -1,0 +1,72 @@
+<div class="container">
+   <div class="row">
+
+      <div class="col-12 mb-1 mt-3">
+         <div class="">
+            View : <a href="">Map</a> | <a href="">List</a>
+         </div>
+         <div class="table-map border ">
+            <!-- <div *ngFor="let x of items[current]['maps']">{{x.id}}</div> -->
+
+            <table class="table table-bordered table-striped">
+               <thead>
+                  <tr>
+                     <th>#</th>
+                     <th>Table Name</th>
+                     <th class="text-center">Capacity</th>
+                     <th class="text-center">Status</th>
+                     <th class="text-center">Cover</th>
+                     <th></th>
+                  </tr>
+               </thead>
+               <tbody>
+                  <tr *ngFor="let x of items[current]['maps']; let i = index">
+                     <td>{{i+1}}</td>
+                     <td>{{x.tableName}}</td>
+                     <td class="text-center">{{x.capacity}}</td>
+                     <td class="text-center">{{x.status}}</td>
+                     <td class="text-center">{{x.cover}}</td>
+                     <td class="text-center"><button type="button" class="btn btn-sm btn-primary" (click)="open(modalCheckIn, x)">New Order</button></td>
+                  </tr>
+               </tbody>
+            </table>
+         </div>
+      </div>
+      <div class="col-12">
+         <span *ngFor="let x of items; let i = index">
+            <button type="button" class="btn  me-1 border" (click)="onMap(i)"
+               [class]="{'btn-primary': current == i}">{{x.desc1}}</button>
+         </span>
+         <a class="btn btn-sm" (click)="reload();">reload db</a>
+      </div>
+
+   </div>
+</div>
+
+
+<ng-template #modalCheckIn let-modal>
+   <div class="modal-header">
+      <strong>Open New Table</strong>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+   </div>
+   <div class="modal-body">
+      <form (ngSubmit)="onSubmit()" #actorForm="ngForm">
+         <div class="mb-3">
+            <div class="mb-1"><label for="cover">Please Input No. of Cover</label></div>
+
+            <input type="number" class="form-control" id="cover" required [(ngModel)]="model.cover" name="cover"
+               #cover="ngModel">
+            <div [hidden]="cover.valid || cover.pristine" class="text-danger">
+               Cover is required
+            </div>
+         </div>
+         <div class="text-center">
+            <button type="button" class="btn btn-outline-secondary mx-2" style="width: 100px;"
+               (click)="modal.close('Save click')">Cancel</button>
+            <button type="submit" class="btn btn-dark  mx-2" style="width: 100px;"
+               [disabled]="!actorForm.form.valid">OK</button>
+         </div>
+      </form>
+   </div>
+
+</ng-template>

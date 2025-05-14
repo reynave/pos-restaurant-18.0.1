@@ -1,0 +1,47 @@
+<div class="wrapper-sm">
+   <div class="border">
+      <div class="container py-2">
+
+         <div class="row">
+            <div class="col-12">
+               LOGO
+            </div>
+         </div>
+
+         <div class="row">
+            <div class="col-12 mb-3">
+               <div class="py-3"><small>username : bebas, password : bebas</small></div>
+               <form (ngSubmit)="onSubmit()" #actorForm="ngForm">
+                  <div class="form-group mb-3">
+                     <label for="username">Username</label> 
+                     <select  class="form-control" id="username" required [(ngModel)]="model.username"
+                        name="username" #username="ngModel">
+                        <option [value]="'it'">IT</option>
+                        <option [value]="'CASIER'">CASIER</option> 
+                     </select>
+                    
+                     <div [hidden]="username.valid || username.pristine" class="alert alert-danger">
+                        Username is required
+                     </div>
+                  </div>
+                  <div class="form-group  mb-3">
+                     <label for="name">Password</label>
+                     <input type="password" class="form-control" id="password" required [(ngModel)]="model.password"
+                        name="password" #password="ngModel">
+                     <div [hidden]="password.valid || password.pristine" class="alert alert-danger">
+                        Username is required
+                     </div>
+                  </div>
+                  <div class="d-grid">
+                     <button type="submit" class="btn btn-success" [disabled]="!actorForm.form.valid">Submit</button>
+
+                  </div>
+
+               </form>
+            </div>
+
+         </div>
+
+      </div>
+   </div>
+</div>

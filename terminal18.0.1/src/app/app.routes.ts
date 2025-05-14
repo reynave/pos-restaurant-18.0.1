@@ -1,8 +1,16 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
+import { SetupComponent } from './setup/setup.component';
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { LoginComponent } from './login/login.component';
+import { CartComponent } from './pos/cart/cart.component';
+import { authGuard } from './guard/auth.guard';
 
 export const routes: Routes = [
-    { path: '',component: HomeComponent},
-    { path: 'home', component: HomeComponent },
+    { path: '',component: SetupComponent},
+    { path: 'setup', component: SetupComponent },
+    { path: 'login', component: LoginComponent },
+    { path: 'cart', component: CartComponent, canActivate:[authGuard] },
  
+    { path: '**', component: PageNotFoundComponent },
 ];
