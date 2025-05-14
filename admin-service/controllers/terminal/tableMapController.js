@@ -27,8 +27,7 @@ exports.getAllData = async (req, res) => {
       items: formattedRows,
       get: req.query
     });
-
-    res.json(data);
+ 
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Database error' });
