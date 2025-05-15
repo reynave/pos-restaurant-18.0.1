@@ -33,7 +33,7 @@ export class LoginComponent {
       data => {
         console.log(data);
         if (data == true) {
-          this.router.navigate(['/cart']);
+          this.router.navigate(['/tables']);
         }
       }
     ) 

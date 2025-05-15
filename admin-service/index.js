@@ -22,6 +22,7 @@ const menu = require('./routes/menu/menu');
 const printer = require('./routes/station/printer');
  
  const terminalMap = require('./routes/terminal/tableMap');
+  const menuItemPos = require('./routes/terminal/menuItemPos');
  
  
  
@@ -81,7 +82,8 @@ app.use(process.env.PREFIX+'printer', printer);
 
 
 // TERMINAL SERVICE HERE
-app.use(process.env.PREFIX+process.env.TERMINAL+'tableMap', terminalMap);
+app.use(process.env.PREFIX+process.env.TERMINAL+'tableMap', terminalMap); 
+app.use(process.env.PREFIX+process.env.TERMINAL+'menuItemPos', menuItemPos);
 
 
 

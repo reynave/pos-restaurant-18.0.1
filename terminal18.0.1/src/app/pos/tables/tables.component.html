@@ -29,11 +29,11 @@
                      <td class="text-center">
                         <div class="d-grid"> 
                            @if(x.cover <= 0 || x.cover=='' ){ <button type="button" class="btn btn-sm btn-dark"
-                              (click)="open(modalCheckIn, x)">New Order</button>
+                              (click)="open(modalCheckIn, x)">NEW ORDER</button>
                               }
                               @else{
-                              <a class="btn btn-sm btn-success" [routerLink]="['/cart/menu']"
-                                 [queryParams]="{id : x.id}"> CART</a>
+                              <a class="btn btn-sm btn-success" [routerLink]="['/menu']"
+                                 [queryParams]="{id : x.cardId}"> MENU</a>
                               }
                         </div>
                      </td>

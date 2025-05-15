@@ -5,7 +5,7 @@ import { environment } from '../../../environments/environment.development';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
 export class Actor {
   constructor(
@@ -15,15 +15,14 @@ export class Actor {
 
   ) { }
 }
-
 @Component({
-  selector: 'app-cart',
+  selector: 'app-tables',
   standalone: true,
-  imports: [HttpClientModule, CommonModule, FormsModule, NgbDropdownModule, RouterModule],
-  templateUrl: './cart.component.html',
-  styleUrl: './cart.component.css'
+   imports: [HttpClientModule, CommonModule, FormsModule, NgbDropdownModule, RouterModule],
+  templateUrl: './tables.component.html',
+  styleUrl: './tables.component.css'
 })
-export class CartComponent implements OnInit {
+export class TablesComponent implements OnInit {
   loading: boolean = false;
   current: number = 0;
   checkboxAll: number = 0;
@@ -39,13 +38,15 @@ export class CartComponent implements OnInit {
     private http: HttpClient,
     public modalService: NgbModal,
     private router: Router,
+     private activeRouter: ActivatedRoute,
+    
   ) { }
 
 
   ngOnInit() {
 
     this.modalService.dismissAll();
-    this.httpGet();
+    this.httpGet(); 
   }
   httpGet() {
     this.loading = true;
@@ -63,6 +64,9 @@ export class CartComponent implements OnInit {
       }
     )
   }
+
+
+
   reload() {
     this.httpGet();
   }
@@ -91,7 +95,7 @@ export class CartComponent implements OnInit {
     }).subscribe(
       data => {
         console.log(data);
-        this.router.navigate(['/cart/menu'], { queryParams: { id: this.model.outletTableMapId } });
+        this.router.navigate(['/menu'], { queryParams: { id: data['cardId'] } });
         this.modalService.dismissAll();
       },
       error => {

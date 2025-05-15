@@ -5,12 +5,20 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
 import { LoginComponent } from './login/login.component';
 import { CartComponent } from './pos/cart/cart.component';
 import { authGuard } from './guard/auth.guard';
+import { TablesComponent } from './pos/tables/tables.component';
+import { MenuComponent } from './pos/menu/menu.component';
+import { MenuMemoComponent } from './pos/menu/menu-memo/menu-memo.component';
 
 export const routes: Routes = [
-    { path: '',component: SetupComponent},
+    { path: '', component: SetupComponent },
     { path: 'setup', component: SetupComponent },
     { path: 'login', component: LoginComponent },
-    { path: 'cart', component: CartComponent, canActivate:[authGuard] },
- 
+
+    { path: 'tables', component: TablesComponent, canActivate: [authGuard] },
+    { path: 'menu', component: MenuComponent, canActivate: [authGuard] },
+    { path: 'menu/memo', component: MenuMemoComponent, canActivate: [authGuard] },
+
+    { path: 'cart', component: CartComponent, canActivate: [authGuard] },
+
     { path: '**', component: PageNotFoundComponent },
 ];

@@ -8,7 +8,7 @@ router.get('/', tableMap.getAllData);
 router.post('/newOrder', tableMap.newOrder);
 
 
-router.post('/create', tableMap.postCreate);
-router.post('/delete', tableMap.postDelete);
+// router.post('/create', tableMap.postCreate);
+// router.post('/delete', tableMap.postDelete);
  
 module.exports = router;
