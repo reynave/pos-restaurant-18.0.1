@@ -15,7 +15,7 @@
         <div class="col-5">
             <!-- TABLE cart -->
 
-            <table class="table table-hover">
+            <table class="table ">
                 <tbody>
                     <tr *ngFor="let x of cart; let i = index" [class]="{'tr-active':x.checkBox == 1 }">
                         <td (click)="fnChecked(i)  ">
@@ -27,14 +27,14 @@
                         <td><strong>{{i+1}}</strong></td>
                         <td>
                             <strong>{{x.name }}</strong>
-                            <div class="row" *ngFor="let a of x.modifier; let j = index">
-                                <div class="col-2" (click)="a.checkBox == 1 ? a.checkBox = 0 : a.checkBox = 1">
+                            <div class="row" (click)="a.checkBox == 1 ? a.checkBox = 0 : a.checkBox = 1" *ngFor="let a of x.modifier; let j = index">
+                                <div class="col-2" >
                                     <h5>
                                         <i *ngIf="a.checkBox == 0 " class="bi bi-square"></i>
                                         <i *ngIf="a.checkBox == 1 " class="bi bi-check-square-fill"></i>
                                     </h5>
                                 </div>
-                                <div class="col-10">
+                                <div class="col-10" >
                                     {{j+1}}. {{a.descl}}
                                 </div>
                             </div>

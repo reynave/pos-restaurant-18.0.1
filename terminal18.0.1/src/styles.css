@@ -1,12 +1,24 @@
 /* You can add global styles to this file, and also import other style files */
+ html, body {
+      height: 100%;
+      margin: 0;
+    }
+
 .wrapper-sm{
     max-width: 600px;
     margin:  0 auto;
 }
 
 .wrapper{
-    height: 95vh;
+    height: 100vh;
+    position: relative;
     overflow-y: auto;
+}
+.wrapper-fix-bottom{
+    position: fixed;
+    left: 0px;
+    bottom: 0px;
+    width: 100%;
 }
 
 .table td{

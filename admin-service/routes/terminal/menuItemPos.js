@@ -8,6 +8,7 @@ router.get('/cart', menuItemPos.cart);
 router.post('/addToCart', menuItemPos.addToCart);
 router.post('/updateQty', menuItemPos.updateQty);
 router.post('/voidItem', menuItemPos.voidItem);
+ router.post('/addToItemModifier', menuItemPos.addToItemModifier);
 
 router.get('/getModifier', menuItemPos.getModifier);
 router.get('/cartDetail', menuItemPos.cartDetail);

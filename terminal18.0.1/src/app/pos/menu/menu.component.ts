@@ -19,6 +19,7 @@ export class Actor {
   styleUrl: './menu.component.css'
 })
 export class MenuComponent implements OnInit {
+  showModifier: boolean = false;
   loading: boolean = false;
   current: number = 0;
   checkboxAll: number = 0;
@@ -26,7 +27,7 @@ export class MenuComponent implements OnInit {
   items: any = [{
     menu: []
   }];
-
+  modifiers: any = [];
   item: any = [];
   cart: any = [];
   id: string = '';
@@ -47,7 +48,9 @@ export class MenuComponent implements OnInit {
       this.modalService.dismissAll();
     this.httpMenu();
     this.httpCart();
+    this.httpGetModifier();
   }
+
   httpMenu() {
     this.loading = true;
     const url = environment.api + "menuItemPos";
@@ -57,8 +60,7 @@ export class MenuComponent implements OnInit {
         departmentId: 0,
       }
     }).subscribe(
-      data => {
-        console.log(data);
+      data => { 
         this.loading = false;
         this.items = data['items'];
 
@@ -69,6 +71,22 @@ export class MenuComponent implements OnInit {
     )
   }
 
+  httpGetModifier() {
+    this.loading = true;
+    const url = environment.api + "menuItemPos/getModifier";
+    this.http.get<any>(url, {
+      headers: this.configService.headers(),
+    }).subscribe(
+      data => { 
+        this.loading = false;
+        this.modifiers = data['items'];
+
+      },
+      error => {
+        console.log(error);
+      }
+    )
+  }
 
   httpCart() {
     this.loading = true;
@@ -79,8 +97,7 @@ export class MenuComponent implements OnInit {
         id: this.activeRouter.snapshot.queryParams['id'],
       }
     }).subscribe(
-      data => {
-        console.log(data);
+      data => { 
         this.cart = data['items'];
         this.totalAmount = data['totalAmount']
       },
@@ -99,8 +116,7 @@ export class MenuComponent implements OnInit {
     this.modalService.open(content);
   }
 
-  addToCart(menu: any) {
-    console.log(menu);
+  addToCart(menu: any) { 
     const body = {
       id: this.activeRouter.snapshot.queryParams['id'],
       menu: menu,
@@ -108,8 +124,7 @@ export class MenuComponent implements OnInit {
     this.http.post<any>(environment.api + "menuItemPos/addToCart", body, {
       headers: this.configService.headers(),
     }).subscribe(
-      data => {
-        console.log(data);
+      data => { 
         this.httpCart();
       },
       error => {
@@ -140,8 +155,8 @@ export class MenuComponent implements OnInit {
   }
 
   isChecked: boolean = false;
-  fnChecked(index:number) {
-    this.cart[index].checkBox == 0 ?  this.cart[index].checkBox = 1:  this.cart[index].checkBox = 0;  
+  fnChecked(index: number) {
+    this.cart[index].checkBox == 0 ? this.cart[index].checkBox = 1 : this.cart[index].checkBox = 0;
 
     let isVoid = 0;
     for (let i = 0; i < this.cart.length; i++) {
@@ -156,11 +171,12 @@ export class MenuComponent implements OnInit {
       this.isChecked = true;
     }
   }
+
   onVoid() {
-    
+
 
     if (this.isChecked == false) {
-      alert("Please check first!");
+      alert("Please check item first!");
     } else {
       if (confirm("Are you sure  void this select items ?")) {
         console.log(this.cart)
@@ -183,6 +199,33 @@ export class MenuComponent implements OnInit {
           }
         )
       }
+    }
+  }
+
+  addToItemModifier(a: any) {
+    if (this.isChecked == false) {
+      alert("Please check item first!");
+    } else { 
+       this.loading = true;
+        const body = {
+          cart: this.cart,
+          cartId: this.id,
+          modifiers : a,
+        }
+        console.log(body);
+        const url = environment.api + "menuItemPos/addToItemModifier";
+        this.http.post<any>(url, body, {
+          headers: this.configService.headers(),
+        }).subscribe(
+          data => {
+            console.log(data);
+             this.httpCart();
+           // this.showModifier = true;
+          },
+          error => {
+            console.log(error);
+          }
+        )
     }
   }
 

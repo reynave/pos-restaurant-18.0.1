@@ -54,9 +54,9 @@ exports.cart = async (req, res) => {
       JOIN menu AS m ON m.id = t1.menuId
     `);
     let totalAmount = 0;
-    for (const row of formattedRows) { 
+    for (const row of formattedRows) {
       totalAmount += row['totalAmount'];
-      
+
       const s = `
         SELECT COUNT(t1.descl) AS 'total', t1.descl
         FROM (
@@ -70,7 +70,7 @@ exports.cart = async (req, res) => {
         ) AS t1
         GROUP BY t1.descl
       `;
-      console.log(s);
+
       const [modifier] = await db.query(s);
 
       row.modifier = modifier; // tambahkan hasil ke properti maps
@@ -216,7 +216,83 @@ exports.voidItem = async (req, res) => {
   }
 };
 
+exports.addToItemModifier = async (req, res) => {
+  const data = req.body['cart'];
+  const modifiers = req.body['modifiers'];
+  const cartId = req.body['cartId'];
 
+  const results = [];
+
+  try {
+
+    for (const emp of data) {
+      const { menuId, checkBox, price } = emp;
+
+      if (!menuId) {
+        results.push({ menuId, status: 'failed', reason: 'Missing fields' });
+        continue;
+      }
+
+      if (checkBox == 1) {
+        const q2 = `
+          SELECT id FROM cart_item 
+          WHERE  cartId = '${cartId}' AND presence = 1 AND void = 0
+          AND price = ${price} AND menuId = ${menuId} 
+        `;
+        const [cartItems] = await db.query(q2);
+        
+
+        for (const cartItem of cartItems) {
+          const q3 = `
+            SELECT count(id) as 'total'
+              FROM cart_item_modifier
+            WHERE
+            cartId = '${cartId}' and
+            cartItemId = ${cartItem['id']} and
+            modifierId = ${modifiers['id']} and
+            presence = 1 and void = 0
+          `;
+          const [isDouble] = await db.query(q3);
+          if (isDouble[0]['total'] == 0) {
+
+            const q =
+              `INSERT INTO cart_item_modifier (
+                presence, inputDate, updateDate, void,
+                cartId, cartItemId, modifierId,
+                note, price
+              )
+              VALUES (
+                1, '${today()}', '${today()}',  0,
+                '${cartId}',  ${cartItem['id']}, ${modifiers['id']},
+                '', ${modifiers['price']}
+            )`;
+            const [result] = await db.query(q);
+
+            if (result.affectedRows === 0) {
+              results.push({ status: 'not found', query: q, });
+            } else {
+              results.push({ status: 'updated', query: q, });
+            }
+
+
+
+          } else {
+            results.push({ status: 'cannot double' });
+          }
+        }
+      }
+    }
+
+    res.status(201).json({
+      error: false,
+      message: 'cart created',
+      results: results
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: true, note: 'Database insert error' });
+  }
+};
 
 exports.cartDetail = async (req, res) => {
   const cartId = req.query.id;
@@ -373,7 +449,6 @@ exports.addModifier = async (req, res) => {
           presence = 1 and void = 0
         `;
         const [isDouble] = await db.query(q2);
-        console.log(isDouble[0]);
         if (isDouble[0]['total'] == 0) {
 
 
@@ -388,7 +463,6 @@ exports.addModifier = async (req, res) => {
             '${cartId}',  ${id}, ${menu['id']},
             '', ${menu['price']}
          )`;
-          console.log(q);
           const [result] = await db.query(q);
 
           if (result.affectedRows === 0) {
@@ -429,10 +503,10 @@ exports.removeDetailModifier = async (req, res) => {
         results.push({ id, status: 'failed', reason: 'Missing fields' });
         continue;
       }
- 
- 
+
+
       for (const emp2 of modifier) {
-        const { id, checkBox } = emp2; 
+        const { id, checkBox } = emp2;
         if (checkBox == 1) {
           const q = `UPDATE cart_item_modifier
             SET
@@ -478,3 +552,4 @@ exports.removeDetailModifier = async (req, res) => {
     res.status(500).json({ error: 'Database update error', details: err.message });
   }
 };
+
