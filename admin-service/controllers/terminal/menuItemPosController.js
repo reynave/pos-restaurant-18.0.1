@@ -55,8 +55,7 @@ exports.cart = async (req, res) => {
     `);
     let totalAmount = 0;
     for (const row of formattedRows) {
-      totalAmount += row['totalAmount'];
-
+     
       const s = `
         SELECT COUNT(t1.descl) AS 'total', t1.descl
         FROM (
@@ -74,6 +73,9 @@ exports.cart = async (req, res) => {
       const [modifier] = await db.query(s);
 
       row.modifier = modifier; // tambahkan hasil ke properti maps
+
+       totalAmount += row['totalAmount'];
+
     }
 
 
