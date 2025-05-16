@@ -76,6 +76,7 @@ export class MenuModifierComponent implements OnInit {
         id: this.activeRouter.snapshot.queryParams['id'],
         menuId: this.activeRouter.snapshot.queryParams['menuId'],
         price: this.activeRouter.snapshot.queryParams['price'],
+        sendOrder : this.activeRouter.snapshot.queryParams['sendOrder'],
       }
     }).subscribe(
       data => {

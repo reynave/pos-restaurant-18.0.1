@@ -21,6 +21,9 @@
     width: 100%;
 }
 
+.table .bg-light td{
+    background-color: #DDE6ED;
+}
 .table td{
     cursor: pointer;
 }

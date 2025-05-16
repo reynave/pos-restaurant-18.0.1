@@ -1,0 +1,75 @@
+<div class="">
+    <div class="row g-0">
+        <div class="col-5 col-lg-4">
+            <!-- TABLE cart -->
+            <div class="wrapper">
+                <div class="py-5">
+                    <table class="table table-hover">
+                        <tbody *ngFor="let x of cart; let i = index">
+                            <tr>
+                                <td>
+                                    <h4><i class="bi bi-receipt"></i> </h4>
+                                </td>
+                                <td>
+                                    <div class="lh-1">
+                                        <strong>{{x.name }} {{x.modifier.length > 0 ? '*':''}} </strong>
+                                    </div>
+                                    <small class="font-monospace">&#64;{{x.price | number}}</small>
+                                    <small class="mx-2" style="font-size: 0.7rem;"><em>Click here for detail
+                                            item</em></small>
+
+                                    <div class="row">
+                                        <div class="col-12" *ngFor="let a of x.modifier">
+                                            {{ a.descl}} {{ a.total > 1 ? 'x'+ a.total: ''}}
+                                            <span *ngIf="a.totalAmount >0" class="font-monospace">x Rp{{a.totalAmount |
+                                                number}},-</span>
+                                        </div>
+                                    </div>
+
+                                </td>
+                                <td width="50px" class="text-end font-monospace">
+                                    x {{x.total | number}}
+                                </td>
+                                <td class="text-end font-monospace">{{x.totalAmount | number}}</td>
+                            </tr>
+
+
+                        </tbody>
+                    </table>
+                </div>  
+            </div>
+        </div>
+
+        <div class="col-5 col-lg-4">
+            <div class="wrapper border px-1 py-5 ">
+                <div class="border shadow-sm px-3">
+                    <pre class="font-monospace" [innerHTML]="htmlBill"></pre>
+                </div>
+            </div>
+        </div>
+        <div class="col-2 col-lg-4">
+
+        </div>
+    </div>
+</div>
+
+<div class="wrapper-fix-bottom border-top shadow-sm bg-white">
+    <div class="p-2">
+        <div class="row">
+            <div class="col-5">
+                <div class="row">
+                    <div class="col-6">
+                        <h4>Guest Check</h4>
+                    </div>
+                    <div class="col-6">
+                        <h4 class="text-end font-monospace">Rp {{totalAmount | number}}</h4>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-7">
+                <a href="javascript:;" (click)="reload()"> Developer Reload</a>
+            </div>
+        </div>
+    </div>
+</div>

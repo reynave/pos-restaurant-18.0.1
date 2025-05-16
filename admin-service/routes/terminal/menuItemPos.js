@@ -2,13 +2,15 @@ const express = require('express');
 const router = express.Router();
 const menuItemPos = require('../../controllers/terminal/menuItemPosController');  
   
-// table/*
+// terminal/*
 router.get('/', menuItemPos.getMenuItem);
 router.get('/cart', menuItemPos.cart);
 router.post('/addToCart', menuItemPos.addToCart);
 router.post('/updateQty', menuItemPos.updateQty);
 router.post('/voidItem', menuItemPos.voidItem);
- router.post('/addToItemModifier', menuItemPos.addToItemModifier);
+router.post('/addToItemModifier', menuItemPos.addToItemModifier);
+router.post('/sendOrder', menuItemPos.sendOrder);
+
 
 router.get('/getModifier', menuItemPos.getModifier);
 router.get('/cartDetail', menuItemPos.cartDetail);

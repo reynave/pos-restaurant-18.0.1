@@ -1,111 +1,130 @@
 <div class="header bg-primary text-white">
 
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-5">
-                menu / login / table info
-            </div>
+   <div class="container-fluid">
+      <div class="row">
+         <div class="col-5">
+            menu / login / table info
+         </div>
 
-        </div>
-    </div>
+      </div>
+   </div>
 </div>
 
 <div class="container-fluid">
-    <div class="row g-0">
-        <div class="col-5">
-            <!-- TABLE cart -->
+   <div class="row g-0">
+      <div class="col-5">
+         <!-- TABLE cart -->
 
-            <table class="table ">
-                <tbody>
-                    <tr *ngFor="let x of cart; let i = index" [class]="{'tr-active':x.checkBox == 1 }">
-                        <td (click)="fnChecked(i)  ">
-                            <h3>
-                                <i *ngIf="x.checkBox == 0 " class="bi bi-square"></i>
-                                <i *ngIf="x.checkBox == 1 " class="bi bi-check-square-fill"></i>
-                            </h3>
-                        </td>
-                        <td><strong>{{i+1}}</strong></td>
-                        <td>
-                            <strong>{{x.name }}</strong>
-                            <div class="row" (click)="a.checkBox == 1 ? a.checkBox = 0 : a.checkBox = 1" *ngFor="let a of x.modifier; let j = index">
-                                <div class="col-2" >
-                                    <h5>
-                                        <i *ngIf="a.checkBox == 0 " class="bi bi-square"></i>
-                                        <i *ngIf="a.checkBox == 1 " class="bi bi-check-square-fill"></i>
-                                    </h5>
-                                </div>
-                                <div class="col-10" >
-                                    {{j+1}}. {{a.descl}}
-                                </div>
-                            </div>
+         <table class="table ">
+            <tbody>
+               <tr *ngFor="let x of cart; let i = index" [class]="{'tr-active':x.checkBox == 1, 'bg-light':x.sendOrder == 1 }">
+                  <td>
+                     <div (click)="fnChecked(i)" *ngIf="x.sendOrder == 0">
+                        <h3>
+                           <i *ngIf="x.checkBox == 0 " class="bi bi-square"></i>
+                           <i *ngIf="x.checkBox == 1 " class="bi bi-check-square-fill"></i>
+                        </h3>
+                     </div>
 
-                         
+                     <div *ngIf="x.sendOrder == 1">
+                        <h4> <i class="bi bi-receipt"></i> </h4>
+                     </div>
 
-                        </td>
-
-                        <td class="text-end font-monospace">{{x.price | number}}</td>
-                    </tr>
-
-                </tbody>
-
-                <tfoot>
-                    <tr>
-                        <th colspan="4" class="text-end font-monospace">
-                            <h4>Rp {{totalAmount | number}}</h4>
-                        </th>
-                    </tr>
-                </tfoot>
-            </table>
+                  </td>
 
 
-        </div>
-        <div class="col-7">
-            <div class="wrapper border p-3">
 
-                <div>
-                    <button type="button" class="btn btn-danger me-1" [disabled]="!isChecked" (click)="onVoid()">VOID  ITEM</button>
-                    <button type="button" class="btn btn-danger me-1"  (click)="onRemoveModifier()">REMOVE MODIFIER</button>
-                    
-                </div>
+                  <td><strong>{{i+1}}</strong></td>
+                  <td>
+                     <strong>{{x.name }}</strong>
+                     @if(x.sendOrder == 0){
+                     <div class="row g-1" (click)="a.checkBox == 1 ? a.checkBox = 0 : a.checkBox = 1"
+                        *ngFor="let a of x.modifier; let j = index">
+                        <div class="col-2">
+                           <h5>
+                              <i *ngIf="a.checkBox == 0 " class="bi bi-square"></i>
+                              <i *ngIf="a.checkBox == 1 " class="bi bi-check-square-fill"></i>
+                           </h5>
+                        </div>
+                        <div class="col-10">
+                          {{a.descl}}
+                           <span class="font-monospace" *ngIf="a.price > 0">Rp{{a.price | number}},-</span>
+                        </div>
+                     </div>
+                     }
+                     @else{
+                     <div class="row g-0" *ngFor="let a of x.modifier; let j = index">
+                        <div class="col-2">
+                            <i class="bi bi-receipt"></i> 
+                        </div>
+                        <div class="col-10">
+                           {{a.descl}}
+                           <span class="font-monospace" *ngIf="a.price > 0">Rp{{a.price | number}},-</span>
+                        </div>
+                     </div>
+                     }
+                  </td>
 
-                <div *ngFor="let x of items">
-                    <div><strong>{{x.name}}</strong></div>
-                    <ol>
-                        <li *ngFor="let a of x.detail"><a href="javascript:;" (click)="addToCart(a)">
-                                {{a.descl}} (Rp{{a.price | number}})</a>
-                        </li>
-                    </ol>
-                </div>
+                  <td class="text-end font-monospace">{{x.price | number}}</td>
+               </tr>
+
+            </tbody>
+
+
+         </table>
+
+         <div class="text-end me-2">
+            <h4>Rp {{totalAmount | number}}</h4>
+         </div>
+      </div>
+      <div class="col-7">
+         <div class="wrapper border p-3">
+
+            <div>
+               <button type="button" class="btn btn-danger me-1" [disabled]="!isChecked" (click)="onVoid()">VOID
+                  ITEM</button>
+               <button type="button" class="btn btn-danger me-1" (click)="onRemoveModifier()">REMOVE MODIFIER</button>
+
             </div>
-        </div>
-    </div>
+
+            <div *ngFor="let x of items">
+               <div><strong>{{x.name}}</strong></div>
+               <ol>
+                  <li *ngFor="let a of x.detail"><a href="javascript:;" (click)="addToCart(a)">
+                        {{a.descl}} (Rp{{a.price | number}})</a>
+                  </li>
+               </ol>
+            </div>
+         </div>
+      </div>
+   </div>
 </div>
 
 
 <ng-template #modalQty let-modal>
-    <div class="modal-header">
-        <strong>Change New Item Quantity </strong>
-        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
-    </div>
-    <div class="modal-body">
+   <div class="modal-header">
+      <strong>Change New Item Quantity </strong>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+   </div>
+   <div class="modal-body">
 
-        <form (ngSubmit)="updateQty()" #actorForm="ngForm">
-            <div class="mb-3">
-                <div class="mb-1"><label for="newQty">Input New Quantity</label></div>
+      <form (ngSubmit)="updateQty()" #actorForm="ngForm">
+         <div class="mb-3">
+            <div class="mb-1"><label for="newQty">Input New Quantity</label></div>
 
-                <input type="number" class="form-control form-control-lg" id="newQty" required
-                    [(ngModel)]="model.newQty" name="newQty" #newQty="ngModel">
-                <div [hidden]="newQty.valid || newQty.pristine" class="text-danger">
-                    Input New Quantity is required
-                </div>
+            <input type="number" class="form-control form-control-lg" id="newQty" required [(ngModel)]="model.newQty"
+               name="newQty" #newQty="ngModel">
+            <div [hidden]="newQty.valid || newQty.pristine" class="text-danger">
+               Input New Quantity is required
             </div>
-            <div class="text-center">
-                <button type="button" class="btn btn-outline-secondary mx-2" style="width: 100px;"
-                    (click)="modal.close('Save click')">Cancel</button>
-                <button type="submit" class="btn btn-dark  mx-2" style="width: 100px;"
-                    [disabled]="!actorForm.form.valid">OK</button>
-            </div>
-        </form>
-    </div>
+         </div>
+         <div class="text-center">
+            <button type="button" class="btn btn-outline-secondary mx-2" style="width: 100px;"
+               (click)="modal.close('Save click')">Cancel</button>
+            <button type="submit" class="btn btn-dark  mx-2" style="width: 100px;"
+               [disabled]="!actorForm.form.valid">OK</button>
+         </div>
+      </form>
+   </div>
 
 </ng-template>

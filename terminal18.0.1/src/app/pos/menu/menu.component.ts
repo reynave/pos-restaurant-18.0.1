@@ -33,6 +33,8 @@ export class MenuComponent implements OnInit {
   id: string = '';
   totalAmount: number = 0;
   api: string = environment.api;
+
+  isChecked: boolean = false;
   model = new Actor(1);
   constructor(
     public configService: ConfigService,
@@ -60,7 +62,7 @@ export class MenuComponent implements OnInit {
         departmentId: 0,
       }
     }).subscribe(
-      data => { 
+      data => {
         this.loading = false;
         this.items = data['items'];
 
@@ -77,7 +79,7 @@ export class MenuComponent implements OnInit {
     this.http.get<any>(url, {
       headers: this.configService.headers(),
     }).subscribe(
-      data => { 
+      data => {
         this.loading = false;
         this.modifiers = data['items'];
 
@@ -97,7 +99,7 @@ export class MenuComponent implements OnInit {
         id: this.activeRouter.snapshot.queryParams['id'],
       }
     }).subscribe(
-      data => { 
+      data => {
         this.cart = data['items'];
         this.totalAmount = data['totalAmount']
       },
@@ -108,7 +110,9 @@ export class MenuComponent implements OnInit {
   }
 
   reload() {
-    this.httpMenu();
+     this.httpMenu();
+    this.httpCart();
+    this.httpGetModifier();
   }
 
   open(content: any, x: any, i: number) {
@@ -116,7 +120,7 @@ export class MenuComponent implements OnInit {
     this.modalService.open(content);
   }
 
-  addToCart(menu: any) { 
+  addToCart(menu: any) {
     const body = {
       id: this.activeRouter.snapshot.queryParams['id'],
       menu: menu,
@@ -124,7 +128,7 @@ export class MenuComponent implements OnInit {
     this.http.post<any>(environment.api + "menuItemPos/addToCart", body, {
       headers: this.configService.headers(),
     }).subscribe(
-      data => { 
+      data => {
         this.httpCart();
       },
       error => {
@@ -154,7 +158,6 @@ export class MenuComponent implements OnInit {
     )
   }
 
-  isChecked: boolean = false;
   fnChecked(index: number) {
     this.cart[index].checkBox == 0 ? this.cart[index].checkBox = 1 : this.cart[index].checkBox = 0;
 
@@ -205,28 +208,47 @@ export class MenuComponent implements OnInit {
   addToItemModifier(a: any) {
     if (this.isChecked == false) {
       alert("Please check item first!");
-    } else { 
-       this.loading = true;
-        const body = {
-          cart: this.cart,
-          cartId: this.id,
-          modifiers : a,
+    } else {
+      this.loading = true;
+      const body = {
+        cart: this.cart,
+        cartId: this.id,
+        modifiers: a,
+      }
+      console.log(body);
+      const url = environment.api + "menuItemPos/addToItemModifier";
+      this.http.post<any>(url, body, {
+        headers: this.configService.headers(),
+      }).subscribe(
+        data => {
+          console.log(data);
+          this.httpCart();
+          // this.showModifier = true;
+        },
+        error => {
+          console.log(error);
         }
-        console.log(body);
-        const url = environment.api + "menuItemPos/addToItemModifier";
-        this.http.post<any>(url, body, {
-          headers: this.configService.headers(),
-        }).subscribe(
-          data => {
-            console.log(data);
-             this.httpCart();
-           // this.showModifier = true;
-          },
-          error => {
-            console.log(error);
-          }
-        )
+      )
     }
+  }
+
+  sendOrder() {
+    this.loading = true;
+    const body = {
+      cartId: this.id,
+    }
+    const url = environment.api + "menuItemPos/sendOrder";
+    this.http.post<any>(url, body, {
+      headers: this.configService.headers(),
+    }).subscribe(
+      data => {
+        console.log(data);
+        this.httpCart();
+      },
+      error => {
+        console.log(error);
+      }
+    )
   }
 
 }

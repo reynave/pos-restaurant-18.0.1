@@ -20,12 +20,10 @@ const outlet = require('./routes/outlet/outlet');
 const floorMap = require('./routes/outlet/floorMap');
 const menu = require('./routes/menu/menu');
 const printer = require('./routes/station/printer');
- 
- const terminalMap = require('./routes/terminal/tableMap');
-  const menuItemPos = require('./routes/terminal/menuItemPos');
- 
- 
- 
+
+const terminalMap = require('./routes/terminal/tableMap');
+const menuItemPos = require('./routes/terminal/menuItemPos');
+const bill = require('./routes/terminal/bill');
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -43,8 +41,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Cek koneksi database saat startup
-app.get(process.env.PREFIX+'checkdb', async (req, res) => {
-    console.log('PREFIX : ',process.env.PREFIX);
+app.get(process.env.PREFIX + 'checkdb', async (req, res) => {
+    console.log('PREFIX : ', process.env.PREFIX);
     try {
         const conn = await db.getConnection(); // ambil koneksi dari pool
         await conn.ping(); // ping koneksi ke database
@@ -59,39 +57,39 @@ app.get(process.env.PREFIX+'checkdb', async (req, res) => {
         });
     }
 });
-app.use(process.env.PREFIX+'public', express.static('public'));
-app.use(process.env.PREFIX+'global', global);
+app.use(process.env.PREFIX + 'public', express.static('public'));
+app.use(process.env.PREFIX + 'global', global);
 
 // ADMIN SERVICE HERE
-app.use(process.env.PREFIX+'specialHour', specialHour);
-app.use(process.env.PREFIX+'holidayList', holidayList);
-app.use(process.env.PREFIX+'employee', employeeRoutes);
-app.use(process.env.PREFIX+'payment', payment);
-app.use(process.env.PREFIX+'discount', discount);
-app.use(process.env.PREFIX+'other', other);
-app.use(process.env.PREFIX+'member', member);
-app.use(process.env.PREFIX+'complaint', complaint);
-app.use(process.env.PREFIX+'customer', customer);
-app.use(process.env.PREFIX+'template', template);
-app.use(process.env.PREFIX+'workStation', workStation);
-app.use(process.env.PREFIX+'tableMap', tableMap); 
-app.use(process.env.PREFIX+'outlet', outlet);
-app.use(process.env.PREFIX+'floorMap', floorMap);
-app.use(process.env.PREFIX+'menu', menu);
-app.use(process.env.PREFIX+'printer', printer);
+app.use(process.env.PREFIX + 'specialHour', specialHour);
+app.use(process.env.PREFIX + 'holidayList', holidayList);
+app.use(process.env.PREFIX + 'employee', employeeRoutes);
+app.use(process.env.PREFIX + 'payment', payment);
+app.use(process.env.PREFIX + 'discount', discount);
+app.use(process.env.PREFIX + 'other', other);
+app.use(process.env.PREFIX + 'member', member);
+app.use(process.env.PREFIX + 'complaint', complaint);
+app.use(process.env.PREFIX + 'customer', customer);
+app.use(process.env.PREFIX + 'template', template);
+app.use(process.env.PREFIX + 'workStation', workStation);
+app.use(process.env.PREFIX + 'tableMap', tableMap);
+app.use(process.env.PREFIX + 'outlet', outlet);
+app.use(process.env.PREFIX + 'floorMap', floorMap);
+app.use(process.env.PREFIX + 'menu', menu);
+app.use(process.env.PREFIX + 'printer', printer);
 
 
 // TERMINAL SERVICE HERE
-app.use(process.env.PREFIX+process.env.TERMINAL+'tableMap', terminalMap); 
-app.use(process.env.PREFIX+process.env.TERMINAL+'menuItemPos', menuItemPos);
+app.use(process.env.PREFIX + process.env.TERMINAL + 'tableMap', terminalMap);
+app.use(process.env.PREFIX + process.env.TERMINAL + 'menuItemPos', menuItemPos);
+app.use(process.env.PREFIX + process.env.TERMINAL + 'bill', bill);
 
-
-
+ 
 app.use('/', (req, res) => {
     const data = {
         error: false,
         serverTime: new Date(),
-        prefix : process.env.PREFIX
+        prefix: process.env.PREFIX
     }
     res.json(data);
 
