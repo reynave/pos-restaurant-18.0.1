@@ -1,8 +1,0 @@
-.wrapper{
-    height: 95vh;
-    overflow-y: auto;
-}
-
-.table td{
-    cursor: pointer;
-}

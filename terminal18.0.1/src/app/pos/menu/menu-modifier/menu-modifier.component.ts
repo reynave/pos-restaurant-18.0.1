@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ConfigService } from '../../service/config.service';
+import { ConfigService } from '../../../service/config.service';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { environment } from '../../../environments/environment.development';
+import { environment } from '../../../../environments/environment.development';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -12,13 +12,13 @@ export class Actor {
   ) { }
 }
 @Component({
-  selector: 'app-menu',
+  selector: 'app-menu-modifier',
   standalone: true,
   imports: [HttpClientModule, CommonModule, FormsModule, NgbDropdownModule, RouterModule],
-  templateUrl: './menu.component.html',
-  styleUrl: './menu.component.css'
+  templateUrl: './menu-modifier.component.html',
+  styleUrl: './menu-modifier.component.css'
 })
-export class MenuComponent implements OnInit {
+export class MenuModifierComponent implements OnInit {
   loading: boolean = false;
   current: number = 0;
   checkboxAll: number = 0;
@@ -45,17 +45,14 @@ export class MenuComponent implements OnInit {
   ngOnInit() {
     this.id = this.activeRouter.snapshot.queryParams['id'],
       this.modalService.dismissAll();
-    this.httpMenu();
+    this.httpGetModifier();
     this.httpCart();
   }
-  httpMenu() {
+  httpGetModifier() {
     this.loading = true;
-    const url = environment.api + "menuItemPos";
+    const url = environment.api + "menuItemPos/getModifier";
     this.http.get<any>(url, {
       headers: this.configService.headers(),
-      params: {
-        departmentId: 0,
-      }
     }).subscribe(
       data => {
         console.log(data);
@@ -72,11 +69,13 @@ export class MenuComponent implements OnInit {
 
   httpCart() {
     this.loading = true;
-    const url = environment.api + "menuItemPos/cart";
+    const url = environment.api + "menuItemPos/cartDetail";
     this.http.get<any>(url, {
       headers: this.configService.headers(),
       params: {
         id: this.activeRouter.snapshot.queryParams['id'],
+        menuId: this.activeRouter.snapshot.queryParams['menuId'],
+        price: this.activeRouter.snapshot.queryParams['price'],
       }
     }).subscribe(
       data => {
@@ -91,7 +90,8 @@ export class MenuComponent implements OnInit {
   }
 
   reload() {
-    this.httpMenu();
+    this.httpGetModifier();
+    this.httpCart();
   }
 
   open(content: any, x: any, i: number) {
@@ -100,22 +100,27 @@ export class MenuComponent implements OnInit {
   }
 
   addToCart(menu: any) {
-    console.log(menu);
-    const body = {
-      id: this.activeRouter.snapshot.queryParams['id'],
-      menu: menu,
-    }
-    this.http.post<any>(environment.api + "menuItemPos/addToCart", body, {
-      headers: this.configService.headers(),
-    }).subscribe(
-      data => {
-        console.log(data);
-        this.httpCart();
-      },
-      error => {
-        console.log(error);
+    if (this.isChecked == false) {
+      alert("Please check first!");
+    } else {
+      const body = {
+        id: this.activeRouter.snapshot.queryParams['id'],
+        menu: menu,
+        cart: this.cart
       }
-    )
+      console.log(body)
+      this.http.post<any>(environment.api + "menuItemPos/addModifier", body, {
+        headers: this.configService.headers(),
+      }).subscribe(
+        data => {
+          console.log(data);
+          this.httpCart();
+        },
+        error => {
+          console.log(error);
+        }
+      )
+    }
   }
 
   updateQty() {
@@ -140,8 +145,8 @@ export class MenuComponent implements OnInit {
   }
 
   isChecked: boolean = false;
-  fnChecked(index:number) {
-    this.cart[index].checkBox == 0 ?  this.cart[index].checkBox = 1:  this.cart[index].checkBox = 0;  
+  fnChecked(index: number) {
+    this.cart[index].checkBox == 0 ? this.cart[index].checkBox = 1 : this.cart[index].checkBox = 0;
 
     let isVoid = 0;
     for (let i = 0; i < this.cart.length; i++) {
@@ -157,12 +162,11 @@ export class MenuComponent implements OnInit {
     }
   }
   onVoid() {
-    
 
     if (this.isChecked == false) {
       alert("Please check first!");
     } else {
-      if (confirm("Are you sure  void this select items ?")) {
+      if (confirm("Are you sure void this selected items ?")) {
         console.log(this.cart)
 
         this.loading = true;
@@ -170,7 +174,7 @@ export class MenuComponent implements OnInit {
           cart: this.cart,
           cartId: this.id,
         }
-        const url = environment.api + "menuItemPos/voidItem";
+        const url = environment.api + "menuItemPos/voidItemDetail";
         this.http.post<any>(url, body, {
           headers: this.configService.headers(),
         }).subscribe(
@@ -186,4 +190,23 @@ export class MenuComponent implements OnInit {
     }
   }
 
+  onRemoveModifier() {
+    this.loading = true;
+    const body = {
+      cart: this.cart,
+      cartId: this.id,
+    }
+    const url = environment.api + "menuItemPos/removeDetailModifier";
+    this.http.post<any>(url, body, {
+      headers: this.configService.headers(),
+    }).subscribe(
+      data => {
+        console.log(data);
+        this.httpCart();
+      },
+      error => {
+        console.log(error);
+      }
+    )
+  }
 }

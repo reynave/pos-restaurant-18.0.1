@@ -7,10 +7,13 @@ router.get('/', menuItemPos.getMenuItem);
 router.get('/cart', menuItemPos.cart);
 router.post('/addToCart', menuItemPos.addToCart);
 router.post('/updateQty', menuItemPos.updateQty);
+router.post('/voidItem', menuItemPos.voidItem);
 
-
+router.get('/getModifier', menuItemPos.getModifier);
 router.get('/cartDetail', menuItemPos.cartDetail);
-
+router.post('/voidItemDetail', menuItemPos.voidItemDetail);
+router.post('/addModifier', menuItemPos.addModifier);
+router.post('/removeDetailModifier', menuItemPos.removeDetailModifier);
 
 // router.post('/create', menuItemPos.postCreate);
 // router.post('/delete', menuItemPos.postDelete);
