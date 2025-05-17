@@ -1,0 +1,120 @@
+<div class="">
+    <div class="row g-0">
+        <div class="col-5 col-lg-4">
+            <!-- TABLE cart -->
+            <div class="wrapper">
+                <div class="py-5">
+                    <table class="table table-sm table-hover table-borderless table-bill">
+                        <tbody>
+                            <tr *ngFor="let x of cart; let i = index">
+
+                                <td>
+                                    <div class="lh-1">
+                                        @if(x.parentMenuId == 0){
+                                        <strong>{{x.name }} </strong>
+                                        }
+                                        @else {
+                                       <span class="ms-4"> {{x.name }}</span>
+                                        }
+
+                                    </div>
+                                    @if(x.parentMenuId == 0){
+                                    <div >&#64;{{x.price | number}}</div>
+                                    }
+                                </td>
+                                <td width="50px" class="text-end ">
+                                    x {{x.total | number}}
+                                </td>
+                                <td class="text-end ">{{x.totalAmount | number}}</td>
+                            </tr>
+                            <tr>
+                                <td>{{totalItem}} Item</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="text-end">Subtotal : </td> 
+                                <td class="text-end "> {{totalAmount | number}} </td>
+                            </tr>
+                            <tr *ngFor="let x of bill"> 
+                                <td colspan="2" class="text-end">{{x.name}} : </td>
+                                <td class="text-end">{{x.amount | number}}</td>
+                            </tr>
+                           
+                            <tr>
+                                <td colspan="2" class="text-end">Grand Total :</td> 
+                                <td class="text-end "><strong class="font-monospace"
+                                        style="font-size: 1.2rem;">{{grandTotal | number}}</strong></td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-5 col-lg-6">
+            <div class="wrapper border px-1 py-5 ">
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>Payment Type</th>
+                            <th>Amount</th>
+                            <th>Tips</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let x of paid">
+                            <td>
+                                {{x.name}}
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" currencyMask [(ngModel)]="x.paid"
+                                    [currencyMask]="{ prefix: '', thousands: ',',  min: 0, precision  : 0, allowNegative  :  false}">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" currencyMask [(ngModel)]="x.tips"
+                                    [currencyMask]="{ prefix: '', thousands: ',',  min: 0, precision  : 0, allowNegative  :  false}">
+                            </td>
+                            <td>
+                                <button type="button" class="btn text-danger" (click)="deletePaid(x)"><i
+                                        class="bi bi-trash3-fill"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+        <div class="col-2  ">
+            <div class="wrapper px-2 py-5 text-center">
+                <div *ngFor="let x of paymentType; let i = index" class="d-grid">
+                    <button type="button" class="btn btn-warning mb-1" (click)="addPayment(x);">{{x.name}}</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="wrapper-fix-bottom border-top shadow-sm bg-white">
+    <div class="p-2">
+        <div class="row">
+            <div class="col-5 col-lg-4">
+                <div class="row">
+                    <div class="col-6">
+                        <h4>Unpaid</h4>
+                    </div>
+                    <div class="col-6">
+                        <h4 class="text-end font-monospace">{{grandTotal | number}}</h4>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-7 col-lg-8">
+                <a href="javascript:;" (click)="reload()"> Developer Reload</a>
+            </div>
+        </div>
+    </div>
+</div>

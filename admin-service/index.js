@@ -24,6 +24,7 @@ const printer = require('./routes/station/printer');
 const terminalMap = require('./routes/terminal/tableMap');
 const menuItemPos = require('./routes/terminal/menuItemPos');
 const bill = require('./routes/terminal/bill');
+const paymentPos = require('./routes/terminal/payment');
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -76,14 +77,16 @@ app.use(process.env.PREFIX + 'tableMap', tableMap);
 app.use(process.env.PREFIX + 'outlet', outlet);
 app.use(process.env.PREFIX + 'floorMap', floorMap);
 app.use(process.env.PREFIX + 'menu', menu);
-app.use(process.env.PREFIX + 'printer', printer);
+app.use(process.env.PREFIX + 'printer', paymentPos);
 
 
 // TERMINAL SERVICE HERE
 app.use(process.env.PREFIX + process.env.TERMINAL + 'tableMap', terminalMap);
 app.use(process.env.PREFIX + process.env.TERMINAL + 'menuItemPos', menuItemPos);
 app.use(process.env.PREFIX + process.env.TERMINAL + 'bill', bill);
+app.use(process.env.PREFIX + process.env.TERMINAL + 'payment', paymentPos);
 
+ 
  
 app.use('/', (req, res) => {
     const data = {

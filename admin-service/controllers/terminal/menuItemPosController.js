@@ -1,5 +1,6 @@
 const db = require('../../config/db');
 const { today, formatDateOnly } = require('../../helpers/global');
+const { autoNumber } = require('../../helpers/autoNumber');
 
 exports.getMenuItem = async (req, res) => {
   const i = 1;
@@ -39,7 +40,7 @@ exports.cart = async (req, res) => {
   const i = 1;
   try {
     const cartId = req.query.id;
-
+    let totalItem = 0;
     const [formattedRows] = await db.query(`
       SELECT t1.* , (t1.total * t1.price) as 'totalAmount', m.name , 0 as 'checkBox', '' as modifier
       FROM (
@@ -55,7 +56,7 @@ exports.cart = async (req, res) => {
     `);
     let totalAmount = 0;
     for (const row of formattedRows) {
-
+      totalItem += 1;
       const s = `
         SELECT COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount'
         FROM (
@@ -74,7 +75,7 @@ exports.cart = async (req, res) => {
       row.modifier = modifier; // tambahkan hasil ke properti maps 
 
       let totalAmountModifier = 0;
-      modifier.forEach(el => {
+      modifier.forEach(el => { 
         totalAmountModifier += parseInt(el['totalAmount']);
       });
 
@@ -91,12 +92,23 @@ exports.cart = async (req, res) => {
       });
     });
 
-
+    const [sendOrder] = await db.query(`
+      SELECT 
+        ROW_NUMBER() OVER (ORDER BY sendOrder ASC) AS no,
+        sendOrder AS id,
+        COUNT(sendOrder) AS totalMenu
+      FROM cart_item
+      WHERE cartId = '${cartId}'
+      GROUP BY sendOrder
+      ORDER BY sendOrder ASC;
+    `);
 
     res.json({
       error: false,
       items: formattedRows,
+      sendOrder : sendOrder, 
       totalAmount: totalAmount,
+      totalItem : totalItem,
       get: req.query
     });
 
@@ -313,7 +325,7 @@ exports.cartDetail = async (req, res) => {
   const cartId = req.query.id;
   const menuId = req.query.menuId;
   const price = req.query.price;
- const sendOrder = req.query.sendOrder;
+  const sendOrder = req.query.sendOrder;
 
   try {
 
@@ -322,7 +334,7 @@ exports.cartDetail = async (req, res) => {
       FROM cart_item AS c
       LEFT JOIN menu AS m ON m.id = c.menuId
       WHERE c.cartId = '${cartId}' AND c.presence = 1 AND c.void = 0
-      AND c.menuId = ${menuId} AND c.price = ${price} and c.sendOrder = ${sendOrder}
+      AND c.menuId = ${menuId} AND c.price = ${price} and c.sendOrder = '${sendOrder}'
     `;
     const [formattedRows] = await db.query(q);
     let totalAmount = 0;
@@ -595,37 +607,58 @@ exports.sendOrder = async (req, res) => {
 
   const inputDate = today();
   const results = [];
-
-  try { 
+  const { insertId } = await autoNumber('sendOrder');
+  const sendOrder = insertId;
+  try {
     const q = `
     UPDATE cart_item SET
-      sendOrder = 1, 
+      sendOrder = '${sendOrder}', 
       updateDate = '${today()}'
-    WHERE cartId = ${cartId}  and presence = 1 and void = 0`;
+    WHERE cartId = ${cartId}  and presence = 1 and void = 0 and sendOrder = '' `;
     const [result] = await db.query(q);
 
     if (result.affectedRows === 0) {
       results.push({ cartId, status: 'not found', });
     } else {
-      results.push({ cartId, status: 'updated',  });
+      results.push({ cartId, status: 'cart_item updated', });
     }
 
-     const q2 = `
+    const q2 = `
     UPDATE cart_item_modifier SET
-      sendOrder = 1, 
+      sendOrder =  '${sendOrder}', 
       updateDate = '${today()}'
-    WHERE cartId = ${cartId}  and presence = 1 and void = 0`;
+    WHERE cartId = ${cartId}  and presence = 1 and void = 0 and sendOrder = ''`;
     const [result2] = await db.query(q2);
 
     if (result2.affectedRows === 0) {
-      results.push({ cartId, status: 'not found',   });
+      results.push({ cartId, status: 'not found', });
     } else {
-      results.push({ cartId, status: 'updated', });
+      results.push({ cartId, status: 'cart_item_modifier updated', });
     }
-   
+
+    if (result2.affectedRows !== 0 || result.affectedRows !== 0) {
+      const q3 =
+        `INSERT INTO send_order (
+        presence, inputDate, updateDate,  
+        cartId, sendOrderDate, id
+      )
+      VALUES (
+        1, '${today()}', '${today()}',  
+        '${cartId}',  '${today()}', '${sendOrder}'
+      )`;
+      const [result3] = await db.query(q3);
+      if (result3.affectedRows === 0) {
+        results.push({ sendOrder, status: 'not found', });
+      } else {
+        results.push({ sendOrder, status: 'insert', });
+      }
+    }
+
+
+
     res.status(201).json({
       error: false,
-      inputDate: inputDate,
+      results: results,
       message: 'cart_item close Order',
     });
 

@@ -29,8 +29,7 @@ export class BillComponent implements OnInit {
   totalAmount: number = 0;
   api: string = environment.api;
   htmlBill: any = '';
-  isChecked: boolean = false;
-  model = new Actor(1);
+  isChecked: boolean = false; 
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
@@ -42,7 +41,7 @@ export class BillComponent implements OnInit {
 
   ngOnInit() {
     this.id = this.activeRouter.snapshot.queryParams['id'],
-      this.modalService.dismissAll();
+    this.modalService.dismissAll();
     this.httpCart();
     this.httpBill();
 
@@ -90,16 +89,25 @@ export class BillComponent implements OnInit {
     this.httpCart();
   }
 
-  open(content: any, x: any, i: number) {
-    this.item = x;
-    this.modalService.open(content);
+  payment(){
+    this.loading = true;
+    const body = {
+      id :this.id,
+    }
+    console.log(body)
+    this.http.post<any>(environment.api+"payment/submit", body,{
+      headers : this.configService.headers(),
+    }).subscribe(
+      data=>{
+        console.log(data);
+        this.router.navigate(['payment'], {queryParams : {id:this.id}});
+      },
+      error=>{
+        console.log(error);
+      }
+    )
   }
-
-
-
-
-
-
+ 
 
 
 }

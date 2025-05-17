@@ -1,8 +1,20 @@
 /* You can add global styles to this file, and also import other style files */
- html, body {
+ *{ 
+    font-family: "Open Sans", sans-serif;   
+}
+html, body {
       height: 100%;
       margin: 0;
     }
+
+
+div, p, label {
+  font-size: 0.9rem;
+}
+
+label{
+  color: #333 !important;
+}
 
 .wrapper-sm{
     max-width: 600px;
@@ -20,13 +32,23 @@
     bottom: 0px;
     width: 100%;
 }
-
+.table thead th{
+    font-size: 0.9rem;
+    text-transform: uppercase;
+}
 .table .bg-light td{
     background-color: #DDE6ED;
+    border-bottom: 1px solid #cecece;
 }
 .table td{
     cursor: pointer;
 }
 .tr-active td{
     background-color: #f4f4f4;
+}
+.table-bill td{
+ padding: 2px 5px;
+}
+.table-bill td, .table-bill td strong, .table-bill td div, .table-bill span{
+    font-family: var(--bs-font-monospace) !important;
 }

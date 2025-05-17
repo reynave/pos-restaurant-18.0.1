@@ -2,13 +2,13 @@ const db = require('../config/db'); // sesuaikan path kalau perlu
 const { today, formatDateOnly } = require('../helpers/global');
 
 
-async function autoNumber() {
+async function autoNumber(name = '') {
     const inputDate = today();
 
     const [rows] = await db.query(
         `SELECT *
       FROM auto_number  
-      WHERE name = 'cart' `
+      WHERE name = '${name}' `
     );
     let prefix = '';
 
@@ -19,6 +19,8 @@ async function autoNumber() {
         const day = String(now.getDate()).padStart(2, '0');
 
         prefix = `${year}${month}${day}`;
+    }else{
+        prefix = rows[0].prefix;
     }
     const newNumber = rows[0].runningNumber + 1;
     const newValue = prefix + String((newNumber)).padStart(rows[0].digit, '0');
@@ -28,7 +30,7 @@ async function autoNumber() {
            lastRecord  = '${newValue}',
            runningNumber  = ${newNumber}, 
            updateDate = '${today()}' 
-         WHERE name = 'cart'`,);
+         WHERE name = '${name}'`,);
 
     return {
         update: update.insertId,

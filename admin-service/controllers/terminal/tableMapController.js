@@ -70,7 +70,7 @@ exports.newOrder = async (req, res) => {
   const inputDate = today();
 
   try {
-    const { insertId } = await autoNumber();
+    const { insertId } = await autoNumber('cart');
   
 
     const [newOrder] = await db.query(
