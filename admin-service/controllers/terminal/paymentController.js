@@ -6,7 +6,7 @@ const ejs = require('ejs');
 const path = require('path');
 
 exports.cart = async (req, res) => {
- let totalItem = 0;
+  let totalItem = 0;
   try {
     const cartId = req.query.id;
 
@@ -62,10 +62,10 @@ exports.cart = async (req, res) => {
       orderItems.push({
         menuId: formattedRows[i]['menuId'],
         parentMenuId: 0,
-        name: formattedRows[i]['name']+(formattedRows[i]['modifier'].length > 0 ? '*':''),
+        name: formattedRows[i]['name'] + (formattedRows[i]['modifier'].length > 0 ? '*' : ''),
         price: formattedRows[i]['price'],
         total: formattedRows[i]['total'],
-        totalAmount: parseInt(formattedRows[i]['totalAmount']), 
+        totalAmount: parseInt(formattedRows[i]['totalAmount']),
       })
       formattedRows[i]['modifier'].forEach(el => {
         orderItems.push({
@@ -74,31 +74,81 @@ exports.cart = async (req, res) => {
           name: el['descl'],
           price: el['price'],
           total: el['total'],
-          totalAmount: parseInt(el['totalAmount']), 
-        }) 
+          totalAmount: parseInt(el['totalAmount']),
+        })
       });
     }
     let grandTotal = totalAmount;
-     const s2 = `
-       SELECT c.id, c.bill as 'amount', t.name 
-FROM cart_payment  AS c
- JOIN check_sc_type AS t ON t.id = c.checkScTypeId 
+    const s2 = `
+      SELECT c.id, c.bill as 'amount', t.name 
+      FROM cart_payment  AS c
+      JOIN check_sc_type AS t ON t.id = c.checkScTypeId  
+      WHERE c.cartId = '${cartId}' and c.presence = 1 
 
-WHERE c.cartId = '${cartId}' and c.presence = 1 
+      UNION 
 
-UNION 
-
-SELECT  c.id, c.bill as 'amount',  a.name
-FROM cart_payment  AS c 
- JOIN check_tax_type AS a ON a.id = c.checkTaxTypeId
-
-WHERE c.cartId = '${cartId}' and c.presence = 1 
-      `; 
-      const [bill] = await db.query(s2);
+      SELECT  c.id, c.bill as 'amount',  a.name
+      FROM cart_payment  AS c 
+      JOIN check_tax_type AS a ON a.id = c.checkTaxTypeId 
+      WHERE c.cartId = '${cartId}' and c.presence = 1 
+      `;
+    const [bill] = await db.query(s2);
 
     bill.forEach(el => {
-        grandTotal += el['amount'];
+      grandTotal += el['amount'];
     });
+
+
+     const s3 = `
+      SELECT c.id, c.paid as 'amount', t.name 
+      FROM cart_payment  AS c
+      JOIN check_payment_type AS t ON t.id = c.checkPaymentTypeId
+      WHERE c.cartId = '${cartId}' and c.presence = 1 and  submit = 1
+      `;
+    const [paided] = await db.query(s3);
+
+   
+
+      const s5 = `
+        SELECT SUM(t1.bill - t1.paid) AS 'amount'  FROM (
+
+          SELECT id, price  AS 'bill', 0 AS 'paid' 
+          FROM cart_item_modifier
+          WHERE cartId = '${cartId}' AND presence =1 AND void = 0
+          UNION
+
+          SELECT id, price  AS 'bill', 0 AS 'paid' FROM cart_item
+          WHERE cartId = '${cartId}'  AND presence =1 AND void = 0
+          UNION 
+
+          SELECT c.id, c.bill  , c.paid
+          FROM cart_payment  AS c 
+          WHERE c.cartId = '${cartId}' AND presence =1  and submit = 1
+
+          UNION 
+
+          SELECT  c.id, c.bill  , c.paid
+          FROM cart_payment  AS c  
+          WHERE c.cartId = '${cartId}' AND presence =1  and submit = 1
+      ) AS t1
+      `;
+    const [closePaymentQuery] = await db.query(s5);
+
+    if( parseInt(closePaymentQuery[0]['amount'] ) <= 0  ){
+      const q = `UPDATE cart
+            SET
+              close =  1, 
+              totalAmount = '${totalAmount}',
+              grandTotal = '${grandTotal}',
+              totalItem = '${totalItem}',
+              endDate = '${today()}',
+              updateDate = '${today()}'
+              
+          WHERE id = ${cartId} and presence = 1  `;
+      const [result] = await db.query(q);
+
+    }
+    
 
 
     res.json({
@@ -108,10 +158,12 @@ WHERE c.cartId = '${cartId}' and c.presence = 1
       items: formattedRows,
       orderItems: orderItems,
       totalAmount: totalAmount,
-      grandTotal: grandTotal,
-      
-      totalItem :  totalItem ,
+      grandTotal: grandTotal, 
+      totalItem: totalItem,
       bill: bill,
+      paided: paided,
+      closePayment : parseInt(closePaymentQuery[0]['amount'] ) <= 0  ? true : false,
+      closePaymentAmount : parseInt(closePaymentQuery[0]['amount'] ),
       get: req.query
     });
 
@@ -248,7 +300,6 @@ exports.submit = async (req, res) => {
           WHERE cartId = ${cartId} and void = 0 and presence = 1 and sendOrder = '' `;
     const [result] = await db.query(q);
 
-
     if (result.affectedRows === 0) {
       results.push({ cartId, status: 'cart_item cartId not found', query: q, });
     } else {
@@ -269,6 +320,11 @@ exports.submit = async (req, res) => {
       results.push({ cartId, status: 'cart_item_modifier sendOrder updated', query: q, });
     }
 
+
+
+
+
+
     res.json({
       error: false,
       id: cartId,
@@ -280,6 +336,46 @@ exports.submit = async (req, res) => {
   }
 };
 
+exports.addPaid = async (req, res) => {
+ 
+  const paid = req.body['paid'];
+
+  const results = [];
+
+  try {
+    for (const emp of paid) {
+      console.log(emp)
+      const { id, cartId, paid } = emp;
+
+      if (!id) {
+        results.push({ id, status: 'failed', reason: 'Missing fields' });
+        continue;
+      }
+ 
+      const q = `UPDATE cart_payment
+                SET
+                  paid = ${paid}, 
+                  submit = 1,
+                  updateDate = '${today()}'
+              WHERE id = ${id}   and cartId = '${cartId}'`;
+      console.log(q);
+      const [result] = await db.query(q);
+      if (result.affectedRows === 0) {
+        results.push({ id, status: 'cart_payment not found', query: q, });
+      } else {
+        results.push({ id, status: 'cart_payment updated', query: q, });
+      }
+    }
+
+    res.json({
+      message: 'Batch update completed',
+      results: results
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: true, note: 'Database insert error' });
+  }
+};
 
 exports.printing = async (req, res) => {
   const templatePath = path.join(__dirname, '../../public/template/bill.ejs');
@@ -353,3 +449,4 @@ exports.printing = async (req, res) => {
     res.status(500).send('Gagal render HTML');
   }
 };
+

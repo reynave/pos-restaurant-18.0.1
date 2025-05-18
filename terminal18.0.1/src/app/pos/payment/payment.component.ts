@@ -34,8 +34,11 @@ export class PaymentComponent implements  OnInit {
   htmlBill: any = '';
   isChecked: boolean = false;  
   paid : any = [];
+  paided : any = [];
+  
   bill : any = [];
   grandTotal : number = 0;
+  closePaymentAmount : number = 1;
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
@@ -86,7 +89,13 @@ export class PaymentComponent implements  OnInit {
         this.totalAmount = data['totalAmount'];
         this.totalItem = data['totalItem'];
         this.bill = data['bill'];
-        this.grandTotal = data['grandTotal']
+        this.paided = data['paided']; 
+        this.grandTotal = data['grandTotal'];
+        this.closePaymentAmount = data['closePaymentAmount'];
+
+        if( data['closePayment'] == true){
+          this.router.navigate(['close/bill'], { queryParams :{ id : this.id}});
+        }
       },
       error => {
         console.log(error);
@@ -137,7 +146,7 @@ export class PaymentComponent implements  OnInit {
     const body = {
       cartId :this.id,
       payment : payment,
-      totalAmount : this.grandTotal,
+      totalAmount : this.closePaymentAmount,
     }
     console.log(body)
     this.http.post<any>(environment.api+"payment/addPayment", body,{
@@ -146,6 +155,7 @@ export class PaymentComponent implements  OnInit {
       data=>{
         console.log(data);
         this.httpPaid();
+        this.httpCart()
       },
       error=>{
         console.log(error);
@@ -167,6 +177,7 @@ export class PaymentComponent implements  OnInit {
       data=>{
         console.log(data);
         this.httpPaid();
+         this.httpCart();
       },
       error=>{
         console.log(error);
@@ -174,4 +185,26 @@ export class PaymentComponent implements  OnInit {
     )
   }
   
+
+  addPaid(){
+    this.loading = true;
+    const body = {
+      cartId :this.id,
+      paid : this.paid,
+      totalAmount : this.grandTotal,
+    }
+    console.log(body)
+    this.http.post<any>(environment.api+"payment/addPaid", body,{
+      headers : this.configService.headers(),
+    }).subscribe(
+      data=>{
+        console.log(data);
+        this.httpCart();
+        this.httpPaid();
+      },
+      error=>{
+        console.log(error);
+      }
+    )
+  }
 }
