@@ -18,7 +18,7 @@ export class Actor {
 @Component({
   selector: 'app-tables',
   standalone: true,
-   imports: [HttpClientModule, CommonModule, FormsModule, NgbDropdownModule, RouterModule],
+  imports: [HttpClientModule, CommonModule, FormsModule, NgbDropdownModule, RouterModule],
   templateUrl: './tables.component.html',
   styleUrl: './tables.component.css'
 })
@@ -33,26 +33,32 @@ export class TablesComponent implements OnInit {
   outletSelect: any = [];
   api: string = environment.api;
   model = new Actor(0, 1, 0);
+  activeView: string = 'map';
+  getTokenJson: any = [];
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
     public modalService: NgbModal,
     private router: Router,
-     private activeRouter: ActivatedRoute,
-    
+    private activeRouter: ActivatedRoute,
+
   ) { }
 
 
   ngOnInit() {
-
+    this.getTokenJson = this.configService.getTokenJson();
+    console.log(this.getTokenJson);
     this.modalService.dismissAll();
-    this.httpGet(); 
+    this.httpGet();
   }
   httpGet() {
     this.loading = true;
     const url = environment.api + "tableMap";
     this.http.get<any>(url, {
       headers: this.configService.headers(),
+      params: {
+        outletId: this.getTokenJson['outlet']['id'],
+      }
     }).subscribe(
       data => {
         console.log(data);
@@ -85,9 +91,10 @@ export class TablesComponent implements OnInit {
 
   onSubmit() {
     console.log(this.model);
-
+    const outletId  = this.configService.getTokenJson()['outlet']['id'];
     const body = {
       model: this.model,
+      outletId : outletId
     }
     console.log(body);
     this.http.post<any>(environment.api + "tableMap/newOrder", body, {
@@ -100,6 +107,14 @@ export class TablesComponent implements OnInit {
       },
       error => {
         console.log(error);
+      }
+    )
+  }
+
+  onLogOut() {
+    this.configService.removeToken().subscribe(
+      () => {
+        this.router.navigate(['login']);
       }
     )
   }

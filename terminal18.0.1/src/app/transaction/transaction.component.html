@@ -1,0 +1,48 @@
+<div class="header">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <button class="btn btn-sm btn-light" (click)="back();">back</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <table class="table table-sm table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Table Name</th>
+                        <th>Payment</th>
+                        <th class="text-end">Cover</th>
+                        <th class="text-end">total Item</th>
+                        <th class="text-end">grand Total</th>
+                        <th>User</th>
+                        <th>start Date</th>
+                        <th>end Date</th> 
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let x of items" (click)="goToDetail(x)">
+                        <td>{{x.id}}</td> 
+                        <td>{{x.tableName }}</td>
+                        <td>
+                            <span *ngFor="let a of x.paymentType; let i = index">{{ i>1 ? ", ":" "}} {{a.name}} </span>
+                        </td>
+                        
+                        <td class="text-end">{{x.cover}}</td> 
+                        <td class="text-end">{{x.totalItem | number}}</td>
+                        <td class="text-end">{{x.grandTotal | number}}</td>
+                        
+                        <td>USER TEST</td>
+                        <td>{{x.startDate | date :'medium'}}</td>
+                        <td>{{x.endDate | date :'medium'}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

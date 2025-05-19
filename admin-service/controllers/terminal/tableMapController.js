@@ -3,12 +3,13 @@ const { today, formatDateOnly } = require('../../helpers/global');
 const { autoNumber } = require('../../helpers/autoNumber');
 
 exports.getAllData = async (req, res) => {
+  const outletId = req.query.outletId;
   try {
 
     const [formattedRows] = await db.query(`
       SELECT id, outletId, desc1, null as 'maps'
       FROM outlet_floor_plan  
-      WHERE presence = 1
+      WHERE presence = 1  ${!outletId  ? '':'AND outletId = '+outletId}
     `);
 
     // Loop dengan for...of agar bisa pakai await
@@ -67,6 +68,7 @@ exports.getAllData = async (req, res) => {
 
 exports.newOrder = async (req, res) => {
   const model = req.body['model'];
+   const outletId = req.body['outletId'];
   const inputDate = today();
 
   try {
@@ -76,9 +78,11 @@ exports.newOrder = async (req, res) => {
     const [newOrder] = await db.query(
       `INSERT INTO cart (
         presence, inputDate, tableMapStatusId, outletTableMapId, 
-        cover,  id,
+        cover,  id, outletId,
         startDate, endDate ) 
-      VALUES (1, '${inputDate}', 10, ${model['outletTableMapId']},  ${model['cover']},  '${insertId}', '${inputDate}', '${inputDate}'  )`
+      VALUES (1, '${inputDate}', 10, ${model['outletTableMapId']}, 
+        ${model['cover']},  '${insertId}',  ${outletId}, 
+        '${inputDate}', '${inputDate}'  )`
     );
 
 
@@ -105,7 +109,7 @@ exports.newOrder = async (req, res) => {
 exports.postDelete = async (req, res) => {
   // const { id, name, position, email } = req.body;
   const data = req.body;
-  console.log(data);
+ 
   // res.json({
   //   body: req.body, 
   // });

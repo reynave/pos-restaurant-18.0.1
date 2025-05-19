@@ -30,8 +30,11 @@ export class MenuComponent implements OnInit {
   modifiers: any = [];
   item: any = [];
   cart: any = [];
+  discountGroup: any = [];
+
   id: string = '';
   totalAmount: number = 0;
+
   api: string = environment.api;
 
   isChecked: boolean = false;
@@ -60,11 +63,13 @@ export class MenuComponent implements OnInit {
       headers: this.configService.headers(),
       params: {
         departmentId: 0,
+        outletId: this.configService.getTokenJson()['outlet']['id']
       }
     }).subscribe(
       data => {
         this.loading = false;
         this.items = data['items'];
+        this.discountGroup = data['discountGroup'];
 
       },
       error => {
@@ -110,7 +115,7 @@ export class MenuComponent implements OnInit {
   }
 
   reload() {
-     this.httpMenu();
+    this.httpMenu();
     this.httpCart();
     this.httpGetModifier();
   }
@@ -159,20 +164,23 @@ export class MenuComponent implements OnInit {
   }
 
   fnChecked(index: number) {
-    this.cart[index].checkBox == 0 ? this.cart[index].checkBox = 1 : this.cart[index].checkBox = 0;
+    if (this.cart[index]['sendOrder'] == 0) {
+      this.cart[index].checkBox == 0 ? this.cart[index].checkBox = 1 : this.cart[index].checkBox = 0;
 
-    let isVoid = 0;
-    for (let i = 0; i < this.cart.length; i++) {
-      if (this.cart[i]['checkBox'] == 1) {
-        isVoid++;
-        i = this.cart.length + 10;
+      let isVoid = 0;
+      for (let i = 0; i < this.cart.length; i++) {
+        if (this.cart[i]['checkBox'] == 1) {
+          isVoid++;
+          i = this.cart.length + 10;
+        }
+      }
+      if (isVoid == 0) {
+        this.isChecked = false;
+      } else {
+        this.isChecked = true;
       }
     }
-    if (isVoid == 0) {
-      this.isChecked = false;
-    } else {
-      this.isChecked = true;
-    }
+
   }
 
   onVoid() {
@@ -232,6 +240,33 @@ export class MenuComponent implements OnInit {
     }
   }
 
+  addDiscountGroup(a: any) {
+    if (this.isChecked == false) {
+      alert("Please check item first!");
+    } else {
+      this.loading = true;
+      const body = {
+        cart: this.cart,
+        cartId: this.id,
+        discountGroup: a,
+      }
+      console.log(body);
+      const url = environment.api + "menuItemPos/addDiscountGroup";
+      this.http.post<any>(url, body, {
+        headers: this.configService.headers(),
+      }).subscribe(
+        data => {
+          console.log(data);
+          this.httpCart();
+          // this.showModifier = true;
+        },
+        error => {
+          console.log(error);
+        }
+      )
+    }
+  }
+
   sendOrder() {
     this.loading = true;
     const body = {
@@ -249,6 +284,26 @@ export class MenuComponent implements OnInit {
         console.log(error);
       }
     )
+  }
+
+  exitWithoutOrder() {
+    if (confirm("Are you sure exit without order?")) {
+      const body = {
+        cartId: this.id,
+      }
+      const url = environment.api + "menuItemPos/exitWithoutOrder";
+      this.http.post<any>(url, body, {
+        headers: this.configService.headers(),
+      }).subscribe(
+        data => {
+          console.log(data);
+          this.router.navigate(['tables']);
+        },
+        error => {
+          console.log(error);
+        }
+      )
+    }
   }
 
 }

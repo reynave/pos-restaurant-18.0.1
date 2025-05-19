@@ -9,7 +9,10 @@ router.post('/addToCart', menuItemPos.addToCart);
 router.post('/updateQty', menuItemPos.updateQty);
 router.post('/voidItem', menuItemPos.voidItem);
 router.post('/addToItemModifier', menuItemPos.addToItemModifier);
+router.post('/addDiscountGroup', menuItemPos.addDiscountGroup);
+
 router.post('/sendOrder', menuItemPos.sendOrder);
+router.post('/exitWithoutOrder', menuItemPos.exitWithoutOrder);
 
 
 router.get('/getModifier', menuItemPos.getModifier);

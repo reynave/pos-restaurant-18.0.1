@@ -129,8 +129,31 @@
 
             </div>
             <div class="col-7 col-lg-8">
-                <a href="javascript:;" (click)="reload()"> Developer Reload</a>
+                <a href="javascript:;" (click)="reload()"> Developer Reload</a> | 
+                <a href="javascript:;" (click)="openModal()">openModal</a> 
             </div>
         </div>
     </div>
 </div>
+
+
+<ng-template #myModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Payment</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+     <div class="row">
+        <div class="col-2">
+            <h1> <i class="bi bi-exclamation-circle-fill"></i></h1>
+        </div>
+        <div class="col-10">
+            <h4>Payment Finish</h4>
+            <h4>{{closePaymentAmount <= 0 ? 'CHANGE' :'AMOUNT DUE'}} : {{closePaymentAmount | number}} </h4>
+        </div>
+     </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="modal.close('OK click')">OK</button>
+  </div>
+</ng-template>

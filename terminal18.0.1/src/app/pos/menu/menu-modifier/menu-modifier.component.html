@@ -48,7 +48,7 @@
                         </div>
                         <div class="col-10">
                           {{a.descl}}
-                           <span class="font-monospace" *ngIf="a.price > 0">Rp{{a.price | number}},-</span>
+                           <span class="font-monospace" >  {{a.price | number}},-</span>
                         </div>
                      </div>
                      }
@@ -59,13 +59,13 @@
                         </div>
                         <div class="col-10">
                            {{a.descl}}
-                           <span class="font-monospace" *ngIf="a.price > 0">Rp{{a.price | number}},-</span>
+                           <span class="font-monospace" > {{a.price | number}},-</span>
                         </div>
                      </div>
                      }
                   </td>
 
-                  <td class="text-end font-monospace">{{x.price | number}}</td>
+                  <td class="text-end font-monospace">{{x.price < 0 ? 0 : x.price | number}}</td>
                </tr>
 
             </tbody>
@@ -74,7 +74,7 @@
          </table>
 
          <div class="text-end me-2">
-            <h4>Rp {{totalAmount | number}}</h4>
+            <h4>  {{totalAmount | number}}</h4>
          </div>
       </div>
       <div class="col-7">

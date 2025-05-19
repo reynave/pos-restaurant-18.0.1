@@ -1,7 +1,18 @@
 .table-map{
     position: relative;
-    width: 800px;
-    height: 600px;
-    background-color: #f5f5f5;
+    width: var(--map-width);
+    height: var(--map-height);
+    background-color: #eee;
     overflow-y: auto;
 }
+
+.table-map .floorPlan{
+   position: absolute; 
+}
+
+ .table-map .floorPlan .items{
+    background-color: #f5f5f5;
+    border: 1px solid #333;
+}
+
+ 

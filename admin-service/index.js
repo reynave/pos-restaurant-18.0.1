@@ -21,10 +21,12 @@ const floorMap = require('./routes/outlet/floorMap');
 const menu = require('./routes/menu/menu');
 const printer = require('./routes/station/printer');
 
+const loginPos = require('./routes/terminal/loginPos'); 
 const terminalMap = require('./routes/terminal/tableMap');
 const menuItemPos = require('./routes/terminal/menuItemPos');
 const bill = require('./routes/terminal/bill');
 const paymentPos = require('./routes/terminal/payment');
+const transactionPos = require('./routes/terminal/transaction');
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -81,10 +83,13 @@ app.use(process.env.PREFIX + 'printer', paymentPos);
 
 
 // TERMINAL SERVICE HERE
+app.use(process.env.PREFIX + process.env.TERMINAL + 'login', loginPos); 
 app.use(process.env.PREFIX + process.env.TERMINAL + 'tableMap', terminalMap);
+
 app.use(process.env.PREFIX + process.env.TERMINAL + 'menuItemPos', menuItemPos);
 app.use(process.env.PREFIX + process.env.TERMINAL + 'bill', bill);
 app.use(process.env.PREFIX + process.env.TERMINAL + 'payment', paymentPos);
+app.use(process.env.PREFIX + process.env.TERMINAL + 'transaction', transactionPos);
 
  
  

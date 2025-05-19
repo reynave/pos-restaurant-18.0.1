@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ConfigService } from '../../service/config.service';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { environment } from '../../../environments/environment.development';
@@ -20,6 +20,7 @@ export class Actor {
   styleUrl: './payment.component.css'
 })
 export class PaymentComponent implements  OnInit {
+   @ViewChild('myModal', { static: true }) myModal: any;
   loading: boolean = false;
   items: any = [{
     menu: []
@@ -94,7 +95,7 @@ export class PaymentComponent implements  OnInit {
         this.closePaymentAmount = data['closePaymentAmount'];
 
         if( data['closePayment'] == true){
-          this.router.navigate(['close/bill'], { queryParams :{ id : this.id}});
+         this.openModal();
         }
       },
       error => {
@@ -117,7 +118,6 @@ export class PaymentComponent implements  OnInit {
       }
     )
   }
-
 
   httpBill() {
     this.loading = true;
@@ -162,8 +162,7 @@ export class PaymentComponent implements  OnInit {
       }
     )
   }
- 
-
+  
   deletePaid(x:any){
     this.loading = true;
     const body = {
@@ -184,8 +183,7 @@ export class PaymentComponent implements  OnInit {
       }
     )
   }
-  
-
+   
   addPaid(){
     this.loading = true;
     const body = {
@@ -206,5 +204,18 @@ export class PaymentComponent implements  OnInit {
         console.log(error);
       }
     )
+  }
+
+   openModal() {
+    this.modalService.open(this.myModal).result.then(
+			(result) => {
+				 console.log("result");
+          this.router.navigate(['tables']);
+			},
+			(reason) => {
+				 console.log("reason");
+          this.router.navigate(['tables']);
+			},
+		);
   }
 }

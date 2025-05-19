@@ -1,57 +1,139 @@
-<div class="container">
-   <div class="row">
-
-      <div class="col-12 mb-1 mt-3">
-         <div class="">
-            View : <a href="">Map</a> | <a href="">List</a>
-         </div>
-         <div class="table-map border ">
-            <!-- <div *ngFor="let x of items[current]['maps']">{{x.id}}</div> -->
-
-            <table class="table table-bordered table-striped">
-               <thead>
-                  <tr>
-                     <th>#</th>
-                     <th>Table Name</th>
-                     <th class="text-center">Capacity</th>
-                     <th class="text-center">Status</th>
-                     <th class="text-center">Cover</th>
-                     <th></th>
-                  </tr>
-               </thead>
-               <tbody>
-                  <tr *ngFor="let x of items[current]['maps']; let i = index">
-                     <td>{{i+1}}</td>
-                     <td>{{x.tableName}}</td>
-                     <td class="text-center">{{x.capacity}}</td>
-                     <td class="text-center">{{x.status}}</td>
-                     <td class="text-center">{{x.cover > 0 ? x.cover : ''}}</td>
-                     <td class="text-center">
-                        <div class="d-grid"> 
-                           @if(x.cover <= 0 || x.cover=='' ){ <button type="button" class="btn btn-sm btn-dark"
-                              (click)="open(modalCheckIn, x)">NEW ORDER</button>
-                              }
-                              @else{
-                              <a class="btn btn-sm btn-success" [routerLink]="['/menu']"
-                                 [queryParams]="{id : x.cardId}"> MENU</a>
-                              }
-                        </div>
-                     </td>
-                  </tr>
-               </tbody>
-            </table>
+<div class="header">
+   <div class="container-fluid">
+      <div class="row">
+         <div class="col-12">
+            header // //https://www.npmjs.com/package/node-thermal-printer
          </div>
       </div>
-      <div class="col-12">
-         <span *ngFor="let x of items; let i = index">
-            <button type="button" class="btn  me-1 border" (click)="onMap(i)"
-               [class]="{'btn-primary': current == i}">{{x.desc1}}</button>
-         </span>
-         <a class="btn btn-sm" (click)="reload();">reload db</a>
-      </div>
-
    </div>
 </div>
+<div class="main ">
+   <div class="map">
+      <div class="container-fluid">
+         <div class="row">
+
+            <div class="col-12 mb-1">
+               View : <a href="javascript:;" (click)="activeView='map'">Map</a> | <a href="javascript:;"
+                  (click)="activeView='table'">List</a>
+
+               <div class="table-map border p-1 ">
+                  @if(activeView == 'map'){
+                  <div class="floorPlan" *ngFor="let x of items[current]['maps']">
+                     <div class="items" [style.transform]="'translate(' + x.posX + 'px,' + x.posY + 'px)'"
+                        [style.width.px]="x.width" [style.height.px]="x.height"
+                        [style.backgroundImage]="'url(' + x.icon + ')'" style="background-size: cover;">
+
+
+                        @if(x.cover <= 0 || x.cover=='' ){ <button type="button" class="btn btn-sm btn-dark"
+                           (click)="open(modalCheckIn, x)">{{x.tableName}}</button>
+                           }
+                           @else{
+                           <a class="btn btn-sm btn-success" [routerLink]="['/menu']" [queryParams]="{id : x.cardId}">
+                              {{x.tableName}}</a>
+                           }
+                     </div>
+                  </div>
+                  }
+                  @else {
+                  <table class="table table-bordered table-striped">
+                     <thead>
+                        <tr>
+                           <th>#</th>
+                           <th>Table Name</th>
+                           <th class="text-center">Capacity</th>
+                           <th class="text-center">Status</th>
+                           <th class="text-center">Cover</th>
+                           <th></th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        <tr *ngFor="let x of items[current]['maps']; let i = index">
+                           <td>{{i+1}}</td>
+                           <td>{{x.tableName}}</td>
+                           <td class="text-center">{{x.capacity}}</td>
+                           <td class="text-center">{{x.status}}</td>
+                           <td class="text-center">{{x.cover > 0 ? x.cover : ''}}</td>
+                           <td class="text-center">
+                              <div class="d-grid">
+                                 @if(x.cover <= 0 || x.cover=='' ){ <button type="button" class="btn btn-sm btn-dark"
+                                    (click)="open(modalCheckIn, x)">NEW ORDER</button>
+                                    }
+                                    @else{
+                                    <a class="btn btn-sm btn-success" [routerLink]="['/menu']"
+                                       [queryParams]="{id : x.cardId}"> MENU</a>
+                                    }
+                              </div>
+                           </td>
+                        </tr>
+                     </tbody>
+                  </table>
+                  }
+               </div>
+            </div>
+            <div class="col-12">
+               <span *ngFor="let x of items; let i = index">
+                  <button type="button" class="btn  me-1 border" (click)="onMap(i)"
+                     [class]="{'btn-primary': current == i}">{{x.desc1}}</button>
+               </span>
+               <a class="btn btn-sm" (click)="reload();">reload db</a>
+
+            </div>
+
+         </div>
+      </div>
+   </div>
+
+   <div class="menu">
+      <div class="container">
+
+         <div class="row g-1">
+            <div class="col-6 mb-3">
+               <strong>Operation</strong>
+               <div class="d-grid">
+                  <a class="btn   btn-primary m-1" [routerLink]="['/setting']">Setting</a>
+               </div>
+               <div class="d-grid">
+                  <button class="btn   btn-primary m-1" disabled>Adjust Item Count</button>
+               </div> 
+              
+               <div class="d-grid">
+                  <button class="btn   btn-warning m-1" disabled>Open Cash Drawer</button>
+               </div>
+               <div class="d-grid">
+                 <button class="btn  btn-warning m-1" disabled>Switch Outlet</button>
+               </div>
+              
+
+            </div>
+            <div class="col-6 mb-3">
+               <strong>Operation</strong>
+              
+              
+               <div class="d-grid">
+                  <button class="btn  btn-success m-1" [routerLink]="['/transaction']">General Report</button>
+               </div>
+               <div class="d-grid">
+                  <button class="btn  btn-success m-1" disabled>Manager Report</button>
+               </div>
+               
+               <div class="d-grid">
+                  <a class="btn  btn-dark m-1" (click)="onLogOut();">Log Off</a>
+               </div>
+
+            </div>
+            <div class="col-12">
+               <strong>Daily Close</strong>
+               <div class="d-grid">
+                  <button class="btn  btn-warning m-1" disabled>Daily Close</button>
+               </div>
+            </div>
+         </div>
+
+      </div>
+   </div>
+
+</div>
+
 
 
 <ng-template #modalCheckIn let-modal>

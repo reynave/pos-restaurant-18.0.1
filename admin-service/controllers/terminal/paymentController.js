@@ -37,7 +37,7 @@ exports.cart = async (req, res) => {
           AND i.cartId = '${cartId}' AND i.void = 0 AND i.presence = 1
           AND r.presence = 1 AND i.void = 0 and r.applyDiscount = 0
         ) AS t1
-        GROUP BY t1.descl
+        GROUP BY t1.descl, t1.price
       `;
 
       const [modifier] = await db.query(s);
@@ -343,8 +343,7 @@ exports.addPaid = async (req, res) => {
   const results = [];
 
   try {
-    for (const emp of paid) {
-      console.log(emp)
+    for (const emp of paid) { 
       const { id, cartId, paid } = emp;
 
       if (!id) {
@@ -358,7 +357,7 @@ exports.addPaid = async (req, res) => {
                   submit = 1,
                   updateDate = '${today()}'
               WHERE id = ${id}   and cartId = '${cartId}'`;
-      console.log(q);
+ 
       const [result] = await db.query(q);
       if (result.affectedRows === 0) {
         results.push({ id, status: 'cart_payment not found', query: q, });

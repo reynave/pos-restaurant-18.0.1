@@ -12,6 +12,20 @@
             <div class="col-12 mb-3">
                <div class="py-3"><small>username : bebas, password : bebas</small></div>
                <form (ngSubmit)="onSubmit()" #actorForm="ngForm">
+
+                  <div class="form-group mb-3">
+                     <label for="outletId">Outlet</label> 
+                     <select  class="form-control" id="outletId" required [(ngModel)]="model.outletId"
+                        name="outletId" #outletId="ngModel"> 
+                        <option *ngFor="let x of outletSelect" [value]="x.id">{{x.name}}</option> 
+                     </select>
+                    
+                     <div [hidden]="outletId.valid || outletId.pristine" class="text-danger">
+                        Outlet Id is required
+                     </div>
+                  </div>
+
+
                   <div class="form-group mb-3">
                      <label for="username">Username</label> 
                      <select  class="form-control" id="username" required [(ngModel)]="model.username"
@@ -20,7 +34,7 @@
                         <option [value]="'CASIER'">CASIER</option> 
                      </select>
                     
-                     <div [hidden]="username.valid || username.pristine" class="alert alert-danger">
+                     <div [hidden]="username.valid || username.pristine" class="text-danger">
                         Username is required
                      </div>
                   </div>
@@ -28,12 +42,12 @@
                      <label for="name">Password</label>
                      <input type="password" class="form-control" id="password" required [(ngModel)]="model.password"
                         name="password" #password="ngModel">
-                     <div [hidden]="password.valid || password.pristine" class="alert alert-danger">
+                     <div [hidden]="password.valid || password.pristine" class="text-danger">
                         Username is required
                      </div>
                   </div>
                   <div class="d-grid">
-                     <button type="submit" class="btn btn-success" [disabled]="!actorForm.form.valid">Submit</button>
+                     <button type="submit" class="btn btn-success" [disabled]="!actorForm.form.valid || !model.outletId">Submit</button>
 
                   </div>
 

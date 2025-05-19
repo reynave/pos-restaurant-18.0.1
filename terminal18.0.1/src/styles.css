@@ -9,7 +9,7 @@ html, body {
 
 
 div, p, label {
-  font-size: 0.9rem;
+  font-size: var(--font-size);
 }
 
 label{
@@ -17,15 +17,35 @@ label{
 }
 
 .wrapper-sm{
-    max-width: 600px;
+    max-width: var(--wrapper-sm-width);
     margin:  0 auto;
 }
 
 .wrapper{
     height: 100vh;
-    position: relative;
+    position: relative; 
     overflow-y: auto;
 }
+
+.main{
+    height: 95vh; 
+     display: flex;
+    overflow-y: auto;
+}
+ 
+.map {
+   width: calc(var(--map-width) + 50px) ;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+.menu{
+    max-width: 300px;
+}
+
+
+
+
 .wrapper-fix-bottom{
     position: fixed;
     left: 0px;
@@ -33,7 +53,7 @@ label{
     width: 100%;
 }
 .table thead th{
-    font-size: 0.9rem;
+    font-size: var(--font-size);
     text-transform: uppercase;
 }
 .table .bg-light td{

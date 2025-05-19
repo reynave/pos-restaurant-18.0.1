@@ -5,6 +5,7 @@
          <div class="wrapper"> 
             <div class="py-5">
                <table class="table table-hover">
+                   
                   <tbody *ngFor="let x of cart; let i = index" [class]="{'tr-active':x.checkBox == 1 }">
                      <tr [class]="{'bg-light':x.sendOrder !== ''}">
                         <td (click)="fnChecked(i)  ">
@@ -18,6 +19,7 @@
                            <h4> <i class="bi bi-receipt"></i> </h4>
                            }
                         </td>
+                        
                         <td [routerLink]="['/menu/modifier']"
                            [queryParams]="{id:id, menuId : x.menuId, price : x.price, sendOrder : x.sendOrder }">
                            <div class="lh-1">
@@ -34,18 +36,19 @@
                            </div>
 
                         </td>
+
                         <td class="text-end font-monospace">
                            <button type="button" class="btn  btn-light border" style="width: 60px;"
                               [disabled]="x.sendOrder == 1" (click)="open(modalQty, x, i)">
                               x {{x.total | number}}
                            </button>
                         </td>
-                        <td class="text-end font-monospace">{{x.totalAmount | number}}</td>
+
+                        <td class="text-end font-monospace">{{(x.totalAmount < 0 ? 0 : x.totalAmount )| number}}</td>
                      </tr>
 
 
-                  </tbody>
-
+                  </tbody> 
 
                </table>
 
@@ -68,13 +71,15 @@
                <button type="button" class="btn btn-success me-1 mb-1" [disabled]="items.length < 1"
                   (click)="sendOrder();">SEND ORDER</button>
 
+               <button type="button" class="btn btn-success me-1 mb-1"  (click)="exitWithoutOrder();">Exit Without Order</button>
+
                <button type="button" class="btn btn-light border me-1 mb-1" [routerLink]="['/tableChecker']" [queryParams]="{id:id}" >Table Checker</button>
                <button type="button" class="btn btn-light border me-1 mb-1" [routerLink]="['/kitchen']" [queryParams]="{id:id}" >Kitchen</button>
                
             </div>
 
             <div class="row border">
-               <div class="col-6">
+               <div class="col-4">
                   <small>Add Menu Item</small>
                   <div *ngFor="let x of items">
                      <div><strong>{{x.desc1}}</strong></div>
@@ -83,7 +88,7 @@
                      </ol>
                   </div>
                </div>
-               <div class="col-6">
+               <div class="col-4">
                   <small>Add Memo</small>
                   <div *ngFor="let x of modifiers">
                      <div><strong>{{x.name}}</strong></div>
@@ -92,6 +97,14 @@
                               {{a.descl}} (Rp{{a.price | number}})</a>
                         </li>
                      </ol>
+                  </div>
+               </div>
+
+               <div class="col-4">
+                  <small>Add Discount Group</small> 
+                  <div><strong>Discount Group</strong></div>
+                  <div *ngFor="let a of discountGroup">
+                     <a href="javascript:;"  (click)="addDiscountGroup(a)">{{a.name}}</a>
                   </div>
                </div>
             </div>
