@@ -306,4 +306,23 @@ export class MenuComponent implements OnInit {
     }
   }
 
+   payment() {
+    this.loading = true;
+    const body = {
+      id: this.id,
+    }
+    console.log(body)
+    this.http.post<any>(environment.api + "payment/submit", body, {
+      headers: this.configService.headers(),
+    }).subscribe(
+      data => {
+        console.log(data);
+        this.router.navigate(['payment'], { queryParams: { id: this.id } });
+      },
+      error => {
+        console.log(error);
+      }
+    )
+  }
+
 }

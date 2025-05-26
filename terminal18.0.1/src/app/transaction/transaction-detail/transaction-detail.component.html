@@ -67,8 +67,21 @@
             </div>
         </div>
         <div class="col-5">
-            <div class="">
-                <button class="btn btn-warning">COPY PRINT</button>
+            <div>
+                  Total Copy {{totalCopy}}
+            </div>
+            <div > 
+                <button class="btn btn-warning" (click)="copyBill()">COPY PRINT</button>
+            </div>
+            <div class="my-2">
+                <table class="table table-sm">
+                    <tbody>
+                        <tr *ngFor="let x of historyCopy; let i = index">
+                            <td>{{i+1}}</td>
+                            <td>{{x.inputDate | date:'medium'}}</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 

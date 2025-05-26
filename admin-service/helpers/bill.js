@@ -3,7 +3,7 @@ const { today } = require('./global');
 
 
 async function cart(cartId = '') {
-    let totalItem = 0; 
+    let totalItem = 0;
 
     const [formattedRows] = await db.query(`
            SELECT t1.* , (t1.total * t1.price) as 'totalAmount', m.name , 0 as 'checkBox', '' as modifier
@@ -45,7 +45,7 @@ async function cart(cartId = '') {
         totalAmount += row['totalAmount'] + totalAmountModifier;
 
     }
- 
+
     const orderItems = [];
     for (let i = 0; i < formattedRows.length; i++) {
         orderItems.push({
@@ -69,6 +69,24 @@ async function cart(cartId = '') {
     }
     let grandTotal = totalAmount;
     const s2 = `
+        SELECT '0' AS 'id', SUM(c.taxAmount ) AS 'amount', t.taxNote AS 'name'
+        FROM cart_item  AS c
+        LEFT JOIN menu_tax_sc AS t ON t.id = c.menuTaxScId
+        WHERE c.cartId = '${cartId}'
+        AND  c.presence = 1 AND c.void = 0 
+        GROUP BY t.taxNote
+
+        UNION
+
+        SELECT '0' AS 'id', SUM(c.scAmount ) AS 'amount', t.scNote as 'name'
+        FROM cart_item  AS c
+        LEFT JOIN menu_tax_sc AS t ON t.id = c.menuTaxScId
+        WHERE c.cartId = '${cartId}'
+        AND  c.presence = 1 AND c.void = 0 
+        GROUP BY t.scNote
+
+        UNION
+
          SELECT c.id, c.bill as 'amount', t.name 
          FROM cart_payment  AS c
          JOIN check_sc_type AS t ON t.id = c.checkScTypeId  
@@ -84,7 +102,7 @@ async function cart(cartId = '') {
     const [bill] = await db.query(s2);
 
     bill.forEach(el => {
-        grandTotal += el['amount'];
+        grandTotal += parseInt(el['amount']);
     });
 
 
@@ -106,7 +124,7 @@ async function cart(cartId = '') {
              WHERE cartId = '${cartId}' AND presence =1 AND void = 0
              UNION
    
-             SELECT id, price  AS 'bill', 0 AS 'paid' FROM cart_item
+             SELECT id, (price + taxAmount + scAmount)   AS 'bill', 0 AS 'paid' FROM cart_item
              WHERE cartId = '${cartId}'  AND presence =1 AND void = 0
              UNION 
    
@@ -152,7 +170,7 @@ async function cart(cartId = '') {
         bill: bill,
         paided: paided,
         closePayment: parseInt(closePaymentQuery[0]['amount']) <= 0 ? true : false,
-        closePaymentAmount: parseInt(closePaymentQuery[0]['amount']), 
+        closePaymentAmount: parseInt(closePaymentQuery[0]['amount']),
     };
 }
 

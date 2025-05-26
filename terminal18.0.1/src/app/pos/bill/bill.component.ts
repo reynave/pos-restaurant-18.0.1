@@ -29,7 +29,13 @@ export class BillComponent implements OnInit {
   totalAmount: number = 0;
   api: string = environment.api;
   htmlBill: any = '';
-  isChecked: boolean = false; 
+  isChecked: boolean = false;
+  paided: any = [];
+
+  totalItem: number = 0;
+  bill: any = [];
+  grandTotal: number = 0;
+  closePaymentAmount: number = 1;
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
@@ -41,7 +47,7 @@ export class BillComponent implements OnInit {
 
   ngOnInit() {
     this.id = this.activeRouter.snapshot.queryParams['id'],
-    this.modalService.dismissAll();
+      this.modalService.dismissAll();
     this.httpCart();
     this.httpBill();
 
@@ -49,8 +55,9 @@ export class BillComponent implements OnInit {
 
 
   httpCart() {
+
     this.loading = true;
-    const url = environment.api + "menuItemPos/cart";
+    const url = environment.api + "payment/cart";
     this.http.get<any>(url, {
       headers: this.configService.headers(),
       params: {
@@ -58,8 +65,13 @@ export class BillComponent implements OnInit {
       }
     }).subscribe(
       data => {
-        this.cart = data['items'];
-        this.totalAmount = data['totalAmount']
+        this.cart = data['data']['orderItems'];
+        this.totalAmount = data['data']['totalAmount'];
+        this.totalItem = data['data']['totalItem'];
+        this.bill = data['data']['bill'];
+        this.paided = data['data']['paided'];
+        this.grandTotal = data['data']['grandTotal'];
+        this.closePaymentAmount = data['data']['closePaymentAmount'];
       },
       error => {
         console.log(error);
@@ -89,25 +101,25 @@ export class BillComponent implements OnInit {
     this.httpCart();
   }
 
-  payment(){
+  payment() {
     this.loading = true;
     const body = {
-      id :this.id,
+      id: this.id,
     }
     console.log(body)
-    this.http.post<any>(environment.api+"payment/submit", body,{
-      headers : this.configService.headers(),
+    this.http.post<any>(environment.api + "payment/submit", body, {
+      headers: this.configService.headers(),
     }).subscribe(
-      data=>{
+      data => {
         console.log(data);
-        this.router.navigate(['payment'], {queryParams : {id:this.id}});
+        this.router.navigate(['payment'], { queryParams: { id: this.id } });
       },
-      error=>{
+      error => {
         console.log(error);
       }
     )
   }
- 
+
 
 
 }

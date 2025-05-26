@@ -86,15 +86,15 @@ export class PaymentComponent implements  OnInit {
       }
     }).subscribe(
       data => {
-        this.cart = data['orderItems'];
-        this.totalAmount = data['totalAmount'];
-        this.totalItem = data['totalItem'];
-        this.bill = data['bill'];
-        this.paided = data['paided']; 
-        this.grandTotal = data['grandTotal'];
-        this.closePaymentAmount = data['closePaymentAmount'];
+        this.cart = data['data']['orderItems'];
+        this.totalAmount = data['data']['totalAmount'];
+        this.totalItem = data['data']['totalItem'];
+        this.bill = data['data']['bill'];
+        this.paided = data['data']['paided']; 
+        this.grandTotal = data['data']['grandTotal'];
+        this.closePaymentAmount = data['data']['closePaymentAmount'];
 
-        if( data['closePayment'] == true){
+        if( data['data']['closePayment'] == true){
          this.openModal();
         }
       },
@@ -148,7 +148,7 @@ export class PaymentComponent implements  OnInit {
       payment : payment,
       totalAmount : this.closePaymentAmount,
     }
-    console.log(body)
+ 
     this.http.post<any>(environment.api+"payment/addPayment", body,{
       headers : this.configService.headers(),
     }).subscribe(

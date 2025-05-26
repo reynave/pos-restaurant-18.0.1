@@ -1,11 +1,28 @@
 const db = require('../../config/db');
 const { today, formatDateOnly } = require('../../helpers/global');
 const { autoNumber } = require('../../helpers/autoNumber');
+const { cart } = require('../../helpers/bill');
 
 const ejs = require('ejs');
 const path = require('path');
 
 exports.cart = async (req, res) => {
+  let totalItem = 0;
+  try {
+    const cartId = req.query.id;  
+    const data = await cart(cartId);
+ 
+    res.json({
+      error: false, 
+      data: data, 
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+};
+exports.cartVer1 = async (req, res) => {
   let totalItem = 0;
   try {
     const cartId = req.query.id;
@@ -79,6 +96,7 @@ exports.cart = async (req, res) => {
       });
     }
     let grandTotal = totalAmount;
+
     const s2 = `
       SELECT c.id, c.bill as 'amount', t.name 
       FROM cart_payment  AS c
@@ -155,7 +173,7 @@ exports.cart = async (req, res) => {
       error: false,
       preview: "https://[YOUR_HOST]:[PORT]/terminal/bill/?id=" + cartId,
       id: cartId,
-      items: formattedRows,
+     // items: formattedRows,
       orderItems: orderItems,
       totalAmount: totalAmount,
       grandTotal: grandTotal, 
@@ -172,7 +190,6 @@ exports.cart = async (req, res) => {
     res.status(500).json({ error: 'Database error' });
   }
 };
-
 
 exports.paymentType = async (req, res) => {
 
@@ -344,7 +361,7 @@ exports.addPaid = async (req, res) => {
 
   try {
     for (const emp of paid) { 
-      const { id, cartId, paid } = emp;
+      const { id, cartId, paid, tips } = emp;
 
       if (!id) {
         results.push({ id, status: 'failed', reason: 'Missing fields' });
@@ -354,6 +371,8 @@ exports.addPaid = async (req, res) => {
       const q = `UPDATE cart_payment
                 SET
                   paid = ${paid}, 
+                  tips = ${tips}, 
+                  
                   submit = 1,
                   updateDate = '${today()}'
               WHERE id = ${id}   and cartId = '${cartId}'`;

@@ -24,7 +24,7 @@ exports.getAllData = async (req, res) => {
             SELECT *, 
             ROW_NUMBER() OVER (PARTITION BY outletTableMapId ORDER BY inputDate DESC) AS rn
             FROM cart
-            WHERE close  = 0
+            WHERE close  = 0 AND presence = 1
           )
           SELECT *
           FROM ranked

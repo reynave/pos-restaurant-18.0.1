@@ -33,10 +33,11 @@ export class TransactionDetailComponent implements  OnInit {
   isChecked: boolean = false;  
   paid : any = [];
   paided : any = [];
-  
+  totalCopy : number = 0;
   bill : any = [];
   grandTotal : number = 0;
   closePaymentAmount : number = 1;
+  historyCopy : any = [];
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
@@ -49,7 +50,9 @@ export class TransactionDetailComponent implements  OnInit {
   ngOnInit() {
     this.id = this.activeRouter.snapshot.queryParams['id'],
     this.modalService.dismissAll();
-    this.httpCart();  
+    this.httpCart(); 
+    this.httpCopy(); 
+      
   }
  
   back(){
@@ -66,15 +69,33 @@ export class TransactionDetailComponent implements  OnInit {
       }
     }).subscribe(
       data => {
-        this.cart = data['orderItems'];
-        this.totalAmount = data['totalAmount'];
-        this.totalItem = data['totalItem'];
-        this.bill = data['bill'];
-        this.paided = data['paided']; 
-        this.grandTotal = data['grandTotal'];
-        this.closePaymentAmount = data['closePaymentAmount'];
-
-         
+        this.cart = data['data']['orderItems'];
+        this.totalAmount = data['data']['totalAmount'];
+        this.totalItem = data['data']['totalItem'];
+        this.bill = data['data']['bill'];
+        this.paided = data['data']['paided']; 
+        this.grandTotal = data['data']['grandTotal'];
+        this.closePaymentAmount = data['data']['closePaymentAmount']; 
+      },
+      error => {
+        console.log(error);
+      }
+    )
+  }
+   httpCopy() {
+    this.loading = true;
+    const url = environment.api + "transaction/getCopyBill";
+    this.http.get<any>(url, {
+      headers: this.configService.headers(),
+      params: {
+        id: this.activeRouter.snapshot.queryParams['id'],
+      }
+    }).subscribe(
+      data => {
+       console.log(data);
+       this.totalCopy = data['copy'][0]['total'];
+      this.historyCopy = data['items'];
+       
       },
       error => {
         console.log(error);
@@ -82,32 +103,25 @@ export class TransactionDetailComponent implements  OnInit {
     )
   }
 
- 
-
-  httpBill() {
+  copyBill(){
     this.loading = true;
-    const url = environment.api + "bill/printing";
-    this.http.get(url, {
-      responseType: 'text' as const,
-      params: {
-        id: this.activeRouter.snapshot.queryParams['id'],
-      }
+    const url = environment.api + "transaction/addCopyBill";
+    const body = {
+      id: this.id,
+    }
+    this.http.post<any>(url, body, {
+      headers: this.configService.headers(),
+      
     }).subscribe(
-      (data: string) => {
-        this.htmlBill = data;
+      data => {
+       console.log(data);
+      this.httpCopy()
       },
       error => {
         console.log(error);
       }
-    );
+    )
   }
-
-  reload() {
-    this.httpCart();
-  }
-
- 
-  
   
  
 }
