@@ -672,8 +672,7 @@ exports.cartDetail = async (req, res) => {
       LEFT JOIN menu AS m ON m.id = c.menuId
       WHERE c.cartId = '${cartId}' AND c.presence = 1 AND c.void = 0
       AND c.menuId = ${menuId} AND c.price = ${price} and c.sendOrder = '${sendOrder}'
-    `;
-    console.log(q);
+    `; 
     const [formattedRows] = await db.query(q);
     let totalAmount = 0;
  let grandAmount = 0;
@@ -725,9 +724,10 @@ exports.cartDetail = async (req, res) => {
         AS 'price', m.scNote AS 'descl', c.cartItemId
         FROM cart_item_modifier AS c 
         JOIN menu_tax_sc AS m ON m.id = c.menuTaxScId  
-        WHERE c.cartItemId = 303 AND c.presence = 1 
+        WHERE c.cartItemId = ${row.id} AND c.presence = 1 
         AND c.modifierId = 0 AND c.applyDiscount = 0
       `;
+      console.log(q9)
       const [modifier] = await db.query(q9);
       modifier[0]['price'] = parseInt(modifier[0]['price'])
       row['modifier'].push(modifier[0]); 
@@ -741,7 +741,7 @@ exports.cartDetail = async (req, res) => {
         AS 'price', m.taxNote AS 'descl', c.cartItemId
         FROM cart_item_modifier AS c 
         JOIN menu_tax_sc AS m ON m.id = c.menuTaxScId  
-        WHERE c.cartItemId = 303 AND c.presence = 1 
+        WHERE c.cartItemId = ${row.id} AND c.presence = 1 
         AND c.modifierId = 0 AND c.applyDiscount = 0
       `;
       const [modifier2] = await db.query(q10);
@@ -1084,6 +1084,8 @@ exports.exitWithoutOrder = async (req, res) => {
 
     const a = `
     UPDATE cart SET
+      void = 1,
+      endDate =  '${today()}',
       presence  = '0', 
       updateDate = '${today()}'
     WHERE id = '${cartId}' `;
