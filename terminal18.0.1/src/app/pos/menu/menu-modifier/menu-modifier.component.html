@@ -15,67 +15,44 @@
       <div class="col-5">
          <!-- TABLE cart -->
 
-         <table class="table ">
+         <table class="table table-sm">
             <tbody>
-               <tr *ngFor="let x of cart; let i = index" [class]="{'tr-active':x.checkBox == 1, 'bg-light':x.sendOrder == 1 }">
+               <tr (click)="fnChecked(i)" *ngFor="let x of cart; let i = index"
+                  [class]="{'tr-active':x.checkBox == 1, 'bg-light':x.sendOrder == 1 }"
+                  [hidden]="x.modifierId == 0 && hideTaxSc != 0">
                   <td>
-                     <div (click)="fnChecked(i)" *ngIf="x.sendOrder == 0">
-                        <h3>
-                           <i *ngIf="x.checkBox == 0 " class="bi bi-square"></i>
-                           <i *ngIf="x.checkBox == 1 " class="bi bi-check-square-fill"></i>
-                        </h3>
+                     <div *ngIf="x.sendOrder == '' && x.modifierId != 0 ">
+                        <i *ngIf="x.checkBox == 0 " class="bi bi-square"></i>
+                        <i *ngIf="x.checkBox == 1 " class="bi bi-check-square-fill"></i>
                      </div>
-
                      <div *ngIf="x.sendOrder == 1">
-                        <h4> <i class="bi bi-receipt"></i> </h4>
+                        <i class="bi bi-receipt"></i>
                      </div>
-
                   </td>
+                  <td> {{x.no}} </td>
+                  <td> {{x.name}} </td>
 
-
-
-                  <td><strong>{{i+1}}</strong></td>
-                  <td>
-                     <strong>{{x.name }}</strong>
-                     @if(x.sendOrder == 0){
-                     <div class="row g-1" (click)="a.checkBox == 1 ? a.checkBox = 0 : a.checkBox = 1"
-                        *ngFor="let a of x.modifier; let j = index">
-                        <div class="col-2">
-                           <h5>
-                              <i *ngIf="a.checkBox == 0 " class="bi bi-square"></i>
-                              <i *ngIf="a.checkBox == 1 " class="bi bi-check-square-fill"></i>
-                           </h5>
-                        </div>
-                        <div class="col-10">
-                          {{a.descl}}
-                           <span class="font-monospace" >  {{a.price | number}},-</span>
-                        </div>
-                     </div>
-                     }
-                     @else{
-                     <div class="row g-0" *ngFor="let a of x.modifier; let j = index">
-                        <div class="col-2">
-                            <i class="bi bi-receipt"></i> 
-                        </div>
-                        <div class="col-10">
-                           {{a.descl}}
-                           <span class="font-monospace" > {{a.price | number}},-</span>
-                        </div>
-                     </div>
-                     }
-                  </td>
 
                   <td class="text-end font-monospace">{{x.price < 0 ? 0 : x.price | number}}</td>
                </tr>
 
             </tbody>
+            <tfoot>
+               <tr>
+                  <td colspan="3" class="text-end">
+                     TOTAL {{!hideTaxSc? "+ TAX & SC":""}} 
+                  </td>
+
+                  <td   class="text-end">
+                     <h4> {{(hideTaxSc ? totalAmount : grandAmount) | number}}</h4>
+                  </td>
+               </tr>
+            </tfoot>
 
 
          </table>
 
-         <div class="text-end me-2">
-            <h4>  {{totalAmount | number}}</h4>
-         </div>
+
       </div>
       <div class="col-7">
          <div class="wrapper border p-3">
@@ -84,6 +61,9 @@
                <button type="button" class="btn btn-danger me-1" [disabled]="!isChecked" (click)="onVoid()">VOID
                   ITEM</button>
                <button type="button" class="btn btn-danger me-1" (click)="onRemoveModifier()">REMOVE MODIFIER</button>
+               <button type="button" class="btn btn-light me-1"
+                  (click)="hideTaxSc == 0 ? hideTaxSc = 1  : hideTaxSc = 0">
+                  {{hideTaxSc == 1 ? 'Show':'Hide'}} Tax & SC</button>
 
             </div>
 

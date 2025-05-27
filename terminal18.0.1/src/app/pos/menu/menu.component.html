@@ -2,10 +2,10 @@
    <div class="row g-0">
       <div class="col-5 col-lg-4">
          <!-- TABLE cart -->
-         <div class="wrapper"> 
+         <div class="wrapper">
             <div class="py-5">
                <table class="table table-hover">
-                   
+
                   <tbody *ngFor="let x of cart; let i = index" [class]="{'tr-active':x.checkBox == 1 }">
                      <tr [class]="{'bg-light':x.sendOrder !== ''}">
                         <td (click)="fnChecked(i)  ">
@@ -19,22 +19,15 @@
                            <h4> <i class="bi bi-receipt"></i> </h4>
                            }
                         </td>
-                        
+
                         <td [routerLink]="['/menu/modifier']"
                            [queryParams]="{id:id, menuId : x.menuId, price : x.price, sendOrder : x.sendOrder }">
                            <div class="lh-1">
                               <strong>{{x.name }} {{x.modifier.length > 0 ? '*':''}} </strong>
                            </div>
                            <small class="font-monospace">&#64;{{x.price | number}}</small>
-                          
-                           <div class="row" *ngIf="showModifier">
-                              <div class="col-12" *ngFor="let a of x.modifier">
-                                 {{ a.descl}} {{ a.total > 1 ? 'x'+ a.total: ''}}
-                                 <span *ngIf="a.totalAmount >0" class="font-monospace">x Rp{{a.totalAmount |
-                                    number}},-</span>
-                              </div>
-                           </div>
 
+                            
                         </td>
 
                         <td class="text-end font-monospace">
@@ -47,8 +40,20 @@
                         <td class="text-end font-monospace">{{(x.totalAmount < 0 ? 0 : x.totalAmount )| number}}</td>
                      </tr>
 
+                     @if(showModifier && x.modifier.length > 0){ 
+                        <tr *ngFor="let a of x.modifier; let i = index">
+                           <td></td>
+                           <td>
+                               <div class="lh-1"> {{ a.descl}} </div>
+                            <small class="font-monospace">&#64;{{x.price | number}}</small>
+   
+                           </td>
+                           <td class="text-center"><span class="font-monospace"> x {{ a.total}}</span></td>
+                           <td class="text-end"> <span class="font-monospace">{{a.totalAmount |number}}</span></td>
+                        </tr>
+                     }
 
-                  </tbody> 
+                  </tbody>
 
                </table>
 
@@ -66,18 +71,22 @@
                   ITEM</button>
 
                <button type="button" class="btn btn-success me-1 mb-1">APPLY ITEM DISCOUNT</button>
-               <button type="button" class="btn btn-success me-1 mb-1" [routerLink]="['/bill']" [queryParams]="{id : id}" > BILL</button>
-                <button type="button" class="btn btn-warning me-1 mb-1" (click)="payment()" > PAYMENT</button>
-               
+               <button type="button" class="btn btn-success me-1 mb-1" [routerLink]="['/bill']"
+                  [queryParams]="{id : id}"> BILL</button>
+               <button type="button" class="btn btn-warning me-1 mb-1" (click)="payment()"> PAYMENT</button>
+
 
                <button type="button" class="btn btn-success me-1 mb-1" [disabled]="items.length < 1"
                   (click)="sendOrder();">SEND ORDER</button>
 
-               <button type="button" class="btn btn-success me-1 mb-1"  (click)="exitWithoutOrder();">Exit Without Order</button>
+               <button type="button" class="btn btn-success me-1 mb-1" (click)="exitWithoutOrder();">Exit Without
+                  Order</button>
 
-               <button type="button" class="btn btn-light border me-1 mb-1" [routerLink]="['/tableChecker']" [queryParams]="{id:id}" >Table Checker</button>
-               <button type="button" class="btn btn-light border me-1 mb-1" [routerLink]="['/kitchen']" [queryParams]="{id:id}" >Kitchen</button>
-               
+               <button type="button" class="btn btn-light border me-1 mb-1" [routerLink]="['/tableChecker']"
+                  [queryParams]="{id:id}">Table Checker</button>
+               <button type="button" class="btn btn-light border me-1 mb-1" [routerLink]="['/kitchen']"
+                  [queryParams]="{id:id}">Kitchen</button>
+
             </div>
 
             <div class="row border">
@@ -88,7 +97,7 @@
                      <ol>
                         <li *ngFor="let a of x.menu">
                            <a href="javascript:;" (click)="addToCart(a)">{{a.name}}</a><br>
-                         <small>Tax {{a.taxRate}}%, SC {{a.scRate}}%</small> 
+                           <small>Tax {{a.taxRate}}%, SC {{a.scRate}}%</small>
                         </li>
                      </ol>
                   </div>
@@ -106,10 +115,10 @@
                </div>
 
                <div class="col-4">
-                  <small>Add Discount Group</small> 
+                  <small>Add Discount Group</small>
                   <div><strong>Discount Group</strong></div>
                   <div *ngFor="let a of discountGroup">
-                     <a href="javascript:;"  (click)="addDiscountGroup(a)">{{a.name}}</a>
+                     <a href="javascript:;" (click)="addDiscountGroup(a)">{{a.name}}</a>
                   </div>
                </div>
             </div>
@@ -124,7 +133,7 @@
 <div class="wrapper-fix-bottom border-top shadow-sm bg-white">
    <div class="p-2">
       <div class="row">
-           <div class="col-5 col-lg-4">
+         <div class="col-5 col-lg-4">
             <div class="row">
                <div class="col-6">
                   <a class="btn" (click)="showModifier == false ? showModifier = true : showModifier = false">

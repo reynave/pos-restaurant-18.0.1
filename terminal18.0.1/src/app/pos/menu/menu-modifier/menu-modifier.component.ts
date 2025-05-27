@@ -31,8 +31,10 @@ export class MenuModifierComponent implements OnInit {
   cart: any = [];
   id: string = '';
   totalAmount: number = 0;
+  grandAmount : number = 0;
   api: string = environment.api;
   model = new Actor(1);
+  hideTaxSc : number = 1;
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
@@ -76,13 +78,15 @@ export class MenuModifierComponent implements OnInit {
         id: this.activeRouter.snapshot.queryParams['id'],
         menuId: this.activeRouter.snapshot.queryParams['menuId'],
         price: this.activeRouter.snapshot.queryParams['price'],
-        sendOrder : this.activeRouter.snapshot.queryParams['sendOrder'],
+        sendOrder: this.activeRouter.snapshot.queryParams['sendOrder'],
       }
     }).subscribe(
       data => {
         console.log(data);
-        this.cart = data['items'];
-        this.totalAmount = data['totalAmount']
+        this.cart = data['orderItems'];
+        this.totalAmount = data['totalAmount'];
+         this.grandAmount = data['grandAmount'];
+        
       },
       error => {
         console.log(error);
@@ -147,19 +151,23 @@ export class MenuModifierComponent implements OnInit {
 
   isChecked: boolean = false;
   fnChecked(index: number) {
-    this.cart[index].checkBox == 0 ? this.cart[index].checkBox = 1 : this.cart[index].checkBox = 0;
+    if (this.cart[index].sendOrder == '' && this.cart[index].modifierId != 0) {
 
-    let isVoid = 0;
-    for (let i = 0; i < this.cart.length; i++) {
-      if (this.cart[i]['checkBox'] == 1) {
-        isVoid++;
-        i = this.cart.length + 10;
+      this.cart[index].checkBox == 0 ? this.cart[index].checkBox = 1 : this.cart[index].checkBox = 0;
+
+      let isVoid = 0;
+      for (let i = 0; i < this.cart.length; i++) {
+        if (this.cart[i]['checkBox'] == 1) {
+          isVoid++;
+          i = this.cart.length + 10;
+        }
       }
-    }
-    if (isVoid == 0) {
-      this.isChecked = false;
-    } else {
-      this.isChecked = true;
+      if (isVoid == 0) {
+        this.isChecked = false;
+      } else {
+        this.isChecked = true;
+      }
+
     }
   }
   onVoid() {
