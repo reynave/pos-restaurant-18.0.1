@@ -1,6 +1,7 @@
 const db = require('../../config/db');
 const { today, formatDateOnly } = require('../../helpers/global');
 const { autoNumber } = require('../../helpers/autoNumber');
+const { taxScUpdate } = require('../../helpers/bill');
 
 exports.getMenuItem = async (req, res) => {
   const i = 1;
@@ -685,68 +686,9 @@ exports.addToItemModifier = async (req, res) => {
               WHERE id = ${cartItem['id']} AND presence =1 AND void = 0 and menuTaxScId = 0
             `;
             const [itemPrice] = await db.query(m1);
-            console.log(m1);
 
+            const taxScUpdateRest = await taxScUpdate(cartItem['id']);
 
-// PINDAIN KE FUNCTION 
-            
-            // UPDATE SC
-            const scQ =
-              `SELECT id, scRate
-              FROM cart_item_modifier
-              WHERE cartItemId = ${cartItem['id']}
-              AND presence =1 AND void = 0   and scStatus = 1
-            `;
-            const [scRow] = await db.query(scQ);
-
-            const taxQ =
-              `SELECT id, taxRate
-              FROM cart_item_modifier
-              WHERE cartItemId = ${cartItem['id']}
-              AND presence =1 AND void = 0   and taxStatus = 1
-            `;
-            const [taxRow] = await db.query(taxQ);
-
-            let scAmount = itemPrice[0]['price'] * (parseFloat(scRow[0]['scRate']) / 100); 
-            let taxAmount = (itemPrice[0]['price'] + scAmount) * (parseFloat(taxRow[0]['taxRate']) / 100);
-
-            // console.log(itemPrice[0]['price'], scRow[0]['scRate']);
-            if (scAmount != 0) {
-
-              const q2 = `UPDATE cart_item_modifier
-                  SET
-                    price = ${scAmount}, 
-                    updateDate = '${today()}'
-                WHERE id = ${scRow[0]['id']}`;
-
-              const [result2] = await db.query(q2);
-
-              if (result2.affectedRows === 0) {
-                results.push({ status: 'not found' });
-              } else {
-                results.push({ status: 'SC cart_item_modifier Update' });
-              }
-
-            }
-
-            // UPDATE TAX
-            if (taxAmount != 0) { 
-              const q2 = `UPDATE cart_item_modifier
-                  SET
-                    price = ${taxAmount}, 
-                    updateDate = '${today()}'
-                WHERE id = ${taxRow[0]['id']}`;
-
-              const [result2] = await db.query(q2);
-
-              if (result2.affectedRows === 0) {
-                results.push({ status: 'not found' });
-              } else {
-                results.push({ status: 'SC cart_item_modifier Update' });
-              }
-
-            }
-// END 
 
 
           } else {
@@ -851,7 +793,10 @@ exports.addDiscountGroup = async (req, res) => {
             results.push({ status: 'updated', query: q, });
           }
 
+          // const  taxScUpdateRest  = await taxScUpdate(cartItem['id'], totalAmount);
+          // console.log(taxScUpdateRest); 
 
+          const taxScUpdateRest = await taxScUpdate(cartItem['id']);
 
           // } else {
           //   results.push({ status: 'cannot double' });
@@ -896,8 +841,7 @@ exports.cartDetail = async (req, res) => {
       const q = `
 
         -- GENERAL
-        SELECT c.id, c.modifierId, c.price, m.descl, c.cartItemId, c.applyDiscount, 
-        0 as 'discRate', 0 as 'discAmount',
+        SELECT c.id, c.modifierId, c.price, m.descl, c.cartItemId, c.applyDiscount,  c.menuTaxScId,
         0 as 'checkBox'
           FROM cart_item_modifier AS c
            JOIN modifier AS m ON m.id = c.modifierId
@@ -907,124 +851,41 @@ exports.cartDetail = async (req, res) => {
  
         UNION 
         -- APPLYDISCOUNT
-        SELECT c.id, c.modifierId, c.price, m.name AS 'descl' , c.cartItemId, c.applyDiscount,
-         m.discRate, m.discAmount,
+        SELECT c.id, c.modifierId, c.price, m.name AS 'descl' , c.cartItemId, c.applyDiscount, c.menuTaxScId,
         0 as 'checkBox'
         FROM cart_item_modifier AS c
          JOIN check_disc_type AS m ON m.id = c.applyDiscount
         where c.cartItemId =  ${row.id}
-        and c.presence = 1 and c.void = 0  and c.modifierId = 0
-          
-      `;
+        and c.presence = 1 and c.void = 0  and c.modifierId = 0 
 
+
+        UNION 
+        -- SC 
+        SELECT c.id, c.modifierId, c.price,  t.scNote AS 'descl' ,  c.cartItemId, c.applyDiscount, c.menuTaxScId,
+        0 as 'checkBox'
+        FROM cart_item_modifier AS c
+        JOIN menu_tax_sc AS t ON t.id = c.menuTaxScId
+        where c.cartItemId =   ${row.id}
+        and c.presence = 1 and c.void = 0  and c.scStatus = 1
+
+
+        UNION 
+        -- TAX 
+        SELECT c.id, c.modifierId, c.price,  t.taxNote AS 'descl' ,  c.cartItemId, c.applyDiscount, c.menuTaxScId,
+        0 as 'checkBox'
+        FROM cart_item_modifier AS c
+        JOIN menu_tax_sc AS t ON t.id = c.menuTaxScId
+        where c.cartItemId =   ${row.id}
+        and c.presence = 1 and c.void = 0  and c.taxStatus = 1
+
+
+      `;
       const [modifier] = await db.query(q);
 
       row.modifier = modifier; // tambahkan hasil ke properti maps
 
-
     }
 
-
-    // hitung TAX and SC
-    for (const row of formattedRows) {
-
-
-      // SUBTOTAL BEFORE DISCOUNT
-      const c2 = `
-      SELECT SUM(t1.price) AS 'subTotal' FROM (
-
-        -- ITEM
-        SELECT   price 
-        FROM cart_item
-        where id = ${row.id}
-        and  presence = 1 and void = 0  
-
-        UNION
-        -- MODIFIER
-        SELECT  c.price
-        FROM cart_item_modifier AS c
-        LEFT JOIN modifier AS m ON m.id = c.modifierId
-        where c.cartItemId = ${row.id}
-        and c.presence = 1 and c.void = 0 and c.modifierId != 0
-        and c.applyDiscount = 0
-  
-
-      ) AS t1
-    `;
-      const [totalBeforeDiscount] = await db.query(c2);
-
-
-      // SUBTOTAL AFTER DISCOUNT
-      const c1 = `
-    SELECT SUM(t1.price) AS 'subTotal' FROM (
-
-      -- ITEM
-      SELECT   price 
-      FROM cart_item
-      where id = ${row.id}
-      and  presence = 1 and void = 0  
-
-      UNION
-      -- MODIFIER + APPLYDISCOUNT
-      SELECT  c.price
-      FROM cart_item_modifier AS c
-      LEFT JOIN modifier AS m ON m.id = c.modifierId
-      where c.cartItemId = ${row.id}
-      and c.presence = 1 and c.void = 0  
-      and c.menuTaxScId = 0
-   
-    ) AS t1
-    `;
-
-      const [totalAfterDiscount] = await db.query(c1);
-
-
-
-
-
-      let subTotal = row['price'];
-      row['modifier'].forEach(el => {
-        subTotal += totalAfterDiscount[0]['subTotal'];
-      });
-
-
-      // SC
-      const q9 = `
-      -- SC
-       SELECT  NULL AS 'id', 0 AS 'modifierId', 
-        CASE
-          WHEN c.scStatus = 1 THEN (${totalAfterDiscount[0]['subTotal']} * (c.scRate /100))
-          ELSE 0
-        END
-        AS 'price', m.scNote AS 'descl', c.cartItemId
-        FROM cart_item_modifier AS c 
-        JOIN menu_tax_sc AS m ON m.id = c.menuTaxScId  
-        WHERE c.cartItemId = ${row.id} AND c.presence = 1 
-        AND c.modifierId = 0 AND c.applyDiscount = 0
-      `;
-
-      const [sc] = await db.query(q9);
-      sc[0]['price'] = parseInt(sc[0]['price'])
-      row['modifier'].push(sc[0]);
-
-      // TAX
-      const q10 = `
-       SELECT  NULL AS 'id', 0 AS 'modifierId', 
-        CASE
-          WHEN c.taxStatus = 1 THEN (${parseInt(totalBeforeDiscount[0]['subTotal']) + sc[0]['price']} * (c.taxRate /100))
-          ELSE 0
-        END
-        AS 'price', m.taxNote AS 'descl', c.cartItemId
-        FROM cart_item_modifier AS c 
-        JOIN menu_tax_sc AS m ON m.id = c.menuTaxScId  
-        WHERE c.cartItemId = ${row.id} AND c.presence = 1 
-        AND c.modifierId = 0 AND c.applyDiscount = 0
-      `;
-      const [modifier2] = await db.query(q10);
-      modifier2[0]['price'] = parseInt(modifier2[0]['price'])
-      row['modifier'].push(modifier2[0]);
-
-    };
 
 
     const orderItems = [];
@@ -1042,6 +903,7 @@ exports.cartDetail = async (req, res) => {
         sendOrder: formattedRows[i]['sendOrder'],
         modifierId: 'parent',
         applyDiscount: 0,
+        menuTaxScId: 0,
       })
       formattedRows[i]['modifier'].forEach(el => {
         orderItems.push({
@@ -1055,10 +917,11 @@ exports.cartDetail = async (req, res) => {
           sendOrder: formattedRows[i]['sendOrder'],
           modifierId: el['modifierId'],
           applyDiscount: el['applyDiscount'],
+          menuTaxScId: el['menuTaxScId'],
         })
         grandAmount += parseInt(el['price']);
 
-        if (el['id'] != null) {
+        if (el['menuTaxScId'] == 0) {
           totalAmount += parseInt(el['price']);
         }
       });
@@ -1211,10 +1074,14 @@ exports.addModifier = async (req, res) => {
             results.push({ id, status: 'not found', query: q, });
           } else {
             results.push({ id, status: 'updated', query: q, });
+
+            const  taxScUpdateRest  = await taxScUpdate(id); 
           }
         } else {
           results.push({ id, status: 'cannot double' });
         }
+
+
       }
     }
 
@@ -1254,7 +1121,9 @@ exports.removeDetailModifier = async (req, res) => {
             results.push({ id, status: 'not found' });
           } else {
             results.push({ id, status: 'updated' });
+             const  taxScUpdateRest  = await taxScUpdate(id); 
           }
+          
         }
         else {
           const q = `UPDATE cart_item_modifier
@@ -1268,10 +1137,15 @@ exports.removeDetailModifier = async (req, res) => {
             results.push({ id, status: 'not found' });
           } else {
             results.push({ id, status: 'updated' });
-          }
-        }
+            const  taxScUpdateRest  = await taxScUpdate(parentId); 
+          } 
+        } 
 
       }
+
+      
+       
+
     }
 
     res.json({

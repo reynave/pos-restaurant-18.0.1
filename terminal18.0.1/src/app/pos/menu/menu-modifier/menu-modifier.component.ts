@@ -26,15 +26,15 @@ export class MenuModifierComponent implements OnInit {
   items: any = [{
     menu: []
   }];
-
+  isChecked: boolean = false;
   item: any = [];
   cart: any = [];
   id: string = '';
   totalAmount: number = 0;
-  grandAmount : number = 0;
+  grandAmount: number = 0;
   api: string = environment.api;
   model = new Actor(1);
-  hideTaxSc : number = 1;
+  hideTaxSc: number = 1;
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
@@ -46,10 +46,10 @@ export class MenuModifierComponent implements OnInit {
 
   ngOnInit() {
     this.id = this.activeRouter.snapshot.queryParams['id'],
-      this.modalService.dismissAll();
+    this.modalService.dismissAll();
     this.httpGetModifier();
-    this.httpCart(); 
-    
+    this.httpCart();
+
   }
   httpGetModifier() {
     this.loading = true;
@@ -86,8 +86,8 @@ export class MenuModifierComponent implements OnInit {
         console.log(data);
         this.cart = data['orderItems'];
         this.totalAmount = data['totalAmount'];
-         this.grandAmount = data['grandAmount'];
-        
+        this.grandAmount = data['grandAmount'];
+
       },
       error => {
         console.log(error);
@@ -150,9 +150,9 @@ export class MenuModifierComponent implements OnInit {
     )
   }
 
-  isChecked: boolean = false;
+
   fnChecked(index: number) {
-    if (this.cart[index].sendOrder == '' && (this.cart[index].modifierId != 0 || this.cart[index].applyDiscount !=  null)) {
+    if (this.cart[index].sendOrder == '' && (this.cart[index].modifierId != 0 || this.cart[index].applyDiscount != null)) {
 
       this.cart[index].checkBox == 0 ? this.cart[index].checkBox = 1 : this.cart[index].checkBox = 0;
 
