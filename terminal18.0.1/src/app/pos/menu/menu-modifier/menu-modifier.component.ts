@@ -48,7 +48,8 @@ export class MenuModifierComponent implements OnInit {
     this.id = this.activeRouter.snapshot.queryParams['id'],
       this.modalService.dismissAll();
     this.httpGetModifier();
-    this.httpCart();
+    this.httpCart(); 
+    
   }
   httpGetModifier() {
     this.loading = true;
@@ -151,7 +152,7 @@ export class MenuModifierComponent implements OnInit {
 
   isChecked: boolean = false;
   fnChecked(index: number) {
-    if (this.cart[index].sendOrder == '' && this.cart[index].modifierId != 0) {
+    if (this.cart[index].sendOrder == '' && (this.cart[index].modifierId != 0 || this.cart[index].applyDiscount !=  null)) {
 
       this.cart[index].checkBox == 0 ? this.cart[index].checkBox = 1 : this.cart[index].checkBox = 0;
 

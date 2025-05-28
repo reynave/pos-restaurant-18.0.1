@@ -30,10 +30,13 @@ export class MenuComponent implements OnInit {
   modifiers: any = [];
   item: any = [];
   cart: any = [];
+  cartOrdered: any = [];
+  
   discountGroup: any = [];
 
   id: string = '';
   totalAmount: number = 0;
+  totalAmountOrdered: number = 0;
 
   api: string = environment.api;
 
@@ -53,6 +56,8 @@ export class MenuComponent implements OnInit {
       this.modalService.dismissAll();
     this.httpMenu();
     this.httpCart();
+    this.httpCartOrdered();
+    
     this.httpGetModifier();
   }
 
@@ -113,6 +118,26 @@ export class MenuComponent implements OnInit {
       }
     )
   }
+
+  httpCartOrdered() {
+    this.loading = true;
+    const url = environment.api + "menuItemPos/cartOrdered";
+    this.http.get<any>(url, {
+      headers: this.configService.headers(),
+      params: {
+        id: this.activeRouter.snapshot.queryParams['id'],
+      }
+    }).subscribe(
+      data => {
+        this.cartOrdered = data['items'];
+        this.totalAmountOrdered = data['totalAmount'];
+      },
+      error => {
+        console.log(error);
+      }
+    )
+  }
+
 
   reload() {
     this.httpMenu();
