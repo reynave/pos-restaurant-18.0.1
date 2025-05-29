@@ -4,9 +4,12 @@ const transactionController = require('../../controllers/terminal/transactionCon
   
 // table/*
 router.get('/', transactionController.getAllData);
+router.get('/detail', transactionController.detail);
 router.get('/cart', transactionController.cart);
+
 router.get('/getCopyBill', transactionController.getCopyBill);
 router.post('/addCopyBill', transactionController.addCopyBill);
+
 
 //router.post('/signin', loginController.newOrder);
 

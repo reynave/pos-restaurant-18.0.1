@@ -138,11 +138,15 @@ export class MenuComponent implements OnInit {
     )
   }
 
-
-  reload() {
+  fullReload() {
     this.httpMenu();
     this.httpCart();
+    this.httpCartOrdered();
     this.httpGetModifier();
+  }
+  reload() { 
+    this.httpCart();
+    this.httpCartOrdered();  
   }
 
   open(content: any, x: any, i: number) {
@@ -159,7 +163,7 @@ export class MenuComponent implements OnInit {
       headers: this.configService.headers(),
     }).subscribe(
       data => {
-        this.httpCart();
+         this.reload();
       },
       error => {
         console.log(error);
@@ -180,7 +184,7 @@ export class MenuComponent implements OnInit {
         console.log(data);
         this.modalService.dismissAll();
         this.model.newQty = 1;
-        this.httpCart();
+        this.reload();
       },
       error => {
         console.log(error);
@@ -228,7 +232,7 @@ export class MenuComponent implements OnInit {
         }).subscribe(
           data => {
             console.log(data);
-            this.httpCart();
+           this.reload();
           },
           error => {
             console.log(error);
@@ -255,8 +259,7 @@ export class MenuComponent implements OnInit {
       }).subscribe(
         data => {
           console.log(data);
-          this.httpCart();
-          // this.showModifier = true;
+          this.reload();
         },
         error => {
           console.log(error);
@@ -282,8 +285,7 @@ export class MenuComponent implements OnInit {
       }).subscribe(
         data => {
           console.log(data);
-          this.httpCart();
-          // this.showModifier = true;
+           this.reload();
         },
         error => {
           console.log(error);
@@ -303,7 +305,7 @@ export class MenuComponent implements OnInit {
     }).subscribe(
       data => {
         console.log(data);
-        this.httpCart();
+         this.reload();
       },
       error => {
         console.log(error);

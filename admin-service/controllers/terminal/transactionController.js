@@ -66,6 +66,95 @@ exports.cart = async (req, res) => {
   }
 };
 
+exports.detail = async (req, res) => {
+
+  try {
+    const id = req.query.id;
+
+    const q = `
+        select * from cart where id = '${id}'
+       `;
+    const [cart] = await db.query(q);
+
+    const q2 = `
+       SELECT 
+       ROW_NUMBER() OVER (ORDER BY i.inputDate ASC, i.sendOrder ASC) AS no,
+       i.id, 0 as 'cartItemModifierId',  i.sendOrder, m.name, i.price,
+        c.desc1 AS 'category', d.desc1 AS 'department', i.inputDate
+       
+      from cart_item  AS i
+      JOIN menu AS m ON m.id = i.menuId
+      LEFT JOIN menu_category AS c ON c.id = i.menuCategoryId
+      LEFT JOIN menu_department AS d ON d.id = i.menuDepartmentId
+      WHERE i.cartId =  '${id}'  and i.presence = 1 and i.void = 0
+      order by i.inputDate ASC, i.sendOrder ASC
+       `;
+    const [cartItem] = await db.query(q2);
+    const items = [];
+    for (const row of cartItem) {
+      items.push(row);
+
+      const q2 = `
+        -- modifier
+        SELECT  c.cartItemId as 'id',  c.id 'cartItemModifierId' , c.sendOrder,   
+        m.descl AS 'name', c.price,
+        0 AS 'applyDiscount', 0 AS 'rate', c.inputDate
+        FROM cart_item_modifier AS c
+        JOIN modifier AS m ON m.id = c.modifierId
+        WHERE c.cartItemId = ${row['id']}
+        AND c.presence = 1 AND c.void = 0  
+        
+        UNION
+        -- applyDiscount
+        SELECT c.cartItemId as 'id',  c.id 'cartItemModifierId' , c.sendOrder,
+        d.name , c.price,
+        c.applyDiscount , 0 AS 'rate' , c.inputDate
+        FROM cart_item_modifier AS c
+        JOIN check_disc_type AS d ON d.id = c.applyDiscount
+        WHERE c.cartItemId =  ${row['id']}
+        AND c.presence = 1 AND c.void = 0  
+
+        UNION
+        -- SC
+        SELECT c.cartItemId as 'id',  c.id 'cartItemModifierId' , c.sendOrder,
+        d.name , c.price,
+        0 AS 'applyDiscount', c.scRate  AS 'rate' , c.inputDate
+        FROM cart_item_modifier AS c
+        JOIN check_sc_type AS d ON d.id = c.menuTaxScId
+        WHERE c.cartItemId =  ${row['id']}
+        AND c.presence = 1 AND c.void = 0  AND c.scStatus != 0   
+
+        UNION
+        -- TAX
+        SELECT c.cartItemId as 'id',  c.id 'cartItemModifierId' , c.sendOrder,
+        d.name , c.price,
+        0 AS 'applyDiscount', c.taxRate AS 'rate' , c.inputDate
+        FROM cart_item_modifier AS c
+        JOIN check_tax_type AS d ON d.id = c.menuTaxScId
+        WHERE c.cartItemId =  ${row['id']}
+        AND c.presence = 1 AND c.void = 0  AND c.taxStatus != 0;
+
+       `;
+      const [cartItem] = await db.query(q2);
+
+      cartItem.forEach(element => {
+         items.push(element);
+      });
+     
+    }
+
+
+    res.json({
+      error: false,
+      items: items, 
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+};
+
 exports.getCopyBill = async (req, res) => {
 
   try {
@@ -86,7 +175,7 @@ exports.getCopyBill = async (req, res) => {
     res.json({
       error: false,
       copy: formattedRows,
-      items : items,
+      items: items,
     });
 
   } catch (err) {
@@ -115,7 +204,7 @@ exports.addCopyBill = async (req, res) => {
     if (result.affectedRows === 0) {
       results.push({ cartId, status: 'cart_copy_bill not found' });
     } else {
-      results.push({ cartId, status: 'cart_copy_bill insert'});
+      results.push({ cartId, status: 'cart_copy_bill insert' });
     }
 
     res.json({

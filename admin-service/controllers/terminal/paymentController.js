@@ -300,8 +300,7 @@ exports.deletePayment = async (req, res) => {
     res.status(500).json({ error: 'Database error' });
   }
 };
-
-
+ 
 exports.submit = async (req, res) => {
 
   const cartId = req.body['id'];
@@ -336,11 +335,7 @@ exports.submit = async (req, res) => {
     } else {
       results.push({ cartId, status: 'cart_item_modifier sendOrder updated', query: q, });
     }
-
-
-
-
-
+ 
 
     res.json({
       error: false,

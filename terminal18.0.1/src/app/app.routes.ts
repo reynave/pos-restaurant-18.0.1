@@ -12,6 +12,7 @@ import { PaymentComponent } from './pos/payment/payment.component';
 import { TransactionComponent } from './transaction/transaction.component';
 import { SettingComponent } from './setting/setting.component';
 import { TransactionDetailComponent } from './transaction/transaction-detail/transaction-detail.component';
+import { TransactionBillComponent } from './transaction/transaction-bill/transaction-bill.component';
 
 export const routes: Routes = [
     { path: '', component: SetupComponent },
@@ -28,7 +29,8 @@ export const routes: Routes = [
 
 
     { path: 'transaction', component: TransactionComponent, canActivate: [authGuard] },
-    { path: 'transaction/detail', component: TransactionDetailComponent, canActivate: [authGuard] },
+    { path: 'transaction/bill', component: TransactionBillComponent, canActivate: [authGuard] },
+ { path: 'transaction/detail', component: TransactionDetailComponent, canActivate: [authGuard] },
 
 
     { path: '**', component: PageNotFoundComponent },

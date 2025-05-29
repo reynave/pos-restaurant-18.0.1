@@ -1,89 +1,47 @@
 <div class="header">
-     <div class="row">
-        <div class="col-12">
-            <button class="btn btn-sm btn-light" (click)="back();">back</button>
-        </div>
-    </div>
+   <div class="row">
+      <div class="col-12">
+         <button class="btn btn-sm btn-light" (click)="back();">back</button>
+      </div>
+   </div>
 </div>
 <div class="container">
-   
-    <div class="row">
-        <div class="col-5 col-lg-4">
-            <div class="wrapper ">
-                <div class=" border">
 
-                    <table class="table table-sm table-hover table-borderless table-bill">
-                        <tbody>
-                            <tr *ngFor="let x of cart; let i = index">
+   <div class="row">
+      <div class="col-12 col-lg-12">
+         <div class="wrapper ">
+            <div class=" border">
 
-                                <td>
-                                    <div class="lh-1">
-                                        @if(x.parentMenuId == 0){
-                                        <strong>{{x.name }} </strong>
-                                        }
-                                        @else {
-                                        <span class="ms-4"> {{x.name }}</span>
-                                        }
+               <table class="table table-sm table-hover">
+                   <thead class="sticky-top">
+                     <tr>
+                        <th>No</th>
+                        <th>Description</th>
+                        
+                        <th class="text-end">Rate</th>
+                        <th class="text-end">Price</th>
+                        <th>Send Order</th>
+                         <th>inputDate</th>
+                        
+                     </tr>
+                   </thead>
+                  <tbody>
+                     <tr *ngFor="let x of items">
+                        <td>{{x.no}}</td>
+                       
+                        <td> {{x.no == undefined ? "+":""}} {{x.name}}</td>
+                        
+                        <td class="text-end">{{x.rate | number}}</td> 
+                        <td class="text-end">{{x.price | number}}</td>
+                        <td>{{x.sendOrder}}</td>
+                         <td>{{x.inputDate | date :'medium'}}</td>
+                     </tr>
+                  </tbody>
+               </table>
 
-                                    </div>
-                                    @if(x.parentMenuId == 0){
-                                    <div>&#64;{{x.price | number}}</div>
-                                    }
-                                </td>
-                                <td width="50px" class="text-end ">
-                                    x {{x.total | number}}
-                                </td>
-                                <td class="text-end ">{{x.totalAmount | number}}</td>
-                            </tr>
-
-                            <tr>
-                                <td colspan="2" class="text-end">{{totalItem}} Item, Subtotal : </td>
-                                <td class="text-end "> {{totalAmount | number}} </td>
-                            </tr>
-                            <tr *ngFor="let x of bill">
-                                <td colspan="2" class="text-end">{{x.name}} : </td>
-                                <td class="text-end">{{x.amount | number}}</td>
-                            </tr>
-                            <tr>
-                                <td colspan="2" class="text-end"><strong class="font-monospace"
-                                        style="font-size: 1.2rem;">Grand Total :</strong></td>
-                                <td class="text-end "><strong class="font-monospace"
-                                        style="font-size: 1.2rem;">{{grandTotal | number}}</strong></td>
-                            </tr>
-
-                            <tr>
-                                <td colspan="3">
-                                    <hr class="p-0 m-0">
-                                </td>
-                            </tr>
-                            <tr *ngFor="let x of paided">
-                                <td colspan="2" class="text-end">{{x.name}} : </td>
-                                <td class="text-end">{{x.amount | number}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                </div>
             </div>
-        </div>
-        <div class="col-5">
-            <div>
-                  Total Copy {{totalCopy}}
-            </div>
-            <div > 
-                <button class="btn btn-warning" (click)="copyBill()">COPY PRINT</button>
-            </div>
-            <div class="my-2">
-                <table class="table table-sm">
-                    <tbody>
-                        <tr *ngFor="let x of historyCopy; let i = index">
-                            <td>{{i+1}}</td>
-                            <td>{{x.inputDate | date:'medium'}}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+         </div>
+      </div>
 
-    </div>
+   </div>
 </div>

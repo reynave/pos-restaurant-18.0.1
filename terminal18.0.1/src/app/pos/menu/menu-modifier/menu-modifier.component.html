@@ -15,7 +15,7 @@
       <div class="col-5">
          <!-- TABLE cart -->
 
-         <table class="table table-sm">
+         <table class="table table-sm table-hover">
             <tbody>
                <tr  (click)="fnChecked(i)" *ngFor="let x of cart; let i = index"
                   [class]="{'tr-active':x.checkBox == 1, 'bg-light':x.sendOrder == 1 }"
