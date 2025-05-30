@@ -22,6 +22,7 @@ export class TransactionDetailComponent implements  OnInit {
   items: any =  []; 
   id: string = ''; 
   api: string = environment.api;  
+  showModifier : number = 0;
   constructor(
     public configService: ConfigService,
     private http: HttpClient,

@@ -52,6 +52,8 @@ export class TablesComponent implements OnInit {
     this.httpGet();
   }
   httpGet() {
+   
+    this.modalService.dismissAll();
     this.loading = true;
     const url = environment.api + "tableMap";
     this.http.get<any>(url, {
@@ -91,10 +93,10 @@ export class TablesComponent implements OnInit {
 
   onSubmit() {
     console.log(this.model);
-    const outletId  = this.configService.getTokenJson()['outlet']['id'];
+    const outletId = this.configService.getTokenJson()['outlet']['id'];
     const body = {
       model: this.model,
-      outletId : outletId
+      outletId: outletId
     }
     console.log(body);
     this.http.post<any>(environment.api + "tableMap/newOrder", body, {
@@ -102,8 +104,14 @@ export class TablesComponent implements OnInit {
     }).subscribe(
       data => {
         console.log(data);
-        this.router.navigate(['/menu'], { queryParams: { id: data['cardId'] } });
-        this.modalService.dismissAll();
+        if (data['error'] != true) {
+          this.router.navigate(['/menu'], { queryParams: { id: data['cardId'] } });
+          this.modalService.dismissAll();
+        } else {
+          alert("Table Used");
+          this.reload();
+        }
+
       },
       error => {
         console.log(error);

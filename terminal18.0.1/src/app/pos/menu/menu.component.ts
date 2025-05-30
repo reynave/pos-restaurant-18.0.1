@@ -31,7 +31,7 @@ export class MenuComponent implements OnInit {
   item: any = [];
   cart: any = [];
   cartOrdered: any = [];
-  
+
   discountGroup: any = [];
 
   id: string = '';
@@ -54,11 +54,17 @@ export class MenuComponent implements OnInit {
   ngOnInit() {
     this.id = this.activeRouter.snapshot.queryParams['id'],
       this.modalService.dismissAll();
-    this.httpMenu();
-    this.httpCart();
-    this.httpCartOrdered();
-    
-    this.httpGetModifier();
+    if (this.id == undefined) {
+      alert("ERROR");
+      this.router.navigate(['tables'])
+    } else {
+      this.httpMenu();
+      this.httpCart();
+      this.httpCartOrdered();
+
+      this.httpGetModifier();
+    }
+
   }
 
   httpMenu() {
@@ -144,9 +150,9 @@ export class MenuComponent implements OnInit {
     this.httpCartOrdered();
     this.httpGetModifier();
   }
-  reload() { 
+  reload() {
     this.httpCart();
-    this.httpCartOrdered();  
+    this.httpCartOrdered();
   }
 
   open(content: any, x: any, i: number) {
@@ -163,7 +169,7 @@ export class MenuComponent implements OnInit {
       headers: this.configService.headers(),
     }).subscribe(
       data => {
-         this.reload();
+        this.reload();
       },
       error => {
         console.log(error);
@@ -232,7 +238,7 @@ export class MenuComponent implements OnInit {
         }).subscribe(
           data => {
             console.log(data);
-           this.reload();
+            this.reload();
           },
           error => {
             console.log(error);
@@ -285,7 +291,7 @@ export class MenuComponent implements OnInit {
       }).subscribe(
         data => {
           console.log(data);
-           this.reload();
+          this.reload();
         },
         error => {
           console.log(error);
@@ -305,7 +311,7 @@ export class MenuComponent implements OnInit {
     }).subscribe(
       data => {
         console.log(data);
-         this.reload();
+        this.reload();
       },
       error => {
         console.log(error);
@@ -333,7 +339,7 @@ export class MenuComponent implements OnInit {
     }
   }
 
-   payment() {
+  payment() {
     this.loading = true;
     const body = {
       id: this.id,

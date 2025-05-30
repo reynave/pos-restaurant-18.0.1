@@ -8,13 +8,40 @@ const path = require('path');
 
 exports.cart = async (req, res) => {
   let totalItem = 0;
+  const results = [];
+  let closePayment = 0;
   try {
-    const cartId = req.query.id;  
+    const cartId = req.query.id;
     const data = await cart(cartId);
- 
+
+    if (data['unpaid'] == 0) {
+      console.log("FINISH");
+      const q = `UPDATE cart
+            SET
+              endDate = '${today()}',
+              updateDate = '${today()}',
+              close = 1,
+              outletTableMapId = 20,
+              totalAmount  = ${data['subTotal']},
+              grandTotal = ${data['grandTotal']},
+              changePayment =  ${data['change']},
+              totalTips = ${data['tips']},
+              totalItem  = ${data['totalItem']}
+          WHERE id = ${cartId} `;
+      const [result] = await db.query(q);
+
+      if (result.affectedRows === 0) {
+        results.push({  status: 'cart not found / payment was close'  });
+      } else {
+        closePayment = 1;
+        results.push({   status: 'cart close payment updated'  });
+      } 
+    }
     res.json({
-      error: false, 
-      data: data, 
+      error: false,
+      data: data,
+      results : results,
+      closePayment : closePayment,
     });
 
   } catch (err) {
@@ -117,7 +144,7 @@ exports.cartVer1 = async (req, res) => {
     });
 
 
-     const s3 = `
+    const s3 = `
       SELECT c.id, c.paid as 'amount', t.name 
       FROM cart_payment  AS c
       JOIN check_payment_type AS t ON t.id = c.checkPaymentTypeId
@@ -125,9 +152,9 @@ exports.cartVer1 = async (req, res) => {
       `;
     const [paided] = await db.query(s3);
 
-   
 
-      const s5 = `
+
+    const s5 = `
         SELECT SUM(t1.bill - t1.paid) AS 'amount'  FROM (
 
           SELECT id, price  AS 'bill', 0 AS 'paid' 
@@ -152,7 +179,7 @@ exports.cartVer1 = async (req, res) => {
       `;
     const [closePaymentQuery] = await db.query(s5);
 
-    if( parseInt(closePaymentQuery[0]['amount'] ) <= 0  ){
+    if (parseInt(closePaymentQuery[0]['amount']) <= 0) {
       const q = `UPDATE cart
             SET
               close =  1, 
@@ -166,22 +193,22 @@ exports.cartVer1 = async (req, res) => {
       const [result] = await db.query(q);
 
     }
-    
+
 
 
     res.json({
       error: false,
       preview: "https://[YOUR_HOST]:[PORT]/terminal/bill/?id=" + cartId,
       id: cartId,
-     // items: formattedRows,
+      // items: formattedRows,
       orderItems: orderItems,
       totalAmount: totalAmount,
-      grandTotal: grandTotal, 
+      grandTotal: grandTotal,
       totalItem: totalItem,
       bill: bill,
       paided: paided,
-      closePayment : parseInt(closePaymentQuery[0]['amount'] ) <= 0  ? true : false,
-      closePaymentAmount : parseInt(closePaymentQuery[0]['amount'] ),
+      closePayment: parseInt(closePaymentQuery[0]['amount']) <= 0 ? true : false,
+      closePaymentAmount: parseInt(closePaymentQuery[0]['amount']),
       get: req.query
     });
 
@@ -234,12 +261,12 @@ exports.paid = async (req, res) => {
 exports.addPayment = async (req, res) => {
   const cartId = req.body['cartId'];
   const payment = req.body['payment'];
-  const totalAmount = req.body['totalAmount'];
+  const unpaid = req.body['unpaid'];
   let amount = 0;
   const results = [];
   try {
     if (payment['autoMatchAmount'] == 1) {
-      amount = totalAmount;
+      amount = unpaid;
     }
     const [result] = await db.query(
       `INSERT INTO cart_payment (
@@ -260,7 +287,6 @@ exports.addPayment = async (req, res) => {
     res.status(201).json({
       error: false,
       message: 'cart_payment created',
-
     });
 
   } catch (err) {
@@ -300,7 +326,7 @@ exports.deletePayment = async (req, res) => {
     res.status(500).json({ error: 'Database error' });
   }
 };
- 
+
 exports.submit = async (req, res) => {
 
   const cartId = req.body['id'];
@@ -335,7 +361,7 @@ exports.submit = async (req, res) => {
     } else {
       results.push({ cartId, status: 'cart_item_modifier sendOrder updated', query: q, });
     }
- 
+
 
     res.json({
       error: false,
@@ -349,20 +375,20 @@ exports.submit = async (req, res) => {
 };
 
 exports.addPaid = async (req, res) => {
- 
+
   const paid = req.body['paid'];
 
   const results = [];
 
   try {
-    for (const emp of paid) { 
+    for (const emp of paid) {
       const { id, cartId, paid, tips } = emp;
 
       if (!id) {
         results.push({ id, status: 'failed', reason: 'Missing fields' });
         continue;
       }
- 
+
       const q = `UPDATE cart_payment
                 SET
                   paid = ${paid}, 
@@ -371,7 +397,7 @@ exports.addPaid = async (req, res) => {
                   submit = 1,
                   updateDate = '${today()}'
               WHERE id = ${id}   and cartId = '${cartId}'`;
- 
+
       const [result] = await db.query(q);
       if (result.affectedRows === 0) {
         results.push({ id, status: 'cart_payment not found', query: q, });

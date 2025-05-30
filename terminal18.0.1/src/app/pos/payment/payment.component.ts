@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { NgxCurrencyDirective } from "ngx-currency";
+import { BillTableComponent } from "../bill/bill-table/bill-table.component";
 export class Actor {
   constructor(
     public newQty: number,
@@ -15,31 +16,32 @@ export class Actor {
 @Component({
   selector: 'app-payment',
   standalone: true,
-  imports: [HttpClientModule, CommonModule, FormsModule, NgbDropdownModule, RouterModule, NgxCurrencyDirective ],
+  imports: [HttpClientModule, CommonModule, FormsModule, NgbDropdownModule, RouterModule, NgxCurrencyDirective, BillTableComponent],
   templateUrl: './payment.component.html',
   styleUrl: './payment.component.css'
 })
-export class PaymentComponent implements  OnInit {
-   @ViewChild('myModal', { static: true }) myModal: any;
+export class PaymentComponent implements OnInit {
+  @ViewChild('myModal', { static: true }) myModal: any;
   loading: boolean = false;
   items: any = [{
     menu: []
   }];
   item: any = [];
-  paymentType  : any = [];
+  paymentType: any = [];
   cart: any = [];
   id: string = '';
   totalAmount: number = 0;
-  totalItem : number = 0;
+  totalItem: number = 0;
   api: string = environment.api;
   htmlBill: any = '';
-  isChecked: boolean = false;  
-  paid : any = [];
-  paided : any = [];
-  
-  bill : any = [];
-  grandTotal : number = 0;
-  closePaymentAmount : number = 1;
+  isChecked: boolean = false;
+  paid: any = [];
+  paided: any = [];
+  data: any = [];
+  bill: any = [];
+  grandTotal: number = 0;
+  closePaymentAmount: number = 1;
+  unpaid: number = 0;
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
@@ -51,9 +53,8 @@ export class PaymentComponent implements  OnInit {
 
   ngOnInit() {
     this.id = this.activeRouter.snapshot.queryParams['id'],
-    this.modalService.dismissAll();
+      this.modalService.dismissAll();
     this.httpCart();
-    //this.httpBill();
     this.httpPaymentType();
     this.httpPaid();
 
@@ -68,7 +69,7 @@ export class PaymentComponent implements  OnInit {
       }
     }).subscribe(
       data => {
-        this.paid = data['items']; 
+        this.paid = data['items'];
       },
       error => {
         console.log(error);
@@ -86,16 +87,11 @@ export class PaymentComponent implements  OnInit {
       }
     }).subscribe(
       data => {
-        this.cart = data['data']['orderItems'];
-        this.totalAmount = data['data']['totalAmount'];
-        this.totalItem = data['data']['totalItem'];
-        this.bill = data['data']['bill'];
-        this.paided = data['data']['paided']; 
-        this.grandTotal = data['data']['grandTotal'];
+        this.data = data['data'];
         this.closePaymentAmount = data['data']['closePaymentAmount'];
-
-        if( data['data']['closePayment'] == true){
-         this.openModal();
+        this.unpaid = data['data']['unpaid']
+        if (data['closePayment'] == 1) {
+          this.openModal();
         }
       },
       error => {
@@ -108,9 +104,9 @@ export class PaymentComponent implements  OnInit {
     this.loading = true;
     const url = environment.api + "payment/paymentType";
     this.http.get<any>(url, {
-      headers: this.configService.headers(), 
+      headers: this.configService.headers(),
     }).subscribe(
-      data => { 
+      data => {
         this.paymentType = data['items']
       },
       error => {
@@ -141,81 +137,94 @@ export class PaymentComponent implements  OnInit {
     this.httpCart();
   }
 
-  addPayment(payment:any){
+  addPayment(payment: any) {
     this.loading = true;
     const body = {
-      cartId :this.id,
-      payment : payment,
-      totalAmount : this.closePaymentAmount,
+      cartId: this.id,
+      payment: payment,
+      unpaid: this.unpaid,
     }
- 
-    this.http.post<any>(environment.api+"payment/addPayment", body,{
-      headers : this.configService.headers(),
+    console.log(body)
+    this.http.post<any>(environment.api + "payment/addPayment", body, {
+      headers: this.configService.headers(),
     }).subscribe(
-      data=>{
+      data => {
         console.log(data);
         this.httpPaid();
         this.httpCart()
       },
-      error=>{
-        console.log(error);
-      }
-    )
-  }
-  
-  deletePaid(x:any){
-    this.loading = true;
-    const body = {
-      cartId :this.id,
-      paid : x,
-    }
-    console.log(body)
-    this.http.post<any>(environment.api+"payment/deletePayment", body,{
-      headers : this.configService.headers(),
-    }).subscribe(
-      data=>{
-        console.log(data);
-        this.httpPaid();
-         this.httpCart();
-      },
-      error=>{
-        console.log(error);
-      }
-    )
-  }
-   
-  addPaid(){
-    this.loading = true;
-    const body = {
-      cartId :this.id,
-      paid : this.paid,
-      totalAmount : this.grandTotal,
-    }
-    console.log(body)
-    this.http.post<any>(environment.api+"payment/addPaid", body,{
-      headers : this.configService.headers(),
-    }).subscribe(
-      data=>{
-        console.log(data);
-        this.httpCart();
-        this.httpPaid();
-      },
-      error=>{
+      error => {
         console.log(error);
       }
     )
   }
 
-   openModal() {
+  deletePaid(x: any) {
+    let allowDelete = true;
+    if (x.submit == 1) {
+      if (confirm("DELETE THIS PAYMENT?")) {
+        allowDelete = true;
+      } else {
+        allowDelete = false;
+      }
+    }
+
+    if (allowDelete == true) {
+
+
+      this.loading = true;
+      const body = {
+        cartId: this.id,
+        paid: x,
+      }
+      console.log(body)
+      this.http.post<any>(environment.api + "payment/deletePayment", body, {
+        headers: this.configService.headers(),
+      }).subscribe(
+        data => {
+          console.log(data);
+          this.httpPaid();
+          this.httpCart();
+        },
+        error => {
+          console.log(error);
+        }
+      )
+    }
+  }
+
+  addPaid() {
+    this.loading = true;
+    const body = {
+      cartId: this.id,
+      paid: this.paid,
+      totalAmount: this.grandTotal,
+    }
+    console.log(body)
+    this.http.post<any>(environment.api + "payment/addPaid", body, {
+      headers: this.configService.headers(),
+    }).subscribe(
+      data => {
+        console.log(data);
+        this.httpCart();
+        this.httpPaid();
+      },
+      error => {
+        console.log(error);
+      }
+    )
+  }
+
+  openModal() {
     this.modalService.open(this.myModal).result.then(
-			(result) => {
-				 console.log("result");
-          this.router.navigate(['tables']);
-			},
-			(reason) => {
-				 console.log("reason");
-          this.router.navigate(['tables']);
-			},
-		);
+      (result) => {
+        console.log("result");
+        this.router.navigate(['tables']);
+      },
+      (reason) => {
+        console.log("reason");
+        this.router.navigate(['tables']);
+      },
+    );
   }
 }

@@ -6,7 +6,7 @@
     "admin18.0.1": {
       "projectType": "application",
       "schematics": {
-         "@schematics/angular:application": {
+        "@schematics/angular:application": {
           "strict": true,
           "skipTests": true
         },
@@ -41,7 +41,8 @@
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
-              "zone.js"
+              "zone.js",
+              "@angular/localize/init"
             ],
             "tsConfig": "tsconfig.app.json",
             "assets": [
@@ -97,9 +98,9 @@
             }
           },
           "defaultConfiguration": "development",
-           "options": {
-                "port": 4850
-            }
+          "options": {
+            "port": 4850
+          }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n"

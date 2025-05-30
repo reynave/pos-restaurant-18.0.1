@@ -6,15 +6,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-export class Actor {
-  constructor(
-    public newQty: number,
-  ) { }
-}
+import { BillTableComponent } from "./bill-table/bill-table.component";
+ 
 @Component({
   selector: 'app-bill',
   standalone: true,
-  imports: [HttpClientModule, CommonModule, FormsModule, NgbDropdownModule, RouterModule],
+  imports: [HttpClientModule, CommonModule, FormsModule, NgbDropdownModule, RouterModule, BillTableComponent],
   templateUrl: './bill.component.html',
   styleUrl: './bill.component.css'
 })
@@ -35,7 +32,9 @@ export class BillComponent implements OnInit {
   totalItem: number = 0;
   bill: any = [];
   grandTotal: number = 0;
+  data :any = [];
   closePaymentAmount: number = 1;
+  unpaid : number = 0;
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
@@ -46,14 +45,16 @@ export class BillComponent implements OnInit {
 
 
   ngOnInit() {
-    this.id = this.activeRouter.snapshot.queryParams['id'],
-      this.modalService.dismissAll();
+    this.id = this.activeRouter.snapshot.queryParams['id'];
+
+    this.modalService.dismissAll();
     this.httpCart();
     this.httpBill();
 
   }
 
-
+  taxSc: any = [];
+  subTotal: any = [];
   httpCart() {
 
     this.loading = true;
@@ -65,13 +66,17 @@ export class BillComponent implements OnInit {
       }
     }).subscribe(
       data => {
-        this.cart = data['data']['orderItems'];
-        this.totalAmount = data['data']['totalAmount'];
-        this.totalItem = data['data']['totalItem'];
+          this.data = data['data'];
+        this.cart = data['data']['cart'];
+        this.taxSc = data['data']['taxSc']; 
+        this.subTotal = data['data']['subTotal'];
+        this.grandTotal = data['data']['grandTotal'];
+        this.totalItem = data['data']['totalItem'];  
         this.bill = data['data']['bill'];
         this.paided = data['data']['paided'];
-        this.grandTotal = data['data']['grandTotal'];
         this.closePaymentAmount = data['data']['closePaymentAmount'];
+
+        this.unpaid = data['data']['unpaid']
       },
       error => {
         console.log(error);

@@ -22,10 +22,8 @@
                         </td>
 
                         <td class="text-end font-monospace">
-                           <button type="button" class="btn  btn-light border" style="width: 60px;"
-                              [disabled]="x.sendOrder == 1" (click)="open(modalQty, x, i)">
-                              x {{x.total | number}}
-                           </button>
+                            
+                              x {{x.total | number}} 
                         </td>
 
                         <td class="text-end font-monospace">{{(x.totalAmount < 0 ? 0 : x.totalAmount )| number}}</td>

@@ -133,7 +133,7 @@ exports.cart = async (req, res) => {
 
       n++;
     }
- 
+
 
     let temp = 0;
 
@@ -264,7 +264,7 @@ exports.cartOrdered = async (req, res) => {
     res.status(500).json({ error: 'Database error' });
   }
 };
- 
+
 
 
 exports.addToCart = async (req, res) => {
@@ -380,8 +380,8 @@ exports.updateQty = async (req, res) => {
 
 
     for (let i = 0; i < model.newQty; i++) {
-     
-     
+
+
       // INSERT CART_ITEM
       const [result] = await db.query(
         `INSERT INTO cart_item (
@@ -426,9 +426,9 @@ exports.updateQty = async (req, res) => {
               ${rec['scRate']}, ${rec['scStatus']} ,
               ${rec['applyDiscount']}, '${rec['sendOrder']}'
           )`;
-         console.log(j)
-        const [result2] = await db.query( j);
-      
+        console.log(j)
+        const [result2] = await db.query(j);
+
 
         if (result2.affectedRows === 0) {
           results.push({ cartId, status: 'not found' });
@@ -436,7 +436,7 @@ exports.updateQty = async (req, res) => {
           results.push({ cartId, status: 'TAX cart_item_modifier insert' });
         }
       }
-  
+
 
     }
     res.status(201).json({
@@ -479,25 +479,37 @@ exports.voidItem = async (req, res) => {
           WHERE menuId = ${menuId}  and cartId = '${cartId}' and sendOrder = '' `;
         const [result] = await db.query(q);
         if (result.affectedRows === 0) {
-          results.push({ menuId, status: 'not found'  });
+          results.push({ menuId, status: 'not found' });
         } else {
-          results.push({ menuId, status: 'cart_item updated'  });
+          results.push({ menuId, status: 'cart_item updated' });
         }
-
-        //  const q2 = `UPDATE cart_item_modifier
-        //     SET
-        //       void = 1,
-        //       presence = 0,
-        //       updateDate = '${today()}'
-        //   WHERE  cartItemId = '${cartId}' and sendOrder = '' `;
-        // const [result2] = await db.query(q2);
-        // console.log(q2)
-        // if (result2.affectedRows === 0) {
-        //   results.push({ menuId, status: 'not found'  });
-        // } else {
-        //   results.push({ menuId, status: 'cart_item_modifier updated'  });
-        // }
       }
+    }
+
+    const q2 = `
+          SELECT id, cartId, presence , void FROM cart_item
+          WHERE cartId = '${cartId}' `;
+    const [result2] = await db.query(q2);
+
+
+    console.log('q2 ', result2.length)
+    if (result2.length > 0) {
+      for (const row of result2) {
+        const q = `UPDATE cart_item_modifier
+            SET
+              void = 1,
+              presence = 0,
+              updateDate = '${today()}'
+          WHERE   cartItemId = '${row['id']}'`;
+        const [result] = await db.query(q);
+
+        if (result2.affectedRows === 0) {
+          results.push({ status: 'not found' });
+        } else {
+          results.push({ status: 'cart_item_modifier updated' });
+        }
+      }
+
     }
 
     res.json({
@@ -975,7 +987,7 @@ exports.addModifier = async (req, res) => {
           } else {
             results.push({ id, status: 'updated', query: q, });
 
-            const  taxScUpdateRest  = await taxScUpdate(id); 
+            const taxScUpdateRest = await taxScUpdate(id);
           }
         } else {
           results.push({ id, status: 'cannot double' });
@@ -1021,9 +1033,9 @@ exports.removeDetailModifier = async (req, res) => {
             results.push({ id, status: 'not found' });
           } else {
             results.push({ id, status: 'updated' });
-             const  taxScUpdateRest  = await taxScUpdate(id); 
+            const taxScUpdateRest = await taxScUpdate(id);
           }
-          
+
         }
         else {
           const q = `UPDATE cart_item_modifier
@@ -1037,14 +1049,14 @@ exports.removeDetailModifier = async (req, res) => {
             results.push({ id, status: 'not found' });
           } else {
             results.push({ id, status: 'updated' });
-            const  taxScUpdateRest  = await taxScUpdate(parentId); 
-          } 
-        } 
+            const taxScUpdateRest = await taxScUpdate(parentId);
+          }
+        }
 
       }
 
-      
-       
+
+
 
     }
 

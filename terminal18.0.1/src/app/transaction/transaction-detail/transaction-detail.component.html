@@ -2,6 +2,7 @@
    <div class="row">
       <div class="col-12">
          <button class="btn btn-sm btn-light" (click)="back();">back</button>
+         <button class="btn btn-sm btn-primary " (click)="showModifier == 0 ? showModifier = 1 : showModifier = 0">Show modifier</button>
       </div>
    </div>
 </div>
@@ -26,12 +27,12 @@
                      </tr>
                    </thead>
                   <tbody>
-                     <tr *ngFor="let x of items">
+                     <tr *ngFor="let x of items" [hidden]="x.no == undefined && showModifier == 0 ">
                         <td>{{x.no}}</td>
                        
                         <td> {{x.no == undefined ? "+":""}} {{x.name}}</td>
                         
-                        <td class="text-end">{{x.rate | number}}</td> 
+                        <td class="text-end">{{ x.rate == 0 ? '' :  x.rate | number}}</td> 
                         <td class="text-end">{{x.price | number}}</td>
                         <td>{{x.sendOrder}}</td>
                          <td>{{x.inputDate | date :'medium'}}</td>

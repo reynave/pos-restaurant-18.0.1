@@ -9,7 +9,7 @@ exports.getAllData = async (req, res) => {
     const [formattedRows] = await db.query(`
       SELECT id, outletId, desc1, null as 'maps'
       FROM outlet_floor_plan  
-      WHERE presence = 1  ${!outletId  ? '':'AND outletId = '+outletId}
+      WHERE presence = 1  ${!outletId ? '' : 'AND outletId = ' + outletId}
     `);
 
     // Loop dengan for...of agar bisa pakai await
@@ -68,33 +68,48 @@ exports.getAllData = async (req, res) => {
 
 exports.newOrder = async (req, res) => {
   const model = req.body['model'];
-   const outletId = req.body['outletId'];
+  const outletId = req.body['outletId'];
   const inputDate = today();
-
+  const results = [];
   try {
+    const q = `
+    SELECT  count(c.close) AS 'total' 
+      FROM outlet_table_map AS o
+      LEFT JOIN cart AS c ON c.outletTableMapId = o.id
+    WHERE  o.presence = 1 AND o.id = ${model['outletTableMapId']} AND c.presence = 1 AND c.void = 0
+    `;
+    const [rows] = await db.query(q);
+    const total = rows[0]?.total || 0; // gunakan optional chaining biar aman
     const { insertId } = await autoNumber('cart');
-  
+    if (total == 0) {
 
-    const [newOrder] = await db.query(
-      `INSERT INTO cart (
+      const [newOrder] = await db.query(
+        `INSERT INTO cart (
         presence, inputDate, tableMapStatusId, outletTableMapId, 
         cover,  id, outletId,
         startDate, endDate ) 
       VALUES (1, '${inputDate}', 10, ${model['outletTableMapId']}, 
         ${model['cover']},  '${insertId}',  ${outletId}, 
         '${inputDate}', '${inputDate}'  )`
-    );
+      );
+      if (newOrder.affectedRows === 0) {
+        results.push({ status: 'not found' });
+      } else {
+        results.push({ status: 'updated' });
+      }
+      res.status(201).json({
+        error: false,
+        cardId: insertId,
+        message: 'cart created',
+      });
 
-
-    res.status(201).json({
-      error: false,
-      cardId: insertId,
-      inputDate: inputDate,
-      message: 'cart created',
-    
-    });
-
-
+    } else {
+      res.status(201).json({
+        error: true,
+        cardId: null,
+        message: 'tables used',
+      });
+    }
 
 
   } catch (err) {
@@ -109,7 +124,7 @@ exports.newOrder = async (req, res) => {
 exports.postDelete = async (req, res) => {
   // const { id, name, position, email } = req.body;
   const data = req.body;
- 
+
   // res.json({
   //   body: req.body, 
   // });
