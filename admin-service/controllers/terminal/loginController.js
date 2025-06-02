@@ -36,9 +36,6 @@ exports.signin = async (req, res) => {
     const { username, password, outletId } = req.body;
     const saltRounds = 4;
 
-
-
-
     try {
         let empId = username;
         const [employee] = await db.query(
@@ -50,19 +47,20 @@ exports.signin = async (req, res) => {
         }
 
         const user = employee[0];
-
         const passwordMatch = await bcrypt.compare(password, user.hash.trim());
-     //   console.log('passwordMatch2',passwordMatch, password, user.hash)
 
-//console.log(typeof user.hash); 
- 
- 
- const hash2 = await bcrypt.hash(password, saltRounds); 
-const passwordMatch2 = await bcrypt.compare(password, hash2); 
-console.log('hash2', passwordMatch2, hash2);
- 
+        //  const hash2 = await bcrypt.hash(password, saltRounds); 
+        // const passwordMatch2 = await bcrypt.compare(password, hash2); 
+        // console.log('hash2', passwordMatch2, hash2);
 
-
+        const dailyCheck = [];
+        if (passwordMatch === true) {
+            const [result] = await db.query(`
+                SELECT * FROM daily_check
+                WHERE presence = 1 and closed = 0 ;
+            `);
+            dailyCheck.push(result[0]);
+        }
 
 
         if (!passwordMatch) {
@@ -71,10 +69,8 @@ console.log('hash2', passwordMatch2, hash2);
 
         res.status(200).json({
             message: 'Login successful',
-            user: {
-                id: user.id,
-                name: user.name, // atau field lain yang ingin dikirim
-            }
+            dailyCheck: dailyCheck,
+            token: 'UAT123',
         });
 
 

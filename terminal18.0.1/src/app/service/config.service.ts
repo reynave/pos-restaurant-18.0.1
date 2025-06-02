@@ -10,6 +10,7 @@ import { Observable } from 'rxjs/internal/Observable';
 export class ConfigService {
   private tokenKey: string = "pos3.tokenKey.mitralink";
   private configJson: string = "pos3.config.mitralink";
+ private dailyCheck: string = "pos3.dailyCheck.mitralink";
 
   //private jtiKey: string = "jti.openAkunting.com";
 
@@ -29,7 +30,11 @@ export class ConfigService {
     const obj = JSON.parse(configJson);
     return obj;
   }
-
+  getDailyCheck() {
+    const id = localStorage.getItem(this.dailyCheck);
+   
+    return id;
+  }
 
   setToken(data: string, token : string): Observable<boolean> {
     try {
@@ -47,6 +52,7 @@ export class ConfigService {
       console.log("removeToken()", this.tokenKey);
       localStorage.removeItem(this.tokenKey);
       localStorage.removeItem(this.configJson);
+ localStorage.removeItem(this.dailyCheck);
 
       return of(true); // Mengembalikan Observable yang mengirimkan nilai boolean true
     } catch (error) {

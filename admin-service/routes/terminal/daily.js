@@ -3,9 +3,9 @@ const router = express.Router();
 const c = require('../../controllers/terminal/dailyController');  
   
 // table/*
-router.get('/', c.getAllData);
-
-//router.post('/signin', loginController.newOrder);
+router.get('/', c.getAllData); 
+router.get('/getData', c.getAllData);
+router.post('/start', c.dailyStart);
 
 
 // router.post('/create', tableMap.postCreate);

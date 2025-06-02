@@ -68,6 +68,8 @@ exports.getAllData = async (req, res) => {
 
 exports.newOrder = async (req, res) => {
   const model = req.body['model'];
+  const dailyCheckId = req.body['dailyCheckId'];
+
   const outletId = req.body['outletId'];
   const inputDate = today();
   const results = [];
@@ -85,13 +87,13 @@ exports.newOrder = async (req, res) => {
 
       const [newOrder] = await db.query(
         `INSERT INTO cart (
-        presence, inputDate, tableMapStatusId, outletTableMapId, 
-        cover,  id, outletId,
-        startDate, endDate ) 
-      VALUES (1, '${inputDate}', 10, ${model['outletTableMapId']}, 
-        ${model['cover']},  '${insertId}',  ${outletId}, 
-        '${inputDate}', '${inputDate}'  )`
-      );
+          presence, inputDate, tableMapStatusId, outletTableMapId, 
+          cover,  id, outletId, dailyCheckId,
+          startDate, endDate ) 
+        VALUES (1, '${inputDate}', 10, ${model['outletTableMapId']}, 
+          ${model['cover']},  '${insertId}',  ${outletId}, '${dailyCheckId}',
+          '${inputDate}', '${inputDate}'  )`
+        );
       if (newOrder.affectedRows === 0) {
         results.push({ status: 'not found' });
       } else {

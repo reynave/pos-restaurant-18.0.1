@@ -10,18 +10,16 @@ async function autoNumber(name = '') {
       FROM auto_number  
       WHERE name = '${name}' `
     );
-    let prefix = '';
+    let prefix = rows[0].prefix ==  null ? '' : rows[0].prefix;
 
     if (rows[0].prefix == 'yymmdd') {
         const now = new Date();
         const year = String(now.getFullYear()).slice(2); // Ambil 2 digit terakhir tahun
         const month = String(now.getMonth() + 1).padStart(2, '0'); // Bulan dari 0–11
-        const day = String(now.getDate()).padStart(2, '0');
-
+        const day = String(now.getDate()).padStart(2, '0'); 
         prefix = `${year}${month}${day}`;
-    }else{
-        prefix = rows[0].prefix;
-    }
+    } 
+
     const newNumber = rows[0].runningNumber + 1;
     const newValue = prefix + String((newNumber)).padStart(rows[0].digit, '0');
 

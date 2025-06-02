@@ -13,6 +13,7 @@ import { TransactionComponent } from './transaction/transaction.component';
 import { SettingComponent } from './setting/setting.component';
 import { TransactionDetailComponent } from './transaction/transaction-detail/transaction-detail.component';
 import { TransactionBillComponent } from './transaction/transaction-bill/transaction-bill.component';
+import { DailyStartComponent } from './pos/daily/daily-start/daily-start.component';
 
 export const routes: Routes = [
     { path: '', component: SetupComponent },
@@ -30,7 +31,9 @@ export const routes: Routes = [
 
     { path: 'transaction', component: TransactionComponent, canActivate: [authGuard] },
     { path: 'transaction/bill', component: TransactionBillComponent, canActivate: [authGuard] },
- { path: 'transaction/detail', component: TransactionDetailComponent, canActivate: [authGuard] },
+    { path: 'transaction/detail', component: TransactionDetailComponent, canActivate: [authGuard] },
+
+     { path: 'daily/start', component: DailyStartComponent, canActivate: [authGuard] },
 
 
     { path: '**', component: PageNotFoundComponent },

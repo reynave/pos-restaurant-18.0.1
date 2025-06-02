@@ -96,7 +96,8 @@ export class TablesComponent implements OnInit {
     const outletId = this.configService.getTokenJson()['outlet']['id'];
     const body = {
       model: this.model,
-      outletId: outletId
+      outletId: outletId,
+      dailyCheckId : this.configService.getDailyCheck(),
     }
     console.log(body);
     this.http.post<any>(environment.api + "tableMap/newOrder", body, {
