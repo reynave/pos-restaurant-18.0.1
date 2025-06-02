@@ -26,6 +26,7 @@ const terminalMap = require('./routes/terminal/tableMap');
 const menuItemPos = require('./routes/terminal/menuItemPos');
 const bill = require('./routes/terminal/bill');
 const paymentPos = require('./routes/terminal/payment');
+const daily = require('./routes/terminal/daily'); 
 const transactionPos = require('./routes/terminal/transaction');
 
 app.use((req, res, next) => {
@@ -84,12 +85,14 @@ app.use(process.env.PREFIX + 'printer', paymentPos);
 
 // TERMINAL SERVICE HERE
 app.use(process.env.PREFIX + process.env.TERMINAL + 'login', loginPos); 
+app.use(process.env.PREFIX + process.env.TERMINAL + 'transaction', transactionPos);
+
 app.use(process.env.PREFIX + process.env.TERMINAL + 'tableMap', terminalMap);
 
 app.use(process.env.PREFIX + process.env.TERMINAL + 'menuItemPos', menuItemPos);
 app.use(process.env.PREFIX + process.env.TERMINAL + 'bill', bill);
 app.use(process.env.PREFIX + process.env.TERMINAL + 'payment', paymentPos);
-app.use(process.env.PREFIX + process.env.TERMINAL + 'transaction', transactionPos);
+app.use(process.env.PREFIX + process.env.TERMINAL + 'daily', daily);
 
  
  

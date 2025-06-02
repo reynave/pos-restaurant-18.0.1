@@ -31,9 +31,9 @@ export class ConfigService {
   }
 
 
-  setToken(data: string): Observable<boolean> {
+  setToken(data: string, token : string): Observable<boolean> {
     try {
-      localStorage.setItem(this.tokenKey, "testDev2025");
+      localStorage.setItem(this.tokenKey, token);
       localStorage.setItem(this.configJson, data);
 
       return of(true); // Mengembalikan Observable yang mengirimkan nilai boolean true

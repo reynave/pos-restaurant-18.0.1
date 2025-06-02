@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const c = require('../../controllers/terminal/loginController');  
+const c = require('../../controllers/terminal/dailyController');  
   
 // table/*
-router.get('/outlet', c.getAllData); 
-router.post('/signin', c.signin);
+router.get('/', c.getAllData);
+
+//router.post('/signin', loginController.newOrder);
 
 
 // router.post('/create', tableMap.postCreate);
