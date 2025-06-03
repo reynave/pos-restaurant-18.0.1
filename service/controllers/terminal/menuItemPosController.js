@@ -18,7 +18,7 @@ exports.getMenuItem = async (req, res) => {
     for (const row of formattedRows) {
       const [menu] = await db.query(`
        
-        SELECT m.id, m.name, m.price${i} as 'price' , 
+        SELECT m.id, m.name, m.price${i} as 'price' , m.adjustItemsId, m.qty,
         m.menuDepartmentId, m.menuCategoryId, m.menuTaxScId,
         t.desc, 
         t.taxRate, t.taxNote, t.taxStatus,
@@ -63,7 +63,7 @@ exports.getMenuItem = async (req, res) => {
     res.status(500).json({ error: 'Database error' });
   }
 };
-
+ 
 exports.cart = async (req, res) => {
   const i = 1;
   try {
@@ -279,10 +279,10 @@ exports.addToCart = async (req, res) => {
 
     let q =
       `INSERT INTO cart_item (presence, inputDate, updateDate, menuId, price, cartId,
-      menuDepartmentId, menuCategoryId
+      menuDepartmentId, menuCategoryId, adjustItemsId
       )
       VALUES (1, '${inputDate}', '${inputDate}',  ${menu['id']}, ${menu['price']}, '${cartId}',
-        ${menu['menuDepartmentId']}, ${menu['menuCategoryId']}
+        ${menu['menuDepartmentId']}, ${menu['menuCategoryId']}, '${!menu['adjustItemsId']  ? '':menu['adjustItemsId']}'
       )`;
 
     const [result] = await db.query(q);

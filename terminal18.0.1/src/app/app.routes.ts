@@ -16,6 +16,7 @@ import { TransactionBillComponent } from './transaction/transaction-bill/transac
 import { DailyStartComponent } from './pos/daily/daily-start/daily-start.component';
 import { DailyCloseComponent } from './pos/daily/daily-close/daily-close.component';
 import { dailyStartGuard } from './guard/daily-start.guard';
+import { ItemsComponent } from './items/items.component';
 
 export const routes: Routes = [
     { path: '', component: SetupComponent },
@@ -30,6 +31,9 @@ export const routes: Routes = [
     { path: 'menu/modifier', component: MenuModifierComponent, canActivate: [authGuard, dailyStartGuard] },
     { path: 'bill', component: BillComponent, canActivate: [authGuard, dailyStartGuard] },
     { path: 'payment', component: PaymentComponent, canActivate: [authGuard, dailyStartGuard] },
+
+    { path: 'items', component: ItemsComponent, canActivate: [authGuard, dailyStartGuard] },
+    
     // END :: DAILYSTARTGUARD
 
     { path: 'transaction', component: TransactionComponent, canActivate: [authGuard] },

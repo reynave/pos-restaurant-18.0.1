@@ -28,6 +28,7 @@ const bill = require('./routes/terminal/bill');
 const paymentPos = require('./routes/terminal/payment');
 const daily = require('./routes/terminal/daily'); 
 const transactionPos = require('./routes/terminal/transaction');
+const items = require('./routes/terminal/items');
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -86,24 +87,21 @@ app.use(process.env.PREFIX + 'printer', paymentPos);
 // TERMINAL SERVICE HERE
 app.use(process.env.PREFIX + process.env.TERMINAL + 'login', loginPos); 
 app.use(process.env.PREFIX + process.env.TERMINAL + 'transaction', transactionPos);
-
 app.use(process.env.PREFIX + process.env.TERMINAL + 'tableMap', terminalMap);
-
 app.use(process.env.PREFIX + process.env.TERMINAL + 'menuItemPos', menuItemPos);
 app.use(process.env.PREFIX + process.env.TERMINAL + 'bill', bill);
 app.use(process.env.PREFIX + process.env.TERMINAL + 'payment', paymentPos);
 app.use(process.env.PREFIX + process.env.TERMINAL + 'daily', daily);
+app.use(process.env.PREFIX + process.env.TERMINAL + 'items', items); 
+ 
 
- 
- 
 app.use('/', (req, res) => {
     const data = {
         error: false,
         serverTime: new Date(),
         prefix: process.env.PREFIX
     }
-    res.json(data);
-
+    res.json(data); 
 });
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

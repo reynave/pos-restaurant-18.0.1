@@ -92,17 +92,17 @@
             <div class="col-6 mb-3">
                <strong>Operation</strong>
                <div class="d-grid">
-                  <a class="btn   btn-primary m-1" [routerLink]="['/setting']">Setting</a>
+                  <a class="btn btn-primary m-1" [routerLink]="['/setting']">Setting</a>
                </div>
                <div class="d-grid">
-                  <button class="btn   btn-primary m-1" disabled>Adjust Item Count</button>
+                  <button class="btn btn-primary m-1" [routerLink]="['/items/']">Adjust Item</button>
                </div>
 
                <div class="d-grid">
-                  <button class="btn   btn-warning m-1" disabled>Open Cash Drawer</button>
+                  <button class="btn btn-warning m-1" disabled>Open Cash Drawer</button>
                </div>
                <div class="d-grid">
-                  <button class="btn  btn-warning m-1" (click)="modal(modalSwitchOutlet)">Switch Outlet</button>
+                  <button class="btn btn-warning m-1" (click)="modal(modalSwitchOutlet)">Switch Outlet</button>
                </div>
 
 

@@ -161,20 +161,22 @@ export class MenuComponent implements OnInit {
   }
 
   addToCart(menu: any) {
-    const body = {
-      id: this.activeRouter.snapshot.queryParams['id'],
-      menu: menu,
-    }
-    this.http.post<any>(environment.api + "menuItemPos/addToCart", body, {
-      headers: this.configService.headers(),
-    }).subscribe(
-      data => {
-        this.reload();
-      },
-      error => {
-        console.log(error);
+    if (menu.qty > 0) { 
+      const body = {
+        id: this.activeRouter.snapshot.queryParams['id'],
+        menu: menu,
       }
-    )
+      this.http.post<any>(environment.api + "menuItemPos/addToCart", body, {
+        headers: this.configService.headers(),
+      }).subscribe(
+        data => {
+          this.reload();
+        },
+        error => {
+          console.log(error);
+        }
+      )
+    }
   }
 
   updateQty() {

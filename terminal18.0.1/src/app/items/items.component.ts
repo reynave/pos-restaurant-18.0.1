@@ -1,0 +1,134 @@
+import { Component, OnInit } from '@angular/core';
+import { ConfigService } from '../service/config.service';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { environment } from '../../environments/environment.development';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+
+
+@Component({
+  selector: 'app-items',
+  standalone: true,
+  imports: [HttpClientModule, CommonModule, FormsModule, NgbDropdownModule, RouterModule],
+  templateUrl: './items.component.html',
+  styleUrl: './items.component.css'
+})
+export class ItemsComponent implements OnInit {
+
+  addQty: number = 1;
+  loading: boolean = false;
+  items: any = [];
+  newQty: number = 99999;
+  constructor(
+    public configService: ConfigService,
+    private http: HttpClient,
+    public modalService: NgbModal,
+    private router: Router,
+    private activeRouter: ActivatedRoute
+  ) { }
+  ngOnInit(): void {
+    this.httpMenu();
+  }
+  httpMenu() {
+    this.checkTotal =0;
+    this.modalService.dismissAll();
+    this.loading = true;
+    const url = environment.api + "items/";
+    this.http.get<any>(url, {
+      headers: this.configService.headers(),
+      params: {
+        departmentId: 0,
+        outletId: this.configService.getConfigJson()['outlet']['id']
+      }
+    }).subscribe(
+      data => {
+        console.log(data);
+        this.loading = false;
+        this.items = data['items'];
+
+      },
+      error => {
+        console.log(error);
+      }
+    )
+  }
+  back() {
+    history.back();
+  }
+  checkTotal: number = 0;
+  onAddQty() {
+   const items: any[] = [];
+    this.items.forEach((el: any) => {
+      if (el['checkBox'] == 1) {
+        items.push(el['id']);
+      }
+    });
+    console.log(items, this.addQty);
+    this.loading = true;
+    const url = environment.api + "items/addQty";
+    const body = {
+      items: items,
+      addQty: this.addQty,
+    }
+    this.http.post<any>(url, body, {
+      headers: this.configService.headers(),
+    }).subscribe(
+      data => {
+        console.log(data);
+        this.loading = false;
+        this.httpMenu();
+      },
+      error => {
+        console.log(error);
+      }
+    )
+
+  }
+  onResetAdjust() {
+    const items: any[] = [];
+    this.items.forEach((el: any) => {
+      if (el['checkBox'] == 1) {
+        items.push(el['id']);
+      }
+    });
+    console.log(items, this.newQty);
+
+    this.loading = true;
+    const url = environment.api + "items/resetAdjust";
+    const body = {
+      items: items,
+      newQty: this.newQty,
+    }
+    this.http.post<any>(url, body, {
+      headers: this.configService.headers(),
+    }).subscribe(
+      data => {
+        console.log(data);
+        this.loading = false;
+        this.httpMenu();
+      },
+      error => {
+        console.log(error);
+      }
+    )
+  }
+
+  fnCheck(index: number) {
+    this.items[index].checkBox == 0 ? this.items[index].checkBox = 1 : this.items[index].checkBox = 0;
+
+    this.checkTotal = 0;
+    this.items.forEach((el: any) => {
+      if (el['checkBox'] == 1) {
+        this.checkTotal += 1;
+      }
+    });
+    console.log(this.checkTotal);
+  }
+
+  open(content: any) {
+
+    this.modalService.open(content);
+  }
+}

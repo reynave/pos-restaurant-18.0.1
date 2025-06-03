@@ -7,8 +7,8 @@
                <table class="table table-hover">
                   <tbody *ngFor="let x of cartOrdered; let i = index" [class]="{'tr-active':x.checkBox == 1 }">
                      <tr [class]="{'bg-light':x.sendOrder !== ''}">
-                        <td (click)="fnChecked(i)  "> 
-                           <h4> <i class="bi bi-receipt"></i> </h4> 
+                        <td (click)="fnChecked(i)  ">
+                           <h4> <i class="bi bi-receipt"></i> </h4>
                         </td>
 
                         <td [routerLink]="['/menu/modifier']"
@@ -16,11 +16,11 @@
                            <div class="lh-1">
                               <strong>{{x.name }} {{x.modifier.length > 0 ? '*':''}} </strong>
                            </div>
-                           <small class="font-monospace">&#64;{{x.price | number}}</small> 
+                           <small class="font-monospace">&#64;{{x.price | number}}</small>
                         </td>
 
-                        <td class="text-end font-monospace"> 
-                              x {{x.total | number}} 
+                        <td class="text-end font-monospace">
+                           x {{x.total | number}}
                         </td>
 
                         <td class="text-end font-monospace">{{(x.totalAmount < 0 ? 0 : x.totalAmount )| number}}</td>
@@ -32,7 +32,6 @@
                         <td>
                            <div class="lh-1"> {{ a.descl}} </div>
                            <small class="font-monospace">&#64;{{x.price | number}}</small>
-
                         </td>
                         <td class="text-center"><span class="font-monospace"> x {{ a.total}}</span></td>
                         <td class="text-end"> <span class="font-monospace">{{a.totalAmount |number}}</span></td>
@@ -121,7 +120,7 @@
                   [queryParams]="{id:id}">Table Checker</button>
                <button type="button" class="btn btn-light border me-1 mb-1" [routerLink]="['/kitchen']"
                   [queryParams]="{id:id}">Kitchen</button>
- <button type="button" class="btn btn-light border me-1 mb-1" [routerLink]="['/transaction/detail']"
+               <button type="button" class="btn btn-light border me-1 mb-1" [routerLink]="['/transaction/detail']"
                   [queryParams]="{id:id}">Transaction Detail</button>
 
             </div>
@@ -132,9 +131,10 @@
                   <div *ngFor="let x of items">
                      <div><strong>{{x.desc1}}</strong></div>
                      <ol>
-                        <li *ngFor="let a of x.menu">
+                        <li *ngFor="let a of x.menu" [class]="{'text-decoration-line-through':a.qty<1}">
                            <a href="javascript:;" (click)="addToCart(a)">{{a.name}}</a><br>
-                           <small>Tax {{a.taxRate}}%, SC {{a.scRate}}%</small>
+                           <small>Tax {{a.taxRate}}%, SC {{a.scRate}}%</small>, 
+                           <small>Qty : {{a.qty}}</small>
                         </li>
                      </ol>
                   </div>
