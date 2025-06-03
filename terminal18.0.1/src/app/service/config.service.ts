@@ -10,7 +10,7 @@ import { Observable } from 'rxjs/internal/Observable';
 export class ConfigService {
   private tokenKey: string = "pos3.tokenKey.mitralink";
   private configJson: string = "pos3.config.mitralink";
- private dailyCheck: string = "pos3.dailyCheck.mitralink";
+  private dailyCheck: string = "pos3.dailyCheck.mitralink";
 
   //private jtiKey: string = "jti.openAkunting.com";
 
@@ -26,17 +26,31 @@ export class ConfigService {
     }
   }
   getTokenJson() {
-    const configJson: any = localStorage.getItem(this.configJson);
-    const obj = JSON.parse(configJson);
+    const data: any = localStorage.getItem(this.tokenKey);
+    const obj = JSON.parse(data);
     return obj;
   }
+  getConfigJson() {
+    const data: any = localStorage.getItem(this.configJson);
+    const obj = JSON.parse(data);
+    return obj;
+  }
+  updateConfigJson(data: any) { 
+    try {
+      localStorage.setItem(this.configJson, JSON.stringify(data));
+      return of(true); // Mengembalikan Observable yang mengirimkan nilai boolean true
+    } catch (error) {
+      return of(false); // Mengembalikan Observable yang mengirimkan nilai boolean false jika terjadi kesalahan
+    }
+  }
+
   getDailyCheck() {
     const id = localStorage.getItem(this.dailyCheck);
-   
+
     return id;
   }
 
-  setToken(data: string, token : string): Observable<boolean> {
+  setToken(data: string, token: string): Observable<boolean> {
     try {
       localStorage.setItem(this.tokenKey, token);
       localStorage.setItem(this.configJson, data);
@@ -49,10 +63,10 @@ export class ConfigService {
 
   removeToken(): Observable<boolean> {
     try {
-      console.log("removeToken()", this.tokenKey);
+    
       localStorage.removeItem(this.tokenKey);
       localStorage.removeItem(this.configJson);
- localStorage.removeItem(this.dailyCheck);
+      localStorage.removeItem(this.dailyCheck);
 
       return of(true); // Mengembalikan Observable yang mengirimkan nilai boolean true
     } catch (error) {

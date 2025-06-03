@@ -37,7 +37,12 @@ export class LoginComponent implements OnInit {
 
 
   ngOnInit(): void {
+
     this.httpGet();
+   
+    if ( this.config.getConfigJson() !== null) {
+      this.router.navigate(['tables']);
+    }
   }
   httpGet() {
     this.loading = true;
@@ -47,7 +52,7 @@ export class LoginComponent implements OnInit {
         console.log(data);
         this.loading = false;
         this.outletSelect = data['outletSelect'];
-        this.employeeSelect = data['employeeSelect']; 
+        this.employeeSelect = data['employeeSelect'];
         this.model.outletId = data['outletSelect'][0]['id'];
       },
       error => {
@@ -63,11 +68,11 @@ export class LoginComponent implements OnInit {
     this.loading = true;
     const url = environment.api + "login/signin";
     const body = {
-      username: this.model['username'],
+      username: this.employeeSelect[this.model.username]['id'],
       password: this.model['password'],
       outletId: this.model['outletId'],
     }
-    console.log(body)
+    //console.log(body, this.employeeSelect[this.model.username]['id'], this.employeeSelect[this.model.username]['name'])
     this.http.post<any>(url, body).subscribe(
       data => {
         console.log(data);
@@ -75,9 +80,9 @@ export class LoginComponent implements OnInit {
 
         const myJSONString = JSON.stringify({
           employee: {
-            id: this.model['username'],
-            username: '00',
-            name: 'Bu Eka'
+            id: this.employeeSelect[this.model.username]['id'],
+            username: this.employeeSelect[this.model.username]['username'],
+            name: this.employeeSelect[this.model.username]['name']
           },
           outlet: {
             id: this.model.outletId,
@@ -90,17 +95,17 @@ export class LoginComponent implements OnInit {
             name: 'ESC/POS (Epson-style)'
           }
         });
-        console.log(myJSONString);
+        //  console.log(myJSONString);
         let dailyCheck = data['dailyCheck']
         this.config.setToken(myJSONString, data['token']).subscribe(
           data => {
             console.log(dailyCheck);
-            if (dailyCheck[0] == null) { 
-              this.router.navigate(['/daily/start']); 
+            if (dailyCheck[0] == null) {
+              this.router.navigate(['/daily/start']);
             } else {
-              localStorage.setItem("pos3.dailyCheck.mitralink",dailyCheck[0]['id']);
+              localStorage.setItem("pos3.dailyCheck.mitralink", dailyCheck[0]['id']);
               this.router.navigate(['/tables']);
-            } 
+            }
 
           }
         )

@@ -34,7 +34,7 @@ export class TransactionComponent implements OnInit {
 
 
   ngOnInit() { 
-    this.outletId = this.configService.getTokenJson()['outlet']['id'];
+    this.outletId = this.configService.getConfigJson()['outlet']['id'];
     this.modalService.dismissAll();
  
     this.httpOutlet(); 

@@ -30,7 +30,7 @@ export class DailyStartComponent implements OnInit {
   }
    
   onStart() {
-    const configData = JSON.parse(localStorage.getItem("pos3.config.mitralink") ?? '{}');
+    const configData = this.config.getConfigJson();
     this.error = '';
     this.loading = true;
     const url = environment.api + "daily/start";

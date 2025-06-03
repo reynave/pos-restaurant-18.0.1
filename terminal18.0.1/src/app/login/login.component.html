@@ -252,7 +252,7 @@
                      <label for="username">Username</label>
                      <select class="form-control" id="username" required [(ngModel)]="model.username" name="username"
                         #username="ngModel">
-                        <option *ngFor="let x of employeeSelect" [value]="x.id">{{x.name}}</option>
+                        <option *ngFor="let x of employeeSelect; let i = index" [value]="i">{{x.name}}</option>
 
                      </select>
 
@@ -269,8 +269,7 @@
                      </div>
                   </div>
                   <div class="d-grid">
-                     <button type="submit" class="btn btn-success"
-                        [disabled]="!actorForm.form.valid || !model.outletId">Submit</button>
+                     <button type="submit" class="btn btn-success" [disabled]="!actorForm.form.valid || !model.outletId">Submit</button>
 
                   </div>
 

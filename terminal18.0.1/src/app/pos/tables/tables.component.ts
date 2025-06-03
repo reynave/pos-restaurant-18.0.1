@@ -34,7 +34,7 @@ export class TablesComponent implements OnInit {
   api: string = environment.api;
   model = new Actor(0, 1, 0);
   activeView: string = 'map';
-  getTokenJson: any = [];
+  getConfigJson: any = [];
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
@@ -46,20 +46,36 @@ export class TablesComponent implements OnInit {
 
 
   ngOnInit() {
-    this.getTokenJson = this.configService.getTokenJson();
-    console.log(this.getTokenJson);
+    this.getConfigJson = this.configService.getConfigJson();
+    console.log(this.getConfigJson);
     this.modalService.dismissAll();
+    this.httpOutlet();
     this.httpGet();
+
+
   }
+  httpOutlet() {
+    this.loading = true;
+    const url = environment.api + "login/outlet";
+    this.http.get<any>(url).subscribe(
+      data => {
+        this.loading = false;
+        this.outletSelect = data['outletSelect'];
+      },
+      error => {
+        console.log(error);
+      }
+    )
+  }
+
   httpGet() {
-   
     this.modalService.dismissAll();
     this.loading = true;
     const url = environment.api + "tableMap";
     this.http.get<any>(url, {
       headers: this.configService.headers(),
       params: {
-        outletId: this.getTokenJson['outlet']['id'],
+        outletId: this.getConfigJson['outlet']['id'],
       }
     }).subscribe(
       data => {
@@ -91,13 +107,32 @@ export class TablesComponent implements OnInit {
     this.modalService.open(content);
   }
 
+  modal(content: any) {
+    this.modalService.open(content);
+  }
+
+  fnSelectOutlet(index: number) {
+    this.getConfigJson['outlet']['id'] = this.outletSelect[index]['id'];
+    this.getConfigJson['outlet']['name'] = this.outletSelect[index]['name']; 
+
+    console.log( this.getConfigJson);
+    this.configService.updateConfigJson(this.getConfigJson).subscribe(
+      data=>{
+        console.log(data);
+        if(data==true){
+          this.httpGet();
+        }
+      }
+    )
+  }
+
   onSubmit() {
     console.log(this.model);
-    const outletId = this.configService.getTokenJson()['outlet']['id'];
+    const outletId = this.configService.getConfigJson()['outlet']['id'];
     const body = {
       model: this.model,
       outletId: outletId,
-      dailyCheckId : this.configService.getDailyCheck(),
+      dailyCheckId: this.configService.getDailyCheck(),
     }
     console.log(body);
     this.http.post<any>(environment.api + "tableMap/newOrder", body, {
@@ -120,7 +155,10 @@ export class TablesComponent implements OnInit {
     )
   }
 
-  onLogOut() {
+  logOff(){
+      this.router.navigate(['/']);
+  }
+  signOff() {
     this.configService.removeToken().subscribe(
       () => {
         this.router.navigate(['login']);

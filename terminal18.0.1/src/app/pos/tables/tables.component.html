@@ -13,8 +13,9 @@
          <div class="row">
 
             <div class="col-12 mb-1">
-               View : <a href="javascript:;" (click)="activeView='map'">Map</a> | <a href="javascript:;"
-                  (click)="activeView='table'">List</a>
+               @if(items.length > 0){
+               View : <a href="javascript:;" (click)="activeView='map'">Map</a> |
+               <a href="javascript:;" (click)="activeView='table'">List</a>
 
                <div class="table-map border p-1 ">
                   @if(activeView == 'map'){
@@ -69,6 +70,7 @@
                   </table>
                   }
                </div>
+               }
             </div>
             <div class="col-12">
                <span *ngFor="let x of items; let i = index">
@@ -94,37 +96,39 @@
                </div>
                <div class="d-grid">
                   <button class="btn   btn-primary m-1" disabled>Adjust Item Count</button>
-               </div> 
-              
+               </div>
+
                <div class="d-grid">
                   <button class="btn   btn-warning m-1" disabled>Open Cash Drawer</button>
                </div>
                <div class="d-grid">
-                 <button class="btn  btn-warning m-1" disabled>Switch Outlet</button>
+                  <button class="btn  btn-warning m-1" (click)="modal(modalSwitchOutlet)">Switch Outlet</button>
                </div>
-              
+
 
             </div>
             <div class="col-6 mb-3">
                <strong>Operation</strong>
-              
-              
+
+
                <div class="d-grid">
                   <button class="btn  btn-success m-1" [routerLink]="['/transaction']">General Report</button>
                </div>
                <div class="d-grid">
                   <button class="btn  btn-success m-1" disabled>Manager Report</button>
                </div>
-               
                <div class="d-grid">
-                  <a class="btn  btn-dark m-1" (click)="onLogOut();">Log Off</a>
+                  <a class="btn  btn-light border m-1" (click)="logOff();">Log off</a>
+               </div>
+               <div class="d-grid">
+                  <a class="btn  btn-dark m-1" (click)="signOff();">Sign Off</a>
                </div>
 
             </div>
             <div class="col-12">
                <strong>Daily Close</strong>
                <div class="d-grid">
-                  <button class="btn  btn-warning m-1" disabled>Daily Close</button>
+                  <button class="btn  btn-warning m-1" [routerLink]="['/daily/close']">Daily Close</button>
                </div>
             </div>
          </div>
@@ -135,6 +139,20 @@
 </div>
 
 
+<ng-template #modalSwitchOutlet let-modal>
+   <div class="modal-header">
+      <strong>Switch Outlet</strong>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+   </div>
+   <div class="modal-body">
+
+      <div class="m-2 d-grid" *ngFor="let x of outletSelect; let i = index">
+         <button type="button" (click)="fnSelectOutlet(i);" class="btn btn-lg btn-primary"
+            [disabled]="x.id == this.getConfigJson['outlet']['id']">{{x.name}}</button>
+      </div>
+   </div>
+
+</ng-template>
 
 <ng-template #modalCheckIn let-modal>
    <div class="modal-header">

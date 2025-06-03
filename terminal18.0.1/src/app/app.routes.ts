@@ -14,6 +14,8 @@ import { SettingComponent } from './setting/setting.component';
 import { TransactionDetailComponent } from './transaction/transaction-detail/transaction-detail.component';
 import { TransactionBillComponent } from './transaction/transaction-bill/transaction-bill.component';
 import { DailyStartComponent } from './pos/daily/daily-start/daily-start.component';
+import { DailyCloseComponent } from './pos/daily/daily-close/daily-close.component';
+import { dailyStartGuard } from './guard/daily-start.guard';
 
 export const routes: Routes = [
     { path: '', component: SetupComponent },
@@ -22,18 +24,21 @@ export const routes: Routes = [
 
     { path: 'setting', component: SettingComponent, canActivate: [authGuard] },
 
-    { path: 'tables', component: TablesComponent, canActivate: [authGuard] },
-    { path: 'menu', component: MenuComponent, canActivate: [authGuard] },
-    { path: 'menu/modifier', component: MenuModifierComponent, canActivate: [authGuard] },
-    { path: 'bill', component: BillComponent, canActivate: [authGuard] },
-    { path: 'payment', component: PaymentComponent, canActivate: [authGuard] },
-
+    // DAILYSTARTGUARD REQUREMENT
+    { path: 'tables', component: TablesComponent, canActivate: [authGuard, dailyStartGuard] },
+    { path: 'menu', component: MenuComponent, canActivate: [authGuard, dailyStartGuard] },
+    { path: 'menu/modifier', component: MenuModifierComponent, canActivate: [authGuard, dailyStartGuard] },
+    { path: 'bill', component: BillComponent, canActivate: [authGuard, dailyStartGuard] },
+    { path: 'payment', component: PaymentComponent, canActivate: [authGuard, dailyStartGuard] },
+    // END :: DAILYSTARTGUARD
 
     { path: 'transaction', component: TransactionComponent, canActivate: [authGuard] },
     { path: 'transaction/bill', component: TransactionBillComponent, canActivate: [authGuard] },
     { path: 'transaction/detail', component: TransactionDetailComponent, canActivate: [authGuard] },
 
-     { path: 'daily/start', component: DailyStartComponent, canActivate: [authGuard] },
+    { path: 'daily/start', component: DailyStartComponent, canActivate: [authGuard] },
+    { path: 'daily/close', component: DailyCloseComponent, canActivate: [authGuard] },
+
 
 
     { path: '**', component: PageNotFoundComponent },

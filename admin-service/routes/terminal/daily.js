@@ -6,6 +6,7 @@ const c = require('../../controllers/terminal/dailyController');
 router.get('/', c.getAllData); 
 router.get('/getData', c.getAllData);
 router.post('/start', c.dailyStart);
+router.post('/close', c.dailyClose);
 
 
 // router.post('/create', tableMap.postCreate);

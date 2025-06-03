@@ -74,7 +74,7 @@ export class MenuComponent implements OnInit {
       headers: this.configService.headers(),
       params: {
         departmentId: 0,
-        outletId: this.configService.getTokenJson()['outlet']['id']
+        outletId: this.configService.getConfigJson()['outlet']['id']
       }
     }).subscribe(
       data => {
