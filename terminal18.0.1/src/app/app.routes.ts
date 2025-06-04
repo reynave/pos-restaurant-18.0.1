@@ -17,9 +17,10 @@ import { DailyStartComponent } from './pos/daily/daily-start/daily-start.compone
 import { DailyCloseComponent } from './pos/daily/daily-close/daily-close.component';
 import { dailyStartGuard } from './guard/daily-start.guard';
 import { ItemsComponent } from './items/items.component';
+import { DailyCashBalanceComponent } from './pos/daily/daily-cash-balance/daily-cash-balance.component';
 
 export const routes: Routes = [
-    { path: '', component: SetupComponent },
+    { path: '', component: HomeComponent },
     { path: 'setup', component: SetupComponent },
     { path: 'login', component: LoginComponent },
 
@@ -41,7 +42,8 @@ export const routes: Routes = [
     { path: 'transaction/detail', component: TransactionDetailComponent, canActivate: [authGuard] },
 
     { path: 'daily/start', component: DailyStartComponent, canActivate: [authGuard] },
-    { path: 'daily/close', component: DailyCloseComponent, canActivate: [authGuard] },
+    { path: 'daily/close', component: DailyCloseComponent, canActivate: [authGuard, dailyStartGuard] },
+    { path: 'daily/cashBalance', component: DailyCashBalanceComponent, canActivate: [authGuard, dailyStartGuard] },
 
 
 

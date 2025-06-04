@@ -53,12 +53,13 @@ export class PaymentComponent implements OnInit {
 
   ngOnInit() {
     this.id = this.activeRouter.snapshot.queryParams['id'],
-      this.modalService.dismissAll();
+    this.modalService.dismissAll();
     this.httpCart();
     this.httpPaymentType();
     this.httpPaid();
 
   }
+
   httpPaid() {
     this.loading = true;
     const url = environment.api + "payment/paid";
@@ -84,6 +85,7 @@ export class PaymentComponent implements OnInit {
       headers: this.configService.headers(),
       params: {
         id: this.activeRouter.snapshot.queryParams['id'],
+        dailyCheckId : this.configService.getDailyCheck() ?? ''
       }
     }).subscribe(
       data => {

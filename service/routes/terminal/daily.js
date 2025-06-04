@@ -8,6 +8,11 @@ router.get('/getData', c.getAllData);
 router.post('/start', c.dailyStart);
 router.post('/close', c.dailyClose);
 
+router.get('/cashbalance', c.cashbalance);
+router.get('/checkCashType', c.checkCashType);
+router.post('/addCashIn', c.addCashIn);
+
+
 
 // router.post('/create', tableMap.postCreate);
 // router.post('/delete', tableMap.postDelete);

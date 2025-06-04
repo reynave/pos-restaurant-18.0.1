@@ -17,7 +17,7 @@ export class SettingComponent implements OnInit {
       public configService: ConfigService,  
     ) { }
   ngOnInit(): void {
-    this.config = this.configService.getTokenJson();
+    this.config = this.configService.getConfigJson();
   }
   back(){
     history.back();

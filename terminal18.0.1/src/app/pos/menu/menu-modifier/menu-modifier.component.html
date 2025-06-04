@@ -31,10 +31,12 @@
                      </div>
                   </td>
                   <td [class]="{'border-top':x.no != 0}"> {{x.no != 0 ? x.no : '+'}} </td>
-                  <td [class]="{'border-top':x.no != 0}"> {{x.name}} </td>
+                  <td [class]="{'border-top':x.no != 0}"> {{x.name}}  {{x.priceIncluded == 0 ? '' : '('+(x.priceIncluded | number)+')'}}</td>
 
 
-                  <td [class]="{'border-top':x.no != 0}" class="text-end font-monospace">{{x.price | number}}</td>
+                  <td [class]="{'border-top':x.no != 0}" class="text-end font-monospace">
+                     {{x.price | number}} 
+                  </td>
                </tr>
 
             </tbody>

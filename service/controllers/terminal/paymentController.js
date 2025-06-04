@@ -12,6 +12,8 @@ exports.cart = async (req, res) => {
   let closePayment = 0;
   try {
     const cartId = req.query.id;
+    const dailyCheckId = req.query.dailyCheckId;
+    
     const data = await cart(cartId);
 
     if (data['unpaid'] == 0) {
@@ -21,27 +23,97 @@ exports.cart = async (req, res) => {
               endDate = '${today()}',
               updateDate = '${today()}',
               close = 1,
-              outletTableMapId = 20,
+              tableMapStatusId = 20,
               totalAmount  = ${data['subTotal']},
               grandTotal = ${data['grandTotal']},
               changePayment =  ${data['change']},
               totalTips = ${data['tips']},
               totalItem  = ${data['totalItem']}
-          WHERE id = ${cartId} `;
+          WHERE id = '${cartId}' `;
       const [result] = await db.query(q);
 
       if (result.affectedRows === 0) {
-        results.push({  status: 'cart not found / payment was close'  });
+        results.push({ status: 'cart not found / payment was close' });
       } else {
         closePayment = 1;
-        results.push({   status: 'cart close payment updated'  });
-      } 
+        results.push({ status: 'cart close payment updated' });
+      }
+
+
+      const q2 = `
+        SELECT sum( p.openDrawer) AS 'openDrawer', SUM(c.paid) AS 'totalPaid'
+        FROM cart_payment AS c
+        JOIN check_payment_type AS p ON p.id = c.checkPaymentTypeId
+        WHERE c.cartId = '${cartId}'
+        AND c.presence = 1   
+      `;
+      const [openDrawer] = await db.query(q2);
+
+      if (openDrawer[0]['openDrawer'] >= 1) {
+        let change = parseInt(openDrawer[0]['totalPaid']) - parseInt(data['grandTotal']);
+        change = Math.abs(change);
+        const q = `UPDATE cart
+            SET 
+              changePayment = ${change}
+          WHERE id = '${cartId}' `;
+        const [result2] = await db.query(q);
+
+        if (result2.affectedRows === 0) {
+          results.push({ status: 'cart not found / payment was close' });
+        } else {
+          closePayment = 1;
+          results.push({ status: 'cart changePayment payment updated' });
+        }
+
+        const q5 = ` 
+        SELECT p.openDrawer, c.paid
+          FROM cart_payment AS c
+          JOIN check_payment_type AS p ON p.id = c.checkPaymentTypeId
+          WHERE c.cartId = '${cartId}'
+          AND c.presence = 1 AND  p.openDrawer = 1;   
+        `;
+        const [cartPayment] = await db.query(q5);
+
+        for (const row of cartPayment) {
+          const q3 = `INSERT INTO 
+          daily_cash_balance(
+            presence, inputDate, updateDate, 
+            cartId, dailyCheckId, cashIn)
+        value(1, '${today()}', '${today()}' , '${cartId}', '${dailyCheckId}',  ${row['paid']} ) `;
+          const [result3] = await db.query(q3);
+
+          if (result3.affectedRows === 0) {
+            results.push({ status: 'cart not found / payment was close' });
+          } else {
+            closePayment = 1;
+            results.push({ status: 'cart changePayment payment updated' });
+          }
+        }
+
+
+
+        const q3 = `INSERT INTO 
+          daily_cash_balance(
+            presence, inputDate, updateDate, 
+            cartId, dailyCheckId, cashOut)
+        value(1, '${today()}', '${today()}' , '${cartId}', '${dailyCheckId}',  ${change} ) `;
+        const [result3] = await db.query(q3);
+
+        if (result3.affectedRows === 0) {
+          results.push({ status: 'cart not found / payment was close' });
+        } else {
+          closePayment = 1;
+          results.push({ status: 'cart changePayment payment updated' });
+        }
+
+      }
+
     }
     res.json({
       error: false,
       data: data,
-      results : results,
-      closePayment : closePayment,
+      results: results,
+      closePayment: closePayment,
     });
 
   } catch (err) {
@@ -49,7 +121,7 @@ exports.cart = async (req, res) => {
     res.status(500).json({ error: 'Database error' });
   }
 };
- 
+
 
 exports.paymentType = async (req, res) => {
 

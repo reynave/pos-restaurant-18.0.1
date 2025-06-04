@@ -148,3 +148,92 @@ exports.dailyClose = async (req, res) => {
         res.status(500).json({ error: 'Database error' });
     }
 };
+
+exports.cashbalance = async (req, res) => {
+    const dailyCheckId = req.query.id;
+    try {
+        const [formattedRows] = await db.query(`
+            SELECT * FROM daily_cash_balance
+            WHERE presence = 1 and dailyCheckId = '${dailyCheckId}';
+        `);
+        const [total] = await db.query(`
+            SELECT sum(cashIn) as 'cashIn', sum(cashOut) as 'cashOut', sum(cashIn-cashOut) as 'balance' 
+            FROM daily_cash_balance
+            WHERE presence = 1 and dailyCheckId = '${dailyCheckId}';
+        `);
+
+        res.json({
+            error: false,
+            items: formattedRows,
+            total: total,
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+    }
+};
+
+exports.checkCashType = async (req, res) => {
+    try {
+        const [formattedRows] = await db.query(`
+            SELECT id, name, value 
+            FROM check_cash_type
+            WHERE presence = 1 
+            order by value DESC
+        `);
+        res.json({
+            error: false,
+            items: formattedRows,
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+    }
+};
+
+exports.addCashIn = async (req, res) => {
+    const dailyCheckId = req.body['dailyCheckId'];
+    const cashIn = req.body['cashIn'];
+    const inputDate = today();
+    const results = [];
+    try {
+        if (cashIn > 0) {
+
+            const [openingBalance] = await db.query(
+                `SELECT count(id) as 'total' from daily_cash_balance 
+                WHERE dailyCheckId = '${dailyCheckId}' and presence = 1 
+            `);
+            
+
+
+
+            const [result] = await db.query(
+                    `INSERT INTO daily_cash_balance (
+                    presence, inputDate, updateDate, openingBalance, 
+                    dailyCheckId, cashIn) 
+                VALUES (1, '${inputDate}', '${inputDate}', ${openingBalance[0]['total'] == 0 ? 1 : 0}, 
+            '${dailyCheckId}' , ${cashIn}
+            )`
+                );
+            if (result.affectedRows === 0) {
+                results.push({ status: 'not found' });
+            } else {
+                results.push({ status: 'daily_cash_balance updated' });
+            }
+            res.json({
+                error: false,
+                results: results,
+            });
+        } else {
+            res.json({
+                error: true,
+            });
+        }
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+    }
+};

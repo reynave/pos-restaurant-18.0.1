@@ -1,0 +1,102 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-8">
+
+            <table class="table table-sm table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th class="text-center">Opening Balance</th>
+                        <th>Bill</th>
+                        <th class="text-end">Cash In</th>
+                        <th class="text-end">Cash Out</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let x of items; let i = index">
+                        <td>{{i+1}}</td>
+                        <td class="text-center"><i *ngIf="x.openingBalance == 1" class="bi bi-check-lg"></i></td>
+                        <td class="font-monospace">{{x.cartId}}</td>
+                        <td class="text-end font-monospace">  {{ x.cashIn | number}} </td>
+                        <td class="text-end font-monospace">  {{ x.cashOut | number}}  </td>
+                        <td>  {{x.inputDate | date:'medium'}}  </td>
+                    </tr>
+
+                </tbody>
+
+                <tfoot>
+                    <tr>
+                         <th></th>
+                        <th></th>
+                        <th> </th>
+                        <th class="text-end font-monospace">{{total['cashIn'] | number }}</th>
+                        <th class="text-end font-monospace">{{total['cashOut']  | number}}</th>
+                        <th></th>
+                        
+                    </tr>
+                    <tr>
+                        <th colspan="5"></th>
+                    </tr>
+                    <tr>
+                         <th></th>
+                        <th></th>
+                        <td></td>
+                        <th>Balance</th>
+                        <th class="text-end font-monospace">{{total['balance'] | number}}</th>
+                        <th></th>
+                        
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="col-4">
+            <div class="d-grid">
+                <button class="btn btn-lg btn-primary" (click)="open(contentOpenCash)">{{ total['balance'] != null ?  'Add Cash In':'Add Opening Balance'}}</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+<ng-template #contentOpenCash let-modal>
+    <div class="modal-header">
+        <strong class="modal-title">{{ total['balance'] != null ?  'Add Cash In':'Add Opening Balance'}}</strong>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+ 
+        <div class="row">
+            <div class="col-12 mb-2">
+                <input type="text" class="form-control form-control-lg" [(ngModel)]="cashIn" currencyMask
+                    [currencyMask]="currencyOption" name="cashIn">
+            </div>
+        </div>
+        <div class="row g-1">
+            <div class="col-4 mb-2 d-grid">
+                <button type="button" class="btn btn-lg btn-warning" (click)="this.cashIn = '0'">CE</button>
+            </div>
+            <div class="col-4 mb-2 d-grid">
+                <button type="button" class="btn btn-lg btn-warning" [disabled]="this.addFunction == 1" (click)="this.addFunction = 1">+</button>
+            </div>
+            <div class="col-4 mb-2 d-grid">
+                <button type="button" class="btn btn-lg btn-warning" [disabled]="this.addFunction == -1"  (click)="this.addFunction = -1 ">-</button>
+            </div>
+          
+        </div>
+        <div class="row g-1">
+              <div class="col-6 mb-2 d-grid" *ngFor="let x of checkCashType">
+                <button type="button" class="btn btn-lg btn-primary" (click)="addValueCashIn(x);">{{x.name}}</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal-body">
+        <div class="d-grid">
+            <button type="button" class="btn btn-lg btn-dark"  [disabled]="cashIn == '0'" (click)="addCashIn()">SUBMIT</button>
+        </div>
+    </div>
+</ng-template>

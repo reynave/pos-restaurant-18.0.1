@@ -105,12 +105,12 @@ async function cart(cartId = '') {
         WHERE c.presence= 1   and c.cartId = '${cartId}' and c.submit = 1
         ORDER BY c.id 
     `);
-        let tips = 0;
+    let tips = 0;
     cartPayment.forEach(element => {
         paid += element['paid'];
         tips += element['tips'];
     });
-    
+
 
     return {
         error: false,
@@ -120,9 +120,9 @@ async function cart(cartId = '') {
         grandTotal: grandTotal,
         totalItem: totalItem,
         cartPayment: cartPayment,
-        unpaid:  grandTotal - paid < 0 ? 0 :(grandTotal - paid) ,
-        change :  grandTotal - paid < 0 ? (grandTotal - paid)*-1 : 0,
-        tips : tips,
+        unpaid: grandTotal - paid < 0 ? 0 : (grandTotal - paid),
+        change: grandTotal - paid < 0 ? (grandTotal - paid) * -1 : 0,
+        tips: tips,
     }
 }
 async function cart_ver1(cartId = '') {
@@ -303,17 +303,8 @@ async function cart_ver1(cartId = '') {
 
 
 async function taxScUpdate(cartItem = 0) {
-    // UPDATE DISCOUNT RATE (%)
-    // SOON
-    // const q1 = `
-    //     SELECT id, cartId, cartItemId, applyDiscount, price 
-    //     FROM cart_item_modifier
-    //     WHERE applyDiscount != 0
-    //     AND presence = 1 AND void = 0 and cartItemId = ${cartItem}
-    // `;
-    // const [applyDiscount] = await db.query(q1);
-    // console.log(applyDiscount);
-
+    let scAmount = 0;
+    let taxAmount = 0;
 
     const q2 = `
         --  q2
@@ -352,11 +343,23 @@ async function taxScUpdate(cartItem = 0) {
             `;
     const [taxRow] = await db.query(taxQ);
 
-    let scAmount = itemPrice * (parseFloat(scRow[0]['scRate']) / 100);
-    let taxAmount = (itemPrice + scAmount) * (parseFloat(taxRow[0]['taxRate']) / 100);
+    if (scRow.length > 0) {
+        scAmount = itemPrice * (parseFloat(scRow[0]['scRate']) / 100);
+    }
+    if (taxRow.length > 0) {
+        taxAmount = (itemPrice + scAmount) * (parseFloat(taxRow[0]['taxRate']) / 100);
+    }
+
+    const a = `
+    SELECT c.id, c.menuId, m.name, m.menuTaxScId, t.taxStatus, t.scStatus
+        FROM cart_item  AS c
+        JOIN menu AS m ON m.id = c.menuId
+        JOIN menu_tax_sc AS t ON t.id = m.menuTaxScId
+    WHERE c.id = ${cartItem} `;
+    const [menu] = await db.query(a);
 
     // UPDATE SC
-    if (scAmount != 0) {
+    if (scAmount != 0 && menu[0]['scStatus'] == 1) {
         const q2 = `UPDATE cart_item_modifier
                   SET
                     price = ${scAmount}, 
@@ -371,8 +374,10 @@ async function taxScUpdate(cartItem = 0) {
 
     }
 
+
+
     // UPDATE TAX
-    if (taxAmount != 0) {
+    if (taxAmount != 0 && menu[0]['taxStatus'] == 1) {
         const q2 = `UPDATE cart_item_modifier
                   SET
                     price = ${taxAmount}, 

@@ -79,7 +79,9 @@ exports.newOrder = async (req, res) => {
       FROM outlet_table_map AS o
       LEFT JOIN cart AS c ON c.outletTableMapId = o.id
     WHERE  o.presence = 1 AND o.id = ${model['outletTableMapId']} AND c.presence = 1 AND c.void = 0
+    AND c.tableMapStatusId != 20
     `;
+    console.log(q)
     const [rows] = await db.query(q);
     const total = rows[0]?.total || 0; // gunakan optional chaining biar aman
     const { insertId } = await autoNumber('cart');
