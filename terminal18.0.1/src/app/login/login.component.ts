@@ -64,8 +64,8 @@ export class LoginComponent implements OnInit {
 
   onSubmit() {
     this.error = '';
-    const getIndexById = this.outletSelect.findIndex((obj: { id: any; }) => obj.id === this.model.outletId);
-    this.loading = true;
+    const getIndexById = this.outletSelect.findIndex((obj: { id: any; }) => obj.id === parseInt(this.model.outletId));
+    
     const url = environment.api + "login/signin";
     const body = {
       username: this.employeeSelect[this.model.username]['id'],

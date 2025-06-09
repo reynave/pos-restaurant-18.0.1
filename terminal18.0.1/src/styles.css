@@ -1,74 +1,97 @@
 /* You can add global styles to this file, and also import other style files */
- *{ 
-    font-family: "Open Sans", sans-serif;   
-}
-html, body {
-      min-height: 100%;
-      margin: 0;
-    }
-
-
-div, p, label {
-  font-size: var(--font-size);
+* {
+    font-family: "Open Sans", sans-serif;
 }
 
-label{
-  color: #333 !important;
-}
-
-.wrapper-sm{
-    max-width: var(--wrapper-sm-width);
-    margin:  0 auto;
-}
-
-.wrapper{
-    height: 100vh;
-    position: relative; 
-    overflow-y: auto;
-}
-
-.main{
-    height: 95vh; 
-     display: flex;
-    overflow-y: auto;
+html,
+body {
+    min-height: 100%;
+    margin: 0;
 }
  
-.map {
-   width: calc(var(--map-width) + 50px) ;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
+
+body { 
+    margin: 0 auto;
+    max-width: var(--body-width);
 }
-.menu{
+
+div,
+p,
+label {
+    font-size: var(--font-size);
+}
+
+label {
+    color: #333 !important;
+}
+
+.wrapper-sm {
+    max-width: var(--wrapper-sm-width);
+    margin: 0 auto;
+}
+
+.wrapper {
+    height: 100vh;
+    position: relative;
+    overflow-y: auto;
+}
+
+.main {
+    height: 95vh;
+    display: flex;
+    overflow-y: auto;
+}
+
+.map {
+    width: calc(var(--map-width) + 50px);
+    height: 78vh;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.menu {
     max-width: 300px;
 }
 
 
 
 
-.wrapper-fix-bottom{
+.wrapper-fix-bottom {
     position: fixed;
     left: 0px;
     bottom: 0px;
     width: 100%;
 }
-.table thead th{
+
+.table thead th {
     font-size: var(--font-size);
     text-transform: uppercase;
 }
-.table .bg-light td{
+
+.table .bg-light td {
     background-color: #DDE6ED;
     border-bottom: 1px solid #cecece;
 }
-.table td{
+
+.table td {
     cursor: pointer;
 }
-.tr-active td{
+
+.tr-active td {
     background-color: #f4f4f4;
 }
-.table-bill td{
- padding: 2px 5px;
+
+.table-bill td {
+    padding: 2px 5px;
 }
-.table-bill td, .table-bill td strong, .table-bill td div, .table-bill span{
+
+.table-bill td,
+.table-bill td strong,
+.table-bill td div,
+.table-bill span {
     font-family: var(--bs-font-monospace) !important;
 }
+
+
+.header {}

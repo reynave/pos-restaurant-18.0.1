@@ -1,0 +1,13 @@
+<div class="row g-1">
+    <div class="col-4" *ngFor="let item of numberArray">
+        <div class="d-grid">
+            <a href="javascript:;"  (click)="sendData(item)" class="btn btn-lg border">{{item}}</a>
+        </div>
+    </div> 
+
+    <div class="col-4">
+        <div class="d-grid">
+            <a href="javascript:;" class="btn btn-lg border" (click)="sendData('b')"><i class="bi bi-backspace"></i></a>
+        </div>
+    </div>
+</div>

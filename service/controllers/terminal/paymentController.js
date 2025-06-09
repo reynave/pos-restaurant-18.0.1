@@ -13,7 +13,7 @@ exports.cart = async (req, res) => {
   try {
     const cartId = req.query.id;
     const dailyCheckId = req.query.dailyCheckId;
-    
+
     const data = await cart(cartId);
 
     if (data['unpaid'] == 0) {
@@ -201,11 +201,13 @@ exports.addPayment = async (req, res) => {
 };
 
 exports.deletePayment = async (req, res) => {
+  const connection = await db.getConnection();
   const cartId = req.body['cartId'];
   const paid = req.body['paid'];
 
   const results = [];
   try {
+    await connection.beginTransaction();
     const q = `UPDATE cart_payment
       SET
         presence = 0, 
@@ -219,7 +221,7 @@ exports.deletePayment = async (req, res) => {
     } else {
       results.push({ cartId, status: 'cart_payment updated' });
     }
-
+    await connection.commit();
     res.status(201).json({
       error: false,
       message: 'cart_payment updated',
@@ -227,8 +229,11 @@ exports.deletePayment = async (req, res) => {
     });
 
   } catch (err) {
-    console.error(err);
+    await connection.rollback(); // rollback jika ada error
+    console.error('Transaction failed:', err); 
     res.status(500).json({ error: 'Database error' });
+  }finally {
+    connection.release(); // kembalikan koneksi ke pool
   }
 };
 

@@ -2,7 +2,7 @@
     position: relative;
     width: var(--map-width);
     height: var(--map-height);
-    background-color: #eee;
+   background-color: var(--bg-color-primary-1);
     overflow-y: auto;
 }
 
@@ -11,8 +11,8 @@
 }
 
  .table-map .floorPlan .items{
-    background-color: #f5f5f5;
-    border: 1px solid #333;
+    background-color: #fff;  
+    cursor: pointer; 
 }
 
  

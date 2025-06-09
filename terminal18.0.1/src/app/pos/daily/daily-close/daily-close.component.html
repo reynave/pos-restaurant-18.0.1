@@ -1,13 +1,19 @@
-<div class="container">
+<div class="modal-header">
+    <strong class="modal-title">Daily Close </strong>
+    <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+</div>
+<div class="modal-body">
     <div class="row">
-        <div class="col-12 text-center">  
+        <div class="col-12 text-center">
             <strong>Do Daily Close now ?</strong>
+        </div>
 
-          <div>
-              <button type="button" class="btn btn-light border mx-1">No</button>
-<button type="button" class="btn btn-dark border mx-1" (click)="onClose()">Yes</button>
-          </div>
-
+    </div>
+</div>
+<div class="modal-body">
+    <div class="row g-1"> 
+        <div class="col-12 text-center  d-grid">
+            <button type="button" class="btn btn-lg btn-outline-dark  " (click)="onClose()">Yes</button>
         </div>
     </div>
 </div>

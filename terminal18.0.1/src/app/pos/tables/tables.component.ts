@@ -6,7 +6,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-
+import { KeyNumberComponent } from "../../keypad/key-number/key-number.component";
+import { DailyCloseComponent } from '../daily/daily-close/daily-close.component';
 export class Actor {
   constructor(
     public outletTableMapId: number,
@@ -18,7 +19,7 @@ export class Actor {
 @Component({
   selector: 'app-tables',
   standalone: true,
-  imports: [HttpClientModule, CommonModule, FormsModule, NgbDropdownModule, RouterModule],
+  imports: [HttpClientModule, CommonModule, FormsModule, NgbDropdownModule, RouterModule, KeyNumberComponent],
   templateUrl: './tables.component.html',
   styleUrl: './tables.component.css'
 })
@@ -30,6 +31,7 @@ export class TablesComponent implements OnInit {
   items: any = [{
     map: []
   }];
+  tableSelect: any = [];
   outletSelect: any = [];
   api: string = environment.api;
   model = new Actor(0, 1, 0);
@@ -51,9 +53,21 @@ export class TablesComponent implements OnInit {
     this.modalService.dismissAll();
     this.httpOutlet();
     this.httpGet();
+  }
 
+  handleData(data: string) {
+
+    let cover = this.model.cover.toString();
+    if (data == 'b') {
+      cover = cover.slice(0, -1);
+      console.log(data)
+    } else {
+      cover = cover + data;
+    }
+    this.model.cover = parseInt(cover || '0'); // fallback kalau cover kosong
 
   }
+
   httpOutlet() {
     this.loading = true;
     const url = environment.api + "login/outlet";
@@ -89,22 +103,27 @@ export class TablesComponent implements OnInit {
     )
   }
 
-
-
   reload() {
     this.httpGet();
   }
+
   onMap(index: number) {
     console.log(index);
     this.current = index;
   }
 
   open(content: any, x: any) {
+
+    this.tableSelect = x;
     this.model.cover = x.capacity
     this.model.outletTableMapId = x.id
     this.model.outletFloorPlandId = x.outletFloorPlandId
 
-    this.modalService.open(content);
+    this.modalService.open(content, { size: 'sm' });
+  }
+
+  gotTo(url: string, params: any) {
+    this.router.navigate([url], { queryParams: params });
   }
 
   modal(content: any) {
@@ -113,13 +132,13 @@ export class TablesComponent implements OnInit {
 
   fnSelectOutlet(index: number) {
     this.getConfigJson['outlet']['id'] = this.outletSelect[index]['id'];
-    this.getConfigJson['outlet']['name'] = this.outletSelect[index]['name']; 
+    this.getConfigJson['outlet']['name'] = this.outletSelect[index]['name'];
 
-    console.log( this.getConfigJson);
+    console.log(this.getConfigJson);
     this.configService.updateConfigJson(this.getConfigJson).subscribe(
-      data=>{
+      data => {
         console.log(data);
-        if(data==true){
+        if (data == true) {
           this.httpGet();
         }
       }
@@ -155,14 +174,20 @@ export class TablesComponent implements OnInit {
     )
   }
 
-  logOff(){
-      this.router.navigate(['/']);
+  logOff() {
+    this.router.navigate(['/']);
   }
+
   signOff() {
     this.configService.removeToken().subscribe(
       () => {
         this.router.navigate(['login']);
       }
     )
+  }
+
+  dailyClose() {
+    this.modalService.open(DailyCloseComponent, {size:'sm'});
+
   }
 }

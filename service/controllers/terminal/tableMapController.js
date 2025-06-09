@@ -7,7 +7,7 @@ exports.getAllData = async (req, res) => {
   try {
 
     const [formattedRows] = await db.query(`
-      SELECT id, outletId, desc1, null as 'maps'
+      SELECT id, outletId, desc1, null as 'maps', 0 as 'checking'
       FROM outlet_floor_plan  
       WHERE presence = 1  ${!outletId ? '' : 'AND outletId = ' + outletId}
     `);
@@ -34,22 +34,18 @@ exports.getAllData = async (req, res) => {
         WHERE o.presence = 1 AND o.outletFloorPlandId = ?
       `, [row.id]);
 
-
-
-      // const [maps] = await db.query(`
-      //   SELECT o.id, o.outletFloorPlandId,   o.tableName, o.posY, o.posX, o.width, 
-      //   o.height, o.capacity, s.name as 'status', o.cover
-      //   FROM outlet_table_map as o
-      //   left join outlet_table_map_status as s on s.id = o.tableMapStatusId
-      //   WHERE o.presence = 1 AND o.outletFloorPlandId = ?
-      // `, [row.id]);
-
-      // row.maps = maps; // tambahkan hasil ke properti maps
-
-
-
-      row.maps = maps; // tambahkan hasil ke properti maps
+      row.maps = maps;
     }
+
+   for(let i = 0; i < formattedRows.length; i++){
+    let checking = 0;
+    for(let n = 0 ; n < formattedRows[i]['maps'].length ; n++){
+      if(formattedRows[i]['maps'][n]['cardId'] != null ){
+        checking+= 1;
+      }
+    }
+    formattedRows[i]['checking'] = checking;
+   }
 
 
     res.json({
@@ -63,8 +59,6 @@ exports.getAllData = async (req, res) => {
     res.status(500).json({ error: 'Database error' });
   }
 };
-
-
 
 exports.newOrder = async (req, res) => {
   const model = req.body['model'];
@@ -95,7 +89,7 @@ exports.newOrder = async (req, res) => {
         VALUES (1, '${inputDate}', 10, ${model['outletTableMapId']}, 
           ${model['cover']},  '${insertId}',  ${outletId}, '${dailyCheckId}',
           '${inputDate}', '${inputDate}'  )`
-        );
+      );
       if (newOrder.affectedRows === 0) {
         results.push({ status: 'not found' });
       } else {
@@ -121,9 +115,6 @@ exports.newOrder = async (req, res) => {
     res.status(500).json({ error: true, note: 'Database insert error' });
   }
 };
-
-
-
 
 exports.postDelete = async (req, res) => {
   // const { id, name, position, email } = req.body;

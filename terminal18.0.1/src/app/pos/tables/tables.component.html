@@ -1,106 +1,135 @@
-<div class="header">
+<div class="header border-bottom mb-2 py-1">
    <div class="container-fluid">
       <div class="row">
          <div class="col-12">
-            header // //https://www.npmjs.com/package/node-thermal-printer
+            Mitralink POS ver 3.0
          </div>
       </div>
    </div>
 </div>
-<div class="main ">
-   <div class="map">
-      <div class="container-fluid">
-         <div class="row">
 
-            <div class="col-12 mb-1">
-               @if(items.length > 0){
-               View : <a href="javascript:;" (click)="activeView='map'">Map</a> |
-               <a href="javascript:;" (click)="activeView='table'">List</a>
-
-               <div class="table-map border p-1 ">
-                  @if(activeView == 'map'){
-                  <div class="floorPlan" *ngFor="let x of items[current]['maps']">
-                     <div class="items" [style.transform]="'translate(' + x.posX + 'px,' + x.posY + 'px)'"
-                        [style.width.px]="x.width" [style.height.px]="x.height"
-                        [style.backgroundImage]="'url(' + x.icon + ')'" style="background-size: cover;">
+<div class="container-fluid">
 
 
-                        @if(x.cover <= 0 || x.cover=='' ){ <button type="button" class="btn btn-sm btn-dark"
-                           (click)="open(modalCheckIn, x)">{{x.tableName}}</button>
-                           }
-                           @else{
-                           <a class="btn btn-sm btn-success" [routerLink]="['/menu']" [queryParams]="{id : x.cardId}">
-                              {{x.tableName}}</a>
-                           }
-                     </div>
-                  </div>
-                  }
-                  @else {
-                  <table class="table table-bordered table-striped">
-                     <thead>
-                        <tr>
-                           <th>#</th>
-                           <th>Table Name</th>
-                           <th class="text-center">Capacity</th>
-                           <th class="text-center">Status</th>
-                           <th class="text-center">Cover</th>
-                           <th></th>
-                        </tr>
-                     </thead>
-                     <tbody>
-                        <tr *ngFor="let x of items[current]['maps']; let i = index">
-                           <td>{{i+1}}</td>
-                           <td>{{x.tableName}}</td>
-                           <td class="text-center">{{x.capacity}}</td>
-                           <td class="text-center">{{x.status}}</td>
-                           <td class="text-center">{{x.cover > 0 ? x.cover : ''}}</td>
-                           <td class="text-center">
-                              <div class="d-grid">
-                                 @if(x.cover <= 0 || x.cover=='' ){ <button type="button" class="btn btn-sm btn-dark"
-                                    (click)="open(modalCheckIn, x)">NEW ORDER</button>
-                                    }
-                                    @else{
-                                    <a class="btn btn-sm btn-success" [routerLink]="['/menu']"
-                                       [queryParams]="{id : x.cardId}"> MENU</a>
-                                    }
-                              </div>
-                           </td>
-                        </tr>
-                     </tbody>
-                  </table>
-                  }
+   <div class="row g-1">
+
+      <div class="col-8">
+
+         <div class="row g-1 mb-2">
+
+            <div class="col-8 ">
+               <div class="bg-light p-1  border rounded-pill d-inline-block">
+                  <span *ngFor="let x of items; let i = index">
+                     <button type="button" class="btn rounded-pill px-3" (click)="onMap(i)" [class]="{
+                           'border': current == i,
+                            'bg-white': current == i,
+                            'shadow-sm': current == i, 
+                           }"> {{x.desc1}}
+
+                        <span *ngIf="x.checking > 0  " class="badge text-bg-danger rounded-circle">
+                           {{x.checking}}
+                        </span>
+
+
+                     </button>
+                  </span>
+                  <small> <a class="btn btn-sm" (click)="reload();">reload db</a></small>
                </div>
-               }
-            </div>
-            <div class="col-12">
-               <span *ngFor="let x of items; let i = index">
-                  <button type="button" class="btn  me-1 border" (click)="onMap(i)"
-                     [class]="{'btn-primary': current == i}">{{x.desc1}}</button>
-               </span>
-               <a class="btn btn-sm" (click)="reload();">reload db</a>
 
+            </div>
+            <div class="col-4 text-end">
+               <a href="javascript:;" class="btn btn-light me-1" [class]="{'btn-dark' : activeView == 'map'}"
+                  (click)="activeView='map'"><i class="bi bi-grid"></i>
+                  Map</a>
+
+               <a href="javascript:;" class="btn  btn-light " [class]="{'btn-dark' : activeView == 'table'}"
+                  (click)="activeView='table'"><i class="bi bi-list-ul"></i>
+                  List</a>
             </div>
 
          </div>
+
+         <div class="map">
+
+            @if(items.length > 0){
+            <div class="table-map border p-1 shadow-sm  rounded ">
+               @if(activeView == 'map'){
+               <div class="floorPlan" *ngFor="let x of items[current]['maps']">
+
+
+                  <div class="items border rounded shadow-sm " [class]="{'bg-success': (x.cover > 0 )}"
+                     [style.transform]="'translate(' + x.posX + 'px,' + x.posY + 'px)'" [style.width.px]="x.width"
+                     [style.height.px]="x.height" [style.backgroundImage]="'url(' + x.icon + ')'"
+                     style="background-size: cover;"
+                     (click)="(x.cover <= 0 || x.cover=='' ) ? open(modalCheckIn, x) : gotTo('/menu',{id : x.cardId} ) ">
+                     <div class="text-center" style="margin: 30% auto; cursor: pointer;">
+                        {{x.tableName}}
+                     </div>
+
+
+                  </div>
+
+               </div>
+               }
+               @else {
+               <table class="table ">
+                  <thead class="sticky-top">
+                     <tr>
+                        <th>#</th>
+                        <th>Table Name</th>
+                        <th class="text-center">Capacity</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center">Cover</th>
+                        <th></th>
+                     </tr>
+                  </thead>
+                  <tbody>
+                     <tr *ngFor="let x of items[current]['maps']; let i = index">
+                        <td>{{i+1}}</td>
+                        <td>{{x.tableName}}</td>
+                        <td class="text-center">{{x.capacity}}</td>
+                        <td class="text-center">{{x.status}}</td>
+                        <td class="text-center">{{x.cover > 0 ? x.cover : ''}}</td>
+                        <td class="text-center">
+                           <div class="d-grid">
+                              @if(x.cover <= 0 || x.cover=='' ){ <button type="button"
+                                 class="btn btn-sm border btn-light shadow-sm rounded-pill"
+                                 (click)="open(modalCheckIn, x)">NEW ORDER</button>
+                                 }
+                                 @else{
+                                 <a class="btn btn-sm btn-success rounded-pill" [routerLink]="['/menu']"
+                                    [queryParams]="{id : x.cardId}"> MENU</a>
+                                 }
+                           </div>
+                        </td>
+                     </tr>
+                  </tbody>
+               </table>
+               }
+            </div>
+            }
+
+         </div>
+
       </div>
-   </div>
 
-   <div class="menu">
-      <div class="container">
-
+      <div class="col-4">
          <div class="row g-1">
             <div class="col-6 mb-3">
                <strong>General</strong>
                <div class="d-grid">
-                  <a class="btn btn-primary m-1" [routerLink]="['/setting']">Setting</a>
+                  <a class="btn btn-lg btn-outline-dark rounded-0 m-1" [routerLink]="['/setting']"> <i
+                        class="bi bi-gear"></i> Setting</a>
                </div>
+
                <div class="d-grid">
-                  <button class="btn btn-primary m-1" [routerLink]="['/items/']">Adjust Item</button>
+                  <button class="btn btn-lg btn-outline-dark rounded-0 m-1" [routerLink]="['/items/']"><i
+                        class="bi bi-bag-plus"></i> Adjust Item</button>
                </div>
- 
-            
+
                <div class="d-grid">
-                  <button class="btn btn-warning m-1" (click)="modal(modalSwitchOutlet)">Switch Outlet</button>
+                  <button class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="modal(modalSwitchOutlet)"><i
+                        class="bi bi-diagram-3"></i> Switch Outlet</button>
                </div>
 
 
@@ -110,36 +139,39 @@
 
 
                <div class="d-grid">
-                  <button class="btn  btn-success m-1" [routerLink]="['/transaction']">General Report</button>
+                  <button class="btn btn-lg btn-outline-dark rounded-0 m-1" [routerLink]="['/transaction']"><i
+                        class="bi bi-receipt"></i> Report</button>
                </div>
 
                <div class="d-grid">
-                  <button class="btn  btn-success m-1" [routerLink]="['/daily/cashBalance']">Cash drawer</button>
+                  <button class="btn btn-lg btn-outline-dark rounded-0 m-1" [routerLink]="['/daily/cashBalance']"><i
+                        class="bi bi-cash-coin"></i> Cash</button>
                </div>
                <div class="d-grid">
-                  <button class="btn  btn-success m-1" disabled>Manager Report</button>
-               </div>
-               <div class="d-grid">
-                  <a class="btn  btn-light border m-1" (click)="logOff();">Log off</a>
-               </div>
-               <div class="d-grid">
-                  <a class="btn  btn-dark m-1" (click)="signOff();">Sign Off</a>
+                  <button class="btn btn-lg btn-outline-dark rounded-0 m-1" disabled>Manager Report</button>
                </div>
 
+               <div class="d-grid">
+                  <a class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="signOff();"><i
+                        class="bi bi-box-arrow-left"></i> Sign Off</a>
+               </div>
+               <div class="d-grid">
+                  <button class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="dailyClose()"><i
+                        class="bi bi-exclamation-circle"></i> Daily Close</button>
+               </div>
             </div>
             <div class="col-12">
-               <strong>Daily Close</strong>
+               <!-- https://www.npmjs.com/package/node-thermal-printer -->
+
                <div class="d-grid">
-                  <button class="btn  btn-warning m-1" [routerLink]="['/daily/close']">Daily Close</button>
+                  <a class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="logOff();"> <i class="bi bi-power"></i>
+                     Log off</a>
                </div>
             </div>
          </div>
-
       </div>
    </div>
-
 </div>
-
 
 <ng-template #modalSwitchOutlet let-modal>
    <div class="modal-header">
@@ -149,7 +181,7 @@
    <div class="modal-body">
 
       <div class="m-2 d-grid" *ngFor="let x of outletSelect; let i = index">
-         <button type="button" (click)="fnSelectOutlet(i);" class="btn btn-lg btn-primary"
+         <button type="button" (click)="fnSelectOutlet(i);" class="btn btn-lg btn-outline-dark rounded-0"
             [disabled]="x.id == this.getConfigJson['outlet']['id']">{{x.name}}</button>
       </div>
    </div>
@@ -158,25 +190,33 @@
 
 <ng-template #modalCheckIn let-modal>
    <div class="modal-header">
-      <strong>Open New Table</strong>
+      <strong>New Order</strong>
       <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
    </div>
    <div class="modal-body">
       <form (ngSubmit)="onSubmit()" #actorForm="ngForm">
          <div class="mb-3">
+            <div class="mb-1"><label>Table</label></div>
+            <div class="form-control form-control-lg bg-light">{{tableSelect.tableName}}</div>
+
+         </div>
+
+         <div class="mb-3">
             <div class="mb-1"><label for="cover">Please Input No. of Cover</label></div>
 
-            <input type="number" class="form-control" id="cover" required [(ngModel)]="model.cover" name="cover"
-               #cover="ngModel">
+            <input type="number" class="form-control form-control-lg" id="cover" required [(ngModel)]="model.cover"
+               name="cover" #cover="ngModel">
             <div [hidden]="cover.valid || cover.pristine" class="text-danger">
                Cover is required
             </div>
          </div>
-         <div class="text-center">
-            <button type="button" class="btn btn-outline-secondary mx-2" style="width: 100px;"
-               (click)="modal.close('Save click')">Cancel</button>
-            <button type="submit" class="btn btn-dark  mx-2" style="width: 100px;"
-               [disabled]="!actorForm.form.valid">OK</button>
+
+         <div class="mb-3">
+            <app-key-number (dataEmitted)="handleData($event)"></app-key-number>
+         </div>
+         <div class="mt-3 d-grid">
+            <button type="submit" class="btn btn-lg btn-dark"
+               [disabled]="!actorForm.form.valid || model.cover < 1 ">Order Now</button>
          </div>
       </form>
    </div>

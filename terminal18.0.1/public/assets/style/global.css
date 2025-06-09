@@ -1,6 +1,19 @@
 :root {
-  --map-width:800px;
+  --body-width:1234px;
+
+  --map-width: 800px;
   --map-height: 600px;
-  --font-size:0.9rem;
-  --wrapper-sm-width:600px;
+  --font-size: 0.9rem;
+  --wrapper-sm-width: 600px;
+
+
+  --bg-color-primary-1: #f0f1ec;
+  --bg-color-primary-10: #f0f5f4;
+  --bg-color-primary-100: #086b68;
+
+}
+
+.bg-success{
+  background-color: var(--bg-color-primary-100) !important;
+  color: #fff;
 }

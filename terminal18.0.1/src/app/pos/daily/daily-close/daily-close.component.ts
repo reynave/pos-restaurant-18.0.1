@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { environment } from '../../../../environments/environment';
 import { ConfigService } from '../../../service/config.service';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-daily-close',
@@ -14,6 +15,8 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
   styleUrl: './daily-close.component.css'
 })
 export class DailyCloseComponent implements OnInit {
+  activeModal = inject(NgbActiveModal);
+
   error: string = '';
   loading: boolean = false;
   ver: string = environment.ver;
@@ -23,12 +26,15 @@ export class DailyCloseComponent implements OnInit {
     private config: ConfigService,
     private router: Router,
     private http: HttpClient,
+    public modalService: NgbModal,
   ) { }
 
   ngOnInit() {
 
   }
-
+  back() {
+    history.back();
+  }
   onClose() {
     // this.router.navigate(['/'])
     const configData = this.config.getConfigJson();
@@ -44,6 +50,7 @@ export class DailyCloseComponent implements OnInit {
     }).subscribe(
       data => {
         console.log(data);
+        this.activeModal.dismiss();
         this.config.removeToken().subscribe(
           () => {
             this.router.navigate(['/']);
