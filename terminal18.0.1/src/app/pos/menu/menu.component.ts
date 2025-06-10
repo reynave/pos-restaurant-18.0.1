@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { ConfigService } from '../../service/config.service';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { environment } from '../../../environments/environment.development';
@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { HeaderMenuComponent } from "../../header/header-menu/header-menu.component";
 export class Actor {
   constructor(
     public newQty: number,
@@ -14,11 +15,11 @@ export class Actor {
 @Component({
   selector: 'app-menu',
   standalone: true,
-  imports: [HttpClientModule, CommonModule, FormsModule, NgbDropdownModule, RouterModule],
+  imports: [HttpClientModule, CommonModule, FormsModule, NgbDropdownModule, RouterModule, HeaderMenuComponent],
   templateUrl: './menu.component.html',
   styleUrl: './menu.component.css'
 })
-export class MenuComponent implements OnInit {
+export class MenuComponent implements OnInit, OnDestroy {
   showModifier: boolean = false;
   loading: boolean = false;
   current: number = 0;
@@ -42,16 +43,30 @@ export class MenuComponent implements OnInit {
 
   isChecked: boolean = false;
   model = new Actor(1);
+
+  cssClass : string = 'btn btn-sm p-3 bg-white me-2 mb-2 rounded shadow-sm';
+  cssMenu : string = 'btn btn-sm py-3 bg-white me-1 lh-1  rounded shadow-sm';
+  
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
     public modalService: NgbModal,
     private router: Router,
-    private activeRouter: ActivatedRoute
+    private activeRouter: ActivatedRoute,
+
+    private renderer: Renderer2
   ) { }
+  ngOnDestroy(): void {
+     this.renderer.setStyle(document.body, 'background-color', '#fff');
+
+  }
 
 
   ngOnInit() {
+
+
+    this.renderer.setStyle(document.body, 'background-color', 'var(--bg-color-primary-1)');
+
     this.id = this.activeRouter.snapshot.queryParams['id'],
       this.modalService.dismissAll();
     if (this.id == undefined) {

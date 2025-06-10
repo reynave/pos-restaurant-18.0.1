@@ -4,8 +4,11 @@ const c = require('../../controllers/terminal/dailyController');
   
 // table/*
 router.get('/', c.getAllData); 
+router.get('/getDailyStart', c.getDailyStart);
+
 router.get('/getData', c.getAllData);
 router.post('/start', c.dailyStart);
+
 router.post('/close', c.dailyClose);
 
 router.get('/cashbalance', c.cashbalance);

@@ -1,95 +1,132 @@
-<div class="">
+<div class="container-fluid ">
    <div class="row g-0">
-      <div class="col-5 col-lg-4">
+      <div class="col-5 ">
          <!-- TABLE cart -->
-         <div class="wrapper">
-            <div class="py-5">
-               <table class="table table-hover">
-                  <tbody *ngFor="let x of cartOrdered; let i = index" [class]="{'tr-active':x.checkBox == 1 }">
-                     <tr [class]="{'bg-light':x.sendOrder !== ''}">
-                        <td (click)="fnChecked(i)  ">
-                           <h4> <i class="bi bi-receipt"></i> </h4>
-                        </td>
+         <div class="wrapper border bg-white">
 
-                        <td [routerLink]="['/menu/modifier']"
-                           [queryParams]="{id:id, menuId : x.menuId, price : x.price, sendOrder : x.sendOrder }">
-                           <div class="lh-1">
-                              <strong>{{x.name }} {{x.modifier.length > 0 ? '*':''}} </strong>
-                           </div>
-                           <small class="font-monospace">&#64;{{x.price | number}}</small>
-                        </td>
+            <div class="py-2 px-3 border-bottom">
+               <div class="row ">
+                  <div class="col-6">
+                     <strong>Order</strong>
+                  </div>
+                  <div class="col-6 text-end">
+                     <strong><span class="badge text-bg-secondary">4</span></strong>
+                  </div>
+               </div>
+            </div>
+            <table class="table table-hover ">
+               <tbody *ngFor="let x of cartOrdered; let i = index" [class]="{'tr-active':x.checkBox == 1 }">
+                  <tr [class]="{'bg-light':x.sendOrder !== ''}">
+                     <td (click)="fnChecked(i)  ">
+                        <h4> <i class="bi bi-fork-knife"></i> </h4>
+                     </td>
 
-                        <td class="text-end font-monospace">
+                     <td>
+                        <div class="lh-1">
+                           <strong>{{x.name }} {{x.modifier.length > 0 ? '*':''}} </strong>
+                        </div>
+                        <small class="font-monospace">&#64;{{x.price | number}}</small>
+                     </td>
+
+                     <td class="text-end font-monospace">
+                        x {{x.total | number}}
+                     </td>
+
+                     <td class="text-end font-monospace">{{(x.totalAmount < 0 ? 0 : x.totalAmount )| number}}</td>
+                     <td>
+                        <a [routerLink]="['/menu/modifier']" class="btn btn-success btn-lg"
+                           [queryParams]="{id:id, menuId : x.menuId, price : x.price, sendOrder : x.sendOrder }"><i
+                              class="bi bi-box-arrow-up-right"></i></a>
+                     </td>
+                  </tr>
+
+                  @if(showModifier && x.modifier.length > 0){
+                  <tr *ngFor="let a of x.modifier; let i = index">
+                     <td></td>
+                     <td>
+                        <div class="lh-1"> {{ a.descl}} </div>
+                        <small class="font-monospace">&#64;{{x.price | number}}</small>
+                     </td>
+                     <td class="text-center"><span class="font-monospace"> x {{ a.total}}</span></td>
+                     <td class="text-end"> <span class="font-monospace">{{a.totalAmount |number}}</span></td>
+                     <td></td>
+                  </tr>
+                  }
+
+               </tbody>
+
+               <tbody *ngFor="let x of cart; let i = index" [class]="{'tr-active':x.checkBox == 1 }">
+                  <tr [class]="{'bg-light':x.sendOrder !== ''}" (click)="fnChecked(i)  ">
+                     <td>
+                        @if(x.sendOrder == 0){
+                        <h3>
+                           <i *ngIf="x.checkBox == 0 " class="bi bi-square"></i>
+                           <i *ngIf="x.checkBox == 1 " class="bi bi-check-square-fill"></i>
+                        </h3>
+                        }
+                        @else {
+                        <h4> <i class="bi bi-receipt"></i> </h4>
+                        }
+                     </td>
+
+                     <td>
+                        <div class="lh-1">
+                           <strong>{{x.name }} {{x.modifier.length > 0 ? '*':''}} </strong>
+                        </div>
+                        <small class="font-monospace">&#64;{{x.price | number}}</small>
+
+
+                     </td>
+
+                     <td class="text-end font-monospace">
+                        <button type="button" class="btn  btn-light border" style="width: 60px;"
+                           [disabled]="x.sendOrder == 1" (click)="open(modalQty, x, i)">
                            x {{x.total | number}}
-                        </td>
+                        </button>
+                     </td>
 
-                        <td class="text-end font-monospace">{{(x.totalAmount < 0 ? 0 : x.totalAmount )| number}}</td>
-                     </tr>
+                     <td class="text-end font-monospace">{{(x.totalAmount < 0 ? 0 : x.totalAmount )| number}}</td>
 
-                     @if(showModifier && x.modifier.length > 0){
-                     <tr *ngFor="let a of x.modifier; let i = index">
-                        <td></td>
-                        <td>
-                           <div class="lh-1"> {{ a.descl}} </div>
-                           <small class="font-monospace">&#64;{{x.price | number}}</small>
-                        </td>
-                        <td class="text-center"><span class="font-monospace"> x {{ a.total}}</span></td>
-                        <td class="text-end"> <span class="font-monospace">{{a.totalAmount |number}}</span></td>
-                     </tr>
-                     }
+                     <td>
+                        <a [routerLink]="['/menu/modifier']" class="btn btn-success btn-lg"
+                           [queryParams]="{id:id, menuId : x.menuId, price : x.price, sendOrder : x.sendOrder }"><i
+                              class="bi bi-box-arrow-up-right"></i></a>
+                     </td>
+                  </tr>
 
-                  </tbody>
+                  @if(showModifier && x.modifier.length > 0){
+                  <tr *ngFor="let a of x.modifier; let i = index">
+                     <td></td>
+                     <td>
+                        <div class="lh-1"> {{ a.descl}} </div>
+                        <small class="font-monospace">&#64;{{x.price | number}}</small>
 
-                  <tbody *ngFor="let x of cart; let i = index" [class]="{'tr-active':x.checkBox == 1 }">
-                     <tr [class]="{'bg-light':x.sendOrder !== ''}">
-                        <td (click)="fnChecked(i)  ">
-                           @if(x.sendOrder == 0){
-                           <h3>
-                              <i *ngIf="x.checkBox == 0 " class="bi bi-square"></i>
-                              <i *ngIf="x.checkBox == 1 " class="bi bi-check-square-fill"></i>
-                           </h3>
-                           }
-                           @else {
-                           <h4> <i class="bi bi-receipt"></i> </h4>
-                           }
-                        </td>
+                     </td>
+                     <td class="text-center"><span class="font-monospace"> x {{ a.total}}</span></td>
+                     <td class="text-end"> <span class="font-monospace">{{a.totalAmount |number}}</span></td>
+                     <td></td>
+                  </tr>
+                  }
 
-                        <td [routerLink]="['/menu/modifier']"
-                           [queryParams]="{id:id, menuId : x.menuId, price : x.price, sendOrder : x.sendOrder }">
-                           <div class="lh-1">
-                              <strong>{{x.name }} {{x.modifier.length > 0 ? '*':''}} </strong>
-                           </div>
-                           <small class="font-monospace">&#64;{{x.price | number}}</small>
+               </tbody>
+
+            </table>
 
 
-                        </td>
-
-                        <td class="text-end font-monospace">
-                           <button type="button" class="btn  btn-light border" style="width: 60px;"
-                              [disabled]="x.sendOrder == 1" (click)="open(modalQty, x, i)">
-                              x {{x.total | number}}
-                           </button>
-                        </td>
-
-                        <td class="text-end font-monospace">{{(x.totalAmount < 0 ? 0 : x.totalAmount )| number}}</td>
-                     </tr>
-
-                     @if(showModifier && x.modifier.length > 0){
-                     <tr *ngFor="let a of x.modifier; let i = index">
-                        <td></td>
-                        <td>
-                           <div class="lh-1"> {{ a.descl}} </div>
-                           <small class="font-monospace">&#64;{{x.price | number}}</small>
-
-                        </td>
-                        <td class="text-center"><span class="font-monospace"> x {{ a.total}}</span></td>
-                        <td class="text-end"> <span class="font-monospace">{{a.totalAmount |number}}</span></td>
-                     </tr>
-                     }
-
-                  </tbody>
-
-               </table>
+            <div class="sticky-bottom bg-white border-top">
+               <div class="container py-3">
+                  <div class="row">
+                     <div class="col-6">
+                        <a class="btn" (click)="showModifier == false ? showModifier = true : showModifier = false">
+                           <i *ngIf="showModifier == false " class="bi bi-square"></i>
+                           <i *ngIf="showModifier == true " class="bi bi-check-square-fill"></i>
+                           Show modifier</a>
+                     </div>
+                     <div class="col-6">
+                        <h4 class="text-end font-monospace">{{totalAmount + totalAmountOrdered | number}}</h4>
+                     </div>
+                  </div>
+               </div>
 
             </div>
 
@@ -97,31 +134,72 @@
          </div>
       </div>
 
-      <div class="col-7 col-lg-8">
-         <div class="wrapper border px-3 py-5">
-            <div class="mb-3">
+      <div class="col-7 ">
+         <div class="wrapper border px-3 py-5 ">
+            <div class="">
 
-               <button type="button" class="btn btn-danger me-1 mb-1" [disabled]="!isChecked" (click)="onVoid()">VOID
+               <button type="button" [class]="cssClass" [disabled]="!isChecked" (click)="onVoid()">VOID
                   ITEM</button>
 
-               <button type="button" class="btn btn-success me-1 mb-1">APPLY ITEM DISCOUNT</button>
-               <button type="button" class="btn btn-success me-1 mb-1" [routerLink]="['/bill']"
-                  [queryParams]="{id : id}"> BILL</button>
-               <button type="button" class="btn btn-warning me-1 mb-1" (click)="payment()"> PAYMENT</button>
+               <button type="button" [class]="cssClass">APPLY ITEM DISCOUNT</button>
+               <button type="button" [class]="cssClass" [routerLink]="['/bill']" [queryParams]="{id : id}">
+                  BILL</button>
+               <button type="button" [class]="cssClass" (click)="payment()"> PAYMENT</button>
 
 
-               <button type="button" class="btn btn-success me-1 mb-1" [disabled]="items.length < 1"
-                  (click)="sendOrder();">SEND ORDER</button>
+               <button type="button" [class]="cssClass" [disabled]="items.length < 1" (click)="sendOrder();">SEND
+                  ORDER</button>
 
-               <button type="button" class="btn btn-success me-1 mb-1" (click)="exitWithoutOrder();">Exit Without
+               <button type="button" [class]="cssClass" (click)="exitWithoutOrder();">Exit Without
                   Order</button>
 
-               <button type="button" class="btn btn-light border me-1 mb-1" [routerLink]="['/tableChecker']"
-                  [queryParams]="{id:id}">Table Checker</button>
-               <button type="button" class="btn btn-light border me-1 mb-1" [routerLink]="['/kitchen']"
+               <button type="button" [class]="cssClass" [routerLink]="['/tableChecker']" [queryParams]="{id:id}">Table
+                  Checker</button>
+               <button type="button" [class]="cssClass" [routerLink]="['/kitchen']"
                   [queryParams]="{id:id}">Kitchen</button>
-               <button type="button" class="btn btn-light border me-1 mb-1" [routerLink]="['/transaction/detail']"
+               <button type="button" [class]="cssClass" [routerLink]="['/transaction/detail']"
                   [queryParams]="{id:id}">Transaction Detail</button>
+
+            </div>
+
+            <div class="row g-1">
+               <div class="col d-grid">
+                  <button type="button" [class]="cssMenu">ITEM NAME</button>
+               </div>
+               <div class="col d-grid">
+                  <button type="button" [class]="cssMenu">ITEM NAME</button>
+               </div>
+               <div class="col d-grid">
+                  <button type="button" [class]="cssMenu">ITEM NAME</button>
+               </div>
+               <div class="col d-grid">
+                  <button type="button" [class]="cssMenu">ITEM NAME</button>
+               </div>
+               <div class="col d-grid">
+                  <button type="button" [class]="cssMenu">ITEM NAME</button>
+               </div>
+
+               <div class="col-12">
+                 
+               </div>
+               <div class="col d-grid">
+                  <a type="button" [class]="cssMenu">
+                     <div class="mb-1">BUNCIS GRG TLR ASIN</div>
+                     <small>Rp 204.102,-</small>
+                  </a>
+               </div>
+               <div class="col d-grid">
+                  <button type="button" [class]="cssMenu">ITEM NAME</button>
+               </div>
+               <div class="col d-grid">
+                  <button type="button" [class]="cssMenu">ITEM NAME</button>
+               </div>
+               <div class="col d-grid">
+                  <button type="button" [class]="cssMenu">ITEM NAME</button>
+               </div>
+               <div class="col d-grid">
+                  <button type="button" [class]="cssMenu">ITEM NAME</button>
+               </div>
 
             </div>
 
@@ -133,7 +211,7 @@
                      <ol>
                         <li *ngFor="let a of x.menu" [class]="{'text-decoration-line-through':a.qty<1}">
                            <a href="javascript:;" (click)="addToCart(a)">{{a.name}}</a><br>
-                           <small>Tax {{a.taxRate}}%, SC {{a.scRate}}%</small>, 
+                           <small>Tax {{a.taxRate}}%, SC {{a.scRate}}%</small>,
                            <small>Qty : {{a.qty}}</small>
                         </li>
                      </ol>
@@ -167,29 +245,8 @@
    </div>
 </div>
 
-<div class="wrapper-fix-bottom border-top shadow-sm bg-white">
-   <div class="p-2">
-      <div class="row">
-         <div class="col-5 col-lg-4">
-            <div class="row">
-               <div class="col-6">
-                  <a class="btn" (click)="showModifier == false ? showModifier = true : showModifier = false">
-                     <i *ngIf="showModifier == false " class="bi bi-square"></i>
-                     <i *ngIf="showModifier == true " class="bi bi-check-square-fill"></i>
-                     Show modifier</a>
-               </div>
-               <div class="col-6">
-                  <h4 class="text-end font-monospace">{{totalAmount + totalAmountOrdered | number}}</h4>
-               </div>
-            </div>
 
-         </div>
-         <div class="col-7 col-lg-8">
-            <a href="javascript:;" (click)="reload()"> Developer Reload</a>
-         </div>
-      </div>
-   </div>
-</div>
+
 
 <ng-template #modalQty let-modal>
    <div class="modal-header">

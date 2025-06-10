@@ -45,7 +45,7 @@ export class ConfigService {
   }
 
   getDailyCheck() {
-    const id = localStorage.getItem(this.dailyCheck);
+    const id = localStorage.getItem(this.dailyCheck) ?? '';
 
     return id;
   }

@@ -25,6 +25,25 @@ exports.getAllData = async (req, res) => {
     }
 };
 
+exports.getDailyStart = async (req, res) => {
+    const id = req.query.id;
+    try {
+        const [formattedRows] = await db.query(`
+            SELECT * FROM daily_check
+            WHERE  id = '${id}' and presence = 1 and closed = 0
+        `);
+        res.json({
+            error: false,
+            item: formattedRows[0],
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+    }
+};
+
+
 exports.getData = async (req, res) => {
 
     try {

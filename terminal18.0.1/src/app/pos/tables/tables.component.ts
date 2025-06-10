@@ -8,6 +8,7 @@ import { NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { KeyNumberComponent } from "../../keypad/key-number/key-number.component";
 import { DailyCloseComponent } from '../daily/daily-close/daily-close.component';
+import { HeaderMenuComponent } from "../../header/header-menu/header-menu.component";
 export class Actor {
   constructor(
     public outletTableMapId: number,
@@ -19,7 +20,7 @@ export class Actor {
 @Component({
   selector: 'app-tables',
   standalone: true,
-  imports: [HttpClientModule, CommonModule, FormsModule, NgbDropdownModule, RouterModule, KeyNumberComponent],
+  imports: [HttpClientModule, CommonModule, FormsModule, NgbDropdownModule, RouterModule, KeyNumberComponent, HeaderMenuComponent],
   templateUrl: './tables.component.html',
   styleUrl: './tables.component.css'
 })
@@ -35,8 +36,9 @@ export class TablesComponent implements OnInit {
   outletSelect: any = [];
   api: string = environment.api;
   model = new Actor(0, 1, 0);
-  activeView: string = 'map';
+  activeView: string = localStorage.getItem("pos3.view") ?? 'map';
   getConfigJson: any = [];
+  dataHeader: any = {};
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
@@ -49,11 +51,14 @@ export class TablesComponent implements OnInit {
 
   ngOnInit() {
     this.getConfigJson = this.configService.getConfigJson();
+
     console.log(this.getConfigJson);
     this.modalService.dismissAll();
     this.httpOutlet();
     this.httpGet();
+    this.httpHeader();
   }
+
 
   handleData(data: string) {
 
@@ -187,7 +192,48 @@ export class TablesComponent implements OnInit {
   }
 
   dailyClose() {
-    this.modalService.open(DailyCloseComponent, {size:'sm'});
+    let checking = 0;
 
+    for (let i = 0; i < this.items.length; i++) {
+      checking += this.items[i]['checking'];
+      if (checking > 0) {
+        i = this.items.length * 2;
+      }
+    }
+    if (checking > 0) {
+      alert("please close all tables!")
+    } else {
+      this.modalService.open(DailyCloseComponent, { size: 'sm' });
+
+    }
+
+
+  }
+
+  httpHeader() {
+    let id = this.configService.getDailyCheck();
+    const url = environment.api + "daily/getDailyStart";
+    this.http.get<any>(url, {
+      headers: this.configService.headers(),
+      params: {
+        id: id,
+      }
+    }).subscribe(
+      data => {
+        this.loading = false;
+        console.log(data);
+        this.dataHeader = data['item'];
+      },
+      error => {
+        console.log(error);
+      }
+    )
+  }
+
+
+  selectActiveView(activeView : string){
+    this.activeView = activeView;
+
+    localStorage.setItem("pos3.view",activeView);
   }
 }

@@ -1,0 +1,39 @@
+<div class="top-header bg-white">
+
+    <div class="header mb-3 border-bottom shadow-sm">
+        <nav class="p-1">
+            <div class="container-fluid">
+                <div class="row g-1">
+                    <div class="col-2">
+                        <a class="navbar-brand" href="#">
+                            <img src="./img/logo.png" height="30">
+                        </a>
+                    </div>
+                    <div class="col-8 text-center"> 
+                        <div class="header-text"> 
+                            <span class="me-1 py-1 px-3 bg-light border"> 
+                                 <i class="bi bi-clock"></i>  {{ currentTime | date: 'medium' }}  
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-2 text-end">
+
+                        <button type="button" class="btn btn-success" (click)="openEnd(content)"> Menu</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+</div>
+
+
+<ng-template #content let-offcanvas>
+	<div class="offcanvas-header">
+		<strong class="offcanvas-title">Menu</strong>
+		<button type="button" class="btn-close" aria-label="Close" (click)="offcanvas.dismiss('Cross click')"></button>
+	</div>
+	<div class="offcanvas-body">
+		Soon
+	</div>
+</ng-template>

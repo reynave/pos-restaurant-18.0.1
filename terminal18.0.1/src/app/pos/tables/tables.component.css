@@ -1,6 +1,6 @@
 .table-map{
     position: relative;
-    width: var(--map-width);
+    width: 100%;
     height: var(--map-height);
    background-color: var(--bg-color-primary-1);
     overflow-y: auto;
@@ -13,6 +13,10 @@
  .table-map .floorPlan .items{
     background-color: #fff;  
     cursor: pointer; 
+}
+
+.table-sm td{
+    font-size: 0.9rem;
 }
 
  
