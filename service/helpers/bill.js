@@ -112,8 +112,7 @@ async function cart(cartId = '') {
     });
 
 
-    return {
-        error: false,
+    return { 
         cart: formattedRows,
         taxSc: taxSc,
         subTotal: subTotal,

@@ -1,31 +1,49 @@
-<div class="modal-header">
-   <strong class="modal-title">Bill</strong>
-   <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
-</div>
-<div class="modal-body">
-   <div class="row g-0">
-      <div class="col-5 col-lg-4">
-         <!-- TABLE cart -->
+<div class="container-fluid">
+   <div class="row">
+      <!-- <div class="col-6"> 
          <div class="wrapper">
             <div class="py-5">
                <app-bill-table [data]="data">Loading...</app-bill-table>
             </div>
          </div>
-      </div>
+      </div> -->
 
-      <div class="col-5 col-lg-4">
-         <div class="wrapper border px-1 py-5 ">
-            <div class="border shadow-sm px-3">
-               <pre class="font-monospace" [innerHTML]="htmlBill"></pre>
+      <div class="col-6">
+         <div class="p-3" style="min-height: 85vh; overflow-y: auto;">
+            <pre class="font-monospace" [innerHTML]="htmlBill"></pre>
+         </div>
+      </div>
+      <div class="col-6 bg-light rounded ">
+         <div class="p-3 text-end">
+            <button type="button" class="btn-close btn-lg " aria-label="Close"
+               (click)="activeModal.dismiss('Cross click')"></button>
+         </div>
+
+         <div style="min-height: 80vh;" class="align-content-center">
+
+
+
+            <div class="text-center d-grid mx-5 mb-3">
+               <button type="button" class="btn btn-lg bg-success rounded shadow-sm text-white border">PRINT
+                  BILL</button>
+            </div>
+            <div class="text-center d-grid mx-5">
+               <button type="button" class="btn btn-lg btn-outline-dark rounded shadow-sm">PAYMENT</button>
+            </div>
+
+
+
+            <div class="text-center mt-5">
+               <a target="_blank" href="{{api}}payment/cart?id=250611000080">API Variable</a>
+               <small class="mx-1">丨</small>
+
+               <a target="_blank" href="{{api}}bill/printing?id=250611000080">Template </a>
+               <div>
+                  <small  style="font-size: 0.7rem;"> Template Format using *.ejs <a href="https://ejs.co/#docs"
+                        target="_blank">Documantation</a></small>
+               </div>
             </div>
          </div>
-      </div>
-      <div class="col-2 col-lg-4">
-         <div class="tpx-1 py-5 text-center">
-            <button type="button" (click)="payment()" class="btn btn-lg btn-success">Payment</button>
-
-         </div>
-
       </div>
    </div>
 </div>

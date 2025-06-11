@@ -203,7 +203,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
   
   openComponent(id : string){
-    this.modalService.open(BillComponent, {size:'lg'});
+    this.modalService.open(BillComponent, {size:'xl'});
     	//const modalRef = this.modalService.open(BillComponent, {size:'lg'});
      // modalRef.componentInstance.id = id;
   }
