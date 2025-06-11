@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HeaderMenuComponent } from "../../header/header-menu/header-menu.component";
+import { BillComponent } from '../bill/bill.component';
 export class Actor {
   constructor(
     public newQty: number,
@@ -20,7 +21,8 @@ export class Actor {
   styleUrl: './menu.component.css'
 })
 export class MenuComponent implements OnInit, OnDestroy {
-  showModifier: boolean = false;
+
+
   loading: boolean = false;
   current: number = 0;
   checkboxAll: number = 0;
@@ -44,9 +46,20 @@ export class MenuComponent implements OnInit, OnDestroy {
   isChecked: boolean = false;
   model = new Actor(1);
 
-  cssClass : string = 'btn btn-sm p-3 bg-white me-2 mb-2 rounded shadow-sm';
-  cssMenu : string = 'btn btn-sm py-3 bg-white me-1 lh-1  rounded shadow-sm';
-  
+  cssClass: string = 'btn btn-sm p-3 bg-white me-2 mb-2 rounded shadow-sm';
+  cssMenu: string = 'btn btn-sm py-3 bg-white me-1 lh-1  rounded shadow-sm';
+
+  showHeader: boolean = true;
+
+  showApplyDiscount: boolean = false;
+  showMenu: boolean = false;
+  showModifier: boolean = false;
+
+  checkBoxAllModifier: boolean = false;
+  modifierDetail: any = [];
+  totalCard: number = 0;
+  totalCardOrder: number = 0;
+
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
@@ -57,10 +70,21 @@ export class MenuComponent implements OnInit, OnDestroy {
     private renderer: Renderer2
   ) { }
   ngOnDestroy(): void {
-     this.renderer.setStyle(document.body, 'background-color', '#fff');
+    this.renderer.setStyle(document.body, 'background-color', '#fff');
+
+  }
+  backMenu() {
+    this.showHeader = true;
+    this.showMenu = false;
+    this.showModifier = false;
+    this.showApplyDiscount = false;
 
   }
 
+  fnShowModifierDetail(index: number) {
+    this.modifierDetail = this.modifiers[index];
+
+  }
 
   ngOnInit() {
 
@@ -132,7 +156,9 @@ export class MenuComponent implements OnInit, OnDestroy {
     }).subscribe(
       data => {
         this.cart = data['items'];
+        this.totalCard = data['totalItem'];
         this.totalAmount = data['totalAmount']
+
       },
       error => {
         console.log(error);
@@ -150,6 +176,7 @@ export class MenuComponent implements OnInit, OnDestroy {
       }
     }).subscribe(
       data => {
+        this.totalCardOrder = data['totalItem'];
         this.cartOrdered = data['items'];
         this.totalAmountOrdered = data['totalAmount'];
       },
@@ -174,9 +201,18 @@ export class MenuComponent implements OnInit, OnDestroy {
     this.item = x;
     this.modalService.open(content);
   }
+  
+  openComponent(id : string){
+    this.modalService.open(BillComponent, {size:'lg'});
+    	//const modalRef = this.modalService.open(BillComponent, {size:'lg'});
+     // modalRef.componentInstance.id = id;
+  }
 
+  back() {
+    history.back();
+  }
   addToCart(menu: any) {
-    if (menu.qty > 0) { 
+    if (menu.qty > 0) {
       const body = {
         id: this.activeRouter.snapshot.queryParams['id'],
         menu: menu,
@@ -216,23 +252,39 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
   fnChecked(index: number) {
-    if (this.cart[index]['sendOrder'] == 0) {
-      this.cart[index].checkBox == 0 ? this.cart[index].checkBox = 1 : this.cart[index].checkBox = 0;
 
-      let isVoid = 0;
-      for (let i = 0; i < this.cart.length; i++) {
-        if (this.cart[i]['checkBox'] == 1) {
-          isVoid++;
-          i = this.cart.length + 10;
-        }
-      }
-      if (isVoid == 0) {
-        this.isChecked = false;
-      } else {
-        this.isChecked = true;
+    this.cart[index].checkBox == 0 ? this.cart[index].checkBox = 1 : this.cart[index].checkBox = 0;
+
+    let isVoid = 0;
+    for (let i = 0; i < this.cart.length; i++) {
+      if (this.cart[i]['checkBox'] == 1) {
+        isVoid++;
+        i = this.cart.length + 10;
       }
     }
+    if (isVoid == 0) {
+      this.isChecked = false;
+    } else {
+      this.isChecked = true;
+    }
+  }
 
+  fnCheckedOrdered(index: number) {
+
+    this.cartOrdered[index].checkBox == 0 ? this.cartOrdered[index].checkBox = 1 : this.cartOrdered[index].checkBox = 0;
+
+    let isVoid = 0;
+    for (let i = 0; i < this.cartOrdered.length; i++) {
+      if (this.cartOrdered[i]['checkBox'] == 1) {
+        isVoid++;
+        i = this.cartOrdered.length + 10;
+      }
+    }
+    if (isVoid == 0) {
+      this.isChecked = false;
+    } else {
+      this.isChecked = true;
+    }
   }
 
   onVoid() {
@@ -298,6 +350,8 @@ export class MenuComponent implements OnInit, OnDestroy {
       this.loading = true;
       const body = {
         cart: this.cart,
+        cartOrdered: this.cartOrdered,
+
         cartId: this.id,
         discountGroup: a,
       }
@@ -375,4 +429,5 @@ export class MenuComponent implements OnInit, OnDestroy {
     )
   }
 
+  
 }

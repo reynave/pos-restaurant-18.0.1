@@ -7,11 +7,12 @@ import { FormsModule } from '@angular/forms';
 import { NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { NgxCurrencyDirective } from "ngx-currency";
+import { HeaderMenuComponent } from "../../header/header-menu/header-menu.component";
  
 @Component({
   selector: 'app-transaction-detail',
   standalone: true,
-   imports: [HttpClientModule, CommonModule, FormsModule, NgbDropdownModule, RouterModule, NgxCurrencyDirective ],
+   imports: [HttpClientModule, CommonModule, FormsModule, NgbDropdownModule, RouterModule, NgxCurrencyDirective, HeaderMenuComponent],
  
   templateUrl: './transaction-detail.component.html',
   styleUrl: './transaction-detail.component.css'
@@ -33,6 +34,7 @@ export class TransactionDetailComponent implements  OnInit {
 
 
   ngOnInit() {
+    
     this.id = this.activeRouter.snapshot.queryParams['id'],
     this.modalService.dismissAll();
  

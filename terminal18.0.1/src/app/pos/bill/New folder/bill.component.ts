@@ -1,10 +1,10 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ConfigService } from '../../service/config.service';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { environment } from '../../../environments/environment.development';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NgbActiveModal, NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { BillTableComponent } from "./bill-table/bill-table.component";
  
@@ -35,7 +35,6 @@ export class BillComponent implements OnInit {
   data :any = [];
   closePaymentAmount: number = 1;
   unpaid : number = 0;
-  activeModal = inject(NgbActiveModal);
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
@@ -45,8 +44,10 @@ export class BillComponent implements OnInit {
   ) { }
 
 
-  ngOnInit() { 
- 
+  ngOnInit() {
+    //this.id = this.activeRouter.snapshot.queryParams['id'];
+
+    this.modalService.dismissAll();
     this.httpCart();
     this.httpBill();
 

@@ -4,31 +4,37 @@
          <!-- TABLE cart -->
          <div class="wrapper border bg-white">
 
-            <div class="py-2 px-3 border-bottom">
-               <div class="row ">
-                  <div class="col-6">
-                     <strong>Order</strong>
-                  </div>
-                  <div class="col-6 text-end">
-                     <strong><span class="badge text-bg-secondary">4</span></strong>
-                  </div>
-               </div>
-            </div>
+            <div *ngIf="cartOrdered.length+cart.length < 1 " class="text-center py-3">No Order</div>
+
             <table class="table table-hover ">
+               <tbody class="sticky-top">
+                  <tr>
+                     <td colspan="4"><strong>ORDER</strong></td>
+                     <td>
+                        <h6 class="text-center"> <span class="badge text-bg-secondary">{{totalCard +
+                              totalCardOrder}}</span></h6>
+                     </td>
+                  </tr>
+               </tbody>
                <tbody *ngFor="let x of cartOrdered; let i = index" [class]="{'tr-active':x.checkBox == 1 }">
-                  <tr [class]="{'bg-light':x.sendOrder !== ''}">
-                     <td (click)="fnChecked(i)  ">
-                        <h4> <i class="bi bi-fork-knife"></i> </h4>
+                  <tr [class]="{'bg-light':x.sendOrder !== ''}" (click)="fnCheckedOrdered(i)">
+                     <td>
+                        <h3>
+                           <i *ngIf="x.checkBox == 0 " class="bi bi-square"></i>
+                           <i *ngIf="x.checkBox == 1 " class="bi bi-check-square-fill"></i>
+                        </h3>
                      </td>
 
                      <td>
                         <div class="lh-1">
-                           <strong>{{x.name }} {{x.modifier.length > 0 ? '*':''}} </strong>
+                           <strong> <span><i class="bi bi-fork-knife"></i></span> {{x.name }} {{x.modifier.length > 0 ?
+                              '*':''}} </strong>
                         </div>
-                        <small class="font-monospace">&#64;{{x.price | number}}</small>
+                        <small class="font-monospace">&#64;{{x.price | number}} <span class="badge text-bg-secondary">SO
+                              {{x.sendOrder}}</span></small>
                      </td>
 
-                     <td class="text-end font-monospace">
+                     <td class="font-monospace text-center">
                         x {{x.total | number}}
                      </td>
 
@@ -40,7 +46,7 @@
                      </td>
                   </tr>
 
-                  @if(showModifier && x.modifier.length > 0){
+                  @if(checkBoxAllModifier && x.modifier.length > 0){
                   <tr *ngFor="let a of x.modifier; let i = index">
                      <td></td>
                      <td>
@@ -58,16 +64,12 @@
                <tbody *ngFor="let x of cart; let i = index" [class]="{'tr-active':x.checkBox == 1 }">
                   <tr [class]="{'bg-light':x.sendOrder !== ''}" (click)="fnChecked(i)  ">
                      <td>
-                        @if(x.sendOrder == 0){
+
                         <h3>
                            <i *ngIf="x.checkBox == 0 " class="bi bi-square"></i>
                            <i *ngIf="x.checkBox == 1 " class="bi bi-check-square-fill"></i>
                         </h3>
-                        }
-                        @else {
-                        <h4> <i class="bi bi-receipt"></i> </h4>
-                        }
-                     </td>
+
 
                      <td>
                         <div class="lh-1">
@@ -94,7 +96,7 @@
                      </td>
                   </tr>
 
-                  @if(showModifier && x.modifier.length > 0){
+                  @if(checkBoxAllModifier && x.modifier.length > 0){
                   <tr *ngFor="let a of x.modifier; let i = index">
                      <td></td>
                      <td>
@@ -113,14 +115,15 @@
             </table>
 
 
-            <div class="sticky-bottom bg-white border-top">
-               <div class="container py-3">
+            <div class="sticky-bottom bg-white">
+               <div class="container py-2">
                   <div class="row">
                      <div class="col-6">
-                        <a class="btn" (click)="showModifier == false ? showModifier = true : showModifier = false">
-                           <i *ngIf="showModifier == false " class="bi bi-square"></i>
-                           <i *ngIf="showModifier == true " class="bi bi-check-square-fill"></i>
-                           Show modifier</a>
+                        <a class="btn btn-outline-dark"
+                           (click)="checkBoxAllModifier == false ? checkBoxAllModifier = true : checkBoxAllModifier = false">
+                           <i *ngIf="checkBoxAllModifier == false " class="bi bi-square"></i>
+                           <i *ngIf="checkBoxAllModifier == true " class="bi bi-check-square-fill"></i>
+                           Show Modifier</a>
                      </div>
                      <div class="col-6">
                         <h4 class="text-end font-monospace">{{totalAmount + totalAmountOrdered | number}}</h4>
@@ -135,110 +138,109 @@
       </div>
 
       <div class="col-7 ">
-         <div class="wrapper border px-3 py-5 ">
-            <div class="">
 
-               <button type="button" [class]="cssClass" [disabled]="!isChecked" (click)="onVoid()">VOID
-                  ITEM</button>
+         <div class="wrapper  px-2  ">
+            <div class="sticky-top mb-3">
+               <div class=" shadow-sm bg-white rounded p-2">
+                  <div class="row ">
+                     <div class="col-3 align-content-center">
+                        @if(showHeader == false){
+                        <button type="button" class="btn border" (click)="backMenu()"> <i class="bi bi-arrow-left"></i>
+                           BACK</button>
+                        }
+                        @else {
+                        <button type="button" class="btn border" (click)="back()"><i class="bi bi-arrow-left"></i>
+                           BACK</button>
+                        }
 
-               <button type="button" [class]="cssClass">APPLY ITEM DISCOUNT</button>
-               <button type="button" [class]="cssClass" [routerLink]="['/bill']" [queryParams]="{id : id}">
-                  BILL</button>
-               <button type="button" [class]="cssClass" (click)="payment()"> PAYMENT</button>
-
-
-               <button type="button" [class]="cssClass" [disabled]="items.length < 1" (click)="sendOrder();">SEND
-                  ORDER</button>
-
-               <button type="button" [class]="cssClass" (click)="exitWithoutOrder();">Exit Without
-                  Order</button>
-
-               <button type="button" [class]="cssClass" [routerLink]="['/tableChecker']" [queryParams]="{id:id}">Table
-                  Checker</button>
-               <button type="button" [class]="cssClass" [routerLink]="['/kitchen']"
-                  [queryParams]="{id:id}">Kitchen</button>
-               <button type="button" [class]="cssClass" [routerLink]="['/transaction/detail']"
-                  [queryParams]="{id:id}">Transaction Detail</button>
-
+                     </div>
+                     <div class="col-9 text-end">
+                        <button type="button" class="btn   btn-outline-dark me-1" [routerLink]="['/transaction/detail']"
+                           [queryParams]="{id:id}"><i class="bi bi-list-check"></i> Transaction Detail</button>
+                        <button type="button" class="btn   btn-outline-dark" (click)="open(modalPrinting,[],0)"><i
+                              class="bi bi-printer"></i> Print</button>
+                     </div>
+                  </div>
+               </div>
             </div>
+            @if(showHeader == true){
+            <div>
+               <button type="button" [class]="cssClass" [disabled]="!isChecked" (click)="onVoid()">
+                  <i class="bi bi-x-lg"></i> VOID ITEM</button>
 
-            <div class="row g-1">
-               <div class="col d-grid">
-                  <button type="button" [class]="cssMenu">ITEM NAME</button>
-               </div>
-               <div class="col d-grid">
-                  <button type="button" [class]="cssMenu">ITEM NAME</button>
-               </div>
-               <div class="col d-grid">
-                  <button type="button" [class]="cssMenu">ITEM NAME</button>
-               </div>
-               <div class="col d-grid">
-                  <button type="button" [class]="cssMenu">ITEM NAME</button>
-               </div>
-               <div class="col d-grid">
-                  <button type="button" [class]="cssMenu">ITEM NAME</button>
-               </div>
+               <button type="button" [class]="cssClass" (click)="openComponent(id)"> 
+                  <i class="bi bi-receipt-cutoff"></i> BILL MODAL</button>
 
-               <div class="col-12">
-                 
-               </div>
-               <div class="col d-grid">
-                  <a type="button" [class]="cssMenu">
-                     <div class="mb-1">BUNCIS GRG TLR ASIN</div>
-                     <small>Rp 204.102,-</small>
+               <button type="button" [class]="cssClass" [routerLink]="['/bill']" [queryParams]="{id : id}">
+                  <i class="bi bi-receipt-cutoff"></i> BILL</button>
+               <button type="button" [class]="cssClass" (click)="payment()"><i class="bi bi-credit-card"></i>
+                  PAYMENT</button>
+               <button type="button" [class]="cssClass" [disabled]="items.length < 1" (click)="sendOrder();">
+                  <i class="bi bi-fork-knife"></i> SEND ORDER</button>
+               <button type="button" [class]="cssClass" (click)="exitWithoutOrder();"><i class="bi bi-trash"></i> CANCEL
+                  ORDER</button>
+            </div>
+            }
+
+            <div>
+
+               @if(showHeader == true){
+               <button type="button" [class]="cssClass" (click)="showMenu = true; showHeader= false"><i
+                     class="bi bi-cup-straw"></i> MENU</button>
+               <button type="button" [class]="cssClass" (click)="showModifier = true;  showHeader= false"><i
+                     class="bi bi-pencil"></i> MODIFIER</button>
+               <button type="button" [class]="cssClass" (click)="showApplyDiscount =true; showHeader= false"><i
+                     class="bi bi-percent"></i> APPLY
+                  ITEM DISCOUNT</button>
+               }
+
+               @if(showHeader == false){
+               <h4>
+                  <span *ngIf="showMenu">MENU</span>
+                  <span *ngIf="showModifier">MODIFIER</span>
+                  <span *ngIf="showApplyDiscount">APPLY ITEM DISCOUNT</span>
+               </h4>
+               }
+            </div>
+            @if(showMenu == true){
+            <div class="row g-1 mb-3" *ngFor="let x of items">
+               <div><strong>{{x.desc1}}</strong></div>
+               <div class="col-3 mb-1 d-grid" *ngFor="let a of x.menu">
+                  <a type="button" [class]="cssMenu" (click)="addToCart(a)">
+                     <div class="mb-1">{{a.name}}</div>
+                     <small>{{a.price | number}}</small>
                   </a>
                </div>
-               <div class="col d-grid">
-                  <button type="button" [class]="cssMenu">ITEM NAME</button>
-               </div>
-               <div class="col d-grid">
-                  <button type="button" [class]="cssMenu">ITEM NAME</button>
-               </div>
-               <div class="col d-grid">
-                  <button type="button" [class]="cssMenu">ITEM NAME</button>
-               </div>
-               <div class="col d-grid">
-                  <button type="button" [class]="cssMenu">ITEM NAME</button>
-               </div>
-
             </div>
+            }
 
-            <div class="row border">
-               <div class="col-4">
-                  <small>Add Menu Item</small>
-                  <div *ngFor="let x of items">
-                     <div><strong>{{x.desc1}}</strong></div>
-                     <ol>
-                        <li *ngFor="let a of x.menu" [class]="{'text-decoration-line-through':a.qty<1}">
-                           <a href="javascript:;" (click)="addToCart(a)">{{a.name}}</a><br>
-                           <small>Tax {{a.taxRate}}%, SC {{a.scRate}}%</small>,
-                           <small>Qty : {{a.qty}}</small>
-                        </li>
-                     </ol>
-                  </div>
-               </div>
-               <div class="col-4">
-                  <small>Add Memo</small>
-                  <div *ngFor="let x of modifiers">
-                     <div><strong>{{x.name}}</strong></div>
-                     <ol>
-                        <li *ngFor="let a of x.detail"><a href="javascript:;" (click)="addToItemModifier(a)">
-                              {{a.descl}} (Rp{{a.price | number}})</a>
-                        </li>
-                     </ol>
-                  </div>
-               </div>
-
-               <div class="col-4">
-                  <small>Add Discount Group</small>
-                  <div><strong>Discount Group</strong></div>
-                  <div *ngFor="let a of discountGroup">
-                     <a href="javascript:;" (click)="addDiscountGroup(a)">{{a.name}}</a>
-                  </div>
+            @if(showModifier == true){
+            <div class="row g-1 mb-3">
+               <div class="col-3 mb-1 d-grid" *ngFor="let x of modifiers; let i = index">
+                  <button type="button" [class]="cssMenu" [disabled]=" x.id == modifierDetail['id'] ? true : false "
+                     (click)="fnShowModifierDetail(i)">
+                     <div class="mb-1"> {{x.name}}</div>
+                  </button>
                </div>
             </div>
 
+            <div class="row g-1 mb-3">
+               <h4>{{modifierDetail['name']}}</h4>
+               <div class="col-3 mb-1 d-grid" *ngFor="let a of modifierDetail['detail']">
+                  <a type="button" [class]="cssMenu" (click)="addToItemModifier(a)">
+                     <div class="mb-1"> {{a.descs}}</div>
+                  </a>
+               </div>
+            </div>
+            }
 
+            @if(showApplyDiscount == true){
+            <div class="row g-1 mb-3">
+               <div class="col-3 mb-1 d-grid" *ngFor="let a of discountGroup">
+                  <a href="javascript:;" [class]="cssMenu" (click)="addDiscountGroup(a)">{{a.name}}</a>
+               </div>
+            </div>
+            }
 
          </div>
       </div>
@@ -301,6 +303,28 @@
                [disabled]="!actorForm.form.valid">OK</button>
          </div>
       </form>
+   </div>
+
+</ng-template>
+
+
+<ng-template #modalPrinting let-modal>
+   <div class="modal-header">
+      <strong class="modal-title">Print</strong>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+   </div>
+   <div class="modal-body">
+      <div class="row">
+         <div class="col">
+            <button type="button" [class]="cssClass" [routerLink]="['/tableChecker']" [queryParams]="{id:id}"><i
+                  class="bi bi-printer"></i> Table
+               Checker</button>
+         </div>
+         <div class="col">
+            <button type="button" [class]="cssClass" [routerLink]="['/kitchen']"
+               [queryParams]="{id:id}">Kitchen</button>
+         </div>
+      </div>
    </div>
 
 </ng-template>

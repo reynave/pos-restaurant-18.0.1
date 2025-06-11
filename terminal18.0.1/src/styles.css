@@ -127,3 +127,7 @@ small{
 }
 
  
+button:disabled,
+button[disabled]{
+  border: none; 
+}
