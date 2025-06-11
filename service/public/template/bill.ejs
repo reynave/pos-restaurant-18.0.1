@@ -1,4 +1,4 @@
 Template belum sempurna, 
 lokasi file ada di public/template/bill.ejs
-<% for (let i = 0; i < items.length; i++) { %> 
-<%= items[i].name %> - <%= formatCurrency(items[i].price) %><% } %>
+<% for (let i = 0; i < data.cart.length; i++) { %> 
+<%= data.cart[i].name %> - <%= formatCurrency(data.cart[i].price) %><% } %>
