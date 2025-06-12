@@ -1,6 +1,6 @@
 <div class="container-fluid ">
    <div class="row g-0">
-      <div class="col-5 ">
+      <div class="col-5">
          <!-- TABLE cart -->
          <div class="wrapper border bg-white">
 
@@ -137,7 +137,7 @@
          </div>
       </div>
 
-      <div class="col-7 ">
+      <div class="col-7"> 
 
          <div class="wrapper  px-2  ">
             <div class="sticky-top mb-3">
@@ -169,10 +169,7 @@
                   <i class="bi bi-x-lg"></i> VOID ITEM</button>
 
                <button type="button" [class]="cssClass" (click)="openComponent(id)"> 
-                  <i class="bi bi-receipt-cutoff"></i> BILL MODAL</button>
-
-               <button type="button" [class]="cssClass" [routerLink]="['/bill']" [queryParams]="{id : id}">
-                  <i class="bi bi-receipt-cutoff"></i> BILL</button>
+                  <i class="bi bi-receipt-cutoff"></i> BILL</button> 
                <button type="button" [class]="cssClass" (click)="payment()"><i class="bi bi-credit-card"></i>
                   PAYMENT</button>
                <button type="button" [class]="cssClass" [disabled]="items.length < 1" (click)="sendOrder();">
@@ -195,11 +192,11 @@
                }
 
                @if(showHeader == false){
-               <h4>
+               <!-- <h4>
                   <span *ngIf="showMenu">MENU</span>
                   <span *ngIf="showModifier">MODIFIER</span>
                   <span *ngIf="showApplyDiscount">APPLY ITEM DISCOUNT</span>
-               </h4>
+               </h4> -->
                }
             </div>
             @if(showMenu == true){
@@ -225,7 +222,7 @@
             </div>
 
             <div class="row g-1 mb-3">
-               <h4>{{modifierDetail['name']}}</h4>
+               <h6 class="text-center">{{modifierDetail['name']}}</h6>
                <div class="col-3 mb-1 d-grid" *ngFor="let a of modifierDetail['detail']">
                   <a type="button" [class]="cssMenu" (click)="addToItemModifier(a)">
                      <div class="mb-1"> {{a.descs}}</div>
@@ -243,6 +240,7 @@
             }
 
          </div>
+
       </div>
    </div>
 </div>

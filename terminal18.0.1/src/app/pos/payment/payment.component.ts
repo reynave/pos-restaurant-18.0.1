@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { ConfigService } from '../../service/config.service';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { environment } from '../../../environments/environment.development';
@@ -20,7 +20,8 @@ export class Actor {
   templateUrl: './payment.component.html',
   styleUrl: './payment.component.css'
 })
-export class PaymentComponent implements OnInit {
+export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('myDiv') myDiv!: ElementRef;
   @ViewChild('myModal', { static: true }) myModal: any;
   loading: boolean = false;
   items: any = [{
@@ -42,22 +43,45 @@ export class PaymentComponent implements OnInit {
   grandTotal: number = 0;
   closePaymentAmount: number = 1;
   unpaid: number = 0;
+
+  cssClass: string = 'btn btn-sm p-3 bg-warning me-2 mb-2 rounded shadow-sm';
+  cssMenu: string = 'btn btn-sm py-3 bg-white me-1 lh-1  rounded shadow-sm';
+
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
     public modalService: NgbModal,
     private router: Router,
-    private activeRouter: ActivatedRoute
+    private activeRouter: ActivatedRoute,
+    private renderer: Renderer2
   ) { }
+
+  ngOnDestroy(): void {
+    this.renderer.setStyle(document.body, 'background-color', '#fff');
+
+  }
+  ngAfterViewInit(): void {
+    console.log("test")
+    try {
+      this.myDiv.nativeElement.scrollTop = this.myDiv.nativeElement.scrollHeight;
+    } catch (err) {
+      console.log(err)
+    }
+  }
 
 
   ngOnInit() {
+    this.renderer.setStyle(document.body, 'background-color', 'var(--bg-color-primary-1)');
+
     this.id = this.activeRouter.snapshot.queryParams['id'],
-    this.modalService.dismissAll();
+      this.modalService.dismissAll();
     this.httpCart();
     this.httpPaymentType();
     this.httpPaid();
 
+  }
+  back() {
+    history.back();
   }
 
   httpPaid() {
@@ -85,7 +109,7 @@ export class PaymentComponent implements OnInit {
       headers: this.configService.headers(),
       params: {
         id: this.activeRouter.snapshot.queryParams['id'],
-        dailyCheckId : this.configService.getDailyCheck() ?? ''
+        dailyCheckId: this.configService.getDailyCheck() ?? ''
       }
     }).subscribe(
       data => {
@@ -228,5 +252,23 @@ export class PaymentComponent implements OnInit {
         this.router.navigate(['tables']);
       },
     );
+  }
+
+
+  updateRow(x: any) {
+    console.log(x); 
+    const body = {
+      item : x
+    }
+    this.http.post<any>(environment.api + "payment/updateRow", body, {
+      headers: this.configService.headers(),
+    }).subscribe(
+      data => {
+        console.log(data); 
+      },
+      error => {
+        console.log(error);
+      }
+    )
   }
 }

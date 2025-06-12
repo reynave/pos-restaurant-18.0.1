@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Renderer2 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { ConfigService } from '../service/config.service';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { KeyNumberComponent } from "../keypad/key-number/key-number.component";
 
 export class Actor {
   constructor(
@@ -17,7 +18,7 @@ export class Actor {
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [HttpClientModule, CommonModule, FormsModule, RouterModule],
+  imports: [HttpClientModule, CommonModule, FormsModule, RouterModule, KeyNumberComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
@@ -33,14 +34,18 @@ export class LoginComponent implements OnInit {
     private config: ConfigService,
     private router: Router,
     private http: HttpClient,
+    private renderer: Renderer2
   ) { }
 
+  ngOnDestroy(): void {
+    this.renderer.setStyle(document.body, 'background-color', '#fff');
 
+  }
   ngOnInit(): void {
-
+    this.renderer.setStyle(document.body, 'background-color', 'var(--bg-color-primary-1)');
     this.httpGet();
-   
-    if ( this.config.getConfigJson() !== null) {
+
+    if (this.config.getConfigJson() !== null) {
       this.router.navigate(['tables']);
     }
   }
@@ -65,7 +70,7 @@ export class LoginComponent implements OnInit {
   onSubmit() {
     this.error = '';
     const getIndexById = this.outletSelect.findIndex((obj: { id: any; }) => obj.id === parseInt(this.model.outletId));
-    
+
     const url = environment.api + "login/signin";
     const body = {
       username: this.employeeSelect[this.model.username]['id'],
@@ -115,9 +120,19 @@ export class LoginComponent implements OnInit {
         console.log(error);
         this.error = error['error']['message'];
       }
-    )
+    ) 
+  }
 
+  
+  handleData(data: string) {
+    console.log(data);
 
-
+    if (data == 'b') {
+       this.model.password = this.model.password.slice(0, -1);
+      console.log(data)
+    } else {
+       this.model.password = this.model.password  + data;
+    }
+     
   }
 }

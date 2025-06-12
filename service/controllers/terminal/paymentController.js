@@ -236,7 +236,42 @@ exports.deletePayment = async (req, res) => {
     connection.release(); // kembalikan koneksi ke pool
   }
 };
+exports.updateRow = async (req, res) => {
+  const connection = await db.getConnection();
+  const item = req.body['item']; 
 
+  const results = [];
+  try {
+    await connection.beginTransaction();
+    const q = `UPDATE cart_payment
+      SET
+        tips = ${item['tips']}, 
+        paid = ${item['paid']}, 
+        updateDate = '${today()}'
+    WHERE  id = ${item['id']} and submit = 0 `;
+    const [result] = await db.query(q);
+    console.log(q)
+
+    if (result.affectedRows === 0) {
+      results.push({  status: 'not found' });
+    } else {
+      results.push({  status: 'cart_payment updated' });
+    }
+    await connection.commit();
+    res.status(201).json({
+      error: false,
+      message: 'cart_payment updated',
+
+    });
+
+  } catch (err) {
+    await connection.rollback(); // rollback jika ada error
+    console.error('Transaction failed:', err); 
+    res.status(500).json({ error: 'Database error' });
+  }finally {
+    connection.release(); // kembalikan koneksi ke pool
+  }
+};
 exports.submit = async (req, res) => {
 
   const cartId = req.body['id'];

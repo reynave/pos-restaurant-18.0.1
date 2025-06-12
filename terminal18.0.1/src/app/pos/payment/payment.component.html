@@ -1,58 +1,86 @@
-<div class="">
+<div class="container-fluid ">
    <div class="row g-0">
-      <div class="col-5 col-lg-4">
-         <!-- TABLE cart -->
-         <div class="wrapper">
-            <div class="py-5">
+      <div class="col-4">
+         <div class="wrapper ">
+            <div class="m-3 bg-light p-3 shadow-sm border rounded" #myDiv>
                <app-bill-table [data]="data">Loading...</app-bill-table>
             </div>
+
          </div>
       </div>
 
-      <div class="col-5 col-lg-6">
-         <div class="wrapper border px-1 py-5 ">
-            <table class="table table-bordered table-hover">
-               <thead>
-                  <tr>
-                     <th></th>
-                     <th>Payment</th>
-                     <th>Amount</th>
-                     <th>Tips</th>
-                     <th></th>
-                  </tr>
-               </thead>
-               <tbody>
-                  <tr *ngFor="let x of paid">
-                     <td>
-                        @if(x.submit == 1){
-                        <h4><i class="bi bi-check-lg"></i></h4>
-                        }
-                     </td>
-                     <td> {{x.name}} </td>
-                     <td>
-                        <input type="text" class="form-control" currencyMask [(ngModel)]="x.paid" [disabled]="x.submit==1"
-                           [currencyMask]="{ prefix: '', thousands: ',',  min: 0, precision  : 0, allowNegative  :  false}">
-                     </td>
-                     <td>
-                        <input type="text" class="form-control" currencyMask [(ngModel)]="x.tips"  [disabled]="x.submit==1"
-                           [currencyMask]="{ prefix: '', thousands: ',',  min: 0, precision  : 0, allowNegative  :  false}">
-                     </td>
-                     <td>
-                        <button type="button" class="btn text-danger" (click)="deletePaid(x)"><i  class="bi bi-trash3-fill"></i></button>
-                     </td>
-                  </tr>
-               </tbody>
+      <div class="col-6 ">
+         <div class="wrapper   px-2  ">
+            <div class="sticky-top mb-3">
+               <div class=" shadow-sm bg-white rounded p-2">
+                  <div class="row ">
+                     <div class="col-3 align-content-center">
 
-            </table>
+                        <button type="button" (click)="back()" class="btn border"><i class="bi bi-arrow-left"></i>
+                           BACK</button>
+                     </div>
+                     <div class="col-9 text-end">
 
-            <button class="btn btn-primary" (click)="addPaid()">SUBMIT</button>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <div class="border bg-white p-1 rounded shadow-sm">
+               <table class="table table-sm">
+                  <thead>
+                     <tr>
+
+                        <th>Payment</th>
+                        <th class="text-end">Amount</th>
+                        <th class="text-end">Tips</th>
+                        <th class="text-center">Paid</th>
+                        <th class="text-center"><i class="bi bi-trash3-fill"></i></th>
+                     </tr>
+                  </thead>
+                  <tbody>
+                     <tr *ngFor="let x of paid">
+
+                        <td width="200">
+                           <div class="form-control border-0">
+                              {{x.name}}
+                           </div>
+                        </td>
+                        <td>
+                           <input type="text" class="form-control" currencyMask [(ngModel)]="x.paid"
+                              [disabled]="x.submit==1" (blur)="updateRow(x)"
+                              [currencyMask]="{ prefix: '', thousands: ',',  min: 0, precision  : 0, allowNegative  :  false}">
+                        </td>
+                        <td>
+                           <input type="text" class="form-control" currencyMask [(ngModel)]="x.tips"
+                              [disabled]="x.submit==1" (blur)="updateRow(x)"
+                              [currencyMask]="{ prefix: '', thousands: ',',  min: 0, precision  : 0, allowNegative  :  false}">
+                        </td>
+                        <td>
+                           @if(x.submit == 1){
+                           <h4 class="text-center"><i class="bi bi-check-lg"></i></h4>
+                           }
+                        </td>
+                        <td>
+                           <button type="button" class="btn text-danger" (click)="deletePaid(x)">
+                              <i class="bi bi-trash3-fill"></i>
+                           </button>
+                        </td>
+                     </tr>
+                  </tbody>
+
+               </table>
+            </div>
+            <div class="d-grid sticky-bottom mt-3">
+               <button class="btn btn-success btn-lg rounded shadow-sm" (click)="addPaid()">SUBMIT</button>
+
+            </div>
 
          </div>
       </div>
       <div class="col-2  ">
-         <div class="wrapper px-2 py-5 text-center">
+         <div class="wrapper px-1   text-center">
             <div *ngFor="let x of paymentType; let i = index" class="d-grid">
-               <button type="button" class="btn btn-warning mb-1" (click)="addPayment(x);">{{x.name}}</button>
+               <button type="button" [class]="cssClass" (click)="addPayment(x);">{{x.name}}</button>
             </div>
          </div>
 
@@ -60,46 +88,30 @@
    </div>
 </div>
 
-<div class="wrapper-fix-bottom border-top shadow-sm bg-white">
-   <div class="p-2">
-      <div class="row">
-         <div class="col-5 col-lg-4">
-            <div class="row">
-               <div class="col-6">
-                  <strong>{{unpaid < 0 ? 'CHANGE' :'UNPAID'}}</strong>
-               </div>
-               <div class="col-6 text-end ">
-                  <strong class="font-monospace">{{unpaid | number}}</strong>
-               </div>
-            </div>
-
-         </div>
-         <div class="col-7 col-lg-8">
-            <a href="javascript:;" (click)="reload()"> Developer Reload</a> |
-            <a href="javascript:;" (click)="openModal()">openModal</a>
-         </div>
-      </div>
-   </div>
-</div>
 
 
 <ng-template #myModal let-modal>
    <div class="modal-header">
-      <h4 class="modal-title">Payment</h4>
+      <strong class="modal-title">Close Payment</strong>
       <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
    </div>
    <div class="modal-body">
       <div class="row">
-         <div class="col-2">
-            <h1> <i class="bi bi-exclamation-circle-fill"></i></h1>
-         </div>
-         <div class="col-10">
+        
+         <div class="col-12 text-center">
             <h4>Payment Finish</h4>
             <h4> CHANGE : {{data['change'] | number}} </h4>
          </div>
       </div>
    </div>
-   <div class="modal-footer">
-      <button type="button" class="btn btn-outline-dark" (click)="modal.close('OK click')">OK</button>
+   <div class="p-3"> 
+      <div class="d-grid mb-3"> 
+         <button type="button" class="btn btn-lg btn-outline-dark py-3" (click)="modal.close('OK click')"><i class="bi bi-check2"></i> Finish</button> 
+      </div> 
+  
+      <div class="d-grid"> 
+         <button type="button" class="btn btn-lg btn-success py-3" (click)="modal.close('OK click')"><i class="bi bi-printer"></i> Finish And Print Closed Bill</button>  
+      </div> 
+ 
    </div>
 </ng-template>

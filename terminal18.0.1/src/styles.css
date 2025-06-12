@@ -34,6 +34,10 @@ label {
     max-width: var(--wrapper-sm-width);
     margin: 0 auto;
 }
+.wrapper-md {
+    max-width: var(--wrapper-md-width);
+    margin: 0 auto;
+}
 
 .wrapper {
     height: 100vh;

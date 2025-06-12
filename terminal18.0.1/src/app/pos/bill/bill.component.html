@@ -28,16 +28,17 @@
                   BILL</button>
             </div>
             <div class="text-center d-grid mx-5">
-               <button type="button" class="btn btn-lg btn-outline-dark rounded shadow-sm">PAYMENT</button>
+               <button type="button" class="btn btn-lg btn-outline-dark rounded shadow-sm" (click)="payment()">PAYMENT</button>
             </div>
 
 
 
             <div class="text-center mt-5">
-               <a target="_blank" href="{{api}}payment/cart?id=250611000080">API Variable</a>
+            
+               <a target="_blank" href="{{api}}bill/printing?id={{id}}&api=true">API Variable</a>
                <small class="mx-1">丨</small>
 
-               <a target="_blank" href="{{api}}bill/printing?id=250611000080">Template </a>
+               <a target="_blank" href="{{api}}bill/printing?id={{id}}">Template </a>
                <div>
                   <small  style="font-size: 0.7rem;"> Template format using *.ejs <a href="https://ejs.co/#docs"
                         target="_blank">Documantation</a> <br> path : public/template/bill.ejs</small>

@@ -19,5 +19,16 @@ function formatDateOnly(dateInput) {
   const day = String(date.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
 }
+function formatDateTime(dateInput) {
+  const date = new Date(dateInput);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
 
-module.exports = { today, formatDateOnly };
+  const hh = String(date.getHours()).padStart(2, '0');
+  const mm = String(date.getMinutes()).padStart(2, '0');
+  const ss = String(date.getSeconds()).padStart(2, '0');
+
+  return `${year}-${month}-${day} ${hh}:${mm}:${ss}`;
+}
+module.exports = { today, formatDateOnly, formatDateTime };

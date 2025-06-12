@@ -1,113 +1,111 @@
-<div class="header bg-primary text-white">
-
-   <div class="container-fluid">
-      <div class="row">
-         <div class="col-5">
-            menu / login / table info
-         </div>
-
-      </div>
-   </div>
-</div>
-
-<div class="container-fluid">
+<div class="container-fluid ">
    <div class="row g-0">
+
       <div class="col-5">
          <!-- TABLE cart -->
+         <div class="wrapper border bg-white">
+            <table class="table table-hover ">
+               <tbody class="sticky-top">
+                  <tr>
+                     <td colspan="5"><strong>MENU MODIFIER</strong></td>
 
-         <table class="table table-sm table-hover">
-            <tbody>
-               <tr  (click)="fnChecked(i)" *ngFor="let x of cart; let i = index"
-                  [class]="{'tr-active':x.checkBox == 1, 'bg-light':x.sendOrder == 1 }"
-                  [hidden]="x.menuTaxScId != 0 && hideTaxSc != 0">
-                  <td [class]="{'border-top':x.no != 0}">
-                  
-                     <div *ngIf="x.sendOrder == '' && (x.menuTaxScId == 0    )">
-                        <i *ngIf="x.checkBox == 0 " class="bi bi-square"></i>
-                        <i *ngIf="x.checkBox == 1 " class="bi bi-check-square-fill"></i>
-                     </div>
-                     <div *ngIf="x.sendOrder == 1">
-                        <i class="bi bi-receipt"></i>
-                     </div>
-                  </td>
-                  <td [class]="{'border-top':x.no != 0}"> {{x.no != 0 ? x.no : '+'}} </td>
-                  <td [class]="{'border-top':x.no != 0}"> {{x.name}}  {{x.priceIncluded == 0 ? '' : '('+(x.priceIncluded | number)+')'}}</td>
+                  </tr>
+               </tbody>
+               <tbody>
+                  <tr (click)="fnChecked(i)" *ngFor="let x of cart; let i = index"
+                     [class]="{'tr-active':x.checkBox == 1, 'bg-light':x.sendOrder == 1 }"
+                     [hidden]="x.menuTaxScId != 0 && hideTaxSc != 0">
+                     <td>
+
+                        <div *ngIf="x.sendOrder == '' && (x.menuTaxScId == 0    )">
+                           <i *ngIf="x.checkBox == 0 " class="bi bi-square"></i>
+                           <i *ngIf="x.checkBox == 1 " class="bi bi-check-square-fill"></i>
+                        </div>
+                        <div *ngIf="x.sendOrder == 1">
+                           <i class="bi bi-receipt"></i>
+                        </div>
+                     </td>
+               
+                     <td> {{x.no != 0 ? x.no : ''}} </td>
+                     <td> {{x.no != 0 ? '': '+'}} {{x.name}} {{x.priceIncluded == 0 ? '' : '('+(x.priceIncluded |
+                        number)+')'}}</td>
+
+                     <td class="text-end"><span class="badge text-bg-secondary">{{x.sendOrder}}</span></td>
+                     <td class="text-end font-monospace">
+                        {{x.price | number}}
+                     </td>
+
+                  </tr>
+
+               </tbody>
+               <tfoot>
+                  <tr>
+                     <td colspan="4" class="text-end ">
+                        TOTAL {{!hideTaxSc? "+ TAX & SC":""}}
+                     </td>
+
+                     <td class="text-end">
+                        <h4> {{(hideTaxSc ? totalAmount : grandAmount) | number}}</h4>
+                     </td>
+
+                  </tr>
+               </tfoot>
 
 
-                  <td [class]="{'border-top':x.no != 0}" class="text-end font-monospace">
-                     {{x.price | number}} 
-                  </td>
-               </tr>
-
-            </tbody>
-            <tfoot>
-               <tr>
-                  <td colspan="3" class="text-end">
-                     TOTAL {{!hideTaxSc? "+ TAX & SC":""}} 
-                  </td>
-
-                  <td   class="text-end">
-                     <h4> {{(hideTaxSc ? totalAmount : grandAmount) | number}}</h4>
-                  </td>
-               </tr>
-            </tfoot>
-
-
-         </table>
-
+            </table>
+         </div>
 
       </div>
       <div class="col-7">
-         <div class="wrapper border p-3">
-
+         <div class="wrapper  px-2  ">
+            <div class="sticky-top mb-3">
+               <div class=" shadow-sm bg-white rounded p-2">
+                  <div class="row ">
+                     <div class="col-6 align-content-center">
+                        <button type="button" class="btn border" (click)="back()"><i class="bi bi-arrow-left"></i>
+                           BACK</button>
+                     </div>
+                     <div class="col-6 text-end">
+                        <button type="button" class="btn border"
+                           (click)="hideTaxSc == 0 ? hideTaxSc = 1  : hideTaxSc = 0">
+                           <i *ngIf="hideTaxSc == 1" class="bi bi-square"></i>
+                           <i *ngIf="hideTaxSc == 0" class="bi bi-check-square-fill"></i>
+                           {{hideTaxSc == 1 ? 'Show':'Hide'}} Tax & SC</button>
+                     </div>
+                  </div>
+               </div>
+            </div>
             <div>
-               <button type="button" class="btn btn-danger me-1" [disabled]="!isChecked" (click)="onVoid()">VOID
-                  ITEM</button>
-               <button type="button" class="btn btn-danger me-1" (click)="onRemoveModifier()">REMOVE MODIFIER</button>
-               <button type="button" class="btn btn-light me-1"
-                  (click)="hideTaxSc == 0 ? hideTaxSc = 1  : hideTaxSc = 0">
-                  {{hideTaxSc == 1 ? 'Show':'Hide'}} Tax & SC</button>
-
+               <button type="button" class="btn btn-danger me-1 py-3 rounded shadow-sm  mb-2" [disabled]="!isChecked"
+                  (click)="onVoid()">
+                  <i class="bi bi-x-lg"></i> VOID ITEM</button>
+               <button type="button" class="btn btn-danger me-1  py-3 rounded shadow-sm  mb-2" (click)="onRemoveModifier()">
+                  <i class="bi bi-trash"></i> REMOVE MODIFIER</button>
+            </div>
+            
+            <div class="row g-1 mb-3"> 
+               <div class="col-3 mb-1 d-grid" *ngFor="let x of items; let i = index">
+                  <button type="button" [class]="cssMenu" [disabled]=" x.id == modifierDetail['id'] ? true : false "
+                     (click)="fnShowModifierDetail(i)">
+                     <div class="mb-1"> {{x.name}}</div>
+                  </button>
+               </div>
             </div>
 
-            <div *ngFor="let x of items">
-               <div><strong>{{x.name}}</strong></div>
-               <ol>
-                  <li *ngFor="let a of x.detail"><a href="javascript:;" (click)="addToCart(a)">
-                        {{a.descl}} (Rp{{a.price | number}})</a>
-                  </li>
-               </ol>
-            </div>
+
+             <div class="row g-1 mb-3">
+               <h6 class="text-center">{{modifierDetail['name']}}</h6>
+               <div class="col-3 mb-1 d-grid" *ngFor="let a of modifierDetail['detail']">
+                  <a type="button" [class]="cssMenu" (click)="addToCart(a)">
+                     <div class="mb-1"> {{a.descs}}</div>
+                  </a>
+               </div>
+            </div> 
+
+          
+ 
+
          </div>
       </div>
    </div>
 </div>
-
-
-<ng-template #modalQty let-modal>
-   <div class="modal-header">
-      <strong>Change New Item Quantity </strong>
-      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
-   </div>
-   <div class="modal-body">
-
-      <form (ngSubmit)="updateQty()" #actorForm="ngForm">
-         <div class="mb-3">
-            <div class="mb-1"><label for="newQty">Input New Quantity</label></div>
-
-            <input type="number" class="form-control form-control-lg" id="newQty" required [(ngModel)]="model.newQty"
-               name="newQty" #newQty="ngModel">
-            <div [hidden]="newQty.valid || newQty.pristine" class="text-danger">
-               Input New Quantity is required
-            </div>
-         </div>
-         <div class="text-center">
-            <button type="button" class="btn btn-outline-secondary mx-2" style="width: 100px;"
-               (click)="modal.close('Save click')">Cancel</button>
-            <button type="submit" class="btn btn-dark  mx-2" style="width: 100px;"
-               [disabled]="!actorForm.form.valid">OK</button>
-         </div>
-      </form>
-   </div>
-
-</ng-template>

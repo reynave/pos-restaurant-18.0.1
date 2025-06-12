@@ -1,13 +1,22 @@
-<div class="container mt-5">
-    <div class="row">
-        <div class="col-12 mb-3 text-center">
-           <strong> TERMINAL {{env.ver}}</strong>
-        </div>
-        <div class="col-12 mb-3 text-center">
-           ENV file : {{env | json}}
-        </div>
-        <div class="col-12 text-center">
-            <a href="javascript:;" [routerLink]="['/login']" class="btn btn-primary">LOG IN</a>
+<div class="wrapper-md">
+    <div class=" text-center mt-2 ">
+        <img src="./img/logo.png" width="50%">
+    </div>
+    <div class="container-fluid rounded bg-light mt-3 border p-2 shadow-lg">
+        <div class="row">
+
+            <div class="col-12 mb-2">
+                <a href="javascript:;" [routerLink]="['/login']">
+                    <img src="./img/img1.jpg" class="rounded" width="100%">
+                </a>
+            </div>
+
+            
+            <div class="col-12 text-center d-grid">
+                <a href="javascript:;" [routerLink]="['/login']" class="btn btn-lg btn-outline-dark rounded shadow">
+                    <i class="bi bi-box-arrow-in-right"></i> LOG IN</a>
+            </div>
         </div>
     </div>
+    <div class="text-center mt-3"><small>Mitralink POS ver 3.0.5</small></div>
 </div>

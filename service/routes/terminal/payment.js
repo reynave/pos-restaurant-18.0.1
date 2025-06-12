@@ -15,5 +15,6 @@ router.post('/deletePayment', payment.deletePayment);
 
 
 router.post('/addPaid', payment.addPaid);  
+router.post('/updateRow', payment.updateRow);  
 
 module.exports = router;

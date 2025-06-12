@@ -87,7 +87,7 @@ async function cart(cartId = '') {
 
     formattedRows.forEach(element => {
         subTotal += parseInt(element['price']);
-        totalItem += 1;
+        totalItem += element['total'];
         element['modifier'].forEach(element => {
             subTotal += parseInt(element['price']);
         });

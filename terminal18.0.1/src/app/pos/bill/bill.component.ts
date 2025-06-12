@@ -46,7 +46,7 @@ export class BillComponent implements OnInit {
 
 
   ngOnInit() { 
- 
+    this.id = this.activeRouter.snapshot.queryParams['id']
     this.httpCart();
     this.httpBill();
 
@@ -115,6 +115,7 @@ export class BillComponent implements OnInit {
       headers: this.configService.headers(),
     }).subscribe(
       data => {
+        this.modalService.dismissAll();
         console.log(data);
         this.router.navigate(['payment'], { queryParams: { id: this.id } });
       },

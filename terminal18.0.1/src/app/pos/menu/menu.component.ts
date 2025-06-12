@@ -65,8 +65,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     private http: HttpClient,
     public modalService: NgbModal,
     private router: Router,
-    private activeRouter: ActivatedRoute,
-
+    private activeRouter: ActivatedRoute, 
     private renderer: Renderer2
   ) { }
   ngOnDestroy(): void {
@@ -86,8 +85,7 @@ export class MenuComponent implements OnInit, OnDestroy {
 
   }
 
-  ngOnInit() {
-
+  ngOnInit() { 
 
     this.renderer.setStyle(document.body, 'background-color', 'var(--bg-color-primary-1)');
 

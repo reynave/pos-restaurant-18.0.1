@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { ConfigService } from '../../../service/config.service';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { environment } from '../../../../environments/environment.development';
@@ -18,7 +18,7 @@ export class Actor {
   templateUrl: './menu-modifier.component.html',
   styleUrl: './menu-modifier.component.css'
 })
-export class MenuModifierComponent implements OnInit {
+export class MenuModifierComponent implements OnInit, OnDestroy {
   loading: boolean = false;
   current: number = 0;
   checkboxAll: number = 0;
@@ -35,18 +35,27 @@ export class MenuModifierComponent implements OnInit {
   api: string = environment.api;
   model = new Actor(1);
   hideTaxSc: number = 1;
+
+  cssClass: string = 'btn btn-sm p-3 bg-white me-2 mb-2 rounded shadow-sm';
+  cssMenu: string = 'btn btn-sm py-3 bg-white me-1 lh-1  rounded shadow-sm';
+
+  modifierDetail: any = [];
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
     public modalService: NgbModal,
     private router: Router,
-    private activeRouter: ActivatedRoute
+    private activeRouter: ActivatedRoute,
+    private renderer: Renderer2
   ) { }
-
+  ngOnDestroy(): void {
+    this.renderer.setStyle(document.body, 'background-color', '#fff');
+  }
 
   ngOnInit() {
+    this.renderer.setStyle(document.body, 'background-color', 'var(--bg-color-primary-1)');
     this.id = this.activeRouter.snapshot.queryParams['id'],
-    this.modalService.dismissAll();
+      this.modalService.dismissAll();
     this.httpGetModifier();
     this.httpCart();
 
@@ -68,8 +77,13 @@ export class MenuModifierComponent implements OnInit {
       }
     )
   }
+  back() {
+    history.back();
+  }
+ fnShowModifierDetail(index: number) {
+    this.modifierDetail = this.items[index];
 
-
+  }
   httpCart() {
     this.loading = true;
     const url = environment.api + "menuItemPos/cartDetail";

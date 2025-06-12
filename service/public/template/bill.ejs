@@ -1,4 +1,43 @@
-Template belum sempurna, 
-lokasi file ada di public/template/bill.ejs
-<% for (let i = 0; i < data.cart.length; i++) { %> 
-<%= data.cart[i].name %> - <%= formatCurrency(data.cart[i].price) %><% } %>
+<% line = 50 %>
+<%= centerText(company.name, line) %> 
+
+<%= centerText(company.addr1+' '+company.addr2, line) %> 
+<%= centerText(company.addr3, line) %>
+<%= centerText(company.cityName, line) %>
+<%= centerText('Telp :'+company.tel, line) %> 
+
+<%= formatLine('BILL', transaction.bill, line)%>
+<%= formatLine('START DATE ', transaction.startDate, line)%>
+<%= formatLine('END DATE', transaction.endDate, line)%>
+<%= formatLine('TABLE', transaction.tableName, line)%>
+<%= formatLine('COVER ', formatCurrency(transaction.cover), line)%>
+ 
+<% data.cart.forEach(function(row){ 
+    %><%= formatLine(row.total+'X '+row.name, formatCurrency(row.price), line)
+    %><% 
+    if(row.modifier.length > 0){ 
+        %>
+<%          let i =0;
+            row.modifier.forEach(function(rec){  
+                i++;
+                if (rec.descl != '') { 
+    %><%=           formatLine('   + '+rec.descl, formatCurrency(rec.price), line)+( ( i < row.modifier.length ) ? "\n":"");
+    %><%            
+                } 
+            }); 
+    %><%
+    }
+    %>
+<% }); %>
+
+<%= formatLine(`          ${data.totalItem} TOTAL ITEM,   SUB TOTAL`, formatCurrency(data.subTotal), line)%>
+<% data.taxSc.forEach(function(row){ %><%= formatLine('                            '+row.name, formatCurrency(row.totalAmount), line)  %>
+<% }); %><%= formatLine('                        GRAND TOTAL', formatCurrency(data.grandTotal), line)  %>
+<% if(transaction.close == 1){ 
+    %>-------------------------------------------------- 
+<% data.cartPayment.forEach(function(row){ %><%= formatLine('                    '+row.name, formatCurrency(row.paid), line)  %>
+<% }); %><%= formatLine('                    CHANGE ', `(${formatCurrency(data.change)})`, line)  %>
+<%}%>
+<% 
+if(transaction.close == 1){ 
+%><%= centerText('[ CLOSED BILL ]', line) %> <% } %>
