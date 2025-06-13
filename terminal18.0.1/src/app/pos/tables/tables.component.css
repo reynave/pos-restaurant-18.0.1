@@ -19,4 +19,14 @@
     font-size: 0.9rem;
 }
 
+.table-10{
+    background-color: var(--bg-color-primary-50) !important;
+}
+
+.table-12{
+    background-color: var(--bg-color-primary-40) !important;
+}
+ .table-18{
+    background-color: var(--bg-color-primary-30) !important;
+}
  

@@ -1,5 +1,6 @@
 const db = require('../../config/db');
-const { formatDateOnly, formatDateTime } = require('../../helpers/global');
+const net = require('net');
+const { today, formatDateTime } = require('../../helpers/global');
 const { cart } = require('../../helpers/bill');
 
 const ejs = require('ejs');
@@ -77,45 +78,43 @@ exports.getData = async (req, res) => {
   }
 };
 
-
-
 exports.printing = async (req, res) => {
   const templatePath = path.join(__dirname, '../../public/template/bill.ejs');
   const api = req.query.api == 'true' ? true : false;
 
   function formatCurrency(num, symbol = '') {
-      num = parseInt(num);
-      num = num.toLocaleString('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0, });
-      return symbol + num.replace(/Rp/g, '');
+    num = parseInt(num);
+    num = num.toLocaleString('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0, });
+    return symbol + num.replace(/Rp/g, '');
+  }
+
+  function formatLine(leftText, rightText, lineLength = 50) {
+    const totalLength = leftText.length + rightText.length;
+
+    if (totalLength >= lineLength) {
+      // Jika terlalu panjang, potong teks kiri
+      const trimmedLeft = leftText.slice(0, lineLength - rightText.length - 1);
+      return trimmedLeft + ' ' + rightText;
     }
 
-    function formatLine(leftText, rightText, lineLength = 50) {
-      const totalLength = leftText.length + rightText.length;
+    const spaces = lineLength - totalLength;
+    return leftText + ' '.repeat(spaces) + rightText;
+  }
 
-      if (totalLength >= lineLength) {
-        // Jika terlalu panjang, potong teks kiri
-        const trimmedLeft = leftText.slice(0, lineLength - rightText.length - 1);
-        return trimmedLeft + ' ' + rightText;
-      }
+  function centerText(str, width = 50) {
+    if (str.length >= width) return str; // jika string lebih panjang, tidak diubah
 
-      const spaces = lineLength - totalLength;
-      return leftText + ' '.repeat(spaces) + rightText;
-    }
+    const totalSpaces = width - str.length;
+    const paddingLeft = Math.floor(totalSpaces / 2);
+    const paddingRight = totalSpaces - paddingLeft;
 
-    function centerText(str, width = 50) {
-      if (str.length >= width) return str; // jika string lebih panjang, tidak diubah
-
-      const totalSpaces = width - str.length;
-      const paddingLeft = Math.floor(totalSpaces / 2);
-      const paddingRight = totalSpaces - paddingLeft;
-
-      return ' '.repeat(paddingLeft) + str + ' '.repeat(paddingRight);
-    }
+    return ' '.repeat(paddingLeft) + str + ' '.repeat(paddingRight);
+  }
 
 
   try {
 
-    
+
 
     const cartId = req.query.id;
     const data = await cart(cartId);
@@ -152,7 +151,7 @@ exports.printing = async (req, res) => {
         function: [
           { 'formatCurrency(value, symbol=null)': `return string` },
           { 'formatLine(leftText, rightText, lineLength = 50)': `return string` },
-           { 'centerText(str, lineLength = 50)': `return string` },
+          { 'centerText(str, lineLength = 50)': `return string` },
         ]
       });
     }
@@ -174,3 +173,87 @@ exports.printing = async (req, res) => {
   }
 };
 
+
+exports.getCartCopyBill = async (req, res) => {
+
+  try {
+    const cartId = req.query.id;
+
+    const [formattedRows] = await db.query(`
+      SELECT  * FROM cart_copy_bill 
+      where cartId = '${cartId}'  order by inputDate Desc
+    `);
+
+    res.json({
+      error: false,
+      items: formattedRows,
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+};
+
+exports.copyBill = async (req, res) => {
+  const cartId = req.body['id'];
+  const results = [];
+  try {
+
+    const [result] = await db.query(
+      `INSERT INTO cart_copy_bill (
+              cartId, presence, inputDate, inputBy) 
+            VALUES ( '${cartId}', 1, '${today()}', '0' )`
+    );
+    if (result.affectedRows === 0) {
+      results.push({ status: 'not found' });
+    } else {
+      results.push({ status: 'updated' });
+    }
+
+    res.json({
+      error: false,
+      get: req.query
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+}
+
+
+exports.ipPrint = async (req, res) => {
+  const printerIp = '10.51.122.20'; // ganti dengan IP printer kamu
+  const printerPort = 9100;
+
+  const cut = "\x1B\x69"; // ESC i = cut paper (Epson-style)
+
+  const message = req.body['message']+ '\n' + cut; // bisa juga pakai ESC/POS command
+
+  const client = new net.Socket();
+  try {
+    client.connect(printerPort, printerIp, () => {
+      let note = 'Connected to printer';
+      console.log(note);
+      client.write(message); // kirim pesan ke printer
+      client.end(); // tutup koneksi setelah selesai
+      res.json({
+        note: note,
+        error: false,
+      });
+    });
+
+    client.on('error', (err) => {
+      let note = 'Printer error:' + err;
+      console.error('Printer error:', err);
+      res.json({
+        note: note,
+        error: true,
+      });
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'error' });
+  }
+}

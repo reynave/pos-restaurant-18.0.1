@@ -47,7 +47,8 @@ export class MenuComponent implements OnInit, OnDestroy {
   model = new Actor(1);
 
   cssClass: string = 'btn btn-sm p-3 bg-white me-2 mb-2 rounded shadow-sm';
-  cssMenu: string = 'btn btn-sm py-3 bg-white me-1 lh-1  rounded shadow-sm';
+  cssMenu: string = 'btn btn-sm py-3 bg-white  me-1 lh-1  rounded shadow-sm';
+  cssMenuDisable: string = 'btn btn-sm py-3 btn-light me-1 lh-1  rounded shadow-sm';
 
   showHeader: boolean = true;
 
@@ -65,7 +66,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     private http: HttpClient,
     public modalService: NgbModal,
     private router: Router,
-    private activeRouter: ActivatedRoute, 
+    private activeRouter: ActivatedRoute,
     private renderer: Renderer2
   ) { }
   ngOnDestroy(): void {
@@ -85,7 +86,7 @@ export class MenuComponent implements OnInit, OnDestroy {
 
   }
 
-  ngOnInit() { 
+  ngOnInit() {
 
     this.renderer.setStyle(document.body, 'background-color', 'var(--bg-color-primary-1)');
 
@@ -191,6 +192,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     this.httpGetModifier();
   }
   reload() {
+     this.httpMenu();
     this.httpCart();
     this.httpCartOrdered();
   }
@@ -199,11 +201,11 @@ export class MenuComponent implements OnInit, OnDestroy {
     this.item = x;
     this.modalService.open(content);
   }
-  
-  openComponent(id : string){
-    this.modalService.open(BillComponent, {size:'xl'});
-    	//const modalRef = this.modalService.open(BillComponent, {size:'lg'});
-     // modalRef.componentInstance.id = id;
+
+  openComponent(id: string) {
+    //this.modalService.open(BillComponent, {size:'xl'});
+    const modalRef = this.modalService.open(BillComponent, { size: 'lg' });
+    modalRef.componentInstance.id = id;
   }
 
   back() {
@@ -381,6 +383,7 @@ export class MenuComponent implements OnInit, OnDestroy {
       data => {
         console.log(data);
         this.reload();
+        history.back();
       },
       error => {
         console.log(error);
@@ -419,7 +422,11 @@ export class MenuComponent implements OnInit, OnDestroy {
     }).subscribe(
       data => {
         console.log(data);
-        this.router.navigate(['payment'], { queryParams: { id: this.id } });
+
+        history.back();
+        setTimeout(() => {
+          this.router.navigate(['payment'], { queryParams: { id: this.id } });
+        }, 500);
       },
       error => {
         console.log(error);
@@ -427,5 +434,5 @@ export class MenuComponent implements OnInit, OnDestroy {
     )
   }
 
-  
+
 }

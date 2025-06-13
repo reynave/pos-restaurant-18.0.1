@@ -1,52 +1,55 @@
-<div class="header ">
-   <div class="container-fluid">
-      <div class="row">
-         <div class="col-12">
-            <button type="button" (click)="back()" class="btn btn-sm btn-light border">Back</button>
-         </div>
-      </div>
-   </div>
-</div>
-
-<div class="container-fluid">
+<app-header-menu></app-header-menu>
+<div class="container-fluid body-with-header">
    <div class="row g-2">
       <div class="col-8">
-         <table class="table table-sm table-hover">
-            <thead class="sticky-top">
-               <tr>
-                  <th></th>
-                  <th>#</th>
-                  <th>Name</th>
-                  <th>Adjust Id</th>
-                  <th  class="text-end">Qty</th>
-               </tr>
-            </thead>
-            <tbody>
-               <tr *ngFor="let x of items; let i = index" (click)="fnCheck(i)"
-                  [ngClass]="{'bg-light': x.checkBox == 1}">
-                  <td>
-                     @if(x.checkBox != 0){
-                     <i class="bi bi-check-square-fill "></i>
-                     }
-                     @else{
-                     <i class="bi bi-square"></i>
-                     }
+         <div class="border shadow-sm rounded">
+            <table class="table table-sm table-hover">
+               <thead>
+                  <tr>
+                     <th (click)="checkBoxAll()">
+                        @if( isCheckAll != 0){
+                        <i class="bi bi-check-square-fill "></i>
+                        }
+                        @else{
+                        <i class="bi bi-square"></i>
+                        }
 
-                  </td>
-                  <td>{{i+1}}</td>
-                  <td>{{x.name}}</td>
-                  <td class="font-monospace">{{x.adjustItemsId}}</td>
-                  <td class="text-end">{{x.qty | number}}</td>
+                     </th>
+                     <th>#</th>
+                     <th>Name</th>
+                     <th>Adjust Id</th>
+                     <th class="text-end">Qty</th>
+                  </tr>
+               </thead>
+               <tbody>
+                  <tr *ngFor="let x of items; let i = index" (click)="fnCheck(i)"
+                     [ngClass]="{'bg-light': x.checkBox == 1}">
+                     <td>
+                        @if(x.checkBox != 0){
+                        <i class="bi bi-check-square-fill "></i>
+                        }
+                        @else{
+                        <i class="bi bi-square"></i>
+                        }
 
-               </tr>
-            </tbody>
-         </table>
+                     </td>
+                     <td>{{i+1}}</td>
+                     <td>{{x.name}}</td>
+                     <td class="font-monospace">{{x.adjustItemsId}}</td>
+                     <td class="text-end">{{x.qty | number}}</td>
+
+                  </tr>
+               </tbody>
+            </table>
+         </div>
       </div>
 
       <div class="col-4">
          <div class="d-grid sticky-top">
-            <button type="button" class="btn btn-lg btn-primary mb-2" [disabled]="this.checkTotal < 1"  (click)="open(contentAdjust)">RESET ADJUST</button>
-            <button type="button" class="btn btn-lg btn-primary mb-2" [disabled]="this.checkTotal < 1"  (click)="open(contentAddQty)">ADD QTY</button>
+            <button type="button" class="btn btn-lg btn-primary mb-2" [disabled]="this.checkTotal < 1"
+               (click)="open(contentAdjust)">RESET ADJUST</button>
+            <button type="button" class="btn btn-lg btn-primary mb-2" [disabled]="this.checkTotal < 1"
+               (click)="open(contentAddQty)">ADD QTY</button>
 
          </div>
       </div>

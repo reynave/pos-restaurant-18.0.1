@@ -15,7 +15,10 @@ exports.cart = async (req, res) => {
     const dailyCheckId = req.query.dailyCheckId;
 
     const data = await cart(cartId);
-
+    const [cartData] = await db.query(`
+       SELECT  * from cart 
+       where presence = 1 and id = '${cartId}'
+    `);
     if (data['unpaid'] == 0) {
       console.log("FINISH");
       const q = `UPDATE cart
@@ -29,11 +32,11 @@ exports.cart = async (req, res) => {
               changePayment =  ${data['change']},
               totalTips = ${data['tips']},
               totalItem  = ${data['totalItem']}
-          WHERE id = '${cartId}' `;
+          WHERE id = '${cartId}' and close = 0`;
       const [result] = await db.query(q);
 
       if (result.affectedRows === 0) {
-        results.push({ status: 'cart not found / payment was close' });
+        results.push({ status: 'cart not found / Payment closed' });
       } else {
         closePayment = 1;
         results.push({ status: 'cart close payment updated' });
@@ -59,7 +62,7 @@ exports.cart = async (req, res) => {
         const [result2] = await db.query(q);
 
         if (result2.affectedRows === 0) {
-          results.push({ status: 'cart not found / payment was close' });
+          results.push({ status: 'cart not found / Payment closed' });
         } else {
           closePayment = 1;
           results.push({ status: 'cart changePayment payment updated' });
@@ -83,7 +86,7 @@ exports.cart = async (req, res) => {
           const [result3] = await db.query(q3);
 
           if (result3.affectedRows === 0) {
-            results.push({ status: 'cart not found / payment was close' });
+            results.push({ status: 'cart not found / Payment closed' });
           } else {
             closePayment = 1;
             results.push({ status: 'cart changePayment payment updated' });
@@ -100,7 +103,7 @@ exports.cart = async (req, res) => {
         const [result3] = await db.query(q3);
 
         if (result3.affectedRows === 0) {
-          results.push({ status: 'cart not found / payment was close' });
+          results.push({ status: 'Cart not found / Payment closed' });
         } else {
           closePayment = 1;
           results.push({ status: 'cart changePayment payment updated' });
@@ -113,7 +116,8 @@ exports.cart = async (req, res) => {
       error: false,
       data: data,
       results: results,
-      closePayment: closePayment,
+      closePayment: data['unpaid']  == 0 ? 1:0,
+      cart : cartData[0],
     });
 
   } catch (err) {
@@ -230,15 +234,16 @@ exports.deletePayment = async (req, res) => {
 
   } catch (err) {
     await connection.rollback(); // rollback jika ada error
-    console.error('Transaction failed:', err); 
+    console.error('Transaction failed:', err);
     res.status(500).json({ error: 'Database error' });
-  }finally {
+  } finally {
     connection.release(); // kembalikan koneksi ke pool
   }
 };
+
 exports.updateRow = async (req, res) => {
   const connection = await db.getConnection();
-  const item = req.body['item']; 
+  const item = req.body['item'];
 
   const results = [];
   try {
@@ -253,9 +258,9 @@ exports.updateRow = async (req, res) => {
     console.log(q)
 
     if (result.affectedRows === 0) {
-      results.push({  status: 'not found' });
+      results.push({ status: 'not found' });
     } else {
-      results.push({  status: 'cart_payment updated' });
+      results.push({ status: 'cart_payment updated' });
     }
     await connection.commit();
     res.status(201).json({
@@ -266,12 +271,13 @@ exports.updateRow = async (req, res) => {
 
   } catch (err) {
     await connection.rollback(); // rollback jika ada error
-    console.error('Transaction failed:', err); 
+    console.error('Transaction failed:', err);
     res.status(500).json({ error: 'Database error' });
-  }finally {
+  } finally {
     connection.release(); // kembalikan koneksi ke pool
   }
 };
+
 exports.submit = async (req, res) => {
 
   const cartId = req.body['id'];
@@ -292,6 +298,22 @@ exports.submit = async (req, res) => {
     } else {
       results.push({ cartId, status: 'cart_item sendOrder updated', query: q, });
     }
+
+
+    const q1 = `
+        UPDATE cart SET
+          tableMapStatusId = 18, 
+          updateDate = '${today()}'
+        WHERE id = ${cartId}  `;
+    const [result23] = await db.query(q1);
+
+    if (result23.affectedRows === 0) {
+      results.push({ cartId, status: 'not found', });
+    } else {
+      results.push({ cartId, status: 'cart updated', });
+    }
+
+
 
     const q2 = `UPDATE cart_item_modifier
             SET

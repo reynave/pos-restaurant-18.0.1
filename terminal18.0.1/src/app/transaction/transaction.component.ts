@@ -6,11 +6,13 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { HeaderMenuComponent } from "../header/header-menu/header-menu.component";
+import { BillComponent } from '../pos/bill/bill.component';
 
 @Component({
   selector: 'app-transaction',
   standalone: true,
-   imports: [HttpClientModule, CommonModule, FormsModule, NgbDropdownModule, RouterModule],
+   imports: [HttpClientModule, CommonModule, FormsModule, NgbDropdownModule, RouterModule, HeaderMenuComponent],
   templateUrl: './transaction.component.html',
   styleUrl: './transaction.component.css'
 })
@@ -82,5 +84,8 @@ export class TransactionComponent implements OnInit {
     history.back();
   }
 
-
+  openComponent(id : string){ 
+      const modalRef = this.modalService.open(BillComponent, {size:'lg'});
+      modalRef.componentInstance.id = id;
+    }
 }

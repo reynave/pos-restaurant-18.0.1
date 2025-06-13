@@ -1,10 +1,7 @@
 const db = require('../../config/db');
 const { today, formatDateOnly } = require('../../helpers/global');
 const { cart } = require('../../helpers/bill');
-
-const ejs = require('ejs');
-const path = require('path');
-
+ 
 exports.getAllData = async (req, res) => {
   const outletId = req.query.outletId;
 

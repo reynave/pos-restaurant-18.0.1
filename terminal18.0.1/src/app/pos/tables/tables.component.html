@@ -50,16 +50,21 @@
                <div class="floorPlan" *ngFor="let x of items[current]['maps']">
 
 
-                  <div class="items border rounded shadow-sm " [class]="{'bg-success': (x.cover > 0 )}"
+                  <div class="items border rounded shadow-sm table-{{x.tableMapStatusId}}" 
                      [style.transform]="'translate(' + x.posX + 'px,' + x.posY + 'px)'" [style.width.px]="x.width"
                      [style.height.px]="x.height" [style.backgroundImage]="'url(' + x.icon + ')'"
                      style="background-size: cover;"
-                     (click)="(x.cover <= 0 || x.cover=='' ) ? open(modalCheckIn, x) : gotTo('/menu',{id : x.cardId} ) ">
+                     (click)="(x.cover <= 0 || x.cover=='' ) ? open(modalCheckIn, x) : gotTo(x) ">
                      <div class="text-center" style="margin: 30% auto; cursor: pointer;">
-                        {{x.tableName}}
-                     </div>
+                        {{x.tableName}} 
+
+                        <div>
+                           <span *ngIf="x.tableMapStatusId == '12' "> <i class="bi bi-fork-knife"></i></span>
+                           <span *ngIf="x.tableMapStatusId == '18' "> <i class="bi bi-receipt-cutoff"></i></span> 
+                        </div>
 
 
+                     </div> 
                   </div>
 
                </div>
@@ -73,9 +78,9 @@
                <thead class="sticky-top">
                   <tr>
                      <th>#</th>
-                     <th>Table Name</th>
+                     <th>Table Name</th> 
+                     <th>Bill</th>
                      <th class="text-center">Capacity</th>
-                     <th class="text-center">Status</th>
                      <th class="text-center">Cover</th>
                      <th></th>
                   </tr>
@@ -84,20 +89,21 @@
                   <tr *ngFor="let x of items[current]['maps']; let i = index">
                      <td>{{i+1}}</td>
                      <td>{{x.tableName}}</td>
-                     <td class="text-center">{{x.capacity}}</td>
-                     <td class="text-center">{{x.status}}</td>
+                      <td>{{x.cardId}}</td>
+                     <td class="text-center">{{x.capacity}}</td> 
                      <td class="text-center">{{x.cover > 0 ? x.cover : ''}}</td>
                      <td class="text-center">
                         <div class="d-grid">
-                           @if(x.cover <= 0 || x.cover=='' ){ <button type="button"
+                           @if(x.cover <= 0 || x.cover=='' ){ 
+                              <button type="button"
                               class="btn btn-sm border btn-light shadow-sm rounded-pill"
                               (click)="open(modalCheckIn, x)">
                               NEW ORDER</button>
-                              }
-                              @else{
-                              <a class="btn btn-sm btn-success rounded-pill" [routerLink]="['/menu']"
-                                 [queryParams]="{id : x.cardId}"> MENU</a>
-                              }
+                           }
+                           @else{
+                           <a class="btn btn-sm rounded-pill table-{{x.tableMapStatusId}}" 
+                     (click)="(x.cover <= 0 || x.cover=='' ) ? open(modalCheckIn, x) : gotTo(x) "> {{x.status}}</a>
+                           }
                         </div>
                      </td>
                   </tr>

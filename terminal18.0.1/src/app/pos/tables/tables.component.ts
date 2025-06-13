@@ -127,8 +127,17 @@ export class TablesComponent implements OnInit {
     this.modalService.open(content, { size: 'sm' });
   }
 
-  gotTo(url: string, params: any) {
-    this.router.navigate([url], { queryParams: params });
+  gotTo( x:any) {
+ 
+    if(x.tableMapStatusId == '12'){ 
+      this.router.navigate(['/menu'], { queryParams: {id:x.cardId} });
+    }
+    else if(x.tableMapStatusId == '18'){ 
+      this.router.navigate(['/payment'], { queryParams: {id:x.cardId} });
+    }else{
+        this.router.navigate(['/menu'], { queryParams: {id:x.cardId} });
+    }
+    
   }
 
   modal(content: any) {

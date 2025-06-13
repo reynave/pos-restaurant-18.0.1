@@ -5,9 +5,16 @@
             <div class="container-fluid">
                 <div class="row g-1">
                     <div class="col-2">
+                        @if(path == 'tables' || path == '' ){ 
                         <a class="navbar-brand" href="#">
                             <img src="./img/logo.png" height="30">
-                        </a>
+                        </a>  
+                        }
+                        @else {
+                        <a class=" btn btn-outline-dark" (click)="back()" >
+                          <i class="bi bi-arrow-left"></i> BACK
+                        </a> 
+                        }
                     </div>
                     <div class="col-8 text-center"> 
                         <div class="header-text"> 

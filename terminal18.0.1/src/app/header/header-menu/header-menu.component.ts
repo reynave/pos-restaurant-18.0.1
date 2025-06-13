@@ -14,12 +14,16 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
   styleUrl: './header-menu.component.css'
 })
 export class HeaderMenuComponent implements OnInit, OnDestroy {
+back() {
+ history.back();
+}
   dataHeader: any = {};
   loading: boolean = false;
 
   currentTime: Date = new Date();
   private intervalId: any;
 
+  path : any = '';
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
@@ -30,6 +34,7 @@ export class HeaderMenuComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+    this.path = this.activeRouter.snapshot.routeConfig?.path;
     this.intervalId = setInterval(() => {
       this.currentTime = new Date();
     }, 1000); // update setiap 1 detik 

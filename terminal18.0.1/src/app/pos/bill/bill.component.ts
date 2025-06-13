@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { ConfigService } from '../../service/config.service';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { environment } from '../../../environments/environment.development';
@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { NgbActiveModal, NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { BillTableComponent } from "./bill-table/bill-table.component";
- 
+
 @Component({
   selector: 'app-bill',
   standalone: true,
@@ -16,13 +16,14 @@ import { BillTableComponent } from "./bill-table/bill-table.component";
   styleUrl: './bill.component.css'
 })
 export class BillComponent implements OnInit {
+  @Input() id: any;
   loading: boolean = false;
   items: any = [{
     menu: []
   }];
   item: any = [];
   cart: any = [];
-  id: string = '';
+  //id: string = '';
   totalAmount: number = 0;
   api: string = environment.api;
   htmlBill: any = '';
@@ -32,10 +33,12 @@ export class BillComponent implements OnInit {
   totalItem: number = 0;
   bill: any = [];
   grandTotal: number = 0;
-  data :any = [];
+  data: any = [];
   closePaymentAmount: number = 1;
-  unpaid : number = 0;
+  unpaid: number = 0;
   activeModal = inject(NgbActiveModal);
+  close: number = -1;
+  cartCopyBill: any = [];
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
@@ -45,11 +48,10 @@ export class BillComponent implements OnInit {
   ) { }
 
 
-  ngOnInit() { 
-    this.id = this.activeRouter.snapshot.queryParams['id']
+  ngOnInit() {
     this.httpCart();
     this.httpBill();
-
+    this.getCartCopyBill();
   }
 
   taxSc: any = [];
@@ -61,20 +63,20 @@ export class BillComponent implements OnInit {
     this.http.get<any>(url, {
       headers: this.configService.headers(),
       params: {
-        id: this.activeRouter.snapshot.queryParams['id'],
+        id: this.id,
       }
     }).subscribe(
       data => {
-          this.data = data['data'];
+        this.data = data['data'];
         this.cart = data['data']['cart'];
-        this.taxSc = data['data']['taxSc']; 
+        this.taxSc = data['data']['taxSc'];
         this.subTotal = data['data']['subTotal'];
         this.grandTotal = data['data']['grandTotal'];
-        this.totalItem = data['data']['totalItem'];  
+        this.totalItem = data['data']['totalItem'];
         this.bill = data['data']['bill'];
         this.paided = data['data']['paided'];
         this.closePaymentAmount = data['data']['closePaymentAmount'];
-
+        this.close = data['cart']['close'];
         this.unpaid = data['data']['unpaid']
       },
       error => {
@@ -83,13 +85,30 @@ export class BillComponent implements OnInit {
     )
   }
 
+  getCartCopyBill() {
+    const url = environment.api + "bill/getCartCopyBill";
+    this.http.get<any>(url, {
+      headers: this.configService.headers(),
+      params: {
+        id: this.id,
+      }
+    }).subscribe(
+      data => {
+        console.log(data);
+        this.cartCopyBill = data['items'];
+      },
+      error => {
+        console.log(error);
+      }
+    );
+  }
   httpBill() {
     this.loading = true;
     const url = environment.api + "bill/printing";
     this.http.get(url, {
       responseType: 'text' as const,
       params: {
-        id: this.activeRouter.snapshot.queryParams['id'],
+        id: this.id,
       }
     }).subscribe(
       (data: string) => {
@@ -117,7 +136,10 @@ export class BillComponent implements OnInit {
       data => {
         this.modalService.dismissAll();
         console.log(data);
-        this.router.navigate(['payment'], { queryParams: { id: this.id } });
+        history.back();
+        setTimeout(() => {
+          this.router.navigate(['payment'], { queryParams: { id: this.id } });
+        }, 500);
       },
       error => {
         console.log(error);
@@ -125,6 +147,51 @@ export class BillComponent implements OnInit {
     )
   }
 
+  isPrinting: boolean = false;
+  printResp: string = '';
+  ipPrint() {
+    this.printResp = '';
+    this.isPrinting = true;
+    console.log('ipPrint', this.htmlBill);
+    const printerIp = '10.51.122.20';
+    const printerPort = 9100;
+    const body = {
+      message: this.htmlBill,
+      ip: printerIp,
+      port: printerPort
+    }
+    this.http.post<any>(environment.api + "bill/ipPrint", body, {
+      headers: this.configService.headers(),
+    }).subscribe(
+      data => {
+        this.isPrinting = false;
+        console.log(data);
+        this.printResp = data['note']; 
+      },
+      error => {
+        this.isPrinting = false;
+        console.log(error);
+        this.printResp = 'Server error';
+      }
+    );
+  }
+  printCopyBill() {
+    const body = {
+      id: this.id
+    }
+    this.http.post<any>(environment.api + "bill/copyBill", body, {
+      headers: this.configService.headers(),
+    }).subscribe(
+      data => {
+        this.getCartCopyBill();
+        this.ipPrint();
+        console.log(data);
+      },
+      error => {
+        console.log(error);
+      }
+    )
+  }
 
 
 }

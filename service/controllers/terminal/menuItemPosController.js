@@ -16,7 +16,7 @@ exports.getMenuItem = async (req, res) => {
 
     // Loop dengan for...of agar bisa pakai await
     for (const row of formattedRows) {
-      const [menu] = await db.query(`
+      const q = `
        
         SELECT 
           m.id, m.name, m.price${i} as 'price' , m.adjustItemsId, m.qty,
@@ -32,12 +32,21 @@ exports.getMenuItem = async (req, res) => {
               WHEN t.scStatus = 2 THEN m.price${i} - (m.price${i} / (1+ (t.scRate/100) ))
               WHEN t.scStatus = 1 THEN m.price${i}*(t.scRate/100)
               ELSE  0
-            END AS 'scAmount' 
+            END AS 'scAmount' ,
+
+             (
+    SELECT COUNT(ci.id)
+    FROM cart_item ci
+    WHERE ci.presence = 1 
+      AND ci.void = 0 
+      AND ci.adjustItemsId = m.adjustItemsId
+  ) AS usedQty
         FROM menu AS m
         LEFT JOIN menu_tax_sc AS t ON t.id = m.menuTaxScId
-        WHERE m.presence = 1 and m.menuDepartmentId = ?
-      `, [row.id]);
-
+        WHERE m.presence = 1 and m.menuDepartmentId = ${row.id}
+      `;
+      const [menu] = await db.query(q);
+      console.log(q);
       row.menu = menu; // tambahkan hasil ke properti maps
     }
 
@@ -1229,6 +1238,21 @@ exports.sendOrder = async (req, res) => {
   const { insertId } = await autoNumber('sendOrder');
   const sendOrder = insertId;
   try {
+
+    const q1 = `
+    UPDATE cart SET
+      tableMapStatusId = 12, 
+      updateDate = '${today()}'
+    WHERE id = ${cartId}  `;
+    const [result23] = await db.query(q1);
+
+    if (result23.affectedRows === 0) {
+      results.push({ cartId, status: 'not found', });
+    } else {
+      results.push({ cartId, status: 'cart_item updated', });
+    }
+
+
     const q = `
     UPDATE cart_item SET
       sendOrder = '${sendOrder}', 
