@@ -137,15 +137,16 @@
          </div>
       </div>
 
-      <div class="col-7"> 
+      <div class="col-7">
 
          <div class="wrapper  px-2  ">
             <div class="sticky-top mb-3">
                <div class=" shadow-sm bg-white rounded p-2">
                   <div class="row ">
                      <div class="col-3 align-content-center">
+                        {{menuLookUpParent | json}}
                         @if(showHeader == false){
-                        <button type="button" class="btn border" (click)="backMenu()"> <i class="bi bi-arrow-left"></i>
+                        <button type="button" class="btn border" (click)="backMenu(menuLookUpParent)"> <i class="bi bi-arrow-left"></i>
                            BACK</button>
                         }
                         @else {
@@ -167,13 +168,13 @@
             <div>
                <button type="button" [class]="cssClass" [disabled]="!isChecked" (click)="onVoid()">
                   <i class="bi bi-x-lg"></i> VOID ITEM</button>
-
-               <button type="button" [class]="cssClass" (click)="openComponent(id)"> 
-                  <i class="bi bi-receipt-cutoff"></i> BILL</button> 
-               <button type="button" [class]="cssClass" (click)="payment()"><i class="bi bi-credit-card"></i>
-                  PAYMENT</button>
                <button type="button" [class]="cssClass" [disabled]="items.length < 1" (click)="sendOrder();">
                   <i class="bi bi-fork-knife"></i> SEND ORDER</button>
+               <button type="button" [class]="cssClass" (click)="openComponent(id)">
+                  <i class="bi bi-receipt-cutoff"></i> BILL</button>
+               <button type="button" [class]="cssClass" (click)="payment()"><i class="bi bi-credit-card"></i>
+                  PAYMENT</button>
+
                <button type="button" [class]="cssClass" (click)="exitWithoutOrder();"><i class="bi bi-trash"></i> CANCEL
                   ORDER</button>
             </div>
@@ -182,8 +183,9 @@
             <div>
 
                @if(showHeader == true){
-               <button type="button" [class]="cssClass" (click)="showMenu = true; showHeader= false"><i
-                     class="bi bi-cup-straw"></i> MENU</button>
+               <button type="button" [class]="cssClass"
+                  (click)="httpMenuLookUp(0);showMenu = true; showHeader= false"><i class="bi bi-cup-straw"></i>
+                  MENU</button>
                <button type="button" [class]="cssClass" (click)="showModifier = true;  showHeader= false"><i
                      class="bi bi-pencil"></i> MODIFIER</button>
                <button type="button" [class]="cssClass" (click)="showApplyDiscount =true; showHeader= false"><i
@@ -200,11 +202,28 @@
                }
             </div>
             @if(showMenu == true){
-            <div class="row g-1 mb-3" *ngFor="let x of items">
-               <div><strong>{{x.desc1}}</strong></div>
-               <div class="col-3 mb-1 d-grid" *ngFor="let a of x.menu">
-                  <button type="button" [class]="((a.qty - a.usedQty)< 1) ? cssMenuDisable : cssMenu" 
-                  (click)="addToCart(a)" [disabled]="(a.qty - a.usedQty) < 1" >
+ 
+            <div class="row g-1 mb-3">
+               @if(menuLookUpParent.length> 0){
+               <div>Lookup Menu : <strong class="text-uppercase">{{menuLookUpParent[0]['name'] }}  </strong> </div>
+{{menuLookUpParent | json}}
+               }
+               @else {
+                  <div>Lookup Menu : <strong class="text-uppercase">MENU</strong> </div>
+               }
+
+               <div class="col-3 mb-1 d-grid" *ngFor="let x of menuLookUp; let i= index">
+                  <button type="button" [class]="cssMenu" (click)="httpMenuLookUp(x.id);">
+                     <div class="mb-1"> {{x.id}} {{x.name}}</div>
+                  </button>
+               </div>
+            </div>
+
+
+            <div class="row g-1 mb-3">
+               <div class="col-3 mb-1 d-grid" *ngFor="let a of items">
+                  <button type="button" [class]="((a.qty - a.usedQty)< 1) ? cssMenuDisable : cssMenu"
+                     (click)="addToCart(a)" [disabled]="(a.qty - a.usedQty) < 1">
                      <div class="mb-1">{{a.name}}</div>
                      <small>&#64;{{a.price | number}} / {{(a.qty - a.usedQty)}}</small>
                   </button>

@@ -8,11 +8,11 @@ async function cart(cartId = '') {
     const q = `
          SELECT t1.* , (t1.total * t1.price) as 'totalAmount', m.name , 0 as 'checkBox', '' as modifier
          FROM (
-           SELECT   c.price, c.menuId, COUNT(c.menuId) AS 'total', c.sendOrder
+           SELECT   c.price, c.menuId, COUNT(c.menuId) AS 'total' 
            FROM cart_item AS c
            JOIN menu AS m ON m.id = c.menuId
            WHERE c.cartId = '${cartId}' AND c.presence = 1 AND c.void  = 0 
-           GROUP BY  c.menuId
+           GROUP BY  c.menuId, c.price
            ORDER BY MAX(c.inputDate) ASC
          ) AS t1
          JOIN menu AS m ON m.id = t1.menuId 
@@ -156,7 +156,7 @@ async function cart_ver1(cartId = '') {
            ) AS t1
            GROUP BY t1.descl, t1.price
          `;
-        console.log(s);
+        
         const [modifier] = await db.query(s);
         row.modifier = modifier; // tambahkan hasil ke properti maps 
 

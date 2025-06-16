@@ -1,9 +1,68 @@
 const db = require('../../config/db');
-const { today, formatDateOnly } = require('../../helpers/global');
+const { today, formatDateOnly, formatDateTime } = require('../../helpers/global');
 const { autoNumber } = require('../../helpers/autoNumber');
 const { taxScUpdate } = require('../../helpers/bill');
 
 exports.getMenuItem = async (req, res) => {
+  const i = 1;
+  try {
+    const menuLookupId = req.query.menuLookupId;
+    const outletId = req.query.outletId;
+
+
+    const q = `
+       
+        SELECT 
+          m.id, m.name, m.price${i} as 'price' , m.adjustItemsId, m.qty,
+          m.menuDepartmentId, m.menuCategoryId, m.menuTaxScId,
+          t.desc, t.taxRate, t.taxNote, t.taxStatus,
+            CASE 
+              WHEN t.taxStatus = 2 THEN m.price${i} - (m.price${i} / (1+ (t.taxRate/100) ))
+              WHEN t.taxStatus = 1 THEN m.price${i}*(t.taxRate/100)
+              ELSE  0
+            END AS 'taxAmount',  
+          t.scRate, t.scNote, t.scStatus,
+            CASE 
+              WHEN t.scStatus = 2 THEN m.price${i} - (m.price${i} / (1+ (t.scRate/100) ))
+              WHEN t.scStatus = 1 THEN m.price${i}*(t.scRate/100)
+              ELSE  0
+            END AS 'scAmount' ,
+
+             (
+    SELECT COUNT(ci.id)
+    FROM cart_item ci
+    WHERE ci.presence = 1 
+      AND ci.void = 0 
+      AND ci.adjustItemsId = m.adjustItemsId
+  ) AS usedQty
+        FROM menu AS m
+        LEFT JOIN menu_tax_sc AS t ON t.id = m.menuTaxScId
+        WHERE m.presence = 1 and m.menuLookupId = ${menuLookupId} and m.menuLookupId != 0
+      `;
+    const [items] = await db.query(q);
+
+    const [discountGroup] = await db.query(`
+      SELECT t.*
+      FROM outlet_check_disc AS d
+       JOIN check_disc_type AS t ON t.id = d.checkDiscTypeId
+      WHERE d.presence = 1 and d.outletId = ${outletId}
+    `);
+
+    res.json({
+      error: false,
+      items: items,
+      discountGroup: discountGroup,
+      get: req.query
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+};
+
+
+exports.getMenuItem_Ver1 = async (req, res) => {
   const i = 1;
   try {
     const outletId = req.query.outletId;
@@ -46,7 +105,7 @@ exports.getMenuItem = async (req, res) => {
         WHERE m.presence = 1 and m.menuDepartmentId = ${row.id}
       `;
       const [menu] = await db.query(q);
-      console.log(q);
+
       row.menu = menu; // tambahkan hasil ke properti maps
     }
 
@@ -72,6 +131,7 @@ exports.getMenuItem = async (req, res) => {
   }
 };
 
+
 exports.cart = async (req, res) => {
   const i = 1;
   try {
@@ -80,15 +140,16 @@ exports.cart = async (req, res) => {
     const q = `
       SELECT t1.* , (t1.total * t1.price) as 'totalAmount', m.name , 0 as 'checkBox', '' as modifier
       FROM (
-        SELECT   c.price, c.menuId, COUNT(c.menuId) AS 'total', c.sendOrder
+        SELECT  c.price,   c.menuId, COUNT(c.menuId) AS 'total' 
         FROM cart_item AS c
         JOIN menu AS m ON m.id = c.menuId
         WHERE c.cartId = '${cartId}' AND c.presence = 1 AND c.void  = 0 AND c.sendOrder = ''
-        GROUP BY  c.menuId
+        GROUP BY  c.menuId, c.price
         ORDER BY MAX(c.inputDate) ASC
       ) AS t1
       JOIN menu AS m ON m.id = t1.menuId 
     `;
+
     const [formattedRows] = await db.query(q);
 
     let totalAmount = 0;
@@ -185,11 +246,11 @@ exports.cartOrdered = async (req, res) => {
     const q = `
       SELECT t1.* , (t1.total * t1.price) as 'totalAmount', m.name , 0 as 'checkBox', '' as modifier
       FROM (
-        SELECT   c.price, c.menuId, COUNT(c.menuId) AS 'total', c.sendOrder
+        SELECT   c.price, c.menuId, COUNT(c.menuId) AS 'total' 
         FROM cart_item AS c
         JOIN menu AS m ON m.id = c.menuId
         WHERE c.cartId = '${cartId}' AND c.presence = 1 AND c.void  = 0 AND c.sendOrder != ''
-        GROUP BY  c.menuId
+        GROUP BY  c.menuId, c.price
         ORDER BY MAX(c.inputDate) ASC
       ) AS t1
       JOIN menu AS m ON m.id = t1.menuId 
@@ -230,7 +291,7 @@ exports.cartOrdered = async (req, res) => {
         GROUP BY t1.descl, t1.price    
 ;
       `;
-      console.log(s)
+
       const [modifier] = await db.query(s);
       row.modifier = modifier; // tambahkan hasil ke properti maps 
 
@@ -274,8 +335,6 @@ exports.cartOrdered = async (req, res) => {
   }
 };
 
-
-
 exports.addToCart = async (req, res) => {
   const menu = req.body['menu'];
   const cartId = req.body['id'];
@@ -292,7 +351,7 @@ exports.addToCart = async (req, res) => {
 
     const [cek] = await db.query(c);
     if (cek.length) {
-      inputDate = cek[0]['inputDate'];
+      inputDate = formatDateTime(cek[0]['inputDate']);
     }
 
     let q =
@@ -437,7 +496,7 @@ exports.updateQty = async (req, res) => {
         LIMIT 1
         `
     );
-    inputDate = row[0]['inputDate'];
+    inputDate = formatDateTime(row[0]['inputDate']);
 
     for (let i = 0; i < model.newQty; i++) {
 
@@ -486,7 +545,7 @@ exports.updateQty = async (req, res) => {
               ${rec['scRate']}, ${rec['scStatus']} ,
               ${rec['applyDiscount']}, '${rec['sendOrder']}'
           )`;
-        console.log(j)
+
         const [result2] = await db.query(j);
 
 
@@ -552,7 +611,6 @@ exports.voidItem = async (req, res) => {
     const [result2] = await db.query(q2);
 
 
-    console.log('q2 ', result2.length)
     if (result2.length > 0) {
       for (const row of result2) {
         const q = `UPDATE cart_item_modifier
@@ -683,8 +741,8 @@ exports.addToItemModifier = async (req, res) => {
 
 exports.addDiscountGroup = async (req, res) => {
   const cart = req.body['cart'];
-   const cartOrdered = req.body['cartOrdered'];
-  
+  const cartOrdered = req.body['cartOrdered'];
+
   const discountGroup = req.body['discountGroup'];
   const cartId = req.body['cartId'];
 
@@ -768,7 +826,7 @@ exports.addDiscountGroup = async (req, res) => {
           }
 
           // const  taxScUpdateRest  = await taxScUpdate(cartItem['id'], totalAmount);
-          // console.log(taxScUpdateRest); 
+
 
           const taxScUpdateRest = await taxScUpdate(cartItem['id']);
 
@@ -854,7 +912,7 @@ exports.addDiscountGroup = async (req, res) => {
           }
 
           // const  taxScUpdateRest  = await taxScUpdate(cartItem['id'], totalAmount);
-          // console.log(taxScUpdateRest); 
+
 
           const taxScUpdateRest = await taxScUpdate(cartItem['id']);
 
@@ -881,7 +939,11 @@ exports.cartDetail = async (req, res) => {
   const cartId = req.query.id;
   const menuId = req.query.menuId;
   const price = req.query.price;
-  const sendOrder = req.query.sendOrder;
+  let sendOrder = !req.query.sendOrder ? '' : req.query.sendOrder;
+
+  if (sendOrder == 'undefined') {
+    sendOrder = '';
+  }
 
   try {
 
@@ -892,6 +954,7 @@ exports.cartDetail = async (req, res) => {
       WHERE c.cartId = '${cartId}' AND c.presence = 1 AND c.void = 0
       AND c.menuId = ${menuId} AND c.price = ${price} and c.sendOrder = '${sendOrder}'
     `;
+    console.log(q)
     const [formattedRows] = await db.query(q);
     let totalAmount = 0;
     let grandAmount = 0;
@@ -1377,6 +1440,52 @@ exports.exitWithoutOrder = async (req, res) => {
       error: false,
       results: results,
       message: 'cart_item close Order',
+    });
+
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database update error', details: err.message });
+  }
+};
+
+
+exports.menuLookUp = async (req, res) => {
+  // const { id, name, position, email } = req.body;
+  let parentId = req.query.parentId;
+
+  if (parentId == 'undefined' || !parentId) parentId = 0;
+
+  try {
+
+    const q = `
+      SELECT m.id, m.parentId, m.name, m.departmentId, p.name as 'parent'
+      FROM menu_lookup  as m
+      left join  menu_lookup as p on p.id = m.parentId
+      WHERE m.presence = 1 and m.parentId = ${parentId}
+      ORDER BY m.sorting ASC
+    `;
+
+    const [rows] = await db.query(q);
+
+
+
+    const q2 = `
+      SELECT id, parentId,  name 
+      FROM menu_lookup 
+      WHERE presence = 1 and id = ${parentId} 
+    `;
+    console.log(q2);
+    const [lookUpHeader] = await db.query(q2);
+
+
+
+    res.status(201).json({
+      error: false,
+      parent : lookUpHeader,
+    //  lookUpHeader: parentId == 0 ? 'Menu' : lookUpHeader[0]['name'],
+    //  parentId: parentId == 0 ? 0 : parseInt(lookUpHeader[0]['parentId']),
+      results: rows,
     });
 
 

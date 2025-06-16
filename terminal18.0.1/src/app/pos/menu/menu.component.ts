@@ -61,6 +61,10 @@ export class MenuComponent implements OnInit, OnDestroy {
   totalCard: number = 0;
   totalCardOrder: number = 0;
 
+  lookUpHeader: string = '';
+  menuLookUp: any = [];
+  menuLookupId: number = 0;
+  menuLookUpParent: any = [];
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
@@ -73,13 +77,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     this.renderer.setStyle(document.body, 'background-color', '#fff');
 
   }
-  backMenu() {
-    this.showHeader = true;
-    this.showMenu = false;
-    this.showModifier = false;
-    this.showApplyDiscount = false;
 
-  }
 
   fnShowModifierDetail(index: number) {
     this.modifierDetail = this.modifiers[index];
@@ -87,7 +85,6 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-
     this.renderer.setStyle(document.body, 'background-color', 'var(--bg-color-primary-1)');
 
     this.id = this.activeRouter.snapshot.queryParams['id'],
@@ -99,11 +96,45 @@ export class MenuComponent implements OnInit, OnDestroy {
       this.httpMenu();
       this.httpCart();
       this.httpCartOrdered();
-
       this.httpGetModifier();
     }
 
   }
+
+  httpMenuLookUp(id: number) {
+    this.loading = true;
+    const url = environment.api + "menuItemPos/menuLookUp";
+    this.http.get<any>(url, {
+      headers: this.configService.headers(),
+      params: {
+        parentId: id,
+      }
+    }).subscribe(
+      data => {
+        console.log(data);
+        this.menuLookUpParent = data['parent']
+        this.menuLookUp = data['results'];
+        this.menuLookupId = data['parent'][0]['id'];
+        this.httpMenu();
+      },
+      error => {
+        console.log(error);
+      }
+    )
+  }
+
+
+  backMenu(menuLookUpParent : any = []) {
+    if (menuLookUpParent.length <= 0) {
+      this.showHeader = true;
+      this.showMenu = false;
+      this.showModifier = false;
+      this.showApplyDiscount = false;
+    } else {
+      this.httpMenuLookUp(menuLookUpParent[0]['parentId']);
+    }
+  }
+
 
   httpMenu() {
     this.loading = true;
@@ -111,7 +142,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     this.http.get<any>(url, {
       headers: this.configService.headers(),
       params: {
-        departmentId: 0,
+        menuLookupId: this.menuLookupId,
         outletId: this.configService.getConfigJson()['outlet']['id']
       }
     }).subscribe(
@@ -192,7 +223,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     this.httpGetModifier();
   }
   reload() {
-     this.httpMenu();
+    this.httpMenu();
     this.httpCart();
     this.httpCartOrdered();
   }
@@ -211,6 +242,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   back() {
     history.back();
   }
+
   addToCart(menu: any) {
     if (menu.qty > 0) {
       const body = {

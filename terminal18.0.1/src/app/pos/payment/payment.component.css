@@ -1,3 +1,7 @@
 .table-sm td{
      font-size: 0.9rem;
 }
+
+.td-active td {
+     background-color: var(--bg-color-primary-40);
+}

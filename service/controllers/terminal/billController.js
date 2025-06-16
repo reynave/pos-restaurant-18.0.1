@@ -10,8 +10,7 @@ exports.getData = async (req, res) => {
 
   try {
     const cartId = req.query.id;
-
-    const [formattedRows] = await db.query(`
+    const q = `
       SELECT t1.* , (t1.total * t1.price) as 'totalAmount', m.name , 0 as 'checkBox', '' as modifier
       FROM (
         SELECT   c.price, c.menuId, COUNT(c.menuId) AS 'total', c.sendOrder
@@ -23,7 +22,8 @@ exports.getData = async (req, res) => {
         ORDER BY MAX(c.inputDate) ASC
       ) AS t1
       JOIN menu AS m ON m.id = t1.menuId
-    `);
+    `;
+    const [formattedRows] = await db.query(q);
     let totalAmount = 0;
     for (const row of formattedRows) {
 

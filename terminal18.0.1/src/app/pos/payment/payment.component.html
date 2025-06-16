@@ -28,8 +28,7 @@
             <div class="border bg-white p-1 rounded shadow-sm">
                <table class="table table-sm">
                   <thead>
-                     <tr>
-
+                     <tr> 
                         <th>Payment</th>
                         <th class="text-end">Amount</th>
                         <th class="text-end">Tips</th>
@@ -38,21 +37,20 @@
                      </tr>
                   </thead>
                   <tbody>
-                     <tr *ngFor="let x of paid">
-
+                     <tr *ngFor="let x of paid; let i = index"  [class]="(i==paymentIndex)? 'td-active':''"> 
                         <td width="200">
                            <div class="form-control border-0">
                               {{x.name}}
                            </div>
                         </td>
                         <td>
-                           <input type="text" class="form-control" currencyMask [(ngModel)]="x.paid"
-                              [disabled]="x.submit==1" (blur)="updateRow(x)"
+                           <input type="text" class="form-control c1" currencyMask [(ngModel)]="x.paid"
+                              [disabled]="x.submit==1" (blur)="updateRow(x)" (click)="paymentActive(i,'paid')"
                               [currencyMask]="{ prefix: '', thousands: ',',  min: 0, precision  : 0, allowNegative  :  false}">
                         </td>
                         <td>
-                           <input type="text" class="form-control" currencyMask [(ngModel)]="x.tips"
-                              [disabled]="x.submit==1" (blur)="updateRow(x)"
+                           <input type="text" class="form-control c1" currencyMask [(ngModel)]="x.tips"
+                              [disabled]="x.submit==1" (blur)="updateRow(x)" (click)="paymentActive(i, 'tips')"
                               [currencyMask]="{ prefix: '', thousands: ',',  min: 0, precision  : 0, allowNegative  :  false}">
                         </td>
                         <td>
@@ -70,8 +68,23 @@
 
                </table>
             </div>
-            <div class="d-grid sticky-bottom mt-3">
-               <button class="btn btn-success btn-lg rounded shadow-sm" (click)="addPaid()">SUBMIT</button>
+
+
+            <div class="d-grid sticky-bottom mt-3 bg-white p-3">
+               <div class="row g-3">
+                  <div class="col-6"> 
+                     <app-key-number (dataEmitted)="handleData($event)"></app-key-number> 
+                  </div>
+                  <div class="col-6">
+                      <div class="d-grid mb-2"> 
+                        <button class="btn btn-warning btn-lg py-4 rounded shadow-sm"  (click)="clearCurrentValue()">CE</button> 
+                     </div>
+                     <div class="d-grid"> 
+                        <button class="btn btn-success btn-lg py-4 rounded shadow-sm"  (click)="addPaid()">SUBMIT</button> 
+                     </div>
+                  </div>
+               </div>
+
 
             </div>
 
@@ -97,21 +110,23 @@
    </div>
    <div class="modal-body">
       <div class="row">
-        
+
          <div class="col-12 text-center">
             <h4>Payment Finish</h4>
             <h4> CHANGE : {{data['change'] | number}} </h4>
          </div>
       </div>
    </div>
-   <div class="p-3"> 
-      <div class="d-grid mb-3"> 
-         <button type="button" class="btn btn-lg btn-outline-dark py-3" (click)="modal.close('OK click')"><i class="bi bi-check2"></i> Finish</button> 
-      </div> 
-  
-      <div class="d-grid"> 
-         <button type="button" class="btn btn-lg btn-success py-3" (click)="modal.close('OK click')"><i class="bi bi-printer"></i> Finish And Print Closed Bill</button>  
-      </div> 
- 
+   <div class="p-3">
+      <div class="d-grid mb-3">
+         <button type="button" class="btn btn-lg btn-outline-dark py-3" (click)="modal.close('OK click')"><i
+               class="bi bi-check2"></i> Finish</button>
+      </div>
+
+      <div class="d-grid">
+         <button type="button" class="btn btn-lg btn-success py-3" (click)="modal.close('OK click')"><i
+               class="bi bi-printer"></i> Finish And Print Closed Bill</button>
+      </div>
+
    </div>
 </ng-template>
