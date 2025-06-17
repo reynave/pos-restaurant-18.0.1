@@ -3,8 +3,14 @@
   font-family: sans-serif;
   display: flex;
   align-items: center;
+  position: relative;
 }
 
+.tree-node .abs-right-pos{
+  position: absolute;
+  right: 5px;
+
+}
 .toggle-btn {
   cursor: pointer;
   margin-right: 6px;
@@ -16,4 +22,8 @@
   display: inline-block;
   width: 12px;
   margin-right: 6px;
+}
+
+.td-used{
+    opacity: 0.5;
 }

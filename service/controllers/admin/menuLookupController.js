@@ -28,7 +28,7 @@ exports.getAllData = async (req, res) => {
     // Kirim respon JSON
     res.status(200).json({
       error: false,
-      results: tree, 
+      results: tree,
     });
 
   } catch (err) {
@@ -54,11 +54,11 @@ exports.items = async (req, res) => {
     `;
     const [rows] = await db.query(q);
 
-    
+
     // Kirim respon JSON
     res.status(200).json({
       error: false,
-      items: rows, 
+      items: rows,
     });
 
   } catch (err) {
@@ -71,74 +71,9 @@ exports.items = async (req, res) => {
   }
 };
 
-
-exports.getMasterData = async (req, res) => {
-  try {
-
-    const [category] = await db.query(`
-      SELECT id, desc1
-      FROM menu_category  
-      WHERE presence = 1 order by desc1 ASC
-    `);
-
-    const [itemClass] = await db.query(`
-      SELECT id, desc1
-      FROM menu_class  
-      WHERE presence = 1 order by desc1 ASC
-    `);
-
-    const [dept] = await db.query(`
-      SELECT id, desc1
-      FROM menu_department  
-      WHERE presence = 1 order by desc1 ASC
-    `);
-
-    const data = {
-      error: false,
-      category: category,
-      class: itemClass,
-      dept: dept, 
-      get: req.query
-    }
-
-    res.json(data);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Database error' });
-  }
-};
-
-exports.postCreate = async (req, res) => {
-  const model = req.body['model'];
-  const inputDate = today();
-
-  try {
-
-    const [result] = await db.query(
-      `INSERT INTO menu (presence, inputDate, name ) 
-      VALUES (?, ?,?)`,
-      [
-        1,
-        inputDate,
-        model['desc1']
-      ]
-    );
-
-    res.status(201).json({
-      error: false,
-      inputDate: inputDate,
-      message: 'menu created',
-      menuId: result.insertId
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: true, note: 'Database insert error' });
-  }
-};
-
-exports.postUpdate = async (req, res) => {
+exports.removeLookup = async (req, res) => {
   // const { id, name, position, email } = req.body;
-  const data = req.body;
+  const data = req.body.list;
   console.log(data);
   // res.json({
   //   body: req.body, 
@@ -151,28 +86,13 @@ exports.postUpdate = async (req, res) => {
   const results = [];
 
   try {
-    for (const emp of data) {
-      const { id } = emp;
-      if (!id) {
-        results.push({ id, status: 'failed', reason: 'Missing fields' });
-        continue;
-      }
+    for (const id of data) {
+      console.log(id);
 
       const [result] = await db.query(
-        `UPDATE menu SET 
-          name = '${emp['name']}',     
-          price1 = ${emp['price1']},   
-          specialPrice1 = ${emp['specialPrice1']},  
-
-          menuDepartmentId = ${emp['menuDepartmentId']},  
-          menuCategoryId = ${emp['menuCategoryId']},  
-          menuClassId = ${emp['menuClassId']},  
-            
-          updateDate = '${today()}'
-
-        WHERE id = ${id}`,
+        'UPDATE menu SET menuLookupId = 0, updateDate = ? WHERE id = ?',
+        [today(), id]
       );
-
 
       if (result.affectedRows === 0) {
         results.push({ id, status: 'not found' });
@@ -191,13 +111,51 @@ exports.postUpdate = async (req, res) => {
   }
 };
 
-exports.postDelete = async (req, res) => {
-  // const { id, name, position, email } = req.body;
-  const data = req.body;
+exports.allItem = async (req, res) => {
+
+  try {
+
+    const [formattedRows] = await db.query(`
+          SELECT id, desc1, '' as menu
+          FROM menu_department
+          WHERE presence = 1
+        `);
+
+    for (const row of formattedRows) {
+      const q = `
+      SELECT m.id, m.name, m.menuLookupId, l.name AS 'menuLookup', 0 as 'checkBox'
+      FROM  menu  as m
+      LEFT JOIN menu_lookup AS l ON l.id =  m.menuLookupId
+      WHERE m.presence = 1  AND m.menuDepartmentId = ${row.id}
+      ORDER BY m.name ASC
+    `;
+      const [menu] = await db.query(q);
+
+
+      row.menu = menu; // tambahkan hasil ke properti maps
+    }
+
+    // Kirim respon JSON
+    res.status(200).json({
+      error: false,
+      items: formattedRows,
+    });
+
+  } catch (err) {
+    console.error('Error:', err);
+    res.status(500).json({
+      error: true,
+      message: 'Database error',
+      details: err.message,
+    });
+  }
+};
+
+exports.onSubmitLookupMenu = async (req, res) => {
+  const data = req.body.items;
+  const menuLookupId = req.body.menuLookupId;
+
   console.log(data);
-  // res.json({
-  //   body: req.body, 
-  // });
 
   if (!Array.isArray(data) || data.length === 0) {
     return res.status(400).json({ error: 'Request body should be a non-empty array' });
@@ -206,27 +164,124 @@ exports.postDelete = async (req, res) => {
   const results = [];
 
   try {
-    for (const emp of data) {
-      const { id, checkbox } = emp;
-
-      if (!id || !checkbox) {
-        results.push({ id, status: 'failed', reason: 'Missing fields' });
-        continue;
-      }
-
+    for (const id of data) {
+      console.log(id);
 
       const [result] = await db.query(
-        'UPDATE menu SET presence = ?, updateDate = ? WHERE id = ?',
-        [checkbox == 0 ? 1 : 0, today(), id]
+        'UPDATE menu SET menuLookupId = ?, updateDate = ? WHERE id = ?',
+        [menuLookupId, today(), id]
       );
-
-
 
       if (result.affectedRows === 0) {
         results.push({ id, status: 'not found' });
       } else {
         results.push({ id, status: 'updated' });
       }
+    }
+
+    res.json({
+      message: 'Batch update completed',
+      results: results
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database update error', details: err.message });
+  }
+};
+
+exports.postCreate = async (req, res) => {
+  const model = req.body.item;
+  const inputDate = today();
+
+  try {
+    const q = `
+      INSERT INTO menu_lookup (parentId, presence, inputDate, name ) 
+      VALUES ( ${ model['id']}, 1, '${inputDate}','child of ${ model['name']}')` ;
+    console.log(q)
+    const [result] = await db.query(q);
+
+    res.status(201).json({
+      error: false, 
+      message: 'menu_lookup created',
+      menuId: result.insertId
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: true, note: 'Database insert error' });
+  }
+};
+
+exports.updateLookUp = async (req, res) => {
+  // const { id, name, position, email } = req.body;
+  const data = req.body.item;
+  
+  console.log(data);
+ 
+  const results = [];
+
+  try {
+
+    const [result] = await db.query(
+      `UPDATE menu_lookup SET 
+          name = '${data['name']}',    
+          updateDate = '${today()}'
+
+        WHERE id = ${data['id']}`,
+    );
+
+
+    if (result.affectedRows === 0) {
+      results.push({   status: 'not found' });
+    } else {
+      results.push({  status: 'updated' });
+    }
+
+    res.json({
+      message: 'Batch update completed',
+      results: results
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database update error', details: err.message });
+  }
+};
+
+exports.deleteTree = async (req, res) => {
+  // const { id, name, position, email } = req.body;
+  const data = req.body.item;
+  
+  console.log(data);
+ 
+  const results = [];
+
+  try {
+
+    const [result] = await db.query(
+      `UPDATE menu_lookup SET 
+          presence = 0,    
+          updateDate = '${today()}' 
+        WHERE id = ${data['id']}`,
+    );
+
+
+    if (result.affectedRows === 0) {
+      results.push({   status: 'menu_lookup not found' });
+    } else {
+      results.push({  status: 'menu_lookup updated' });
+    }
+ 
+    const [result2] = await db.query(
+      `UPDATE menu SET 
+          menuLookupId = 0,    
+          updateDate = '${today()}' 
+        WHERE menuLookupId = ${data['id']}`,
+    );
+
+
+    if (result2.affectedRows === 0) {
+      results.push({   status: 'menu not found' });
+    } else {
+      results.push({  status: 'menu updated' });
     }
 
     res.json({

@@ -10,13 +10,8 @@
                 </div>
                 <div class="col-8 text-end">
                     @if(disabled==false){
-                    <button type="button" class="btn btn-sm btn-light border me-2" (click)="cancel()">Close</button>
-                    <button type="button" class="btn btn-sm btn-light border me-2" (click)="onUpdate();">Update</button>
-
-                    <button type="button" class="btn btn-sm btn-dark border me-2"
-                        (click)="open(content);">Create</button>
-                    <button type="button" class="btn btn-sm btn-danger border me-2"
-                        (click)="onDelete();">Delete</button>
+                    <button type="button" class="btn btn-sm btn-light border me-1">Save </button>
+                    <button type="button" class="btn btn-sm btn-light border  " (click)="cancel()">Close</button>
 
                     }
                     @else {
@@ -30,7 +25,7 @@
 
         </div>
     </div>
-    <div class="col-3">
+    <div class="col-4">
         <div *ngFor="let item of lookupItems">
             <ng-container *ngTemplateOutlet="treeTemplate; context: { $implicit: item, level: 0 }"></ng-container>
 
@@ -52,14 +47,34 @@
                 <span *ngIf="!node.children?.length" class="toggle-empty">•</span>
 
                 @if(disabled==false){
-                <a class="btn btn-sm py-0 btn-outline-dark"> <i class="bi bi-plus"></i> <small>Child</small></a>
+                <div class="row g-0 ">
+                    <div class="col-3">
+                        <a class="btn btn-sm  btn-outline-dark" (click)="postCreate(node)"> <i class="bi bi-plus"></i>
+                            <small>Child</small></a>
+                    </div>
+                    <div class="col-8">
+                        <input type="text" class="form-control form-control-sm form-control "
+                            [class]="{'border-3':menuLookupId == node.id, 'border-success':menuLookupId == node.id }"
+                            (blur)="updateLookUp(node)" [(ngModel)]="node.name">
+                    </div>
+                </div>
 
                 }
+                @else {
+                <a class="btn btn-sm py-0 " [class]="{'btn-success':menuLookupId == node.id}" (click)="menuRow(node)">
+                    {{ node.name }}</a>
+                }
 
-                <a class="btn btn-sm py-0 " (click)="menuRow(node)"> {{ node.name }}</a>
 
+                @if(disabled==false){
 
+                <div class="abs-right-pos">
+                    @if(node.children?.length <= 0){ <a class="text-danger btn btn-sm" (click)="deleteTree(node)"><i
+                            class="bi bi-trash3"></i></a>
+                        }
 
+                </div>
+                }
             </div>
 
             <div *ngIf="node.children?.length > 0 && isExpanded(node.id)">
@@ -71,65 +86,100 @@
 
         </ng-template>
 
-
     </div>
-    <div class="col-9">
-        <div>
-            <button type="button" (click)="removeLookup()">Remove</button>
+    <div class="col-8">
+        <div class="border px-3 shadow-sm bg-light">
+
+            <div class="py-2 text-end">
+                <button type="button" [disabled]="!menuLookupId " class="btn btn-sm btn-light border mx-1"
+                    (click)="open(contentItems)">Add Item</button>
+                <button type="button" [disabled]="items.length < 1 " class="btn btn-sm btn-danger mx-1"
+                    (click)="removeLookup()">Remove</button>
+            </div>
+            <table class="table table-sm border">
+                <thead>
+                    <tr>
+                        <th width="20px">#</th>
+                        <th width="30px"></th>
+                        <th>Name</th>
+                        <th>Qty</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let x of items; let i = index"
+                        (click)="x.checkBox == 0 ?  x.checkBox = 1 : x.checkBox = 0">
+                        <td>{{i+1}}.</td>
+                        <td>
+                            @if(x.checkBox == 1){
+                            <i class="bi bi-check-square-fill"></i>
+                            }
+                            @if(x.checkBox == 0){
+                            <i class="bi bi-square"></i>
+                            }
+
+                        </td>
+
+                        <td>{{x.name}}</td>
+                        <td>{{x.qty}}</td>
+
+                    </tr>
+                </tbody>
+            </table>
+
         </div>
-        <table class="table table-sm border">
-            <thead>
-                <tr>
-                    <th width="20px">#</th>
-                    <th width="30px"></th>
-                    <th>Name</th>
-                    <th>Qty</th> 
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let x of items; let i = index" (click)="x.checkBox == 0 ?  x.checkBox = 1 : x.checkBox = 0">
-                    <td>{{i+1}}.</td>
-                    <td>
-                        @if(x.checkBox == 1){
-                        <i class="bi bi-check-square-fill"></i>
-                        }
-                        @if(x.checkBox == 0){
-                        <i class="bi bi-square"></i>
-                        }
-
-                    </td>
-
-                    <td>{{x.name}}</td>
-                    <td>{{x.qty}}</td>
-
-                </tr>
-            </tbody>
-        </table>
     </div>
 </div>
 
 
-<ng-template #content let-modal>
+<ng-template #contentItems let-modal>
     <div class="modal-header">
-        <strong class="modal-title" id="modal-basic-title">New Item</strong>
+        <strong class="modal-title" id="modal-basic-title">Menu</strong>
+
+        <a class=" btn btn-sm mx-2 text-primary"
+            (click)="hideItemsUsed == false ? hideItemsUsed = true : hideItemsUsed = false">
+            {{hideItemsUsed == false ? 'Hide':'Show'}} used menu</a>
         <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
     </div>
     <div class="modal-body">
-        <form (ngSubmit)="onSubmit()" #actorForm="ngForm">
-            <div class="mb-2">
-                <label for="desc1">Description*</label>
-                <input id="desc1" class="form-control form-control-sm" name="desc1" [(ngModel)]="model.desc1" required
-                    #desc1="ngModel" />
-                <small [hidden]="desc1.valid || desc1.pristine" class="text-danger">
-                    *desc1 is required
-                </small>
-            </div>
+        <div class="row">
+            <div class="col-12">
 
+                <table class="table table-sm" *ngFor="let item of allItem; let n = index">
+                    <thead class="sticky-top">
+                        <tr>
+                            <th width="30px">#</th>
+                            <th width="30px"></th>
+                            <th>{{item.desc1}}</th>
+                            <th>Used by</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let x of item.menu; let i = index" [class]="{'td-used':x.menuLookupId != 0}"
+                            (click)="x.checkBox == 0  ? x.checkBox = 1 : x.checkBox = 0"
+                            [hidden]="hideItemsUsed && x.menuLookupId != 0">
+                            <td>{{i+1}}</td>
+                            <td>
+                                @if(x.menuLookupId == 0){
+                                @if(x.checkBox == 1){
+                                <i class="bi bi-check-square-fill"></i>
+                                }
+                                @if(x.checkBox == 0){
+                                <i class="bi bi-square"></i>
+                                }
+                                }
 
-            <div class="d-grid">
-                <button type="submit" class="btn btn-sm btn-dark" [disabled]="!actorForm.form.valid">Save</button>
+                            </td>
+                            <td>{{x.name}}</td>
+                            <td>{{x.menuLookup}}</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-        </form>
+        </div>
     </div>
-
+    <div class="sticky-bottom bg-white">
+        <div class="d-grid p-3">
+            <button type="button" class="btn btn-outline-dark" (click)="onSubmitLookupMenu()">Submit</button>
+        </div>
+    </div>
 </ng-template>

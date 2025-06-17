@@ -23,6 +23,9 @@ export class Actor {
   styleUrl: './menu-lookup.component.css'
 })
 export class MenuLookupComponent implements OnInit {
+  // Map ID => isExpanded
+  expandedMap: { [id: number]: boolean } = {};
+  menuLookupId: number = 0;
 
   loading: boolean = false;
   checkboxAll: number = 0;
@@ -33,7 +36,9 @@ export class MenuLookupComponent implements OnInit {
   selectCategory: any = [];
   selectClass: any = [];
   selectDept: any = [];
-
+  modalLoading: boolean = false;
+  allItem: any = [];
+  hideItemsUsed: boolean = false;
   model = new Actor('', 0);
   constructor(
     public configService: ConfigService,
@@ -42,29 +47,10 @@ export class MenuLookupComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // this.httpMaster();
     this.httpGet();
 
   }
-  httpMaster() {
-    this.loading = true;
-    const url = environment.api + "menu/master/";
-    this.http.get<any>(url, {
-      headers: this.configService.headers(),
-    }).subscribe(
-      data => {
-        console.log(data);
-        this.httpGet();
-        this.selectCategory = data['category'];
-        this.selectClass = data['class'];
-        this.selectDept = data['dept'];
-        this.modalService.dismissAll();
-      },
-      error => {
-        console.log(error);
-      }
-    )
-  }
+
   httpGet() {
     this.loading = true;
     const url = environment.api + "menu/menuLookup/";
@@ -84,8 +70,6 @@ export class MenuLookupComponent implements OnInit {
   }
 
 
-  // Map ID => isExpanded
-  expandedMap: { [id: number]: boolean } = {};
 
   toggleExpand(id: number) {
     this.expandedMap[id] = !this.expandedMap[id];
@@ -97,6 +81,7 @@ export class MenuLookupComponent implements OnInit {
 
   menuRow(x: any) {
     this.loading = true;
+    this.menuLookupId = x.id
     const url = environment.api + "menu/menuLookup/items";
     this.http.get<any>(url, {
       headers: this.configService.headers(),
@@ -115,122 +100,187 @@ export class MenuLookupComponent implements OnInit {
       }
     )
   }
-removeLookup() {  
-  const s: any[] = [];
 
-  this.items.forEach((el: any) => {
-      if(el.checkBox == 1){
+  removeLookup() {
+    const s: any[] = [];
+
+    this.items.forEach((el: any) => {
+      if (el.checkBox == 1) {
         s.push(el.id);
       }
-  });
-  console.log(s);
-}
+    });
 
-  checkAll() {
-    if (this.checkboxAll == 0) {
-      this.checkboxAll = 1;
-      for (let i = 0; i < this.items.length; i++) {
-        this.items[i]['checkbox'] = 1;
-      }
+    this.loading = true;
+    const url = environment.api + "menu/menuLookup/removeLookup";
+    const body = {
+      menuLookupId: this.menuLookupId,
+      list: s
     }
-    else if (this.checkboxAll == 1) {
-      this.checkboxAll = 0;
-      for (let i = 0; i < this.items.length; i++) {
-        this.items[i]['checkbox'] = 0;
+    this.http.post<any>(url, body, {
+      headers: this.configService.headers(),
+
+    }).subscribe(
+      data => {
+        this.loading = false;
+        console.log(data);
+        const tmp = {
+          id: this.menuLookupId
+        }
+        this.menuRow(tmp)
+      },
+      error => {
+        this.loading = false;
+        console.log(error);
       }
-    }
+    )
+
+    console.log(s);
   }
+
+
+
 
   cancel() {
     this.disabled = true;
     this.httpGet();
   }
 
-  onUpdate() {
-    this.loading = true;
-    this.sendInChunks(this.items, 30);
+
+  open(content: any) {
+
+    this.httpGetAllItem()
+
+    this.modalService.open(content, { size: 'lg' });
   }
 
-  onDelete() {
-    if (confirm("Delete this checklist?")) {
-      this.loading = true;
-      const url = environment.api + "menu/item/delete";
-      const body = this.items;
-      this.http.post<any>(url, body, {
-        headers: this.configService.headers(),
-      }).subscribe(
-        data => {
-          console.log(data);
-          this.httpGet();
-        },
-        error => {
-          console.log(error);
-        }
-      )
-    }
-  }
-
-  onSubmit() {
-    this.loading = true;
-    const url = environment.api + "menu/item/create";
-    const body = {
-      model: this.model,
-    };
-    this.http.post<any>(url, body, {
+  httpGetAllItem() {
+    this.modalLoading = true;
+    const url = environment.api + "menu/menuLookup/allItem";
+    this.http.get<any>(url, {
       headers: this.configService.headers(),
     }).subscribe(
       data => {
+        this.modalLoading = false;
+        this.allItem = data['items'];
         console.log(data);
-        if (data['error'] == false) {
-          this.model = new Actor('', 0);
-          this.httpGet();
-        } else {
-          alert("INSERT ERROR");
-        }
-
       },
       error => {
+        this.modalLoading = false;
         console.log(error);
       }
     )
   }
 
-  open(content: any) {
-    this.modalService.open(content);
-  }
+  onSubmitLookupMenu() {
+    const s: any[] = [];
 
+    this.allItem.forEach((el: any) => {
 
-  onHere(x: any) {
-    console.log(x);
-  }
-
-  sendInChunks(data: any[], chunkSize: number) {
-    const url = environment.api + "menu/item/update";
-    let currentIndex = 0;
-
-    const sendNextChunk = () => {
-      if (currentIndex >= data.length) {
-        console.log('✅ All data was sent successfully.');
-        this.loading = false;
-        return;
-      }
-
-      const chunk = data.slice(currentIndex, currentIndex + chunkSize);
-      this.http.post<any>(url, chunk, {
-        headers: this.configService.headers(),
-      }).subscribe({
-        next: () => {
-          console.log(`✅ Chunk send: ${currentIndex} - ${currentIndex + chunk.length - 1}`);
-          currentIndex += chunkSize;
-          sendNextChunk(); // Kirim berikutnya setelah sukses
-        },
-        error: (err) => {
-          console.error(`❌ Failed to send chunk starting index ${currentIndex}:`, err);
+      el.menu.forEach((row: any) => {
+        if (row.checkBox == 1) {
+          s.push(row.id);
         }
       });
-    };
 
-    sendNextChunk();
+    });
+
+    // for (let i = 0; i < this.allItem.length; i++) {
+    //   for (let n = 0; n < this.allItem.length; n++) {
+
+    //   }
+    // }
+
+    this.loading = true;
+    const url = environment.api + "menu/menuLookup/onSubmitLookupMenu";
+    const body = {
+      menuLookupId: this.menuLookupId,
+      items: s
+    }
+    console.log(body)
+
+    this.http.post<any>(url, body, {
+      headers: this.configService.headers(),
+    }).subscribe(
+      data => {
+        this.modalLoading = false;
+        this.httpGetAllItem();
+        const tmp = {
+          id: this.menuLookupId
+        }
+        this.menuRow(tmp);
+        this.modalService.dismissAll();
+      },
+      error => {
+        this.modalLoading = false;
+        console.log(error);
+      }
+    )
+  }
+
+
+  updateLookUp(item: any) {
+    console.log(item);
+    this.loading = true;
+    const url = environment.api + "menu/menuLookup/updateLookUp";
+    const body = {
+      item: item
+    }
+
+    this.http.post<any>(url, body, {
+      headers: this.configService.headers(),
+    }).subscribe(
+      data => {
+        this.loading = false;
+      },
+      error => {
+        this.loading = false;
+        console.log(error);
+      }
+    )
+  }
+  postCreate(item: any) {
+
+    this.loading = true;
+    const url = environment.api + "menu/menuLookup/postCreate";
+    const body = {
+      item: item
+    }
+    console.log(body);
+    this.http.post<any>(url, body, {
+      headers: this.configService.headers(),
+    }).subscribe(
+      data => {
+        this.httpGet();
+        this.loading = false;
+      },
+      error => {
+        this.loading = false;
+        console.log(error);
+      }
+    )
+  }
+
+  deleteTree(item: any) {
+    if (confirm("Delete this look up ?")) {
+      this.loading = true;
+      const url = environment.api + "menu/menuLookup/deleteTree";
+      const body = {
+        item: item
+      }
+      console.log(body);
+      this.http.post<any>(url, body, {
+        headers: this.configService.headers(),
+      }).subscribe(
+        data => {
+          this.httpGet();
+          this.loading = false;
+        },
+        error => {
+          this.loading = false;
+          console.log(error);
+        }
+      )
+    }
   }
 }
 

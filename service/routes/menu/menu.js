@@ -34,7 +34,13 @@ router.post('/item/delete', menuItem.postDelete);
 
 
 
-router.get('/menuLookup/', menuLookup.getAllData);
+router.get('/menuLookup/', menuLookup.getAllData)
+router.get('/menuLookup/allItem', menuLookup.allItem);
 router.get('/menuLookup/items', menuLookup.items);
+router.post('/menuLookup/removeLookup', menuLookup.removeLookup);
+router.post('/menuLookup/onSubmitLookupMenu', menuLookup.onSubmitLookupMenu);
+router.post('/menuLookup/updateLookUp', menuLookup.updateLookUp);
+router.post('/menuLookup/postCreate', menuLookup.postCreate);
+router.post('/menuLookup/deleteTree', menuLookup.deleteTree);
 
 module.exports = router;
