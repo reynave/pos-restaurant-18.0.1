@@ -4,6 +4,7 @@ const menuCategory = require('../../controllers/admin/menuCategoryController');
 const department = require('../../controllers/admin/menuDepartmentController');   
 const menuClass = require('../../controllers/admin/menuClassController');   
 const menuItem = require('../../controllers/admin/menuItemController');   
+const menuLookup = require('../../controllers/admin/menuLookupController');   
 
 //router.get('/', outlet.getMaster); 
 router.get('/category/', menuCategory.getAllData);
@@ -31,5 +32,9 @@ router.post('/item/create', menuItem.postCreate);
 router.post('/item/delete', menuItem.postDelete); 
   
 
+
+
+router.get('/menuLookup/', menuLookup.getAllData);
+router.get('/menuLookup/items', menuLookup.items);
 
 module.exports = router;

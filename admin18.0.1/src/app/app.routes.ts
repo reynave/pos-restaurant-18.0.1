@@ -54,6 +54,7 @@ import { MenuDeptComponent } from './module/menu/menu-dept/menu-dept.component';
 import { MenuCategoryComponent } from './module/menu/menu-category/menu-category.component';
 import { MenuClassComponent } from './module/menu/menu-class/menu-class.component';
 import { PrinterComponent } from './module/printer/printer.component';
+import { MenuLookupComponent } from './module/menu/menu-lookup/menu-lookup.component';
 
 export const routes: Routes = [
     { path: '',component: HomeComponent},
@@ -129,6 +130,7 @@ export const routes: Routes = [
     { path: 'menu/department', component: MenuDeptComponent },
     { path: 'menu/category', component: MenuCategoryComponent },
     { path: 'menu/class', component: MenuClassComponent },
+     { path: 'menu/lookUp', component: MenuLookupComponent },
     
     { path: 'printer', component: PrinterComponent },
     

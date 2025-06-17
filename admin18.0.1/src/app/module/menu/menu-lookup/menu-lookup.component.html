@@ -1,0 +1,135 @@
+<div class="row  g-2">
+    <div class="col-12">
+        <div class="header py-2">
+            <div class="row">
+                <div class="col-4">
+                    <strong>MENU ITEMS</strong>
+                    <span class="mx-1" *ngIf="loading">
+                        <img src="./gif/Pulse@1x-1.0s-200px-200px.gif" height="30">
+                    </span>
+                </div>
+                <div class="col-8 text-end">
+                    @if(disabled==false){
+                    <button type="button" class="btn btn-sm btn-light border me-2" (click)="cancel()">Close</button>
+                    <button type="button" class="btn btn-sm btn-light border me-2" (click)="onUpdate();">Update</button>
+
+                    <button type="button" class="btn btn-sm btn-dark border me-2"
+                        (click)="open(content);">Create</button>
+                    <button type="button" class="btn btn-sm btn-danger border me-2"
+                        (click)="onDelete();">Delete</button>
+
+                    }
+                    @else {
+                    <button type="button" class="btn btn-sm btn-light border me-2"
+                        (click)="disabled= false">Editable</button>
+
+                    }
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="col-3">
+        <div *ngFor="let item of lookupItems">
+            <ng-container *ngTemplateOutlet="treeTemplate; context: { $implicit: item, level: 0 }"></ng-container>
+
+        </div>
+
+        <ng-template #treeTemplate let-node let-level="level">
+            <div class="tree-node border-bottom" [style.marginLeft.px]="level * 20">
+
+                <button type="button" class="btn btn-sm py-0" *ngIf="node.children?.length > 0"
+                    (click)="toggleExpand(node.id)">
+                    @if(isExpanded(node.id)){
+                    <i class="bi bi-caret-down-fill"></i>
+                    }
+                    @else {
+                    <i class="bi bi-caret-right"></i>
+                    }
+                </button>
+
+                <span *ngIf="!node.children?.length" class="toggle-empty">•</span>
+
+                @if(disabled==false){
+                <a class="btn btn-sm py-0 btn-outline-dark"> <i class="bi bi-plus"></i> <small>Child</small></a>
+
+                }
+
+                <a class="btn btn-sm py-0 " (click)="menuRow(node)"> {{ node.name }}</a>
+
+
+
+            </div>
+
+            <div *ngIf="node.children?.length > 0 && isExpanded(node.id)">
+                <ng-container *ngFor="let child of node.children">
+                    <ng-container
+                        *ngTemplateOutlet="treeTemplate; context: { $implicit: child, level: level + 1 }"></ng-container>
+                </ng-container>
+            </div>
+
+        </ng-template>
+
+
+    </div>
+    <div class="col-9">
+        <div>
+            <button type="button" (click)="removeLookup()">Remove</button>
+        </div>
+        <table class="table table-sm border">
+            <thead>
+                <tr>
+                    <th width="20px">#</th>
+                    <th width="30px"></th>
+                    <th>Name</th>
+                    <th>Qty</th> 
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let x of items; let i = index" (click)="x.checkBox == 0 ?  x.checkBox = 1 : x.checkBox = 0">
+                    <td>{{i+1}}.</td>
+                    <td>
+                        @if(x.checkBox == 1){
+                        <i class="bi bi-check-square-fill"></i>
+                        }
+                        @if(x.checkBox == 0){
+                        <i class="bi bi-square"></i>
+                        }
+
+                    </td>
+
+                    <td>{{x.name}}</td>
+                    <td>{{x.qty}}</td>
+
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <strong class="modal-title" id="modal-basic-title">New Item</strong>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <form (ngSubmit)="onSubmit()" #actorForm="ngForm">
+            <div class="mb-2">
+                <label for="desc1">Description*</label>
+                <input id="desc1" class="form-control form-control-sm" name="desc1" [(ngModel)]="model.desc1" required
+                    #desc1="ngModel" />
+                <small [hidden]="desc1.valid || desc1.pristine" class="text-danger">
+                    *desc1 is required
+                </small>
+            </div>
+
+
+            <div class="d-grid">
+                <button type="submit" class="btn btn-sm btn-dark" [disabled]="!actorForm.form.valid">Save</button>
+            </div>
+        </form>
+    </div>
+
+</ng-template>

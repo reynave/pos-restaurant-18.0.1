@@ -47,6 +47,8 @@ exports.getAllData = async (req, res) => {
       { name: 'Category', href: 'menu/category', icon:'<i class="bi bi-display"></i>', },  
       { name: 'Class', href: 'menu/class', icon:'<i class="bi bi-display"></i>', },  
       { name: 'Item', href: 'menu/item', icon:'<i class="bi bi-display"></i>', },   
+      { name: 'Item Look Up', href: 'menu/lookUp', icon:'<i class="bi bi-display"></i>', },   
+      
     ] 
     const data = {
       error: false,

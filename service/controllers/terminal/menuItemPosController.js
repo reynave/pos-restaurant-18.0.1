@@ -1448,8 +1448,7 @@ exports.exitWithoutOrder = async (req, res) => {
     res.status(500).json({ error: 'Database update error', details: err.message });
   }
 };
-
-
+ 
 exports.menuLookUp = async (req, res) => {
   // const { id, name, position, email } = req.body;
   let parentId = req.query.parentId;
@@ -1494,3 +1493,4 @@ exports.menuLookUp = async (req, res) => {
     res.status(500).json({ error: 'Database update error', details: err.message });
   }
 };
+
