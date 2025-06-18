@@ -7,11 +7,12 @@ import { ConfigService } from '../../../service/config.service';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxCurrencyDirective } from 'ngx-currency';
+import { HeaderMenuComponent } from "../../../header/header-menu/header-menu.component";
 
 @Component({
   selector: 'app-daily-cash-balance',
   standalone: true,
-  imports: [HttpClientModule, CommonModule, FormsModule, RouterModule, NgxCurrencyDirective],
+  imports: [HttpClientModule, CommonModule, FormsModule, RouterModule, NgxCurrencyDirective, HeaderMenuComponent],
   templateUrl: './daily-cash-balance.component.html',
   styleUrl: './daily-cash-balance.component.css'
 })
@@ -23,7 +24,7 @@ export class DailyCashBalanceComponent implements OnInit {
   addFunction: number = 1;
   checkCashType: any = [];
   total : any = {}; 
-  
+  cssMenu : string = "btn btn-lg btn outl";
   currencyOption: any = { prefix: '', thousands: ',', decimal: '.', precision: 0, }
   constructor(
     private config: ConfigService,

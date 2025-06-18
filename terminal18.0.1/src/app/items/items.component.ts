@@ -7,16 +7,18 @@ import { FormsModule } from '@angular/forms';
 import { NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HeaderMenuComponent } from "../header/header-menu/header-menu.component";
+import { KeyNumberComponent } from "../keypad/key-number/key-number.component";
 
 
 @Component({
   selector: 'app-items',
   standalone: true,
-  imports: [HttpClientModule, CommonModule, FormsModule, NgbDropdownModule, RouterModule, HeaderMenuComponent],
+  imports: [HttpClientModule, CommonModule, FormsModule, NgbDropdownModule, RouterModule, HeaderMenuComponent, KeyNumberComponent],
   templateUrl: './items.component.html',
   styleUrl: './items.component.css'
 })
 export class ItemsComponent implements OnInit {
+
 
 
   addQty: number = 1;
@@ -58,17 +60,17 @@ export class ItemsComponent implements OnInit {
   }
 
   isCheckAll: number = 0;
-  checkBoxAll() { 
+  checkBoxAll() {
     if (this.isCheckAll == 0) this.isCheckAll = 1;
     else this.isCheckAll = 0;
 
-       this.checkTotal = this.isCheckAll;
+    this.checkTotal = this.isCheckAll;
     for (let i = 0; i < this.items.length; i++) {
       this.items[i]['checkBox'] = this.isCheckAll;
     }
 
- 
-    
+
+
   }
   back() {
     history.back();
@@ -147,4 +149,22 @@ export class ItemsComponent implements OnInit {
 
     this.modalService.open(content);
   }
+
+
+  handleData(data: string) {
+    let value = '';
+ 
+
+    value =  this.addQty.toString()
+    if (data == 'b') {
+      value = value.slice(0, -1);
+      if(value.length <1){
+        value = '0';
+      }
+    } else {
+      value = value + data;
+    }
+    this.addQty = parseInt(value);
+
+  } 
 }

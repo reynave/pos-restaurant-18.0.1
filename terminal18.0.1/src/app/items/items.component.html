@@ -2,8 +2,10 @@
 <div class="container-fluid body-with-header">
    <div class="row g-2">
       <div class="col-8">
-         <div class="border shadow-sm rounded">
+         <div class="content-table border shadow-sm">
+            
             <table class="table table-sm table-hover">
+
                <thead>
                   <tr>
                      <th (click)="checkBoxAll()">
@@ -21,6 +23,7 @@
                      <th class="text-end">Qty</th>
                   </tr>
                </thead>
+
                <tbody>
                   <tr *ngFor="let x of items; let i = index" (click)="fnCheck(i)"
                      [ngClass]="{'bg-light': x.checkBox == 1}">
@@ -46,10 +49,10 @@
 
       <div class="col-4">
          <div class="d-grid sticky-top">
-            <button type="button" class="btn btn-lg btn-primary mb-2" [disabled]="this.checkTotal < 1"
+            <button type="button" class="btn btn-lg  border btn-success mb-2 py-4" [disabled]="this.checkTotal < 1"
                (click)="open(contentAdjust)">RESET ADJUST</button>
-            <button type="button" class="btn btn-lg btn-primary mb-2" [disabled]="this.checkTotal < 1"
-               (click)="open(contentAddQty)">ADD QTY</button>
+            <button type="button" class="btn btn-lg  border btn-success mb-2 py-4" [disabled]="this.checkTotal < 1"
+               (click)="addQty = 0 ; open(contentAddQty)">ADD QTY</button>
 
          </div>
       </div>
@@ -79,18 +82,33 @@
 
 <ng-template #contentAddQty let-modal>
    <div class="modal-header">
-      <strong>Add Adjustment</strong>
+      <strong>Adjustment Qty</strong>
       <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
    </div>
    <div class="modal-body">
       <form>
          <div class="mb-3">
             <label for="qty">Add Qty</label>
-            <input type="number" class="form-control form-control-lg" id="qty" [(ngModel)]="addQty" name="newQty">
+            <input type="number" class="form-control form-control-lg text-end" id="qty" [(ngModel)]="addQty"
+               name="newQty">
          </div>
+
+         <div class="row g-3">
+            <div class="col-6">
+               <app-key-number (dataEmitted)="handleData($event)"></app-key-number>
+            </div>
+            <div class="col-6">
+               <div class="d-grid mb-2">
+                  <button class="btn btn-warning btn-lg py-4 rounded shadow-sm" (click)="addQty= 0">CE</button>
+               </div>
+               <div class="d-grid mb-2">
+                  <button type="button" class="btn btn-dark btn-lg py-4 rounded shadow-sm"
+                     (click)="onAddQty()">Submit</button>
+               </div>
+            </div>
+         </div>
+
       </form>
    </div>
-   <div class="modal-footer">
-      <button type="button" class="btn btn-dark" (click)="onAddQty()">Submit</button>
-   </div>
+
 </ng-template>
