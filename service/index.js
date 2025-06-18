@@ -29,6 +29,7 @@ const paymentPos = require('./routes/terminal/payment');
 const daily = require('./routes/terminal/daily'); 
 const transactionPos = require('./routes/terminal/transaction');
 const items = require('./routes/terminal/items');
+const printingPos = require('./routes/terminal/printing');
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -93,6 +94,7 @@ app.use(process.env.PREFIX + process.env.TERMINAL + 'bill', bill);
 app.use(process.env.PREFIX + process.env.TERMINAL + 'payment', paymentPos);
 app.use(process.env.PREFIX + process.env.TERMINAL + 'daily', daily);
 app.use(process.env.PREFIX + process.env.TERMINAL + 'items', items); 
+ app.use(process.env.PREFIX + process.env.TERMINAL + 'printing', printingPos); 
  
 
 app.use('/', (req, res) => {

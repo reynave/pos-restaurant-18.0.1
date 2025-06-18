@@ -4,10 +4,7 @@ const bill = require('../../controllers/terminal/billController');
   
 // table/*
 router.get('/', bill.getData);  
-router.get('/printing', bill.printing);  
-router.post('/copyBill', bill.copyBill);  
-router.get('/getCartCopyBill', bill.getCartCopyBill);  
-
+router.get('/printing', bill.printing);   
 router.post('/ipPrint', bill.ipPrint);  
 
 

@@ -31,4 +31,44 @@ function formatDateTime(dateInput) {
 
   return `${year}-${month}-${day} ${hh}:${mm}:${ss}`;
 }
-module.exports = { today, formatDateOnly, formatDateTime };
+
+
+
+
+  function formatCurrency(num, symbol = '') {
+    num = parseInt(num);
+    num = num.toLocaleString('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0, });
+    return symbol + num.replace(/Rp/g, '');
+  }
+
+  function formatLine(leftText, rightText, lineLength = 50) {
+    const totalLength = leftText.length + rightText.length;
+
+    if (totalLength >= lineLength) {
+      // Jika terlalu panjang, potong teks kiri
+      const trimmedLeft = leftText.slice(0, lineLength - rightText.length - 1);
+      return trimmedLeft + ' ' + rightText;
+    }
+
+    const spaces = lineLength - totalLength;
+    return leftText + ' '.repeat(spaces) + rightText;
+  }
+
+  function centerText(str, width = 50) {
+    if (str.length >= width) return str; // jika string lebih panjang, tidak diubah
+
+    const totalSpaces = width - str.length;
+    const paddingLeft = Math.floor(totalSpaces / 2);
+    const paddingRight = totalSpaces - paddingLeft;
+
+    return ' '.repeat(paddingLeft) + str + ' '.repeat(paddingRight);
+  }
+
+module.exports = { 
+  today, 
+  formatDateOnly, 
+  formatDateTime, 
+  
+  formatCurrency, 
+  formatLine, 
+  centerText };

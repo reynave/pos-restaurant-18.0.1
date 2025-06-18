@@ -23,6 +23,7 @@ export class Actor {
 export class MenuComponent implements OnInit, OnDestroy {
 
 
+
   loading: boolean = false;
   current: number = 0;
   checkboxAll: number = 0;
@@ -124,7 +125,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
 
-  backMenu(menuLookUpParent : any = []) {
+  backMenu(menuLookUpParent: any = []) {
     if (menuLookUpParent.length <= 0) {
       this.showHeader = true;
       this.showMenu = false;
@@ -467,4 +468,34 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
 
+  printToKitchen() {
+     window.open(environment.api+"printing/kitchen?id="+this.id);
+    // this.http.get<any>(environment.api+"printing/tableChecker",{
+    //   params : {
+    //     id : this.id
+    //   }
+    // }).subscribe(
+    //   data=>{
+    //     console.log(data);
+    //   },
+    //   error=>{
+    //     console.log(error);
+    //   }
+    // )
+  }
+  printTableChecker() {
+    window.open(environment.api+"printing/tableChecker?id="+this.id);
+    // this.http.get<any>(environment.api+"printing/tableChecker",{
+    //   params : {
+    //     id : this.id
+    //   }
+    // }).subscribe(
+    //   data=>{
+    //     console.log(data);
+    //   },
+    //   error=>{
+    //     console.log(error);
+    //   }
+    // )
+  }
 }
