@@ -62,6 +62,10 @@ export class TablesComponent implements OnInit {
 
   handleData(data: string) {
 
+    if(this.model.cover == null){
+      this.model.cover = 0;
+    }
+ 
     let cover = this.model.cover.toString();
     if (data == 'b') {
       cover = cover.slice(0, -1);
@@ -128,7 +132,7 @@ export class TablesComponent implements OnInit {
   }
 
   gotTo( x:any) {
- 
+    console.log(x)
     if(x.tableMapStatusId == '12'){ 
       this.router.navigate(['/menu'], { queryParams: {id:x.cardId} });
     }

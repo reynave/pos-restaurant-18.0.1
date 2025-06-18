@@ -15,6 +15,91 @@ exports.getAllData = async (req, res) => {
     // Loop dengan for...of agar bisa pakai await
     for (const row of formattedRows) {
       const [maps] = await db.query(`
+       SELECT o.id, o.id as 'outletTableMapId', o.outletFloorPlandId, o.tableName, o.posY, o.posX, o.width, 
+        o.height, o.capacity
+        FROM outlet_table_map AS o 
+        WHERE o.presence = 1 AND o.outletFloorPlandId = ?
+      `, [row.id]);
+      row.maps = maps;
+    }
+
+
+    const [cart] = await db.query(`
+      SELECT c.*, s.name AS 'tableMapStatus'
+      FROM cart AS c
+      LEFT JOIN outlet_table_map_status AS s ON c.tableMapStatusId = s.id
+      WHERE c.close  = 0 AND c.presence = 1 AND c.outletId = 15
+    `);
+
+
+    for (let i = 0; i < formattedRows.length; i++) {
+      let checking = 0;
+      for (let n = 0; n < formattedRows[i]['maps'].length; n++) {
+        if (formattedRows[i]['maps'][n]['cardId'] != null) {
+          checking += 1;
+        }
+      }
+      formattedRows[i]['checking'] = checking;
+    }
+
+
+    formattedRows.forEach(rec => {
+      rec.maps.forEach(x => {
+
+        const index = cart.findIndex(y => y.outletTableMapId === x.outletTableMapId);
+
+        if (index !== -1) { 
+
+          x['close'] = cart[index]['close'];
+          x['cardId'] = cart[index]['id'];
+          x['totalItem'] = cart[index]['totalItem'];
+          x['cover'] = cart[index]['cover']; 
+          x['tableMapStatusId'] = cart[index]['tableMapStatusId'];
+          x['tableMapStatus'] = cart[index]['tableMapStatus']; 
+          x['grandTotal'] = cart[index]['grandTotal'];
+
+        }else{
+          x['close'] = null
+          x['cardId'] = ''
+          x['totalItem'] = 0;
+          x['cover'] = null; 
+          x['tableMapStatusId'] = null;
+          x['tableMapStatus'] = null; 
+          x['grandTotal'] = 0;
+        }
+
+
+      });
+    });
+
+
+    res.json({
+      //  error: false,
+      items: formattedRows,
+      cart: cart,
+      //get: req.query
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+};
+
+
+exports.getAllData_Ver1_DEL = async (req, res) => {
+  const outletId = req.query.outletId;
+  try {
+
+    const [formattedRows] = await db.query(`
+      SELECT id, outletId, desc1, null as 'maps', 0 as 'checking'
+      FROM outlet_floor_plan  
+      WHERE presence = 1  ${!outletId ? '' : 'AND outletId = ' + outletId}
+    `);
+
+    // Loop dengan for...of agar bisa pakai await
+    for (const row of formattedRows) {
+      const [maps] = await db.query(`
        SELECT o.id, o.outletFloorPlandId, o.tableName, o.posY, o.posX, o.width, 
         o.height, o.capacity, r.id  AS 'cardId', r.cover, r.tableMapStatusId , r.close, s.name AS 'status'
         FROM outlet_table_map AS o
@@ -37,15 +122,15 @@ exports.getAllData = async (req, res) => {
       row.maps = maps;
     }
 
-   for(let i = 0; i < formattedRows.length; i++){
-    let checking = 0;
-    for(let n = 0 ; n < formattedRows[i]['maps'].length ; n++){
-      if(formattedRows[i]['maps'][n]['cardId'] != null ){
-        checking+= 1;
+    for (let i = 0; i < formattedRows.length; i++) {
+      let checking = 0;
+      for (let n = 0; n < formattedRows[i]['maps'].length; n++) {
+        if (formattedRows[i]['maps'][n]['cardId'] != null) {
+          checking += 1;
+        }
       }
+      formattedRows[i]['checking'] = checking;
     }
-    formattedRows[i]['checking'] = checking;
-   }
 
 
     res.json({
@@ -59,7 +144,6 @@ exports.getAllData = async (req, res) => {
     res.status(500).json({ error: 'Database error' });
   }
 };
-
 exports.newOrder = async (req, res) => {
   const model = req.body['model'];
   const dailyCheckId = req.body['dailyCheckId'];
@@ -75,7 +159,7 @@ exports.newOrder = async (req, res) => {
     WHERE  o.presence = 1 AND o.id = ${model['outletTableMapId']} AND c.presence = 1 AND c.void = 0
     AND c.tableMapStatusId != 20
     `;
-    console.log(q)
+   
     const [rows] = await db.query(q);
     const total = rows[0]?.total || 0; // gunakan optional chaining biar aman
     const { insertId } = await autoNumber('cart');

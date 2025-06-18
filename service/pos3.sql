@@ -1900,13 +1900,13 @@ CREATE TABLE IF NOT EXISTS `menu_lookup` (
   `sorting` smallint(6) NOT NULL DEFAULT 999,
   `presence` tinyint(4) NOT NULL DEFAULT 1,
   `inputDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
-  `inputBy` varchar(50) NOT NULL,
+  `inputBy` varchar(50) NOT NULL DEFAULT '',
   `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
-  `updateBy` varchar(50) NOT NULL,
+  `updateBy` varchar(50) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
--- Dumping data for table pos_resto.menu_lookup: ~11 rows (approximately)
+-- Dumping data for table pos_resto.menu_lookup: ~12 rows (approximately)
 INSERT INTO `menu_lookup` (`id`, `departmentId`, `parentId`, `name`, `sorting`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
 	(1, 1, 0, 'Beverage', 1, 1, '2025-01-01 00:00:00', '', '2025-01-01 00:00:00', ''),
 	(2, 2, 0, 'Food', 2, 1, '2025-01-01 00:00:00', '', '2025-01-01 00:00:00', ''),
@@ -1915,14 +1915,8 @@ INSERT INTO `menu_lookup` (`id`, `departmentId`, `parentId`, `name`, `sorting`, 
 	(5, 0, 1, 'Alcohol', 3, 1, '2025-01-01 00:00:00', '', '2025-01-01 00:00:00', ''),
 	(6, 0, 2, 'APPETIZER', 999, 1, '2025-01-01 00:00:00', '', '2025-01-01 00:00:00', ''),
 	(7, 0, 2, 'DIMSUM', 999, 1, '2025-01-01 00:00:00', '', '2025-01-01 00:00:00', ''),
-	(8, 0, 7, 'menu 3.1', 999, 0, '2025-01-01 00:00:00', '', '2025-06-17 21:02:35', ''),
-	(9, 0, 7, 'Dimsud sub', 999, 0, '2025-01-01 00:00:00', '', '2025-06-17 21:06:33', ''),
 	(10, 0, 2, 'DESSERT', 999, 1, '2025-01-01 00:00:00', '', '2025-01-01 00:00:00', ''),
 	(11, 0, 2, 'BUBUR', 999, 1, '2025-01-01 00:00:00', '', '2025-01-01 00:00:00', ''),
-	(12, 0, 7, 'New look Up', 999, 0, '2025-06-17 20:51:03', '', '2025-06-17 21:06:31', ''),
-	(13, 0, 7, 'child of DIMSUM', 999, 0, '2025-06-17 20:51:27', '', '2025-06-17 21:06:27', ''),
-	(14, 0, 7, 'child of DIMSUM', 999, 0, '2025-06-17 20:51:29', '', '2025-06-17 21:06:34', ''),
-	(15, 0, 13, 'child of child of DIMSUM', 999, 0, '2025-06-17 20:51:31', '', '2025-06-17 21:01:59', ''),
 	(16, 0, 7, 'child of DIMSUM 2', 999, 1, '2025-06-17 21:08:11', '', '2025-06-17 21:08:21', ''),
 	(17, 0, 7, 'child of DIMSUM 1', 999, 1, '2025-06-17 21:08:15', '', '2025-06-17 21:08:19', ''),
 	(18, 0, 7, 'child of DIMSUM 3', 999, 1, '2025-06-17 21:08:17', '', '2025-06-17 21:08:22', '');

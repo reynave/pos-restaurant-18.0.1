@@ -90,7 +90,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     this.id = this.activeRouter.snapshot.queryParams['id'],
       this.modalService.dismissAll();
     if (this.id == undefined) {
-      alert("ERROR");
+      alert("ERROR, ngOnInit() id == undefined ");
       this.router.navigate(['tables'])
     } else {
       this.httpMenu();

@@ -15,7 +15,7 @@
                               totalCardOrder}}</span></h6>
                      </td>
                   </tr>
-               </tbody>
+               </tbody> 
                <tbody *ngFor="let x of cartOrdered; let i = index" [class]="{'tr-active':x.checkBox == 1 }">
                   <tr [class]="{'bg-light':x.sendOrder !== ''}" (click)="fnCheckedOrdered(i)">
                      <td>
@@ -60,9 +60,9 @@
                   }
 
                </tbody>
-
+ 
                <tbody *ngFor="let x of cart; let i = index" [class]="{'tr-active':x.checkBox == 1 }">
-                  <tr [class]="{'bg-light':x.sendOrder !== ''}" (click)="fnChecked(i)  ">
+                  <tr   (click)="fnChecked(i)  ">
                      <td>
 
                         <h3>
@@ -168,7 +168,7 @@
             <div>
                <button type="button" [class]="cssClass" [disabled]="!isChecked" (click)="onVoid()">
                   <i class="bi bi-x-lg"></i> VOID ITEM</button>
-               <button type="button" [class]="cssClass" [disabled]="items.length < 1" (click)="sendOrder();">
+               <button type="button" [class]="cssClass" [disabled]="cart.length < 1" (click)="sendOrder();">
                   <i class="bi bi-fork-knife"></i> SEND ORDER</button>
                <button type="button" [class]="cssClass" (click)="openComponent(id)">
                   <i class="bi bi-receipt-cutoff"></i> BILL</button>
