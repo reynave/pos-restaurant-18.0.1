@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { environment } from '../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root', 
@@ -16,9 +17,9 @@ export class UserLoggerService {
       url: window.location.href
     };
 
-    this.http.post<any>('http://localhost:3000/terminal/log', logData).subscribe(
+    this.http.post<any>(environment.api+'log', logData).subscribe(
       data => {
-         
+          console.log(data);
       },
       error => {
         console.log(error);
