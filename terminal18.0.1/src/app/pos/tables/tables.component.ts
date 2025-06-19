@@ -9,6 +9,9 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { KeyNumberComponent } from "../../keypad/key-number/key-number.component";
 import { DailyCloseComponent } from '../daily/daily-close/daily-close.component';
 import { HeaderMenuComponent } from "../../header/header-menu/header-menu.component";
+import { SocketService } from './../../service/socket.service';
+import { UserLoggerService } from '../../service/user-logger.service';
+
 export class Actor {
   constructor(
     public outletTableMapId: number,
@@ -45,31 +48,41 @@ export class TablesComponent implements OnInit {
     public modalService: NgbModal,
     private router: Router,
     private activeRouter: ActivatedRoute,
+    private socketService: SocketService,
+    public logService: UserLoggerService
 
   ) { }
 
 
   ngOnInit() {
     this.getConfigJson = this.configService.getConfigJson();
+    this.sendMessage();
 
-    console.log(this.getConfigJson);
     this.modalService.dismissAll();
     this.httpOutlet();
     this.httpGet();
     this.httpHeader();
-  }
 
+    this.socketService.listen<string>('message-from-server').subscribe((msg) => {
+      console.log(msg);
+      this.httpGet();
+    });
+  }
+  sendMessage() {
+    console.log("EMIT");
+    this.socketService.emit('message-from-client', 'reload');
+
+  }
 
   handleData(data: string) {
 
-    if(this.model.cover == null){
+    if (this.model.cover == null) {
       this.model.cover = 0;
     }
- 
+
     let cover = this.model.cover.toString();
     if (data == 'b') {
       cover = cover.slice(0, -1);
-      console.log(data)
     } else {
       cover = cover + data;
     }
@@ -102,7 +115,6 @@ export class TablesComponent implements OnInit {
       }
     }).subscribe(
       data => {
-        console.log(data);
         this.loading = false;
         this.items = data['items'];
       },
@@ -114,10 +126,10 @@ export class TablesComponent implements OnInit {
 
   reload() {
     this.httpGet();
+    this.sendMessage()
   }
 
   onMap(index: number) {
-    console.log(index);
     this.current = index;
   }
 
@@ -131,17 +143,16 @@ export class TablesComponent implements OnInit {
     this.modalService.open(content, { size: 'sm' });
   }
 
-  gotTo( x:any) {
-    console.log(x)
-    if(x.tableMapStatusId == '12'){ 
-      this.router.navigate(['/menu'], { queryParams: {id:x.cardId} });
+  gotTo(x: any) {
+    if (x.tableMapStatusId == '12') {
+      this.router.navigate(['/menu'], { queryParams: { id: x.cardId } });
     }
-    else if(x.tableMapStatusId == '18'){ 
-      this.router.navigate(['/payment'], { queryParams: {id:x.cardId} });
-    }else{
-        this.router.navigate(['/menu'], { queryParams: {id:x.cardId} });
+    else if (x.tableMapStatusId == '18') {
+      this.router.navigate(['/payment'], { queryParams: { id: x.cardId } });
+    } else {
+      this.router.navigate(['/menu'], { queryParams: { id: x.cardId } });
     }
-    
+
   }
 
   modal(content: any) {
@@ -152,10 +163,8 @@ export class TablesComponent implements OnInit {
     this.getConfigJson['outlet']['id'] = this.outletSelect[index]['id'];
     this.getConfigJson['outlet']['name'] = this.outletSelect[index]['name'];
 
-    console.log(this.getConfigJson);
     this.configService.updateConfigJson(this.getConfigJson).subscribe(
       data => {
-        console.log(data);
         if (data == true) {
           this.httpGet();
         }
@@ -164,19 +173,16 @@ export class TablesComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log(this.model);
     const outletId = this.configService.getConfigJson()['outlet']['id'];
     const body = {
       model: this.model,
       outletId: outletId,
       dailyCheckId: this.configService.getDailyCheck(),
     }
-    console.log(body);
     this.http.post<any>(environment.api + "tableMap/newOrder", body, {
       headers: this.configService.headers(),
     }).subscribe(
       data => {
-        console.log(data);
         if (data['error'] != true) {
           this.router.navigate(['/menu'], { queryParams: { id: data['cardId'] } });
           this.modalService.dismissAll();
@@ -234,7 +240,6 @@ export class TablesComponent implements OnInit {
     }).subscribe(
       data => {
         this.loading = false;
-        console.log(data);
         this.dataHeader = data['item'];
       },
       error => {
@@ -244,9 +249,9 @@ export class TablesComponent implements OnInit {
   }
 
 
-  selectActiveView(activeView : string){
+  selectActiveView(activeView: string) {
     this.activeView = activeView;
 
-    localStorage.setItem("pos3.view",activeView);
+    localStorage.setItem("pos3.view", activeView);
   }
 }

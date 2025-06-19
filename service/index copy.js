@@ -2,31 +2,6 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const fs = require('fs');
-const http = require('http').Server(app);
-const path = require('path');
-const io = require('socket.io')(http, {
-    cors: {
-        origin: "*", // Ganti kalau pakai frontend berbeda
-    },
-});
-
-let user = 0;
-
-io.on('connection', (socket) => {
-    console.log('Client connected');
-
-    socket.on('message-from-client', (data) => {
-        console.log('Received from client:', data);
-
-        // Kirim ke semua client yang terhubung
-        // io.emit('message-from-server', 'Broadcast: ' + data);
-
-        //
-        socket.broadcast.emit('message-from-server', 'Broadcast to others');
-
-    });
-});
-
 const db = require('./config/db'); // koneksi pool dari mysql2
 const employeeRoutes = require('./routes/general/employee');
 const specialHour = require('./routes/general/specialHour');
@@ -46,16 +21,15 @@ const floorMap = require('./routes/outlet/floorMap');
 const menu = require('./routes/menu/menu');
 const printer = require('./routes/station/printer');
 
-const loginPos = require('./routes/terminal/loginPos');
+const loginPos = require('./routes/terminal/loginPos'); 
 const terminalMap = require('./routes/terminal/tableMap');
 const menuItemPos = require('./routes/terminal/menuItemPos');
 const bill = require('./routes/terminal/bill');
 const paymentPos = require('./routes/terminal/payment');
-const daily = require('./routes/terminal/daily');
+const daily = require('./routes/terminal/daily'); 
 const transactionPos = require('./routes/terminal/transaction');
 const items = require('./routes/terminal/items');
 const printingPos = require('./routes/terminal/printing');
-const userLog = require('./routes/terminal/userLog');
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -112,51 +86,16 @@ app.use(process.env.PREFIX + 'printer', paymentPos);
 
 
 // TERMINAL SERVICE HERE
-app.use(process.env.PREFIX + process.env.TERMINAL + 'login', loginPos);
+app.use(process.env.PREFIX + process.env.TERMINAL + 'login', loginPos); 
 app.use(process.env.PREFIX + process.env.TERMINAL + 'transaction', transactionPos);
 app.use(process.env.PREFIX + process.env.TERMINAL + 'tableMap', terminalMap);
 app.use(process.env.PREFIX + process.env.TERMINAL + 'menuItemPos', menuItemPos);
 app.use(process.env.PREFIX + process.env.TERMINAL + 'bill', bill);
 app.use(process.env.PREFIX + process.env.TERMINAL + 'payment', paymentPos);
 app.use(process.env.PREFIX + process.env.TERMINAL + 'daily', daily);
-app.use(process.env.PREFIX + process.env.TERMINAL + 'items', items);
-app.use(process.env.PREFIX + process.env.TERMINAL + 'printing', printingPos);
-app.use(process.env.PREFIX + process.env.TERMINAL + 'log', userLog);
-
-app.post('/log', (req, res) => {
-    const log = req.body; 
-
-    // Fungsi untuk mendapatkan tanggal hari ini dalam format YYYY-MM-DD
-    function getTodayDate() {
-        const now = new Date();
-        return now.toISOString().split('T')[0]; // Contoh: '2025-06-17'
-    }
-
-    // Data yang ingin dicatat
-    const logData = `[${new Date().toISOString()}] ${log.userId} - ${log.action} @ ${log.url}\n`;
-
-
-    // Path folder berdasarkan tanggal
-    const todayFolder = path.join(__dirname, 'public', 'userLog', getTodayDate());
-
-    // Pastikan foldernya ada, kalau belum maka dibuat
-    fs.mkdir(todayFolder, { recursive: true }, (err) => {
-        if (err) return console.error('Error creating log folder:', err);
-
-        // Path file log-nya
-        const logFilePath = path.join(todayFolder, 'user-actions.log');
-
-        // Tulis atau tambahkan log ke file
-        fs.appendFile(logFilePath, logData, (err) => {
-            if (err) {
-                console.error('Failed to write log:', err);
-            } else {
-                console.log('Log added successfully');
-            }
-        });
-    });
-});
-
+app.use(process.env.PREFIX + process.env.TERMINAL + 'items', items); 
+ app.use(process.env.PREFIX + process.env.TERMINAL + 'printing', printingPos); 
+ 
 
 app.use('/', (req, res) => {
     const data = {
@@ -164,14 +103,9 @@ app.use('/', (req, res) => {
         serverTime: new Date(),
         prefix: process.env.PREFIX
     }
-    res.json(data);
+    res.json(data); 
 });
 const PORT = process.env.PORT || 3000;
-// app.listen(PORT, () => {
-//     console.log(`Server running on port ${PORT}`);
-// });
-
-
-http.listen(PORT, () => {
-    console.log('listening on *:' + PORT);
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
 });
