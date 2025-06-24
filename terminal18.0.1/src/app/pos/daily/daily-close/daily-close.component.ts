@@ -6,6 +6,7 @@ import { environment } from '../../../../environments/environment';
 import { ConfigService } from '../../../service/config.service';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { UserLoggerService } from '../../../service/user-logger.service';
 
 @Component({
   selector: 'app-daily-close',
@@ -27,6 +28,8 @@ export class DailyCloseComponent implements OnInit {
     private router: Router,
     private http: HttpClient,
     public modalService: NgbModal,
+     public logService: UserLoggerService
+    
   ) { }
 
   ngOnInit() {
@@ -36,7 +39,8 @@ export class DailyCloseComponent implements OnInit {
     history.back();
   }
   onClose() {
-    // this.router.navigate(['/'])
+    // this.router.navigate(['/']);
+    this.logService.logAction('Daily Close -> YES')
     const configData = this.config.getConfigJson();
     this.error = '';
     this.loading = true;

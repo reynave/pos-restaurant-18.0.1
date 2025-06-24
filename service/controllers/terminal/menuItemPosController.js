@@ -29,12 +29,12 @@ exports.getMenuItem = async (req, res) => {
             END AS 'scAmount' ,
 
              (
-    SELECT COUNT(ci.id)
-    FROM cart_item ci
-    WHERE ci.presence = 1 
-      AND ci.void = 0 
-      AND ci.adjustItemsId = m.adjustItemsId
-  ) AS usedQty
+                SELECT COUNT(ci.id)
+                FROM cart_item ci
+                WHERE ci.presence = 1 
+                  AND ci.void = 0 
+                  AND ci.adjustItemsId = m.adjustItemsId
+              ) AS usedQty
         FROM menu AS m
         LEFT JOIN menu_tax_sc AS t ON t.id = m.menuTaxScId
         WHERE m.presence = 1 and m.menuLookupId = ${menuLookupId} and m.menuLookupId != 0

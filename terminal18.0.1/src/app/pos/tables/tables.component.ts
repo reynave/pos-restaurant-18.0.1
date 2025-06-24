@@ -103,7 +103,7 @@ export class TablesComponent implements OnInit {
       }
     )
   }
-
+  totalCart : number = 99;
   httpGet() {
     this.modalService.dismissAll();
     this.loading = true;
@@ -117,6 +117,7 @@ export class TablesComponent implements OnInit {
       data => {
         this.loading = false;
         this.items = data['items'];
+        this.totalCart = data['cart'].length;
       },
       error => {
         console.log(error);
@@ -211,19 +212,15 @@ export class TablesComponent implements OnInit {
   }
 
   dailyClose() {
-    let checking = 0;
+   
 
-    for (let i = 0; i < this.items.length; i++) {
-      checking += this.items[i]['checking'];
-      if (checking > 0) {
-        i = this.items.length * 2;
-      }
-    }
-    if (checking > 0) {
-      alert("please close all tables!")
+    
+    if (this.totalCart > 0) {
+      alert("please close all tables!");
+      this.logService.logAction('please close all tables!')
     } else {
       this.modalService.open(DailyCloseComponent, { size: 'sm' });
-
+      this.logService.logAction('Daily Close ?')
     }
 
 

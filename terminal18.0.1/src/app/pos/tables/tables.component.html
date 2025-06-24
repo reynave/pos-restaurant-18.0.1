@@ -102,7 +102,7 @@
                            }
                            @else{
                            <a class="btn btn-sm rounded-pill table-{{x.tableMapStatusId}}" 
-                     (click)="(x.cover <= 0 || x.cover=='' ) ? open(modalCheckIn, x) : gotTo(x) "> {{x.status}}</a>
+                     (click)="(x.cover <= 0 || x.cover=='' ) ? open(modalCheckIn, x) : gotTo(x) "> {{x.tableMapStatus}}</a>
                            }
                         </div>
                      </td>
@@ -136,24 +136,22 @@
             <div class="col-6 mb-3">
                <strong>General</strong>
                <div class="d-grid">
-                  <a class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="reload()">
-                     <i class="bi bi-arrow-clockwise"></i> Refresh</a>
-
-                     <button (click)="logService.logAction('Klik Tombol Bayar')">LOG TEST</button>
+                  <a class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="reload(); logService.logAction('Click reload')">
+                     <i class="bi bi-arrow-clockwise"></i> Refresh</a> 
                </div>
 
                <div class="d-grid">
-                  <a class="btn btn-lg btn-outline-dark rounded-0 m-1" [routerLink]="['/setting']"> <i
+                  <a class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="logService.logAction('click setting')" [routerLink]="['/setting']"> <i
                         class="bi bi-gear"></i> Setting</a>
                </div>
 
                <div class="d-grid">
-                  <button class="btn btn-lg btn-outline-dark rounded-0 m-1" [routerLink]="['/items/']"><i
+                  <button class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="logService.logAction('items')" [routerLink]="['/items/']"><i
                         class="bi bi-bag-plus"></i> Adjust Item</button>
                </div>
 
                <div class="d-grid">
-                  <button class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="modal(modalSwitchOutlet)"><i
+                  <button class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="modal(modalSwitchOutlet); logService.logAction('modalSwitchOutlet')"><i
                         class="bi bi-diagram-3"></i> Switch Outlet</button>
                </div>
 
@@ -162,12 +160,12 @@
             <div class="col-6 mb-3">
                <strong>Operation</strong>
                <div class="d-grid">
-                  <button class="btn btn-lg btn-outline-dark rounded-0 m-1" [routerLink]="['/transaction']"><i
+                  <button class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="logService.logAction('click transaction')" [routerLink]="['/transaction']"><i
                         class="bi bi-receipt"></i> Report</button>
                </div>
 
                <div class="d-grid">
-                  <button class="btn btn-lg btn-outline-dark rounded-0 m-1" [routerLink]="['/daily/cashBalance']"><i
+                  <button class="btn btn-lg btn-outline-dark rounded-0 m-1"  (click)="logService.logAction('click daily/cashBalance')" [routerLink]="['/daily/cashBalance']"><i
                         class="bi bi-cash-coin"></i> Cash</button>
                </div>
                <div class="d-grid">
@@ -175,11 +173,11 @@
                </div>
 
                <div class="d-grid">
-                  <a class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="signOff();"><i
+                  <a class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="signOff(); logService.logAction('signOff')"><i
                         class="bi bi-box-arrow-left"></i> Sign Off</a>
                </div>
                <div class="d-grid">
-                  <button class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="dailyClose()">
+                  <button class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="dailyClose(); logService.logAction('popup dailyClose')">
                      <i class="bi bi-key"></i> Daily Close</button>
                </div>
             </div>
@@ -187,7 +185,7 @@
                <!-- https://www.npmjs.com/package/node-thermal-printer -->
 
                <div class="d-grid">
-                  <a class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="logOff();"> <i class="bi bi-power"></i>
+                  <a class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="logOff(); logService.logAction('logOff')"> <i class="bi bi-power"></i>
                      Log off</a>
                </div>
             </div>

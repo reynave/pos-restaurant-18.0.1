@@ -6,9 +6,18 @@ exports.getItems = async (req, res) => {
 
    try {
       const [formattedRows] = await db.query(`
-      SELECT *, 0 as 'checkBox'
-      FROM menu
-      WHERE presence = 1
+       SELECT 
+          m.id, m.name,   m.adjustItemsId,  0 as 'checkBox',
+          m.menuDepartmentId, m.menuCategoryId,  
+            m.qty -  (
+                SELECT COUNT(ci.id)
+                FROM cart_item ci
+                WHERE ci.presence = 1 
+                  AND ci.void = 0 
+                  AND ci.adjustItemsId = m.adjustItemsId
+              ) AS qty
+        FROM menu AS m 
+        WHERE m.presence = 1 
     `);
 
       res.json({
