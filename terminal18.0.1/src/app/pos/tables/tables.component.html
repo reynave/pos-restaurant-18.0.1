@@ -46,8 +46,8 @@
 
          @if(activeView == 'map'){
          <div class="map">
-            <div class="table-map border p-1 shadow-sm  rounded ">
-               <div class="floorPlan" *ngFor="let x of items[current]['maps']">
+            <div class="table-map border p-1 shadow-sm  rounded " >
+               <div class="floorPlan" *ngFor="let x of items[current]?.maps">
 
 
                   <div class="items border rounded shadow-sm table-{{x.tableMapStatusId}}" 

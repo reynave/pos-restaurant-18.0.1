@@ -8,6 +8,7 @@ import { NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HeaderMenuComponent } from "../../header/header-menu/header-menu.component";
 import { BillComponent } from '../bill/bill.component';
+import { KeyNumberComponent } from "../../keypad/key-number/key-number.component";
 export class Actor {
   constructor(
     public newQty: number,
@@ -16,7 +17,7 @@ export class Actor {
 @Component({
   selector: 'app-menu',
   standalone: true,
-  imports: [HttpClientModule, CommonModule, FormsModule, NgbDropdownModule, RouterModule, HeaderMenuComponent],
+  imports: [HttpClientModule, CommonModule, FormsModule, NgbDropdownModule, RouterModule, HeaderMenuComponent, KeyNumberComponent],
   templateUrl: './menu.component.html',
   styleUrl: './menu.component.css'
 })
@@ -124,7 +125,13 @@ export class MenuComponent implements OnInit, OnDestroy {
     )
   }
 
-
+  btnFinish(){
+     this.showHeader = true;
+      this.showMenu = false;
+      this.showModifier = false;
+      this.showApplyDiscount = false;
+      this.httpMenuLookUp(0);
+  }
   backMenu(menuLookUpParent: any = []) {
     if (menuLookUpParent.length <= 0) {
       this.showHeader = true;
@@ -497,5 +504,18 @@ export class MenuComponent implements OnInit, OnDestroy {
     //     console.log(error);
     //   }
     // )
+  }
+
+   handleData(data: string) {
+     
+
+    let newQty = this.model.newQty.toString();
+    if (data == 'b') {
+      newQty = newQty.slice(0, -1);
+    } else {
+      newQty = newQty + data;
+    }
+    this.model.newQty = parseInt(newQty || '0'); // fallback kalau cover kosong
+
   }
 }

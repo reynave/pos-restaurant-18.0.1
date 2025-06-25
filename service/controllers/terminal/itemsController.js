@@ -114,7 +114,7 @@ exports.addQty = async (req, res) => {
             UPDATE menu
                SET    
                   adjustItemsId = '${insertId}',
-                  qty = ${addQty + parseInt(qty[0]['qty'])},    
+                  qty = ${addQty},    
                   updateDate = '${today()}'
             WHERE id = ${id}
          `;
@@ -139,7 +139,7 @@ exports.addQty = async (req, res) => {
             const q = `
                UPDATE menu
                   SET     
-                     qty = ${addQty + parseInt(qty[0]['qty'])},    
+                     qty = ${addQty },    
                      updateDate = '${today()}'
                WHERE id = ${id}
             `;

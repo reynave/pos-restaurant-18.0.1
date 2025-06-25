@@ -372,8 +372,11 @@ exports.addToCart = async (req, res) => {
       results.push({ cartId, status: 'cart_item insert' });
     }
     let scAmount = menu['price'] * (menu['scRate'] / 100);
-    let taxAmount = (menu['price'] + scAmount) * (menu['taxRate'] / 100);
+  
+    let taxAmount = (parseInt(menu['price']) + scAmount) * (menu['taxRate'] / 100);
+ 
 
+ 
     if (menu['scStatus'] == 1) {
       let q2 =
         `INSERT INTO cart_item_modifier (
@@ -432,7 +435,7 @@ exports.addToCart = async (req, res) => {
         ${menu['taxRate']},  ${menu['taxStatus']},
           ${taxAmount}, 0
       )`;
-
+    //  console.log(q3);
       const [result3] = await db.query(q3);
 
       if (result3.affectedRows === 0) {

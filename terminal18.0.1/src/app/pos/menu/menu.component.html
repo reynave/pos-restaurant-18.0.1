@@ -15,7 +15,7 @@
                               totalCardOrder}}</span></h6>
                      </td>
                   </tr>
-               </tbody> 
+               </tbody>
                <tbody *ngFor="let x of cartOrdered; let i = index" [class]="{'tr-active':x.checkBox == 1 }">
                   <tr [class]="{'bg-light':x.sendOrder !== ''}" (click)="fnCheckedOrdered(i)">
                      <td>
@@ -60,9 +60,9 @@
                   }
 
                </tbody>
- 
+
                <tbody *ngFor="let x of cart; let i = index" [class]="{'tr-active':x.checkBox == 1 }">
-                  <tr   (click)="fnChecked(i)  ">
+                  <tr (click)="fnChecked(i)  ">
                      <td>
 
                         <h3>
@@ -82,7 +82,7 @@
 
                      <td class="text-end font-monospace">
                         <button type="button" class="btn  btn-light border" style="width: 60px;"
-                           [disabled]="x.sendOrder == 1" (click)="open(modalQty, x, i)">
+                           [disabled]="x.sendOrder == 1" (click)="model.newQty = 0;open(modalQty, x, i)">
                            x {{x.total | number}}
                         </button>
                      </td>
@@ -144,9 +144,10 @@
                <div class=" shadow-sm bg-white rounded p-2">
                   <div class="row ">
                      <div class="col-3 align-content-center">
-                      
+
                         @if(showHeader == false){
-                        <button type="button" class="btn border" (click)="backMenu(menuLookUpParent)"> <i class="bi bi-arrow-left"></i>
+                        <button type="button" class="btn border" (click)="backMenu(menuLookUpParent)"> <i
+                              class="bi bi-arrow-left"></i>
                            BACK</button>
                         }
                         @else {
@@ -202,14 +203,14 @@
                }
             </div>
             @if(showMenu == true){
- 
+
             <div class="row g-1 mb-3">
                @if(menuLookUpParent.length> 0){
-               <div>Lookup Menu : <strong class="text-uppercase">{{menuLookUpParent[0]['name'] }}  </strong> </div>
- 
+               <div>Lookup Menu : <strong class="text-uppercase">{{menuLookUpParent[0]['name'] }} </strong> </div>
+
                }
                @else {
-                  <div>Lookup Menu : <strong class="text-uppercase">MENU</strong> </div>
+               <div>Lookup Menu : <strong class="text-uppercase">MENU</strong> </div>
                }
 
                <div class="col-3 mb-1 d-grid" *ngFor="let x of menuLookUp; let i= index">
@@ -259,6 +260,21 @@
             </div>
             }
 
+            @if(showMenu == true){
+            <div class="row g-1 mb-3">
+               <div class="col-3 mb-1 d-grid">
+                  <button type="button" [class]="cssMenu" (click)="btnFinish()">
+                     <div class="mb-1">CANCEL</div>
+                  </button>
+               </div>
+               <div class="col-3 mb-1 d-grid">
+                  <button type="button" [class]="cssMenu" (click)="back()">
+                     <div class="mb-1">FINISH</div>
+                  </button>
+               </div>
+            </div>
+            }
+
          </div>
 
       </div>
@@ -285,12 +301,20 @@
                Input New Quantity is required
             </div>
          </div>
-         <div class="text-center">
-            <button type="button" class="btn btn-outline-secondary mx-2" style="width: 100px;"
-               (click)="modal.close('Save click')">Cancel</button>
-            <button type="submit" class="btn btn-dark  mx-2" style="width: 100px;"
-               [disabled]="!actorForm.form.valid">OK</button>
+         <div class="mb-3">
+            <app-key-number (dataEmitted)="handleData($event)"></app-key-number>
          </div>
+
+         <div class="row g-1">
+            <div class="col d-grid">
+               <button type="button" class="btn btn-outline-secondary"
+                  (click)="modal.close('Save click')">Cancel</button>
+            </div>
+            <div class="col  d-grid">
+               <button type="submit" class="btn btn-dark" [disabled]="!actorForm.form.valid">OK</button>
+            </div>
+         </div>
+
       </form>
    </div>
 
@@ -334,12 +358,15 @@
    <div class="modal-body">
       <div class="row g-1">
          <div class="col d-grid">
-            <button type="button"  class="btn btn-lg btn-outline-dark py-5" (click)="printTableChecker()">
-            <h4><i class="bi bi-receipt-cutoff"></i></h4>
-             Guest  Checker</button>
+            <button type="button" class="btn btn-lg btn-outline-dark py-5" (click)="printTableChecker()">
+               <h4><i class="bi bi-receipt-cutoff"></i></h4>
+               Guest Checker
+            </button>
          </div>
-           <div class="col d-grid">
-            <button type="button" class="btn btn-lg btn-outline-dark py-5" (click)="printToKitchen()"  ><h4><i class="bi bi-fire"></i></h4> Kitchen</button>
+         <div class="col d-grid">
+            <button type="button" class="btn btn-lg btn-outline-dark py-5" (click)="printToKitchen()">
+               <h4><i class="bi bi-fire"></i></h4> Kitchen
+            </button>
          </div>
       </div>
    </div>

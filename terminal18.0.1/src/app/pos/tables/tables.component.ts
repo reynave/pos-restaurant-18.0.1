@@ -55,6 +55,14 @@ export class TablesComponent implements OnInit {
 
 
   ngOnInit() {
+    this.current = 0;
+    if (!localStorage.getItem("pos3.onMap")) {
+      localStorage.setItem("pos3.onMap", '0')
+    }else{
+       this.current = parseInt(localStorage.getItem("pos3.onMap") || '0');
+    }
+
+
     this.getConfigJson = this.configService.getConfigJson();
     this.sendMessage();
 
@@ -63,10 +71,18 @@ export class TablesComponent implements OnInit {
     this.httpGet();
     this.httpHeader();
 
+
+
     this.socketService.listen<string>('message-from-server').subscribe((msg) => {
       console.log(msg);
       this.httpGet();
     });
+
+
+
+    //     this.current = localStorage.getItem("pos3.onMap");
+
+
   }
   sendMessage() {
     console.log("EMIT");
@@ -103,7 +119,7 @@ export class TablesComponent implements OnInit {
       }
     )
   }
-  totalCart : number = 99;
+  totalCart: number = 99;
   httpGet() {
     this.modalService.dismissAll();
     this.loading = true;
@@ -131,6 +147,7 @@ export class TablesComponent implements OnInit {
   }
 
   onMap(index: number) {
+    localStorage.setItem("pos3.onMap", index.toString());
     this.current = index;
   }
 
@@ -212,9 +229,9 @@ export class TablesComponent implements OnInit {
   }
 
   dailyClose() {
-   
 
-    
+
+
     if (this.totalCart > 0) {
       alert("please close all tables!");
       this.logService.logAction('please close all tables!')
