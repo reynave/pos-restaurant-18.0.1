@@ -1,10 +1,11 @@
 const db = require('../../config/db');
 const net = require('net');
-const { today, formatDateTime } = require('../../helpers/global');
+const { today, formatDateTime, formatCurrency, formatLine, centerText } = require('../../helpers/global');
 const { cart } = require('../../helpers/bill');
 
 const ejs = require('ejs');
 const path = require('path');
+const { group } = require('console');
 
 exports.getData = async (req, res) => {
 
@@ -81,35 +82,7 @@ exports.getData = async (req, res) => {
 exports.printing = async (req, res) => {
   const templatePath = path.join(__dirname, '../../public/template/bill.ejs');
   const api = req.query.api == 'true' ? true : false;
-
-  function formatCurrency(num, symbol = '') {
-    num = parseInt(num);
-    num = num.toLocaleString('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0, });
-    return symbol + num.replace(/Rp/g, '');
-  }
-
-  function formatLine(leftText, rightText, lineLength = 50) {
-    const totalLength = leftText.length + rightText.length;
-
-    if (totalLength >= lineLength) {
-      // Jika terlalu panjang, potong teks kiri
-      const trimmedLeft = leftText.slice(0, lineLength - rightText.length - 1);
-      return trimmedLeft + ' ' + rightText;
-    }
-
-    const spaces = lineLength - totalLength;
-    return leftText + ' '.repeat(spaces) + rightText;
-  }
-
-  function centerText(str, width = 50) {
-    if (str.length >= width) return str; // jika string lebih panjang, tidak diubah
-
-    const totalSpaces = width - str.length;
-    const paddingLeft = Math.floor(totalSpaces / 2);
-    const paddingRight = totalSpaces - paddingLeft;
-
-    return ' '.repeat(paddingLeft) + str + ' '.repeat(paddingRight);
-  }
+ 
 
 
   try {
@@ -117,12 +90,14 @@ exports.printing = async (req, res) => {
 
 
     const cartId = req.query.id;
-    const data = await cart(cartId);
+    const subgroup = !req.query.subgroup ? 1 : req.query.subgroup;
+
+    const data = await cart(cartId, subgroup);
 
 
     const [transaction] = await db.query(`
      SELECT 
-         c.id , c.id as 'bill', c.void,  c.dailyCheckId, c.cover, c.outletId,
+         c.id   , c.id as 'bill', c.void,  c.dailyCheckId, c.cover, c.outletId,
         o.name AS 'outlet', c.startDate, c.endDate , 
         c.close,   t.tableName, t.tableNameExt, 'UAT PERSON' as 'servedBy' 
       FROM cart AS c
@@ -133,6 +108,8 @@ exports.printing = async (req, res) => {
 
     const formattedRows = transaction.map(row => ({
       ...row,
+      bill : row.id + ( subgroup > 1 ? ( '.'+subgroup): ''),
+
       startDate: formatDateTime(row.startDate),
       endDate: row.close == 0 ? '' : formatDateTime(row.endDate),
     }));
@@ -148,24 +125,27 @@ exports.printing = async (req, res) => {
         data: data,
         transaction: formattedRows[0],
         company: outlet[0],
+        subgroup :subgroup,
         function: [
           { 'formatCurrency(value, symbol=null)': `return string` },
           { 'formatLine(leftText, rightText, lineLength = 50)': `return string` },
           { 'centerText(str, lineLength = 50)': `return string` },
         ]
       });
-    }
-    const html = await ejs.renderFile(templatePath, {
-      data: data,
-      transaction: formattedRows[0],
-      company: outlet[0],
-      formatCurrency,
-      formatLine,
-      centerText
-    });
-    res.setHeader('Content-Type', 'application/json');
-    res.send(html);
+    } else {
 
+
+      const html = await ejs.renderFile(templatePath, {
+        data: data,
+        transaction: formattedRows[0],
+        company: outlet[0],
+        formatCurrency,
+        formatLine,
+        centerText
+      });
+      res.setHeader('Content-Type', 'application/json');
+      res.send(html);
+    }
 
   } catch (err) {
     console.error('Render error:', err);
@@ -229,7 +209,7 @@ exports.ipPrint = async (req, res) => {
 
   const cut = "\x1B\x69"; // ESC i = cut paper (Epson-style)
 
-  const message = req.body['message']+ '\n' + cut; // bisa juga pakai ESC/POS command
+  const message = req.body['message'] + '\n' + cut; // bisa juga pakai ESC/POS command
 
   const client = new net.Socket();
   try {
@@ -255,5 +235,66 @@ exports.ipPrint = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'error' });
+  }
+}
+
+exports.splitBill = async (req, res) => {
+
+  try {
+    const cartId = req.query.id;
+    const q = `
+     SELECT i.id, i.subgroup, i.price, i.sendOrder, i.inputDate, 
+      m.name AS 'menu'
+      FROM cart_item AS i
+      JOIN menu AS m ON m.id = i.menuId
+      WHERE i.cartId = '${cartId}' AND i.presence = 1 AND i.void = 0 
+      ORDER BY i.inputDate ASC;
+    `;
+    const [items] = await db.query(q);
+    let subgroup = [1, 2, 3, 4]
+
+
+    res.json({
+      subgroup: subgroup,
+      error: false,
+      items: items,
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+};
+
+exports.updateGroup = async (req, res) => {
+  const id = req.body['id'];
+  const group = req.body['group'];
+
+  const results = [];
+  try {
+    const q = `
+            UPDATE cart_item
+               SET    
+                  subgroup = '${group}', 
+                  updateDate = '${today()}'
+            WHERE id = ${id}
+         `;
+
+    const [result] = await db.query(q);
+
+    if (result.affectedRows === 0) {
+      results.push({ status: 'not found' });
+    } else {
+      results.push({ status: 'updated' });
+    }
+
+    res.json({
+      error: false,
+      get: req.query
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
   }
 }

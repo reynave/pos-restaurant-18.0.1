@@ -10,28 +10,37 @@
 
       <div class="col-6">
 
-         <div style="min-height: 85vh; overflow-y: auto;">
-            <pre class="font-monospace" [innerHTML]="htmlBill"></pre>
+         <div style="max-height: 85vh; overflow-y: auto;">
+            <div *ngFor="let a of groups; let i = index">
+               <pre class="font-monospace" [innerHTML]="htmlBill[i]"></pre>
+               <hr *ngIf="groups.length > 1">
+            </div>
+
          </div>
       </div>
       <div class="col-6 bg-light rounded ">
+
          <div class="p-3 text-end">
-            <button type="button" class="btn-close btn-lg " aria-label="Close"
-               (click)="activeModal.dismiss('Cross click')"></button>
+            <button type="button" class="btn-close btn-lg " aria-label="Close"  (click)="activeModal.dismiss('Cross click')"></button>
          </div>
 
          <div style="min-height: 80vh;" class="align-content-center">
 
 
             @if(close == 0){
+ 
             <div class="text-center d-grid mx-5 mb-3">
                <button type="button" class="btn btn-lg  bg-success py-3 rounded shadow-sm  text-white border"
                   (click)="payment()">PAYMENT</button>
             </div>
 
             <div class="text-center d-grid mx-5 mb-3">
-               <button type="button" class="btn btn-lg   bg-white py-3 rounded shadow-sm border"> PRINT
-                  BILL</button>
+               <button type="button" class="btn btn-lg  bg-warning py-3 rounded shadow-sm  text-white border"
+                  (click)="splitBill()">SPLIT BILL</button>
+            </div>
+
+            <div class="text-center d-grid mx-5 mb-3">
+               <button type="button" class="btn btn-lg   bg-white py-3 rounded shadow-sm border"> PRINT BILL</button>
             </div>
 
             }
@@ -39,7 +48,7 @@
 
             <h4 class="mb-5 text-center">Total Copied : {{cartCopyBill.length}}</h4>
             <div class="text-center" *ngIf="isPrinting == true">
-              Checking <img src="./gif/ellipsis.gif" width="50">
+               Checking <img src="./gif/ellipsis.gif" width="50">
             </div>
             <div class="text-center d-grid mx-5 mb-3">
                <button type="button" [disabled]="isPrinting" (click)="printCopyBill();"
@@ -49,7 +58,7 @@
             </div>
             }
 
-            
+
             <div class="alert alert-warning" *ngIf="printResp != ''">
                {{printResp}}
             </div>

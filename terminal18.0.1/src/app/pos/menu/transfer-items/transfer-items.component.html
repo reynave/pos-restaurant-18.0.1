@@ -1,0 +1,69 @@
+<div class="container-fluid ">
+    <div class="row g-0">
+        <div class="col-12">
+            <div class="wrapper border bg-white">
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th></th>
+                            <th>Menu</th>
+                            <th class="text-center">Current Table</th>
+                            <th class="text-center">
+                                Select Table
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let x of items; let i = index">
+                            <td>{{i+1}}</td>
+                            <td>
+                                @if(x.checkBox == 0){
+                                <h5 (click)="x.checkBox = 1"> <i class="bi bi-square"></i> </h5>
+
+                                }
+                                @else {
+                                <h5 (click)="x.checkBox = 0"> <i class="bi bi-check-square-fill"></i> </h5>
+                                }
+
+
+
+                            </td>
+                            <td>{{x.menu}}</td>
+                            <td class="text-center">{{x.tableName}}</td>
+                            <td class="text-center">
+
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="d-grid m-2">
+                    <button type="button" class="btn btn-lg btn-dark" (click)="open(content)">SELECT TABLES</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <strong class="modal-title" id="modal-basic-title">Select Tables</strong>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="mb-3">
+                <div *ngFor="let x of tables" class="border mb-1" (click)="fnTransferItems(x)">
+                    {{x.tableName}}
+                </div>
+
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" (click)="modal.close('Save click')">Save</button>
+    </div>
+</ng-template>

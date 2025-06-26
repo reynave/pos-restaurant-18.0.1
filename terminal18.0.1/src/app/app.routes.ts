@@ -18,6 +18,8 @@ import { DailyCloseComponent } from './pos/daily/daily-close/daily-close.compone
 import { dailyStartGuard } from './guard/daily-start.guard';
 import { ItemsComponent } from './items/items.component';
 import { DailyCashBalanceComponent } from './pos/daily/daily-cash-balance/daily-cash-balance.component';
+import { SplitBillComponent } from './pos/bill/split-bill/split-bill.component';
+import { TransferItemsComponent } from './pos/menu/transfer-items/transfer-items.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -30,11 +32,15 @@ export const routes: Routes = [
     { path: 'tables', component: TablesComponent, canActivate: [authGuard, dailyStartGuard] },
     { path: 'menu', component: MenuComponent, canActivate: [authGuard, dailyStartGuard] },
     { path: 'menu/modifier', component: MenuModifierComponent, canActivate: [authGuard, dailyStartGuard] },
+    { path: 'menu/transferItems', component: TransferItemsComponent, canActivate: [authGuard, dailyStartGuard] },
+
     { path: 'bill', component: BillComponent, canActivate: [authGuard, dailyStartGuard] },
+    { path: 'bill/splitBill', component: SplitBillComponent, canActivate: [authGuard, dailyStartGuard] },
+
     { path: 'payment', component: PaymentComponent, canActivate: [authGuard, dailyStartGuard] },
 
     { path: 'items', component: ItemsComponent, canActivate: [authGuard, dailyStartGuard] },
-    
+
     // END :: DAILYSTARTGUARD
 
     { path: 'transaction', component: TransactionComponent, canActivate: [authGuard] },

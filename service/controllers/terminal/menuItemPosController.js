@@ -372,11 +372,11 @@ exports.addToCart = async (req, res) => {
       results.push({ cartId, status: 'cart_item insert' });
     }
     let scAmount = menu['price'] * (menu['scRate'] / 100);
-  
-    let taxAmount = (parseInt(menu['price']) + scAmount) * (menu['taxRate'] / 100);
- 
 
- 
+    let taxAmount = (parseInt(menu['price']) + scAmount) * (menu['taxRate'] / 100);
+
+
+
     if (menu['scStatus'] == 1) {
       let q2 =
         `INSERT INTO cart_item_modifier (
@@ -435,7 +435,7 @@ exports.addToCart = async (req, res) => {
         ${menu['taxRate']},  ${menu['taxStatus']},
           ${taxAmount}, 0
       )`;
-    //  console.log(q3);
+      //  console.log(q3);
       const [result3] = await db.query(q3);
 
       if (result3.affectedRows === 0) {
@@ -955,7 +955,7 @@ exports.cartDetail = async (req, res) => {
       FROM cart_item AS c
       LEFT JOIN menu AS m ON m.id = c.menuId
       WHERE c.cartId = '${cartId}' AND c.presence = 1 AND c.void = 0
-      AND c.menuId = ${menuId} AND c.price = ${price} and c.sendOrder = '${sendOrder}'
+      AND c.menuId = ${menuId} AND c.price = ${price}  
     `;
     console.log(q)
     const [formattedRows] = await db.query(q);
@@ -1451,7 +1451,7 @@ exports.exitWithoutOrder = async (req, res) => {
     res.status(500).json({ error: 'Database update error', details: err.message });
   }
 };
- 
+
 exports.menuLookUp = async (req, res) => {
   // const { id, name, position, email } = req.body;
   let parentId = req.query.parentId;
@@ -1484,9 +1484,9 @@ exports.menuLookUp = async (req, res) => {
 
     res.status(201).json({
       error: false,
-      parent : lookUpHeader,
-    //  lookUpHeader: parentId == 0 ? 'Menu' : lookUpHeader[0]['name'],
-    //  parentId: parentId == 0 ? 0 : parseInt(lookUpHeader[0]['parentId']),
+      parent: lookUpHeader,
+      //  lookUpHeader: parentId == 0 ? 'Menu' : lookUpHeader[0]['name'],
+      //  parentId: parentId == 0 ? 0 : parseInt(lookUpHeader[0]['parentId']),
       results: rows,
     });
 
@@ -1497,3 +1497,42 @@ exports.menuLookUp = async (req, res) => {
   }
 };
 
+
+exports.transferItems = async (req, res) => {
+
+  try {
+    const cartId = req.query.id;
+    const q = `
+      SELECT i.id,   i.price, i.sendOrder, i.inputDate, c.id AS 'cartId' , c.outletTableMapId, c.outletId, t.tableName,
+m.name AS 'menu', 0 AS 'checkBox'
+FROM cart_item AS i
+JOIN cart AS c ON c.id = i.cartId
+JOIN menu AS m ON m.id = i.menuId
+JOIN outlet_table_map AS t ON t.id = c.outletTableMapId
+WHERE i.cartId = '${cartId}' AND i.presence = 1 AND i.void = 0 
+ORDER BY i.inputDate ASC;
+    `;
+    const [items] = await db.query(q);
+
+    const q2 = `
+     SELECT  * from outlet_table_map
+     WHERE presence = 1
+     order by tableName ASC
+    `;
+    const [tables] = await db.query(q2);
+
+    let subgroup = [1, 2, 3, 4]
+
+
+    res.json({
+      subgroup: subgroup,
+      tables: tables,
+      error: false,
+      items: items,
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+};

@@ -112,12 +112,25 @@ exports.cart = async (req, res) => {
       }
 
     }
+
+
+    const [groups] = await db.query(`
+      SELECT subgroup, COUNT(id) AS 'qty'
+      FROM cart_item 
+      WHERE  presence= 1 AND  void = 0 AND    cartId = '${cartId}'
+      GROUP BY subgroup
+    `);
+
+
+
+
     res.json({
       error: false,
       data: data,
       results: results,
-      closePayment: data['unpaid']  == 0 ? 1:0,
-      cart : cartData[0],
+      closePayment: data['unpaid'] == 0 ? 1 : 0,
+      cart: cartData[0],
+      groups: groups,
     });
 
   } catch (err) {

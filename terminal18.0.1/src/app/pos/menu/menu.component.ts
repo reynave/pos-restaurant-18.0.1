@@ -9,6 +9,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HeaderMenuComponent } from "../../header/header-menu/header-menu.component";
 import { BillComponent } from '../bill/bill.component';
 import { KeyNumberComponent } from "../../keypad/key-number/key-number.component";
+import { param } from 'jquery';
 export class Actor {
   constructor(
     public newQty: number,
@@ -67,6 +68,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   menuLookUp: any = [];
   menuLookupId: number = 0;
   menuLookUpParent: any = [];
+
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
@@ -517,5 +519,11 @@ export class MenuComponent implements OnInit, OnDestroy {
     }
     this.model.newQty = parseInt(newQty || '0'); // fallback kalau cover kosong
 
+  }
+
+  transferItems(){
+    this.router.navigate(['menu/transferItems'], { queryParams : {id:this.id}}).then(
+      ()=> {this.modalService.dismissAll()}
+    )
   }
 }

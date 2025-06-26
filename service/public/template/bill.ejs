@@ -13,7 +13,7 @@
 <%= formatLine('COVER ', formatCurrency(transaction.cover), line)%>
  
 <% data.cart.forEach(function(row){ 
-    %><%= formatLine(row.total+'X '+row.name, formatCurrency(row.price), line)
+    %><%= formatLine(row.total+'X '+row.name, formatCurrency(row.totalAmount), line)
     %><% 
     if(row.modifier.length > 0){ 
         %>

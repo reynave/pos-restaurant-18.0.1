@@ -16,6 +16,7 @@ import { BillTableComponent } from "./bill-table/bill-table.component";
   styleUrl: './bill.component.css'
 })
 export class BillComponent implements OnInit {
+
   @Input() id: any;
   loading: boolean = false;
   items: any = [{
@@ -26,7 +27,7 @@ export class BillComponent implements OnInit {
   //id: string = '';
   totalAmount: number = 0;
   api: string = environment.api;
-  htmlBill: any = '';
+  htmlBill: any = [];
   isChecked: boolean = false;
   paided: any = [];
 
@@ -39,6 +40,11 @@ export class BillComponent implements OnInit {
   activeModal = inject(NgbActiveModal);
   close: number = -1;
   cartCopyBill: any = [];
+  isPrinting: boolean = false;
+  printResp: string = '';
+  groups: any = [];
+  taxSc: any = [];
+  subTotal: any = [];
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
@@ -50,12 +56,10 @@ export class BillComponent implements OnInit {
 
   ngOnInit() {
     this.httpCart();
-    this.httpBill();
+
     this.getCartCopyBill();
   }
 
-  taxSc: any = [];
-  subTotal: any = [];
   httpCart() {
 
     this.loading = true;
@@ -67,22 +71,31 @@ export class BillComponent implements OnInit {
       }
     }).subscribe(
       data => {
-        this.data = data['data'];
-        this.cart = data['data']['cart'];
-        this.taxSc = data['data']['taxSc'];
-        this.subTotal = data['data']['subTotal'];
-        this.grandTotal = data['data']['grandTotal'];
-        this.totalItem = data['data']['totalItem'];
-        this.bill = data['data']['bill'];
-        this.paided = data['data']['paided'];
-        this.closePaymentAmount = data['data']['closePaymentAmount'];
         this.close = data['cart']['close'];
-        this.unpaid = data['data']['unpaid']
+        this.groups = data['groups'];
+
+        // this.groups.forEach((el: any) => {
+        //    this.httpBill(el.subgroup);
+        //  });
+        this.callWithDelay();
+
+
       },
       error => {
         console.log(error);
       }
     )
+  }
+
+  async callWithDelay() {
+    for (const el of this.groups) {
+      await this.httpBill(el.subgroup); // kalau httpBill async
+      await this.delay(100); // delay 1 detik
+    }
+  }
+
+  delay(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   getCartCopyBill() {
@@ -102,17 +115,19 @@ export class BillComponent implements OnInit {
       }
     );
   }
-  httpBill() {
+
+  httpBill(subgroup: number) {
     this.loading = true;
     const url = environment.api + "bill/printing";
     this.http.get(url, {
       responseType: 'text' as const,
       params: {
         id: this.id,
+        subgroup: subgroup
       }
     }).subscribe(
       (data: string) => {
-        this.htmlBill = data;
+        this.htmlBill.push(data);
       },
       error => {
         console.log(error);
@@ -147,26 +162,32 @@ export class BillComponent implements OnInit {
     )
   }
 
-  isPrinting: boolean = false;
-  printResp: string = '';
   ipPrint() {
     this.printResp = '';
-    this.isPrinting = true;
-    console.log('ipPrint', this.htmlBill);
+    this.isPrinting = true;  
+    let htmlBill = "";
+
+    this.htmlBill.forEach((element: any) => {
+      htmlBill += element;
+    });
+
     const printerIp = '10.51.122.20';
     const printerPort = 9100;
     const body = {
-      message: this.htmlBill,
+      message: htmlBill,
       ip: printerIp,
       port: printerPort
     }
+
+
+    console.log(body);
     this.http.post<any>(environment.api + "bill/ipPrint", body, {
       headers: this.configService.headers(),
     }).subscribe(
       data => {
         this.isPrinting = false;
         console.log(data);
-        this.printResp = data['note']; 
+        this.printResp = data['note'];
       },
       error => {
         this.isPrinting = false;
@@ -175,6 +196,7 @@ export class BillComponent implements OnInit {
       }
     );
   }
+
   printCopyBill() {
     const body = {
       id: this.id
@@ -193,5 +215,12 @@ export class BillComponent implements OnInit {
     )
   }
 
+  splitBill() {
+    this.router.navigate(['bill/splitBill'], { queryParams: { id: this.id } }).then(
+      () => {
+        this.activeModal.dismiss();
+      }
+    )
+  }
 
 }
