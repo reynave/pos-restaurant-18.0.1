@@ -1,0 +1,20 @@
+.table-map{
+    position: relative;
+    width: 100%;
+    height: var(--map-height);
+   background-color: var(--bg-color-primary-1);
+    overflow-y: auto;
+}
+
+.table-map .floorPlan{
+   position: absolute; 
+}
+
+ .table-map .floorPlan .items{
+    background-color: #fff;  
+    cursor: pointer; 
+}
+
+.disable-icon{
+     opacity: 0.5;
+}

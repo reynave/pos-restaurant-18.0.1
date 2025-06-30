@@ -1,0 +1,51 @@
+<div class="modal-header">
+    <strong class="modal-title">Transfer Item log</strong>
+    <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+</div>
+<div class="modal-body">
+    <div class="row">
+       <div class="col-6">
+            <strong>Transfer In</strong>
+             <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Menu</th>
+                        <th>Table</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let x of transferIn; let i = index">
+                        <td>{{i+1}}</td>
+                        <td> {{x.menu}} </td>
+                        <td> {{x.tableName}} </td>
+                        <td>{{x.inputDate | date:'h:mm a'}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-6">
+            <strong>Transfer Out</strong>
+             <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Menu</th>
+                        <th>Table</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let x of transferOut; let i = index">
+                        <td>{{i+1}}</td>
+                        <td> {{x.menu}} </td>
+                        <td> {{x.tableName}} </td>
+                        <td>{{x.inputDate | date:'h:mm a'}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+ 

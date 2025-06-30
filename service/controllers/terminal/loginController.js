@@ -39,7 +39,7 @@ exports.signin = async (req, res) => {
     try {
         let empId = username;
         const [employee] = await db.query(
-            `SELECT * FROM employee WHERE presence = 1 AND id = ?`, [empId]
+            `SELECT * FROM employee WHERE presence = 1 AND username = ?`, [empId]
         );
 
         if (!employee.length) {
@@ -70,6 +70,7 @@ exports.signin = async (req, res) => {
         res.status(200).json({
             message: 'Login successful',
             dailyCheck: dailyCheck,
+            employee : employee,
             token: 'UAT123',
         });
 

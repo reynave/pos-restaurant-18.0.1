@@ -135,3 +135,26 @@ button:disabled,
 button[disabled]{
   border: none; 
 }
+
+.table-10{
+    background-color: var(--bg-color-primary-50) !important;
+}
+
+.table-12{
+    background-color: var(--bg-color-primary-40) !important;
+}
+ .table-18{
+    background-color: var(--bg-color-primary-30) !important;
+}
+.table-name{
+    text-shadow: 2px 2px 2px #f4f4f4;
+   
+}
+
+.table-pos-label{
+    position: absolute;
+    bottom: -1.2rem;
+    left: 0px;
+    width: 100%;
+    text-align: center;
+}

@@ -1514,21 +1514,154 @@ ORDER BY i.inputDate ASC;
     `;
     const [items] = await db.query(q);
 
-    const q2 = `
-     SELECT  * from outlet_table_map
-     WHERE presence = 1
-     order by tableName ASC
-    `;
-    const [tables] = await db.query(q2);
 
-    let subgroup = [1, 2, 3, 4]
+    const q1 = `
+      SELECT  * 
+      FROM cart 
+      WHERE id = '${cartId}' AND  presence = 1 AND void = 0
+    `;
+    const [table] = await db.query(q1);
+
+    res.json({
+      table: table[0],
+      error: false,
+      items: items,
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+};
+
+
+exports.transferTable = async (req, res) => {
+  const table = req.body['table'];
+  const cart = req.body['cart'];
+  const data = req.body['items'];
+  const dailyCheckId = req.body['dailyCheckId'];
+  const outletId = req.body['outletId'];
+
+  const inputDate = today();
+  const results = [];
+  try {
+    let cartId = table['cardId'];
+
+    if (cartId == '') {
+      const { insertId } = await autoNumber('cart');
+      cartId = insertId;
+
+      const [newOrder] = await db.query(
+        `INSERT INTO cart (
+                presence, inputDate,   outletTableMapId, 
+                cover,  id, outletId, dailyCheckId, tableMapStatusId,
+                startDate, endDate ) 
+              VALUES (1, '${inputDate}',  ${table['outletTableMapId']}, 
+                1,  '${insertId}',  ${outletId}, '${dailyCheckId}',   ${cart['tableMapStatusId']}, 
+                '${inputDate}', '${inputDate}'  )`
+      );
+      if (newOrder.affectedRows === 0) {
+        results.push({ status: 'not found' });
+      } else {
+        results.push({ status: 'updated' });
+      }
+    }
+
+    for (const emp of data) {
+      const { id } = emp;
+
+      if (!id) {
+        results.push({ id, status: 'failed', reason: 'Missing fields' });
+        continue;
+      }
+
+      const [result] = await db.query(
+        `UPDATE cart_item SET 
+          cartId = '${cartId}', 
+          subgroup = 1, 
+          updateDate = '${today()}'
+        WHERE id = ${id}`
+      );
+
+      if (result.affectedRows === 0) {
+        results.push({ id, status: 'not found' });
+      } else {
+        results.push({ id, status: 'updated' });
+      }
+
+      const q1 = `UPDATE cart_item_modifier SET 
+          cartId = '${cartId}',  
+          updateDate = '${today()}'
+        WHERE cartItemId = ${id}`;
+      const [result2] = await db.query(q1);
+
+      if (result2.affectedRows === 0) {
+        results.push({ id, status: 'not found' });
+      } else {
+        results.push({ id, status: 'updated' });
+      }
+
+
+
+      const [newOrder] = await db.query(
+        `INSERT INTO cart_transfer_items (
+                presence, inputDate,  outletTableMapId, outletTableMapIdNew,
+                cartItemId, cartId, cartIdNew, dailyCheckId
+               ) 
+        VALUES (1, '${inputDate}',  ${data[0]['outletTableMapId']},  ${table['outletTableMapId']}, 
+            ${data[0]['id']}, '${data[0]['cartId']}' ,'${cartId}',  '${dailyCheckId}'  )`
+      );
+      if (newOrder.affectedRows === 0) {
+        results.push({ status: 'not found' });
+      } else {
+        results.push({ status: 'updated' });
+      }
+    }
+
+
+
+
 
 
     res.json({
-      subgroup: subgroup,
-      tables: tables,
       error: false,
-      items: items,
+      cartId: cartId
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+};
+
+exports.transferLog = async (req, res) => {
+
+  try {
+    const cartId = req.query.cartId;
+    const q = `
+      SELECT  t.*, m.name 'menu', o.tableName FROM cart_transfer_items AS t 
+      JOIN cart_item AS c ON c.id = t.cartItemId
+      JOIN menu AS m ON m.id = c.menuId
+      JOIN outlet_table_map AS o ON o.id = t.outletTableMapId
+      WHERE t.cartIdNew = '${cartId}';
+    `;
+    const [transferIn] = await db.query(q);
+
+    const q2 = `
+     SELECT  t.*, m.name 'menu', o.tableName FROM cart_transfer_items AS t 
+      JOIN cart_item AS c ON c.id = t.cartItemId
+      JOIN menu AS m ON m.id = c.menuId
+      JOIN outlet_table_map AS o ON o.id = t.outletTableMapIdNew
+      WHERE t.cartId = '${cartId}';
+    `;
+    const [transferOut] = await db.query(q2);
+
+    
+    res.json({
+      error: false,
+      transferIn: transferIn,
+      transferOut: transferOut,
+
     });
 
   } catch (err) {

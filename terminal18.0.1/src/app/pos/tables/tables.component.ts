@@ -42,6 +42,7 @@ export class TablesComponent implements OnInit {
   activeView: string = localStorage.getItem("pos3.view") ?? 'map';
   getConfigJson: any = [];
   dataHeader: any = {};
+  public : string = environment.api+"../public/floorMap/";
   constructor(
     public configService: ConfigService,
     private http: HttpClient,

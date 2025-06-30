@@ -11,6 +11,11 @@
          </div>
 
          <div class="row">
+            <div class="col-12" [hidden]="error ==''">
+               <div class="alert alert-danger">
+                  {{error}}
+               </div>
+            </div>
             <div class="col-12">
                <form (ngSubmit)="onSubmit()" #actorForm="ngForm">
 
@@ -28,28 +33,30 @@
 
 
                   <div class="form-group mb-3">
-                     <label for="username">Username</label>
-                     <select class="form-control  form-control-lg" id="username" required [(ngModel)]="model.username"
+                     <label for="username">User ID</label>
+                     <input type="text" class="form-control  form-control-lg" id="username" required
+                        [(ngModel)]="model.username" name="username" #username="ngModel">
+                     <!-- <select class="form-control  form-control-lg" id="username" required [(ngModel)]="model.username"
                         name="username" #username="ngModel">
                         <option *ngFor="let x of employeeSelect; let i = index" [value]="i">{{x.name}}</option>
 
-                     </select>
+                     </select> -->
 
                      <div [hidden]="username.valid || username.pristine" class="text-danger">
-                        Username is required
+                        userID is required
                      </div>
                   </div>
                   <div class="form-group  mb-3">
                      <label for="name">Password</label>
                      <input type="password" class="form-control  form-control-lg" id="password" required
-                        [(ngModel)]="model.password" name="password"  #password="ngModel">
+                        [(ngModel)]="model.password" name="password" #password="ngModel">
                      <div [hidden]="password.valid || password.pristine" class="text-danger">
                         Password is required
                      </div>
-                    
-                     <div class="mt-1">
-                       <app-key-number (dataEmitted)="handleData($event)"></app-key-number>
-                     </div> 
+
+                     <!-- <div class="mt-1">
+                        <app-key-number (dataEmitted)="handleData($event)"></app-key-number>
+                     </div> -->
 
                   </div>
 
@@ -63,9 +70,7 @@
                </form>
             </div>
 
-            <div class="text-danger">
-               {{error}}
-            </div>
+
 
          </div>
 

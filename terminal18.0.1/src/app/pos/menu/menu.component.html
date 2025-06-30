@@ -167,33 +167,63 @@
             </div>
             @if(showHeader == true){
             <div>
-               <button type="button" [class]="cssClass" [disabled]="!isChecked" (click)="onVoid()">
-                  <i class="bi bi-x-lg"></i> VOID ITEM</button>
-               <button type="button" [class]="cssClass" [disabled]="cart.length < 1" (click)="sendOrder();">
-                  <i class="bi bi-fork-knife"></i> SEND ORDER</button>
-               <button type="button" [class]="cssClass" (click)="openComponent(id)">
-                  <i class="bi bi-receipt-cutoff"></i> BILL</button>
-               <button type="button" [class]="cssClass" (click)="payment()"><i class="bi bi-credit-card"></i>
-                  PAYMENT</button>
+               <div class="row g-2">
+                  <div class="col-3 d-grid">
+                     <button type="button" [class]="cssClass" class="bg-white" [disabled]="!isChecked" (click)="onVoid()">
+                        <i class="bi bi-x-lg"></i> VOID ITEM</button>
+                  </div>
+                  <div class="col-3 d-grid">
+                     <button type="button" [class]="cssClass" class="bg-white" [disabled]="cart.length < 1" (click)="sendOrder();">
+                        <i class="bi bi-fork-knife"></i> SEND ORDER</button>
+                  </div>
+                  <div class="col-3 d-grid">
+                     <button type="button" [class]="cssClass" class="bg-white" (click)="openComponent(id)">
+                        <i class="bi bi-receipt-cutoff"></i> BILL</button>
+                  </div>
+                  <div class="col-3 d-grid">
+                     <button type="button" [class]="cssClass" class="bg-white" (click)="payment()"><i class="bi bi-credit-card"></i>
+                        PAYMENT</button>
+                  </div>
 
-               <button type="button" [class]="cssClass" (click)="exitWithoutOrder();"><i class="bi bi-trash"></i> CANCEL
-                  ORDER</button>
-               <button type="button" [class]="cssClass" (click)="transferItems()"> <i class="bi bi-send-plus"></i>
-                  TRANSFER ITEMS</button>
+               </div>
+
+               <div class="row g-2">
+                  <div class="col-3 d-grid">
+                     <button type="button" [class]="cssClass" class="btn-danger" (click)="exitWithoutOrder();"><i class="bi bi-trash"></i>
+                        CANCEL ORDER</button>
+                  </div>
+                  <div class="col-3 d-grid">
+                     <button type="button" [class]="cssClass" class="btn-warning" (click)="transferItems()"> <i class="bi bi-send-plus"></i>
+                        TRANSFER ITEMS</button>
+                  </div>
+                  <div class="col-3 d-grid">
+                     <button type="button" [class]="cssClass" class="bg-white" (click)="transferLog()"> <i
+                           class="bi bi-clock-history"></i>
+                        TRANSFER LOG</button>
+                  </div>
+               </div>
             </div>
             }
 
             <div>
 
                @if(showHeader == true){
-               <button type="button" [class]="cssClass"
-                  (click)="httpMenuLookUp(0);showMenu = true; showHeader= false"><i class="bi bi-cup-straw"></i>
-                  MENU</button>
-               <button type="button" [class]="cssClass" (click)="showModifier = true;  showHeader= false"><i
-                     class="bi bi-pencil"></i> MODIFIER</button>
-               <button type="button" [class]="cssClass" (click)="showApplyDiscount =true; showHeader= false"><i
-                     class="bi bi-percent"></i> APPLY
-                  ITEM DISCOUNT</button>
+               <div class="row g-2">
+                  <div class="col-3 d-grid">
+                     <button type="button" [class]="cssClass" class="bg-white"
+                        (click)="httpMenuLookUp(0);showMenu = true; showHeader= false"><i class="bi bi-cup-straw"></i>
+                        MENU</button>
+                  </div>
+                  <div class="col-3 d-grid">
+                     <button type="button" [class]="cssClass" class="bg-white" (click)="showModifier = true;  showHeader= false"><i
+                           class="bi bi-pencil"></i> MODIFIER</button>
+                  </div>
+                  <div class="col-4 d-grid">
+                     <button type="button" [class]="cssClass" class="bg-white" (click)="showApplyDiscount =true; showHeader= false"><i
+                           class="bi bi-percent"></i> APPLY
+                        ITEM DISCOUNT</button>
+                  </div>
+               </div>
                }
 
                @if(showHeader == false){
@@ -297,10 +327,17 @@
          <div class="mb-3">
             <div class="mb-1"><label for="newQty">Input New Quantity</label></div>
 
-            <input type="number" class="form-control form-control-lg" id="newQty" required [(ngModel)]="model.newQty"
-               name="newQty" #newQty="ngModel">
-            <div [hidden]="newQty.valid || newQty.pristine" class="text-danger">
-               Input New Quantity is required
+            <div class="row g-1">
+               <div class="col-9">
+                  <input type="number" class="form-control form-control-lg" id="newQty" required
+                     [(ngModel)]="model.newQty" name="newQty" #newQty="ngModel">
+                  <div [hidden]="newQty.valid || newQty.pristine" class="text-danger">
+                     Input New Quantity is required
+                  </div>
+               </div>
+               <div class="col-3 d-grid">
+                  <button type="button" class="btn btn-lg btn-warning" (click)="model.newQty=0">CE</button>
+               </div>
             </div>
          </div>
          <div class="mb-3">

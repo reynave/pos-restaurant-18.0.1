@@ -10,31 +10,23 @@
                             <th></th>
                             <th>Menu</th>
                             <th class="text-center">Current Table</th>
-                            <th class="text-center">
-                                Select Table
-                            </th>
+                            
                         </tr>
                     </thead>
                     <tbody>
-                        <tr *ngFor="let x of items; let i = index">
+                        <tr *ngFor="let x of items; let i = index" (click)="x.checkBox == 0 ? x.checkBox = 1: x.checkBox = 0">
                             <td>{{i+1}}</td>
                             <td>
                                 @if(x.checkBox == 0){
-                                <h5 (click)="x.checkBox = 1"> <i class="bi bi-square"></i> </h5>
-
+                                <h5> <i class="bi bi-square"></i> </h5> 
                                 }
                                 @else {
-                                <h5 (click)="x.checkBox = 0"> <i class="bi bi-check-square-fill"></i> </h5>
-                                }
-
-
-
+                                <h5> <i class="bi bi-check-square-fill"></i> </h5>
+                                } 
                             </td>
                             <td>{{x.menu}}</td>
                             <td class="text-center">{{x.tableName}}</td>
-                            <td class="text-center">
-
-                            </td>
+                           
                         </tr>
                     </tbody>
                 </table>
@@ -50,20 +42,58 @@
 
 <ng-template #content let-modal>
     <div class="modal-header">
-        <strong class="modal-title" id="modal-basic-title">Select Tables</strong>
+        <strong class="modal-title" id="modal-basic-title">Select Tables for Transfer</strong>
         <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
     </div>
     <div class="modal-body">
-        <form>
-            <div class="mb-3">
-                <div *ngFor="let x of tables" class="border mb-1" (click)="fnTransferItems(x)">
-                    {{x.tableName}}
-                </div>
+        <div class="mb-2">
+             <div class="bg-light p-1  border rounded-pill d-inline-block">
+                  <span *ngFor="let x of tablesMaps; let i = index">
+                     <button type="button" class="btn btn-sm rounded-pill px-3" (click)="onMap(i)" [class]="{
+                           'border': current == i,
+                            'bg-white': current == i,
+                            'shadow-sm': current == i,
+                           }"> {{x.desc1}}  
 
+                        <span *ngIf="x.checking > 0  " class="badge text-bg-danger rounded-circle">
+                           {{x.checking}}
+                        </span>
+
+
+                     </button>
+                  </span>
+
+               </div>
+        </div>
+ 
+          <div class="map">
+            <div class="table-map border p-1 shadow-sm  rounded " >
+               <div class="floorPlan" *ngFor="let x of tablesMaps[current]?.maps">
+
+
+                  <div class="items border rounded shadow-sm table-{{x.tableMapStatusId}}" 
+                     [style.transform]="'translate(' + x.posX + 'px,' + x.posY + 'px)'" [style.width.px]="x.width"
+                     [style.height.px]="x.height" [style.backgroundImage]="'url(' + x.icon + ')'"
+                     style="background-size: cover; margin: 30% auto; cursor: pointer;" [style.opacity]="x.id == table.outletTableMapId ? 0.4 : 1" (click)="fnTransferItems(x)">
+                     <div class="text-center" >
+                        {{x.tableName}}   
+
+                        <div>
+                           <span *ngIf="x.tableMapStatusId == '12' "> <i class="bi bi-fork-knife"></i></span>
+                           <span *ngIf="x.tableMapStatusId == '18' "> <i class="bi bi-receipt-cutoff"></i></span> 
+                        </div>
+
+
+                     </div> 
+                  </div>
+
+               </div>
             </div>
-        </form>
+         </div>
+
+
+
+           
     </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-outline-secondary" (click)="modal.close('Save click')">Save</button>
-    </div>
+    
 </ng-template>

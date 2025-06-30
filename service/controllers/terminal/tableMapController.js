@@ -7,7 +7,7 @@ exports.getAllData = async (req, res) => {
   try {
 
     const [formattedRows] = await db.query(`
-      SELECT id, outletId, desc1, null as 'maps', 0 as 'checking'
+      SELECT id, outletId, desc1, null as 'maps', 0 as 'checking', image
       FROM outlet_floor_plan  
       WHERE presence = 1  ${!outletId ? '' : 'AND outletId = ' + outletId}
     `);
@@ -16,7 +16,7 @@ exports.getAllData = async (req, res) => {
     for (const row of formattedRows) {
       const [maps] = await db.query(`
        SELECT o.id, o.id as 'outletTableMapId', o.outletFloorPlandId, o.tableName, o.posY, o.posX, o.width, 
-        o.height, o.capacity
+        o.height, o.capacity, o.icon
         FROM outlet_table_map AS o 
         WHERE o.presence = 1 AND o.outletFloorPlandId = ?
       `, [row.id]);
@@ -86,64 +86,7 @@ exports.getAllData = async (req, res) => {
   }
 };
 
-
-exports.getAllData_Ver1_DEL = async (req, res) => {
-  const outletId = req.query.outletId;
-  try {
-
-    const [formattedRows] = await db.query(`
-      SELECT id, outletId, desc1, null as 'maps', 0 as 'checking'
-      FROM outlet_floor_plan  
-      WHERE presence = 1  ${!outletId ? '' : 'AND outletId = ' + outletId}
-    `);
-
-    // Loop dengan for...of agar bisa pakai await
-    for (const row of formattedRows) {
-      const [maps] = await db.query(`
-       SELECT o.id, o.outletFloorPlandId, o.tableName, o.posY, o.posX, o.width, 
-        o.height, o.capacity, r.id  AS 'cardId', r.cover, r.tableMapStatusId , r.close, s.name AS 'status'
-        FROM outlet_table_map AS o
-        LEFT JOIN (
-
-          WITH ranked AS (
-            SELECT *, 
-            ROW_NUMBER() OVER (PARTITION BY outletTableMapId ORDER BY inputDate DESC) AS rn
-            FROM cart
-            WHERE close  = 0 AND presence = 1
-          )
-          SELECT *
-          FROM ranked
-          WHERE rn = 1
-        ) AS r ON r.outletTableMapId = o.id
-        LEFT JOIN outlet_table_map_status AS s ON s.id = r.tableMapStatusId
-        WHERE o.presence = 1 AND o.outletFloorPlandId = ?
-      `, [row.id]);
-
-      row.maps = maps;
-    }
-
-    for (let i = 0; i < formattedRows.length; i++) {
-      let checking = 0;
-      for (let n = 0; n < formattedRows[i]['maps'].length; n++) {
-        if (formattedRows[i]['maps'][n]['cardId'] != null) {
-          checking += 1;
-        }
-      }
-      formattedRows[i]['checking'] = checking;
-    }
-
-
-    res.json({
-      error: false,
-      items: formattedRows,
-      get: req.query
-    });
-
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Database error' });
-  }
-};
+ 
 exports.newOrder = async (req, res) => {
   const model = req.body['model'];
   const dailyCheckId = req.body['dailyCheckId'];

@@ -27,7 +27,8 @@ router.post('/removeDetailModifier', menuItemPos.removeDetailModifier);
 
 
 router.get('/transferItems', menuItemPos.transferItems);
-
+router.post('/transferTable', menuItemPos.transferTable); 
+router.get('/transferLog', menuItemPos.transferLog);
 // router.post('/create', menuItemPos.postCreate);
 // router.post('/delete', menuItemPos.postDelete);
  

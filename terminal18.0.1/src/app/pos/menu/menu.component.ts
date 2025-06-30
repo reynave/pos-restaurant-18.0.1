@@ -10,6 +10,7 @@ import { HeaderMenuComponent } from "../../header/header-menu/header-menu.compon
 import { BillComponent } from '../bill/bill.component';
 import { KeyNumberComponent } from "../../keypad/key-number/key-number.component";
 import { param } from 'jquery';
+import { TransferLogComponent } from './transfer-log/transfer-log.component';
 export class Actor {
   constructor(
     public newQty: number,
@@ -49,7 +50,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   isChecked: boolean = false;
   model = new Actor(1);
 
-  cssClass: string = 'btn btn-sm p-3 bg-white me-2 mb-2 rounded shadow-sm';
+  cssClass: string = 'btn btn-sm py-3 btn-outi mb-2 rounded shadow-sm';
   cssMenu: string = 'btn btn-sm py-3 bg-white  me-1 lh-1  rounded shadow-sm';
   cssMenuDisable: string = 'btn btn-sm py-3 btn-light me-1 lh-1  rounded shadow-sm';
 
@@ -127,12 +128,12 @@ export class MenuComponent implements OnInit, OnDestroy {
     )
   }
 
-  btnFinish(){
-     this.showHeader = true;
-      this.showMenu = false;
-      this.showModifier = false;
-      this.showApplyDiscount = false;
-      this.httpMenuLookUp(0);
+  btnFinish() {
+    this.showHeader = true;
+    this.showMenu = false;
+    this.showModifier = false;
+    this.showApplyDiscount = false;
+    this.httpMenuLookUp(0);
   }
   backMenu(menuLookUpParent: any = []) {
     if (menuLookUpParent.length <= 0) {
@@ -478,7 +479,7 @@ export class MenuComponent implements OnInit, OnDestroy {
 
 
   printToKitchen() {
-     window.open(environment.api+"printing/kitchen?id="+this.id);
+    window.open(environment.api + "printing/kitchen?id=" + this.id);
     // this.http.get<any>(environment.api+"printing/tableChecker",{
     //   params : {
     //     id : this.id
@@ -493,7 +494,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     // )
   }
   printTableChecker() {
-    window.open(environment.api+"printing/tableChecker?id="+this.id);
+    window.open(environment.api + "printing/tableChecker?id=" + this.id);
     // this.http.get<any>(environment.api+"printing/tableChecker",{
     //   params : {
     //     id : this.id
@@ -508,8 +509,8 @@ export class MenuComponent implements OnInit, OnDestroy {
     // )
   }
 
-   handleData(data: string) {
-     
+  handleData(data: string) {
+
 
     let newQty = this.model.newQty.toString();
     if (data == 'b') {
@@ -521,9 +522,14 @@ export class MenuComponent implements OnInit, OnDestroy {
 
   }
 
-  transferItems(){
-    this.router.navigate(['menu/transferItems'], { queryParams : {id:this.id}}).then(
-      ()=> {this.modalService.dismissAll()}
+  transferItems() {
+    this.router.navigate(['menu/transferItems'], { queryParams: { id: this.id } }).then(
+      () => { this.modalService.dismissAll() }
     )
+  }
+
+  transferLog() {
+    const modalRef = this.modalService.open(TransferLogComponent,{size:'lg'});
+    modalRef.componentInstance.cartId = this.id;
   }
 }

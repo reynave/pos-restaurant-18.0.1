@@ -46,22 +46,27 @@
 
          @if(activeView == 'map'){
          <div class="map">
-            <div class="table-map border p-1 shadow-sm  rounded " >
+         
+            <div class="table-map border p-1 shadow-sm  rounded " 
+            style="background: url('{{public}}{{items[current]?.image}}') left top no-repeat;" >
                <div class="floorPlan" *ngFor="let x of items[current]?.maps">
 
 
-                  <div class="items border rounded shadow-sm table-{{x.tableMapStatusId}}" 
+                  <div class="items   table-{{x.tableMapStatusId}}" 
                      [style.transform]="'translate(' + x.posX + 'px,' + x.posY + 'px)'" [style.width.px]="x.width"
-                     [style.height.px]="x.height" [style.backgroundImage]="'url(' + x.icon + ')'"
+                     [style.height.px]="x.height" [style.backgroundImage]="'url('+public+x.icon+')'"
                      style="background-size: cover;"
                      (click)="(x.cover <= 0 || x.cover=='' ) ? open(modalCheckIn, x) : gotTo(x) ">
-                     <div class="text-center" style="margin: 30% auto; cursor: pointer;">
-                        {{x.tableName}} 
+                     <div class="text-end p-1" style=" cursor: pointer;">
+                        
+                        <div class="table-pos-label">
+                           <strong class="table-name">{{x.tableName}} </strong>
+                        </div>
 
-                        <div>
+                        <h5>
                            <span *ngIf="x.tableMapStatusId == '12' "> <i class="bi bi-fork-knife"></i></span>
                            <span *ngIf="x.tableMapStatusId == '18' "> <i class="bi bi-receipt-cutoff"></i></span> 
-                        </div>
+                        </h5>
 
 
                      </div> 
