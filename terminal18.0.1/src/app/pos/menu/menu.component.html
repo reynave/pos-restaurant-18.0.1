@@ -30,8 +30,9 @@
                            <strong> <span><i class="bi bi-fork-knife"></i></span> {{x.name }} {{x.modifier.length > 0 ?
                               '*':''}} </strong>
                         </div>
-                        <small class="font-monospace">&#64;{{x.price | number}} <span class="badge text-bg-secondary">SO
-                              {{x.sendOrder}}</span></small>
+                        <small class="font-monospace">&#64;{{x.price | number}} </small>
+                        <span class="badge text-bg-secondary ">SO {{x.sendOrder}}</span>
+                        <span *ngIf="x.ta > 0 " class="badge text-bg-warning ms-2">TA ({{x.ta}})</span>
                      </td>
 
                      <td class="font-monospace text-center">
@@ -76,14 +77,13 @@
                            <strong>{{x.name }} {{x.modifier.length > 0 ? '*':''}} </strong>
                         </div>
                         <small class="font-monospace">&#64;{{x.price | number}}</small>
-
+                        <span *ngIf="x.ta > 0 " class="badge text-bg-warning  ms-2">TA {{x.ta}}</span>
 
                      </td>
 
                      <td class="text-end font-monospace">
                         <button type="button" class="btn  btn-light border" style="width: 60px;"
-                           [disabled]="x.sendOrder == 1" (click)="model.newQty = 0;open(modalQty, x, i)">
-                           x {{x.total | number}}
+                           [disabled]="x.sendOrder == 1" (click)="model.newQty = 0;open(modalQty, x, i)"> x {{x.total | number}}
                         </button>
                      </td>
 
@@ -169,11 +169,13 @@
             <div>
                <div class="row g-2">
                   <div class="col-3 d-grid">
-                     <button type="button" [class]="cssClass" class="bg-white" [disabled]="!isChecked" (click)="onVoid()">
+                     <button type="button" [class]="cssClass" class="bg-white" [disabled]="!isChecked"
+                        (click)="onVoid()">
                         <i class="bi bi-x-lg"></i> VOID ITEM</button>
                   </div>
                   <div class="col-3 d-grid">
-                     <button type="button" [class]="cssClass" class="bg-white" [disabled]="cart.length < 1" (click)="sendOrder();">
+                     <button type="button" [class]="cssClass" class="bg-white" [disabled]="cart.length < 1"
+                        (click)="sendOrder();">
                         <i class="bi bi-fork-knife"></i> SEND ORDER</button>
                   </div>
                   <div class="col-3 d-grid">
@@ -181,7 +183,8 @@
                         <i class="bi bi-receipt-cutoff"></i> BILL</button>
                   </div>
                   <div class="col-3 d-grid">
-                     <button type="button" [class]="cssClass" class="bg-white" (click)="payment()"><i class="bi bi-credit-card"></i>
+                     <button type="button" [class]="cssClass" class="bg-white" (click)="payment()"><i
+                           class="bi bi-credit-card"></i>
                         PAYMENT</button>
                   </div>
 
@@ -189,17 +192,32 @@
 
                <div class="row g-2">
                   <div class="col-3 d-grid">
-                     <button type="button" [class]="cssClass" class="btn-danger" (click)="exitWithoutOrder();"><i class="bi bi-trash"></i>
+                     <button type="button" [class]="cssClass" class="btn-danger" (click)="exitWithoutOrder();"><i
+                           class="bi bi-trash"></i>
                         CANCEL ORDER</button>
                   </div>
                   <div class="col-3 d-grid">
-                     <button type="button" [class]="cssClass" class="btn-warning" (click)="transferItems()"> <i class="bi bi-send-plus"></i>
+                     <button type="button" [class]="cssClass" class="btn-warning" (click)="transferItems()"> <i
+                           class="bi bi-send-plus"></i>
                         TRANSFER ITEMS</button>
                   </div>
                   <div class="col-3 d-grid">
                      <button type="button" [class]="cssClass" class="bg-white" (click)="transferLog()"> <i
                            class="bi bi-clock-history"></i>
                         TRANSFER LOG</button>
+                  </div>
+
+                  <div class="col-3 d-grid">
+                     <button type="button" [class]="cssClass" class="bg-white" [disabled]="!isChecked"
+                        (click)="takeOut()">
+                        <i class="bi bi-bag-check"></i>
+                        TAKE OUT</button>
+                  </div>
+
+                    <div class="col-3 d-grid">
+                     <button type="button" [class]="cssClass" class="bg-white"   (click)="openTables(modelTables)"> 
+                       <i class="bi bi-intersect"></i>
+                         MERGE CHECK </button>
                   </div>
                </div>
             </div>
@@ -215,12 +233,12 @@
                         MENU</button>
                   </div>
                   <div class="col-3 d-grid">
-                     <button type="button" [class]="cssClass" class="bg-white" (click)="showModifier = true;  showHeader= false"><i
-                           class="bi bi-pencil"></i> MODIFIER</button>
+                     <button type="button" [class]="cssClass" class="bg-white"
+                        (click)="showModifier = true;  showHeader= false"><i class="bi bi-pencil"></i> MODIFIER</button>
                   </div>
                   <div class="col-4 d-grid">
-                     <button type="button" [class]="cssClass" class="bg-white" (click)="showApplyDiscount =true; showHeader= false"><i
-                           class="bi bi-percent"></i> APPLY
+                     <button type="button" [class]="cssClass" class="bg-white"
+                        (click)="showApplyDiscount =true; showHeader= false"><i class="bi bi-percent"></i> APPLY
                         ITEM DISCOUNT</button>
                   </div>
                </div>
@@ -410,4 +428,64 @@
       </div>
    </div>
 
+</ng-template>
+
+
+<ng-template #modelTables let-modal>
+    <div class="modal-header">
+        <strong class="modal-title" id="modal-basic-title">Select Tables for Merger to</strong>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <div class="mb-2">
+             <div class="bg-light p-1  border rounded-pill d-inline-block">
+                  <span *ngFor="let x of tablesMaps; let i = index">
+                     <button type="button" class="btn btn-sm rounded-pill px-3" (click)="onMap(i)" [class]="{
+                           'border': current == i,
+                            'bg-white': current == i,
+                            'shadow-sm': current == i,
+                           }"> {{x.desc1}}  
+
+                        <span *ngIf="x.checking > 0  " class="badge text-bg-danger rounded-circle">
+                           {{x.checking}}
+                        </span>
+
+
+                     </button>
+                  </span>
+
+               </div>
+        </div>
+ 
+          <div class="map">
+            <div class="table-map border p-1 shadow-sm  rounded " >
+               <div class="floorPlan" *ngFor="let x of tablesMaps[current]?.maps">
+
+
+                  <div class="items border rounded shadow-sm table-{{x.tableMapStatusId}}" 
+                     [style.transform]="'translate(' + x.posX + 'px,' + x.posY + 'px)'" [style.width.px]="x.width"
+                     [style.height.px]="x.height" [style.backgroundImage]="'url(' + x.icon + ')'"
+                     style="background-size: cover; margin: 30% auto; cursor: pointer;" 
+                     [style.opacity]="x.id == table.outletTableMapId ? 0.4 : 1" (click)="mergerCheck(x)">
+                     <div class="text-center" >
+                        {{x.tableName}}   
+
+                        <div>
+                           <span *ngIf="x.tableMapStatusId == '12' "> <i class="bi bi-fork-knife"></i></span>
+                           <span *ngIf="x.tableMapStatusId == '18' "> <i class="bi bi-receipt-cutoff"></i></span> 
+                        </div>
+
+
+                     </div> 
+                  </div>
+
+               </div>
+            </div>
+         </div>
+
+
+
+           
+    </div>
+    
 </ng-template>

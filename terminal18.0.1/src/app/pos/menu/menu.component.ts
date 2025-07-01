@@ -70,6 +70,8 @@ export class MenuComponent implements OnInit, OnDestroy {
   menuLookupId: number = 0;
   menuLookUpParent: any = [];
 
+  tablesMaps: any = [];
+  table: any = [];
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
@@ -80,7 +82,6 @@ export class MenuComponent implements OnInit, OnDestroy {
   ) { }
   ngOnDestroy(): void {
     this.renderer.setStyle(document.body, 'background-color', '#fff');
-
   }
 
 
@@ -102,6 +103,7 @@ export class MenuComponent implements OnInit, OnDestroy {
       this.httpCart();
       this.httpCartOrdered();
       this.httpGetModifier();
+      this.httpTables();
     }
 
   }
@@ -145,7 +147,6 @@ export class MenuComponent implements OnInit, OnDestroy {
       this.httpMenuLookUp(menuLookUpParent[0]['parentId']);
     }
   }
-
 
   httpMenu() {
     this.loading = true;
@@ -199,7 +200,7 @@ export class MenuComponent implements OnInit, OnDestroy {
         this.cart = data['items'];
         this.totalCard = data['totalItem'];
         this.totalAmount = data['totalAmount']
-
+        this.table = data['table'][0];
       },
       error => {
         console.log(error);
@@ -232,6 +233,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     this.httpCart();
     this.httpCartOrdered();
     this.httpGetModifier();
+    this.httpTables();
   }
   reload() {
     this.httpMenu();
@@ -529,7 +531,103 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
   transferLog() {
-    const modalRef = this.modalService.open(TransferLogComponent,{size:'lg'});
+    const modalRef = this.modalService.open(TransferLogComponent, { size: 'lg' });
     modalRef.componentInstance.cartId = this.id;
+  }
+
+  takeOut() {
+    if (this.isChecked == false) {
+      alert("Please check item first!");
+    } else {
+      let cart: any[] = [];
+      this.cart.forEach((el: any) => {
+        if (el['checkBox'] == 1) {
+          cart.push(el)
+        }
+
+      });
+
+      console.log(this.cart)
+
+      this.loading = true;
+      const body = {
+        cart: cart,
+        cartId: this.id,
+      }
+      const url = environment.api + "menuItemPos/takeOut";
+      this.http.post<any>(url, body, {
+        headers: this.configService.headers(),
+      }).subscribe(
+        data => {
+          console.log(data);
+          this.reload();
+        },
+        error => {
+          console.log(error);
+        }
+      )
+    }
+  }
+
+
+  httpTables() {
+    this.modalService.dismissAll();
+    this.loading = true;
+    const url = environment.api + "tableMap";
+    this.http.get<any>(url, {
+      headers: this.configService.headers(),
+      params: {
+        outletId: this.configService.getConfigJson()['outlet']['id'],
+      }
+    }).subscribe(
+      data => {
+        this.loading = false;
+        console.log('httpTables', data);
+        this.tablesMaps = data['items'];
+      },
+      error => {
+        console.log(error);
+      }
+    )
+  }
+
+  openTables(content: any) {
+    this.modalService.open(content, { size: 'xl' });
+  }
+  onMap(index: number) {
+    localStorage.setItem("pos3.onMap", index.toString());
+    this.current = index;
+  }
+
+
+  mergerCheck(x: any) {
+    console.log(x);
+
+    if (x.cardId != '' && x.cardId != this.table['id']) {
+      if (confirm("Merge table with " + x.tableName + " ?")) {
+        this.loading = true;
+        const body = { 
+          cartId: this.id,
+          table : this.table,
+          newTable : x,
+        }
+        console.log(body);
+        const url = environment.api + "menuItemPos/mergerCheck";
+        this.http.post<any>(url, body, {
+          headers: this.configService.headers(),
+        }).subscribe(
+          data => {
+            console.log(data);
+           history.back();
+          },
+          error => {
+            console.log(error);
+          }
+        )
+      }
+    } else {
+      alert("Please select active table");
+
+    }
   }
 }

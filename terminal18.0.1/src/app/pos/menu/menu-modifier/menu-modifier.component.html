@@ -25,12 +25,18 @@
                            <i class="bi bi-receipt"></i>
                         </div>
                      </td>
-               
+
                      <td> {{x.no != 0 ? x.no : ''}} </td>
                      <td> {{x.no != 0 ? '': '+'}} {{x.name}} {{x.priceIncluded == 0 ? '' : '('+(x.priceIncluded |
                         number)+')'}}</td>
 
-                     <td class="text-end"><span class="badge text-bg-secondary">{{x.sendOrder}}</span></td>
+                     <td class="text-end">
+                        <span class="badge text-bg-warning me-1" *ngIf="x.ta==1">TA</span>
+                        <span class="badge text-bg-secondary me-1">{{x.sendOrder}}</span>
+
+
+                     </td>
+
                      <td class="text-end font-monospace">
                         {{x.price | number}}
                      </td>
@@ -75,15 +81,25 @@
                   </div>
                </div>
             </div>
-            <div>
-               <button type="button" class="btn btn-danger me-1 py-3 rounded shadow-sm  mb-2" [disabled]="!isChecked"
-                  (click)="onVoid()">
-                  <i class="bi bi-x-lg"></i> VOID ITEM</button>
-               <button type="button" class="btn btn-danger me-1  py-3 rounded shadow-sm  mb-2" (click)="onRemoveModifier()">
-                  <i class="bi bi-trash"></i> REMOVE MODIFIER</button>
+            <div class="row g-2 mb-2">
+               <div class="col-4 d-grid">
+                  <button type="button" class="btn btn-danger py-3 rounded shadow-sm" [disabled]="!isChecked"
+                     (click)="onVoid()">
+                     <i class="bi bi-x-lg"></i> VOID ITEM</button>
+               </div>
+               <div class="col-4 d-grid">
+                  <button type="button" class="btn btn-danger   py-3 rounded shadow-sm"
+                     (click)="onRemoveModifier()">
+                     <i class="bi bi-trash"></i> REMOVE MODIFIER</button>
+               </div>
+               <div class="col-4 d-grid">
+                  <button type="button" class="btn btn-warning   py-3 rounded shadow-sm"
+                     (click)="takeOutDetail()">
+                     <i class="bi bi-bag-check"></i> TAKE OUT</button>
+               </div>
             </div>
-            
-            <div class="row g-1 mb-3"> 
+
+            <div class="row g-1 mb-3">
                <div class="col-3 mb-1 d-grid" *ngFor="let x of items; let i = index">
                   <button type="button" [class]="cssMenu" [disabled]=" x.id == modifierDetail['id'] ? true : false "
                      (click)="fnShowModifierDetail(i)">
@@ -93,17 +109,17 @@
             </div>
 
 
-             <div class="row g-1 mb-3">
+            <div class="row g-1 mb-3">
                <h6 class="text-center">{{modifierDetail['name']}}</h6>
                <div class="col-3 mb-1 d-grid" *ngFor="let a of modifierDetail['detail']">
                   <a type="button" [class]="cssMenu" (click)="addToCart(a)">
                      <div class="mb-1"> {{a.descs}}</div>
                   </a>
                </div>
-            </div> 
+            </div>
 
-          
- 
+
+
 
          </div>
       </div>

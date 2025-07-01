@@ -61,77 +61,6 @@ exports.getMenuItem = async (req, res) => {
   }
 };
 
-
-exports.getMenuItem_Ver1 = async (req, res) => {
-  const i = 1;
-  try {
-    const outletId = req.query.outletId;
-
-    const [formattedRows] = await db.query(`
-      SELECT id, desc1, '' as menu
-      FROM menu_department
-      WHERE presence = 1
-    `);
-
-    // Loop dengan for...of agar bisa pakai await
-    for (const row of formattedRows) {
-      const q = `
-       
-        SELECT 
-          m.id, m.name, m.price${i} as 'price' , m.adjustItemsId, m.qty,
-          m.menuDepartmentId, m.menuCategoryId, m.menuTaxScId,
-          t.desc, t.taxRate, t.taxNote, t.taxStatus,
-            CASE 
-              WHEN t.taxStatus = 2 THEN m.price${i} - (m.price${i} / (1+ (t.taxRate/100) ))
-              WHEN t.taxStatus = 1 THEN m.price${i}*(t.taxRate/100)
-              ELSE  0
-            END AS 'taxAmount',  
-          t.scRate, t.scNote, t.scStatus,
-            CASE 
-              WHEN t.scStatus = 2 THEN m.price${i} - (m.price${i} / (1+ (t.scRate/100) ))
-              WHEN t.scStatus = 1 THEN m.price${i}*(t.scRate/100)
-              ELSE  0
-            END AS 'scAmount' ,
-
-             (
-    SELECT COUNT(ci.id)
-    FROM cart_item ci
-    WHERE ci.presence = 1 
-      AND ci.void = 0 
-      AND ci.adjustItemsId = m.adjustItemsId
-  ) AS usedQty
-        FROM menu AS m
-        LEFT JOIN menu_tax_sc AS t ON t.id = m.menuTaxScId
-        WHERE m.presence = 1 and m.menuDepartmentId = ${row.id}
-      `;
-      const [menu] = await db.query(q);
-
-      row.menu = menu; // tambahkan hasil ke properti maps
-    }
-
-    const [discountGroup] = await db.query(`
-      SELECT t.*
-      FROM outlet_check_disc AS d
-       JOIN check_disc_type AS t ON t.id = d.checkDiscTypeId
-      WHERE d.presence = 1 and d.outletId = ${outletId}
-    `);
-
-
-
-    res.json({
-      error: false,
-      items: formattedRows,
-      discountGroup: discountGroup,
-      get: req.query
-    });
-
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Database error' });
-  }
-};
-
-
 exports.cart = async (req, res) => {
   const i = 1;
   try {
@@ -140,48 +69,68 @@ exports.cart = async (req, res) => {
     const q = `
       SELECT t1.* , (t1.total * t1.price) as 'totalAmount', m.name , 0 as 'checkBox', '' as modifier
       FROM (
-        SELECT  c.price,   c.menuId, COUNT(c.menuId) AS 'total' 
+        SELECT  c.price,   c.menuId, COUNT(c.menuId) AS 'total' , sum(c.ta) as 'ta'
         FROM cart_item AS c
         JOIN menu AS m ON m.id = c.menuId
         WHERE c.cartId = '${cartId}' AND c.presence = 1 AND c.void  = 0 AND c.sendOrder = ''
-        GROUP BY  c.menuId, c.price
+        GROUP BY  c.menuId, c.price, c.ta
         ORDER BY MAX(c.inputDate) ASC
       ) AS t1
       JOIN menu AS m ON m.id = t1.menuId 
     `;
 
-    const [formattedRows] = await db.query(q);
+    const [formattedRowsOri] = await db.query(q);
+
+    const formattedRows = [];
+    let i = 0;
+    for (const row of formattedRowsOri) {
+      let getIndexById = formattedRows.findIndex((obj) => obj.menuId === row.menuId);
+      console.log(i += 1, getIndexById);
+      if (getIndexById > -1) {
+        formattedRows[getIndexById]['totalAmount'] += parseInt(row.totalAmount);
+        formattedRows[getIndexById]['ta'] = parseInt(row.ta) + parseInt(formattedRows[getIndexById]['ta']);
+        formattedRows[getIndexById]['total'] += parseInt(row.total);
+      } else {
+        formattedRows.push(row);
+      }
+
+    }
 
     let totalAmount = 0;
     let n = 0;
     for (const row of formattedRows) {
+      // MODIFIER 
       const s = `
-        SELECT COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price
+      -- cart_item_modifier / SC / TAX
+        SELECT 
+          COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price
         FROM (
           SELECT r.modifierId, m.descl, r.price
-          FROM cart_item  AS i 
-          right JOIN cart_item_modifier AS r ON r.cartItemId = i.id
-          JOIN modifier AS m ON m.id = r.modifierId 
+            FROM cart_item  AS i 
+            RIGHT JOIN cart_item_modifier AS r ON r.cartItemId = i.id
+            JOIN modifier AS m ON m.id = r.modifierId 
           WHERE i.menuId = ${row['menuId']}  
-          AND i.cartId = '${cartId}' AND i.void = 0 AND i.presence = 1
-          AND i.sendOrder = '' AND r.sendOrder = ''
-          AND r.presence = 1 AND i.void = 0   
+              AND i.cartId = '${cartId}' AND i.void = 0 AND i.presence = 1
+              AND i.sendOrder = '' AND r.sendOrder = ''
+              AND r.presence = 1 AND i.void = 0   
         ) AS t1
         GROUP BY t1.descl, t1.price
 
-
         UNION 
 
-         SELECT COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price
-        FROM ( SELECT r.modifierId,   r.price, r.applyDiscount, d.name AS 'descl'
-          FROM cart_item  AS i
-            JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
-           JOIN check_disc_type AS d ON d.id = r.applyDiscount
-          WHERE i.menuId = ${row['menuId']} 
-          AND i.cartId = '${cartId}' AND i.void = 0 AND i.presence = 1  
-           AND i.sendOrder = '' AND r.sendOrder = ''
-          AND r.presence = 1 AND i.void = 0 
-      ) AS t1
+        -- check_disc_type
+        SELECT 
+          COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price
+          FROM ( 
+            SELECT r.modifierId,   r.price, r.applyDiscount, d.name AS 'descl'
+              FROM cart_item  AS i
+              JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
+              JOIN check_disc_type AS d ON d.id = r.applyDiscount
+            WHERE i.menuId = ${row['menuId']} 
+                AND i.cartId = '${cartId}' AND i.void = 0 AND i.presence = 1  
+                AND i.sendOrder = '' AND r.sendOrder = ''
+                AND r.presence = 1 AND i.void = 0 
+          ) AS t1
         GROUP BY t1.descl, t1.price    
 ;
       `;
@@ -198,9 +147,7 @@ exports.cart = async (req, res) => {
       n++;
     }
 
-
     let temp = 0;
-
 
     for (let i = 0; i < formattedRows.length; i++) {
       totalAmount += formattedRows[i]['totalAmount'];
@@ -222,9 +169,16 @@ exports.cart = async (req, res) => {
       totalItem += element['total'];
     });
 
+
+    const q2 = `
+      SELECT * FROM cart WHERE id = '${cartId}' and presence = 1;
+    `;
+
+    const [table] = await db.query(q2);
+
     res.json({
       error: false,
-      temp: temp,
+      table: table,
       items: formattedRows,
       sendOrder: sendOrder,
       totalAmount: totalAmount,
@@ -246,16 +200,33 @@ exports.cartOrdered = async (req, res) => {
     const q = `
       SELECT t1.* , (t1.total * t1.price) as 'totalAmount', m.name , 0 as 'checkBox', '' as modifier
       FROM (
-        SELECT   c.price, c.menuId, COUNT(c.menuId) AS 'total' 
+        SELECT   c.price, c.menuId, COUNT(c.menuId) AS 'total' , sum(c.ta) as 'ta'
         FROM cart_item AS c
         JOIN menu AS m ON m.id = c.menuId
         WHERE c.cartId = '${cartId}' AND c.presence = 1 AND c.void  = 0 AND c.sendOrder != ''
-        GROUP BY  c.menuId, c.price
+        GROUP BY  c.menuId, c.price, c.ta
         ORDER BY MAX(c.inputDate) ASC
       ) AS t1
       JOIN menu AS m ON m.id = t1.menuId 
     `;
-    const [formattedRows] = await db.query(q);
+    const [formattedRowsOri] = await db.query(q);
+
+    const formattedRows = [];
+    let i = 0;
+    for (const row of formattedRowsOri) {
+      let getIndexById = formattedRows.findIndex((obj) => obj.menuId === row.menuId);
+      console.log(i += 1, getIndexById);
+      if (getIndexById > -1) {
+        formattedRows[getIndexById]['totalAmount'] += parseInt(row.totalAmount);
+        formattedRows[getIndexById]['ta'] = parseInt(row.ta) + parseInt(formattedRows[getIndexById]['ta']);
+        formattedRows[getIndexById]['total'] += parseInt(row.total);
+      } else {
+        formattedRows.push(row);
+      }
+
+    }
+
+
 
     let totalAmount = 0;
     let n = 0;
@@ -951,11 +922,11 @@ exports.cartDetail = async (req, res) => {
   try {
 
     const q = `
-      SELECT c.id, c.price, c.menuId , m.name, 0 as 'checkBox', '' as 'modifier', c.sendOrder
+      SELECT c.id, c.price, c.menuId , m.name, 0 as 'checkBox', '' as 'modifier', c.sendOrder, c.ta
       FROM cart_item AS c
       LEFT JOIN menu AS m ON m.id = c.menuId
       WHERE c.cartId = '${cartId}' AND c.presence = 1 AND c.void = 0
-      AND c.menuId = ${menuId} AND c.price = ${price}  
+      AND c.menuId = ${menuId} 
     `;
     console.log(q)
     const [formattedRows] = await db.query(q);
@@ -1036,6 +1007,7 @@ exports.cartDetail = async (req, res) => {
         modifierId: 'parent',
         applyDiscount: 0,
         menuTaxScId: 0,
+        ta: formattedRows[i]['ta']
       })
       formattedRows[i]['modifier'].forEach(el => {
         orderItems.push({
@@ -1620,9 +1592,6 @@ exports.transferTable = async (req, res) => {
 
 
 
-
-
-
     res.json({
       error: false,
       cartId: cartId
@@ -1656,12 +1625,213 @@ exports.transferLog = async (req, res) => {
     `;
     const [transferOut] = await db.query(q2);
 
-    
+
     res.json({
       error: false,
       transferIn: transferIn,
       transferOut: transferOut,
 
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+};
+
+exports.takeOut = async (req, res) => {
+  const data = req.body['cart'];
+  const cartId = req.body['cartId'];
+
+  const inputDate = today();
+  const results = [];
+  try {
+
+    for (const emp of data) {
+      const { menuId, ta } = emp;
+
+      if (!menuId) {
+        results.push({ id, status: 'failed', reason: 'Missing fields' });
+        continue;
+      }
+
+      const q = `UPDATE cart_item
+            SET
+              ta = ${parseInt(ta) > 0 ? 0 : 1}, 
+              updateDate = '${today()}'
+          WHERE menuId = ${menuId}  and cartId = '${cartId}' and sendOrder = '' `;
+      const [result] = await db.query(q);
+      if (result.affectedRows === 0) {
+        results.push({ status: 'not found' });
+      } else {
+        results.push({ status: 'cart_item updated' });
+      }
+
+    }
+
+    const q2 = `SELECT id, ta FROM  cart_item 
+      WHERE  cartId = '${cartId}' and sendOrder = '' AND presence = 1 AND void = 0 `;
+    const [result] = await db.query(q2);
+    for (const data of result) {
+
+      const q = `UPDATE cart_item_modifier
+            SET
+              void = ${parseInt(data['ta'])}, 
+              updateDate = '${today()}'
+          WHERE cartItemId = ${data['id']}  and scStatus  = 1  `;
+
+
+
+      const [result] = await db.query(q);
+      if (result.affectedRows === 0) {
+        results.push({ status: 'not found' });
+      } else {
+        results.push({ status: 'cart_item_modifier updated' });
+      }
+
+    }
+
+
+    res.json({
+      error: false,
+
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+};
+
+exports.takeOutDetail = async (req, res) => {
+  const data = req.body['cart'];
+  const cartId = req.body['cartId'];
+
+  const inputDate = today();
+  const results = [];
+  try {
+
+    for (const emp of data) {
+      const { id, ta } = emp;
+
+      if (!id) {
+        results.push({ id, status: 'failed', reason: 'Missing fields' });
+        continue;
+      }
+
+      const q = `UPDATE cart_item
+            SET
+              ta = ${parseInt(ta) > 0 ? 0 : 1}, 
+              updateDate = '${today()}'
+          WHERE id = ${id}  and sendOrder = '' `;
+      const [result] = await db.query(q);
+      if (result.affectedRows === 0) {
+        results.push({ status: 'not found' });
+      } else {
+        results.push({ status: 'cart_item updated' });
+      }
+
+    }
+
+    const q2 = `SELECT id, ta FROM  cart_item 
+      WHERE  cartId = '${cartId}' and sendOrder = '' AND presence = 1 AND void = 0 `;
+    const [result] = await db.query(q2);
+    for (const data of result) {
+
+      const q = `UPDATE cart_item_modifier
+            SET
+              void = ${parseInt(data['ta'])}, 
+              updateDate = '${today()}'
+          WHERE cartItemId = ${data['id']}  and scStatus  = 1  `;
+
+
+
+      const [result] = await db.query(q);
+      if (result.affectedRows === 0) {
+        results.push({ status: 'not found' });
+      } else {
+        results.push({ status: 'cart_item_modifier updated' });
+      }
+
+    }
+
+
+    res.json({
+      error: false,
+
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+};
+
+
+exports.mergerCheck = async (req, res) => {
+  const newTable = req.body['newTable'];
+  const cartId = req.body['cartId'];
+  const table = req.body['table'];
+  const inputDate = today();
+  const results = [];
+  try {
+
+    const q1 = `UPDATE cart SET 
+          void = 1,   
+          close = 1,
+          tableMapStatusId = 40,
+          endDate = '${today()}',
+          updateDate = '${today()}'
+        WHERE id = '${cartId}'`;
+    const [result1] = await db.query(q1);
+
+    if (result1.affectedRows === 0) {
+      results.push({ status: 'not found' });
+    } else {
+      results.push({ status: 'void cart  '+cartId });
+    }
+ 
+    const q0 = `UPDATE cart SET   
+          cover = ${table['cover'] + newTable['cover']}, 
+          updateDate = '${today()}'
+        WHERE id ='${newTable['cardId']}'`;
+    const [result0] = await db.query(q0);
+
+    if (result0.affectedRows === 0) {
+      results.push({ status: 'not found' });
+    } else {
+      results.push({ status: 'update cart updated '+newTable['cardId'] });
+    }
+
+    const q2 = `UPDATE cart_item SET 
+          cartId = '${newTable['cardId']}',
+          updateDate = '${today()}'
+        WHERE cartId = ${cartId}`;
+    const [result2] = await db.query(q2);
+
+    if (result2.affectedRows === 0) {
+      results.push({ status: 'not found' });
+    } else {
+      results.push({ status: 'cart updated' });
+    }
+ 
+    const q3 = `UPDATE cart_item_modifier SET 
+          cartId = '${newTable['cardId']}',
+          updateDate = '${today()}'
+        WHERE cartId = ${cartId}`;
+    const [result3] = await db.query(q3);
+
+    if (result3.affectedRows === 0) {
+      results.push({ status: 'not found' });
+    } else {
+      results.push({ status: 'cart updated' });
+    }
+
+
+
+    res.json({
+      error: false, 
+      results : results
     });
 
   } catch (err) {

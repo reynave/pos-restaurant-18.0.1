@@ -80,7 +80,7 @@ export class MenuModifierComponent implements OnInit, OnDestroy {
   back() {
     history.back();
   }
- fnShowModifierDetail(index: number) {
+  fnShowModifierDetail(index: number) {
     this.modifierDetail = this.items[index];
 
   }
@@ -232,5 +232,40 @@ export class MenuModifierComponent implements OnInit, OnDestroy {
         console.log(error);
       }
     )
+  }
+
+
+  takeOutDetail() {
+    if (this.isChecked == false) {
+      alert("Please check item first!");
+    } else {
+      let cart: any[] = [];
+      this.cart.forEach((el: any) => {
+        if (el['checkBox'] == 1) {
+          cart.push(el)
+        }
+
+      });
+
+  
+      this.loading = true;
+      const body = {
+        cart: cart,
+        cartId: this.id,
+      }
+      console.log(body)
+      const url = environment.api + "menuItemPos/takeOutDetail";
+      this.http.post<any>(url, body, {
+        headers: this.configService.headers(),
+      }).subscribe(
+        data => {
+          console.log(data);
+          this.reload();
+        },
+        error => {
+          console.log(error);
+        }
+      )
+    }
   }
 }
