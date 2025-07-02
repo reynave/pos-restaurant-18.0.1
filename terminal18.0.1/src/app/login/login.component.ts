@@ -74,8 +74,7 @@ export class LoginComponent implements OnInit {
     const url = environment.api + "login/signin";
     const body = {
       // username: this.employeeSelect[this.model.username]['id'],
-      username: this.model['username'],
-
+      username: this.model['username'], 
       password: this.model['password'],
       outletId: this.model['outletId'],
     }
@@ -85,12 +84,7 @@ export class LoginComponent implements OnInit {
         console.log(data);
         this.loading = false;
 
-        const myJSONString = JSON.stringify({
-          employee: {
-            id: data['employee'][0]['id'],
-            username: data['employee'][0]['username'],
-            name: data['employee'][0]['name'],
-          },
+        const myJSONString = JSON.stringify({ 
           outlet: {
             id: this.model.outletId,
             name: this.outletSelect[getIndexById]['name'],

@@ -57,6 +57,7 @@ const items = require('./routes/terminal/items');
 const printingPos = require('./routes/terminal/printing');
 const userLog = require('./routes/terminal/userLog');
 
+const IsAuth = require('./helpers/IsAuth');
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -118,7 +119,7 @@ app.use(process.env.PREFIX + process.env.TERMINAL + 'tableMap', terminalMap);
 app.use(process.env.PREFIX + process.env.TERMINAL + 'menuItemPos', menuItemPos);
 app.use(process.env.PREFIX + process.env.TERMINAL + 'bill', bill);
 app.use(process.env.PREFIX + process.env.TERMINAL + 'payment', paymentPos);
-app.use(process.env.PREFIX + process.env.TERMINAL + 'daily', daily);
+app.use(process.env.PREFIX + process.env.TERMINAL + 'daily', IsAuth.validateToken, daily);
 app.use(process.env.PREFIX + process.env.TERMINAL + 'items', items);
 app.use(process.env.PREFIX + process.env.TERMINAL + 'printing', printingPos);
 app.use(process.env.PREFIX + process.env.TERMINAL + 'log', userLog);

@@ -19,8 +19,8 @@ import { KeyNumberComponent } from "../keypad/key-number/key-number.component";
 })
 export class ItemsComponent implements OnInit {
 
-
-
+  checkTotal: number = 0;
+  isCheckAll: number = 0;
   addQty: number = 1;
   loading: boolean = false;
   items: any = [];
@@ -35,6 +35,7 @@ export class ItemsComponent implements OnInit {
   ngOnInit(): void {
     this.httpMenu();
   }
+
   httpMenu() {
     this.checkTotal = 0;
     this.modalService.dismissAll();
@@ -51,7 +52,7 @@ export class ItemsComponent implements OnInit {
         console.log(data);
         this.loading = false;
         this.items = data['items'];
-
+        this.searchResults = this.items;
       },
       error => {
         console.log(error);
@@ -59,23 +60,20 @@ export class ItemsComponent implements OnInit {
     )
   }
 
-  isCheckAll: number = 0;
   checkBoxAll() {
     if (this.isCheckAll == 0) this.isCheckAll = 1;
     else this.isCheckAll = 0;
 
     this.checkTotal = this.isCheckAll;
-    for (let i = 0; i < this.items.length; i++) {
-      this.items[i]['checkBox'] = this.isCheckAll;
+    for (let i = 0; i < this.searchResults.length; i++) {
+      this.searchResults[i]['checkBox'] = this.isCheckAll;
     }
-
-
-
   }
+
   back() {
     history.back();
   }
-  checkTotal: number = 0;
+
   onAddQty() {
     const items: any[] = [];
     this.items.forEach((el: any) => {
@@ -104,33 +102,37 @@ export class ItemsComponent implements OnInit {
     )
 
   }
-  onResetAdjust() {
-    const items: any[] = [];
-    this.items.forEach((el: any) => {
-      if (el['checkBox'] == 1) {
-        items.push(el['id']);
-      }
-    });
-    console.log(items, this.newQty);
 
-    this.loading = true;
-    const url = environment.api + "items/resetAdjust";
-    const body = {
-      items: items,
-      newQty: this.newQty,
-    }
-    this.http.post<any>(url, body, {
-      headers: this.configService.headers(),
-    }).subscribe(
-      data => {
-        console.log(data);
-        this.loading = false;
-        this.httpMenu();
-      },
-      error => {
-        console.log(error);
+  onResetAdjust() {
+    if ((confirm("Remove Adjustment item will be unlimited qty?"))) {
+
+
+      const items: any[] = [];
+      this.items.forEach((el: any) => {
+        if (el['checkBox'] == 1) {
+          items.push(el['id']);
+        }
+      });
+      console.log(items);
+
+      this.loading = true;
+      const url = environment.api + "items/resetAdjust";
+      const body = {
+        items: items
       }
-    )
+      this.http.post<any>(url, body, {
+        headers: this.configService.headers(),
+      }).subscribe(
+        data => {
+          console.log(data);
+          this.loading = false;
+          this.httpMenu();
+        },
+        error => {
+          console.log(error);
+        }
+      )
+    }
   }
 
   fnCheck(index: number) {
@@ -150,15 +152,14 @@ export class ItemsComponent implements OnInit {
     this.modalService.open(content);
   }
 
-
   handleData(data: string) {
     let value = '';
- 
 
-    value =  this.addQty.toString()
+
+    value = this.addQty.toString()
     if (data == 'b') {
       value = value.slice(0, -1);
-      if(value.length <1){
+      if (value.length < 1) {
         value = '0';
       }
     } else {
@@ -166,5 +167,12 @@ export class ItemsComponent implements OnInit {
     }
     this.addQty = parseInt(value);
 
-  } 
+  }
+  searchTerm = '';
+  searchResults: any = [];
+  searchByName() {
+    this.searchResults = this.items.filter((item: { name: string; }) =>
+      item.name.toLowerCase().includes(this.searchTerm.toLowerCase())
+    );
+  }
 }

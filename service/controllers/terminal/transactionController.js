@@ -9,12 +9,14 @@ exports.getAllData = async (req, res) => {
 
     const [formattedRows] = await db.query(`
 
-            SELECT c.*, o.name AS 'outlet' , m.tableName, '' as paymentType
+            SELECT c.*, o.name AS 'outlet' , m.tableName, '' as paymentType, s.name as 'status'
             FROM cart AS c
             JOIN outlet AS o ON o.id = c.outletId 
             JOIN outlet_table_map AS m ON m.id = c.outletTableMapId
+            left join outlet_table_map_status as s on s.id = c.tableMapStatusId
             WHERE c.presence = 1 and c.close = 1    ${outletId ? 'and c.outletId = ' + outletId : ''}
             order BY c.id DESC 
+            limit 200
  
         `);
 

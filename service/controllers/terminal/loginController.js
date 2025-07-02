@@ -3,6 +3,7 @@ const { today, formatDateOnly } = require('../../helpers/global');
 const ejs = require('ejs');
 const path = require('path');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 exports.getAllData = async (req, res) => {
 
@@ -61,17 +62,48 @@ exports.signin = async (req, res) => {
             `);
             dailyCheck.push(result[0]);
         }
-
-
         if (!passwordMatch) {
             return res.status(401).json({ message: 'Invalid password' });
+        }
+
+        const data = {
+            id: employee[0]['id'],
+            username: employee[0]['username'],
+            name: employee[0]['name'],
+            lastLogin: today(),
+        }
+
+        const SECRET_KEY = process.env.SECRET_KEY;
+
+        const tokenjwt = jwt.sign(data, SECRET_KEY);
+        console.log(tokenjwt);
+
+        // const decoded = jwt.verify(tokenjwt, SECRET_KEY);
+        // console.log(decoded);
+
+
+        const q2 = `
+            INSERT INTO employee_token( employeeId, presence, inputDate, updateDate)
+            value('${employee[0]['id']}',1,'${today()}', '${today()}') 
+        `;
+
+        const [result] = await db.query(q2);
+        if (result.affectedRows === 0) {
+            results.push({ status: ' not found', });
+        } else {
+            results.push({ status: 'employee_token insert' });
         }
 
         res.status(200).json({
             message: 'Login successful',
             dailyCheck: dailyCheck,
-            employee : employee,
-            token: 'UAT123',
+            token: tokenjwt,
+            printer: {
+                con: 'ip',
+                address: '10.51.122.20',
+                port: 9100,
+                name: 'ESC/POS (Epson-style)'
+            }
         });
 
 

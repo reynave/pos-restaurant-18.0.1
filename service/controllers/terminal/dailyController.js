@@ -27,6 +27,8 @@ exports.getAllData = async (req, res) => {
 
 exports.getDailyStart = async (req, res) => {
     const id = req.query.id;
+
+   
     try {
         const [formattedRows] = await db.query(`
             SELECT * FROM daily_check
@@ -34,7 +36,7 @@ exports.getDailyStart = async (req, res) => {
         `);
         res.json({
             error: false,
-            item: formattedRows[0],
+            item: formattedRows[0], 
         });
 
     } catch (err) {

@@ -26,16 +26,22 @@ export class ConfigService {
     }
   }
   getTokenJson() {
-    const data: any = localStorage.getItem(this.tokenKey);
-    const obj = JSON.parse(data);
-    return obj;
+    const token: any = localStorage.getItem(this.tokenKey);
+    try {
+      const payload = token.split('.')[1];
+      const decoded = atob(payload);
+      return JSON.parse(decoded);
+    } catch (e) {
+      console.error('Error decoding JWT:', e);
+      return null;
+    }
   }
   getConfigJson() {
     const data: any = localStorage.getItem(this.configJson);
     const obj = JSON.parse(data);
     return obj;
   }
-  updateConfigJson(data: any) { 
+  updateConfigJson(data: any) {
     try {
       localStorage.setItem(this.configJson, JSON.stringify(data));
       return of(true); // Mengembalikan Observable yang mengirimkan nilai boolean true
@@ -52,8 +58,8 @@ export class ConfigService {
 
   setToken(data: string, token: string): Observable<boolean> {
     try {
-      localStorage.setItem(this.tokenKey, token);
       localStorage.setItem(this.configJson, data);
+      localStorage.setItem(this.tokenKey, token);
 
       return of(true); // Mengembalikan Observable yang mengirimkan nilai boolean true
     } catch (error) {
@@ -63,7 +69,7 @@ export class ConfigService {
 
   removeToken(): Observable<boolean> {
     try {
-    
+
       localStorage.removeItem(this.tokenKey);
       localStorage.removeItem(this.configJson);
       localStorage.removeItem(this.dailyCheck);
@@ -78,7 +84,7 @@ export class ConfigService {
     const token: any = localStorage.getItem(this.tokenKey);
     return new HttpHeaders({
       'Content-Type': 'application/json',
-      'Token': token,
+      'Authorization': `Bearer ${token}`,
     });
   }
 }

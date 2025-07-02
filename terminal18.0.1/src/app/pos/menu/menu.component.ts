@@ -121,7 +121,10 @@ export class MenuComponent implements OnInit, OnDestroy {
         console.log(data);
         this.menuLookUpParent = data['parent']
         this.menuLookUp = data['results'];
-        this.menuLookupId = data['parent'][0]['id'];
+        if(data['parent'].length){
+ this.menuLookupId = data['parent'][0]['id'];
+        }
+       
         this.httpMenu();
       },
       error => {
@@ -131,6 +134,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
   btnFinish() {
+   
     this.showHeader = true;
     this.showMenu = false;
     this.showModifier = false;
@@ -138,6 +142,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     this.httpMenuLookUp(0);
   }
   backMenu(menuLookUpParent: any = []) {
+     
     if (menuLookUpParent.length <= 0) {
       this.showHeader = true;
       this.showMenu = false;
@@ -289,6 +294,9 @@ export class MenuComponent implements OnInit, OnDestroy {
         this.modalService.dismissAll();
         this.model.newQty = 1;
         this.reload();
+        if(data['warning']) {
+          alert(data['warning']);
+        }
       },
       error => {
         console.log(error);

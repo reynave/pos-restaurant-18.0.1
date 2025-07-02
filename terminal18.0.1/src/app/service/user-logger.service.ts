@@ -14,10 +14,11 @@ export class UserLoggerService {
   ) { }
 
   logAction(action: string) {
+    
     const logData = {
       timestamp: new Date(),
       action,
-      userId: this.configService.getConfigJson()['employee']['name'] + "(" + this.configService.getConfigJson()['employee']['id'] + ")", // opsional, bisa dari auth
+      userId: this.configService.getTokenJson()['name'] + "(" + this.configService.getConfigJson()['id'] + ")", // opsional, bisa dari auth
       url: window.location.href
     };
 

@@ -20,6 +20,13 @@ exports.getItems = async (req, res) => {
         WHERE m.presence = 1 
     `);
 
+
+      formattedRows.forEach(el => {
+         if( el['adjustItemsId'] == '' ){
+            el['qty'] = 'unlimited';
+         }
+      });
+
       res.json({
          error: false,
          items: formattedRows,
@@ -45,14 +52,11 @@ exports.resetAdjust = async (req, res) => {
             continue;
          }
 
-         const { insertId } = await autoNumber('adjustItems');
-
-
          const q = `
             UPDATE menu
                SET   
-                  adjustItemsId = '${insertId}',
-                  qty = ${newQty},    
+                  adjustItemsId = '',
+                  qty = 0,    
                   updateDate = '${today()}'
             WHERE id = ${id}
          `;
@@ -64,18 +68,6 @@ exports.resetAdjust = async (req, res) => {
             results.push({ id, status: 'menu updated', query: q, });
          }
 
-
-         const q2 = `
-            INSERT INTO adjust_items(id, presence, inputDate, updateDate)
-            value('${insertId}',1,'${today()}', '${today()}') 
-         `;
-
-         const [result2] = await db.query(q2);
-         if (result2.affectedRows === 0) {
-            results.push({ id, status: 'menu not found', query: q, });
-         } else {
-            results.push({ id, status: 'adjust_items insert', query: q, });
-         }
       }
 
       res.json({
@@ -95,6 +87,7 @@ exports.addQty = async (req, res) => {
    const addQty = req.body['addQty'];
 
    try {
+
       for (const id of items) {
          // const { id, cartId, paid, tips } = emp;
 
@@ -103,14 +96,9 @@ exports.addQty = async (req, res) => {
             continue;
          }
 
-         const s = `
-            SELECT adjustItemsId, qty from menu 
-            WHERE id = ${id}
-         `; 
-         const [qty] = await db.query(s);
-         if (qty[0]['adjustItemsId'] == '' || qty[0]['adjustItemsId'] == null) {
-            const { insertId } = await autoNumber('adjustItems');
-            const q = `
+
+         const { insertId } = await autoNumber('adjustItems');
+         const q = `
             UPDATE menu
                SET    
                   adjustItemsId = '${insertId}',
@@ -118,51 +106,24 @@ exports.addQty = async (req, res) => {
                   updateDate = '${today()}'
             WHERE id = ${id}
          `;
-            const [result] = await db.query(q);
-            if (result.affectedRows === 0) {
-               results.push({ id, status: 'menu not found', query: q, });
-            } else {
-               results.push({ id, status: 'menu updated', query: q, });
-            }
-            const q2 = `
+         const [result] = await db.query(q);
+         if (result.affectedRows === 0) {
+            results.push({ id, status: 'menu not found', query: q, });
+         } else {
+            results.push({ id, status: 'menu updated', query: q, });
+         }
+         const q2 = `
                INSERT INTO adjust_items(id, presence, inputDate, updateDate)
                value('${insertId}',1,'${today()}', '${today()}') 
             `;
 
-            const [result2] = await db.query(q2);
-            if (result2.affectedRows === 0) {
-               results.push({ id, status: 'adjust_items not found', query: q, });
-            } else {
-               results.push({ id, status: 'adjust_items insert', query: q, });
-            }
+         const [result2] = await db.query(q2);
+         if (result2.affectedRows === 0) {
+            results.push({ id, status: 'adjust_items not found', query: q, });
          } else {
-            const q = `
-               UPDATE menu
-                  SET     
-                     qty = ${addQty },    
-                     updateDate = '${today()}'
-               WHERE id = ${id}
-            `;
-            const [result] = await db.query(q);
-            if (result.affectedRows === 0) {
-               results.push({ id, status: 'menu not found', query: q, });
-            } else {
-               results.push({ id, status: 'menu updated', query: q, });
-            }
+            results.push({ id, status: 'adjust_items insert', query: q, });
+         }
 
-            const q3 = `
-               UPDATE adjust_items
-                  SET
-                     updateDate = '${today()}'
-               WHERE id = '${qty[0]['adjustItemsId']}'
-            `;
-            const [result3] = await db.query(q3);
-            if (result.affectedRows === 0) {
-               results.push({ id, status: 'adjust_items  not found', query: q, });
-            } else {
-               results.push({ id, status: 'adjust_items updated', query: q, });
-            }
-         } 
       }
 
       res.json({

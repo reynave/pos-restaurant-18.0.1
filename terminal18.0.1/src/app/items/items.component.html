@@ -2,11 +2,17 @@
 <div class="container-fluid body-with-header">
    <div class="row g-2">
       <div class="col-8">
+            <div class=" sticky-top p-2 bg-white border">
+                 <input type="text" class="form-control " [(ngModel)]="searchTerm" (input)="searchByName()" 
+                 placeholder="Search by Name" />
+
+            </div>
          <div class="content-table border shadow-sm">
-            
+         
+         
             <table class="table table-sm table-hover">
 
-               <thead>
+               <thead class="sticky-top">
                   <tr>
                      <th (click)="checkBoxAll()">
                         @if( isCheckAll != 0){
@@ -25,7 +31,7 @@
                </thead>
 
                <tbody>
-                  <tr *ngFor="let x of items; let i = index" (click)="fnCheck(i)"
+                  <tr *ngFor="let x of searchResults; let i = index" (click)="fnCheck(i)"
                      [ngClass]="{'bg-light': x.checkBox == 1}">
                      <td>
                         @if(x.checkBox != 0){
@@ -39,7 +45,7 @@
                      <td>{{i+1}}</td>
                      <td>{{x.name}}</td>
                      <td class="font-monospace">{{x.adjustItemsId}}</td>
-                     <td class="text-end">{{x.qty | number}}</td>
+                     <td class="text-end">{{x.qty}}</td>
 
                   </tr>
                </tbody>
@@ -49,8 +55,9 @@
 
       <div class="col-4">
          <div class="d-grid sticky-top">
-            <button type="button" class="btn btn-lg  border btn-success mb-2 py-4" [disabled]="this.checkTotal < 1"
-               (click)="open(contentAdjust)">RESET ADJUST</button>
+            <button type="button" class="btn btn-lg  border btn-primary mb-2 py-4" [disabled]="this.checkTotal < 1"
+               (click)="onResetAdjust()">REMOVE ADJUST / UNLIMITED</button>
+               
             <button type="button" class="btn btn-lg  border btn-success mb-2 py-4" [disabled]="this.checkTotal < 1"
                (click)="addQty = 0 ; open(contentAddQty)">ADJUST QTY</button>
 
