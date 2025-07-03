@@ -1,7 +1,2 @@
-ALTER TABLE `cart_item`
-	ADD COLUMN `tax` INT(11) NOT NULL DEFAULT '0' AFTER `price`,
-	ADD COLUMN `serviceCharge` INT(11) NOT NULL DEFAULT '0' AFTER `tax`;
-
-
-ALTER TABLE `cart_item`
-	ADD COLUMN `ta` TINYINT NOT NULL DEFAULT 0 AFTER `adjustItemsId`;
+ALTER TABLE `employee`
+	CHANGE COLUMN `authlevel` `authlevelId` SMALLINT(6) NULL DEFAULT NULL AFTER `id`;

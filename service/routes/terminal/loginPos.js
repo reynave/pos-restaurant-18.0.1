@@ -6,6 +6,8 @@ const c = require('../../controllers/terminal/loginController');
 router.get('/outlet', c.getAllData); 
 router.post('/signin', c.signin);
 
+router.post('/terminal', c.terminal);
+
 
 // router.post('/create', tableMap.postCreate);
 // router.post('/delete', tableMap.postDelete);

@@ -1,0 +1,29 @@
+<div class="wrapper-md">
+    <div class="container">
+        <div class="row g-2">
+            <div class="col-6">
+                <img src="./img/img1.jpg" class="rounded" width="100%">
+            </div>
+            <div class="col-6">
+                <div>
+                    {{error}}
+                </div>
+                <div class="mb-2">
+                    <input type="text" class="form-control form-control-lg text-end" placeholder="POS / TERMINAL ID"
+                        [(ngModel)]="terminalId">
+                </div>
+                <div class="mb-1">
+                    <app-key-number (dataEmitted)="handleData($event)"></app-key-number>
+                </div>
+                <div class="row g-1">
+                    <div class="col-6 d-grid">
+                        <button type="button" class="btn btn-warning" (click)="terminalId=''">CE</button>
+                    </div>
+                    <div class="col-6 d-grid">
+                        <button type="button" class="btn btn-dark" (click)="onSubmit()">SUBMIT</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

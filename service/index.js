@@ -11,17 +11,17 @@ const io = require('socket.io')(http, {
 });
 
 let user = 0;
-
 io.on('connection', (socket) => {
     console.log('Client connected');
 
     socket.on('message-from-client', (data) => {
         console.log('Received from client:', data);
 
-        // Kirim ke semua client yang terhubung
-        // io.emit('message-from-server', 'Broadcast: ' + data);
-
+        // Kirim ke SEMUA client yang terhubung
+        // io.emit('message-from-server', 'Broadcast: ' + data); 
         //
+
+        // Kirim ke  client yang terhubung kecuali diri sendiri
         socket.broadcast.emit('message-from-server', 'Broadcast to others');
 
     });
@@ -61,7 +61,7 @@ const IsAuth = require('./helpers/IsAuth');
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Token');
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Terminal, X-Requested-With, Content-Type, Accept, Authorization, Token');
 
     if (req.method === 'OPTIONS') {
         return res.sendStatus(200);

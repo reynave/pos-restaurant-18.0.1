@@ -11,12 +11,21 @@ export class ConfigService {
   private tokenKey: string = "pos3.tokenKey.mitralink";
   private configJson: string = "pos3.config.mitralink";
   private dailyCheck: string = "pos3.dailyCheck.mitralink";
+  private terminalId: string = "pos3.terminal.mitralink";
+  private terminalAddressId: string = "pos3.address.mitralink";
 
   //private jtiKey: string = "jti.openAkunting.com";
 
   constructor(
     private router: Router
   ) { }
+
+  nameOfterminal(){
+    return this.terminalId;
+  } 
+  nameOfterminalAddressId(){
+    return this.terminalAddressId;
+  }
   checkToken() {
     console.log(this.tokenKey, localStorage.getItem(this.tokenKey));
     if (localStorage.getItem(this.tokenKey) != null) {
@@ -82,9 +91,16 @@ export class ConfigService {
 
   headers() {
     const token: any = localStorage.getItem(this.tokenKey);
+
+    const data = {
+      terminalId : localStorage.getItem(this.terminalId)??'',
+      address : localStorage.getItem(this.terminalAddressId)??'',
+    }
+
     return new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`,
+      'X-Terminal' : JSON.stringify(data),
     });
   }
 }

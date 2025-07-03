@@ -40,6 +40,9 @@ export class TablesComponent implements OnInit {
   api: string = environment.api;
   model = new Actor(0, 1, 0);
   activeView: string = localStorage.getItem("pos3.view") ?? 'map';
+  terminalId : any = localStorage.getItem("pos3.terminal.mitralink");
+   getTokenJson : any = [];
+  
   getConfigJson: any = [];
   dataHeader: any = {};
   public : string = environment.api+"../public/floorMap/";
@@ -65,6 +68,7 @@ export class TablesComponent implements OnInit {
 
 
     this.getConfigJson = this.configService.getConfigJson();
+    this.getTokenJson = this.configService.getTokenJson();
     this.sendMessage();
 
     this.modalService.dismissAll();
@@ -87,8 +91,7 @@ export class TablesComponent implements OnInit {
   }
   sendMessage() {
     console.log("EMIT");
-    this.socketService.emit('message-from-client', 'reload');
-
+    this.socketService.emit('message-from-client', 'reload'); 
   }
 
   handleData(data: string) {

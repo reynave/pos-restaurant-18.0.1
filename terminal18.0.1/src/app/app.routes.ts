@@ -20,36 +20,39 @@ import { ItemsComponent } from './items/items.component';
 import { DailyCashBalanceComponent } from './pos/daily/daily-cash-balance/daily-cash-balance.component';
 import { SplitBillComponent } from './pos/bill/split-bill/split-bill.component';
 import { TransferItemsComponent } from './pos/menu/transfer-items/transfer-items.component';
+import { TerminalLoginComponent } from './login/terminal-login/terminal-login.component';
+import { terminalGuard } from './guard/terminal.guard';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
     { path: 'setup', component: SetupComponent },
     { path: 'login', component: LoginComponent },
+    { path: 'login/terminal', component: TerminalLoginComponent },
 
     { path: 'setting', component: SettingComponent, canActivate: [authGuard] },
 
     // DAILYSTARTGUARD REQUREMENT
-    { path: 'tables', component: TablesComponent, canActivate: [authGuard, dailyStartGuard] },
-    { path: 'menu', component: MenuComponent, canActivate: [authGuard, dailyStartGuard] },
-    { path: 'menu/modifier', component: MenuModifierComponent, canActivate: [authGuard, dailyStartGuard] },
-    { path: 'menu/transferItems', component: TransferItemsComponent, canActivate: [authGuard, dailyStartGuard] },
+    { path: 'tables', component: TablesComponent, canActivate: [authGuard, dailyStartGuard, terminalGuard] },
+    { path: 'menu', component: MenuComponent, canActivate: [authGuard, dailyStartGuard, terminalGuard] },
+    { path: 'menu/modifier', component: MenuModifierComponent, canActivate: [authGuard, dailyStartGuard, terminalGuard] },
+    { path: 'menu/transferItems', component: TransferItemsComponent, canActivate: [authGuard, dailyStartGuard, terminalGuard] },
 
-    { path: 'bill', component: BillComponent, canActivate: [authGuard, dailyStartGuard] },
-    { path: 'bill/splitBill', component: SplitBillComponent, canActivate: [authGuard, dailyStartGuard] },
+    { path: 'bill', component: BillComponent, canActivate: [authGuard, dailyStartGuard ,terminalGuard] },
+    { path: 'bill/splitBill', component: SplitBillComponent, canActivate: [authGuard, dailyStartGuard,terminalGuard] },
 
-    { path: 'payment', component: PaymentComponent, canActivate: [authGuard, dailyStartGuard] },
+    { path: 'payment', component: PaymentComponent, canActivate: [authGuard, dailyStartGuard,terminalGuard] },
 
-    { path: 'items', component: ItemsComponent, canActivate: [authGuard, dailyStartGuard] },
+    { path: 'items', component: ItemsComponent, canActivate: [authGuard, dailyStartGuard,terminalGuard] },
 
     // END :: DAILYSTARTGUARD
 
-    { path: 'transaction', component: TransactionComponent, canActivate: [authGuard] },
-    { path: 'transaction/bill', component: TransactionBillComponent, canActivate: [authGuard] },
-    { path: 'transaction/detail', component: TransactionDetailComponent, canActivate: [authGuard] },
+    { path: 'transaction', component: TransactionComponent, canActivate: [authGuard,terminalGuard] },
+    { path: 'transaction/bill', component: TransactionBillComponent, canActivate: [authGuard,terminalGuard] },
+    { path: 'transaction/detail', component: TransactionDetailComponent, canActivate: [authGuard,terminalGuard] },
 
-    { path: 'daily/start', component: DailyStartComponent, canActivate: [authGuard] },
-    { path: 'daily/close', component: DailyCloseComponent, canActivate: [authGuard, dailyStartGuard] },
-    { path: 'daily/cashBalance', component: DailyCashBalanceComponent, canActivate: [authGuard, dailyStartGuard] },
+    { path: 'daily/start', component: DailyStartComponent, canActivate: [authGuard,terminalGuard] },
+    { path: 'daily/close', component: DailyCloseComponent, canActivate: [authGuard, dailyStartGuard,terminalGuard] },
+    { path: 'daily/cashBalance', component: DailyCashBalanceComponent, canActivate: [authGuard, dailyStartGuard,terminalGuard] },
 
 
 

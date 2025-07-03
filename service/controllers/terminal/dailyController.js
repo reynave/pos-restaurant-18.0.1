@@ -28,7 +28,9 @@ exports.getAllData = async (req, res) => {
 exports.getDailyStart = async (req, res) => {
     const id = req.query.id;
 
-   
+     const headerTerminal = req.headers['x-terminal'];
+     console.log(headerTerminal);
+     
     try {
         const [formattedRows] = await db.query(`
             SELECT * FROM daily_check

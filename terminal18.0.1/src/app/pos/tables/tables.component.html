@@ -132,11 +132,30 @@
                      <tr>
                         <td class="align-content-center">Daily Start</td>
                         <td>
-                          <div class="form-control form-control-sm bg-light"> {{dataHeader['startDate'] | date:'medium'}}</div>
+                           : {{dataHeader['startDate'] | date:'medium'}} 
+                        </td>
+                     </tr>
+                      <tr>
+                        <td class="align-content-center">User</td>
+                        <td>
+                            : {{getTokenJson['name']  }} 
+                        </td>
+                     </tr>  
+                     <tr>
+                        <td class="align-content-center">Level</td>
+                        <td>
+                           : {{getTokenJson['authlevel']  }} 
+                        </td>
+                     </tr>
+                       <tr>
+                        <td class="align-content-center">Terminal ID</td>
+                        <td>
+                           : {{terminalId}} 
                         </td>
                      </tr>
                   </tbody>
                </table>
+              
             </div>
             <div class="col-6 mb-3">
                <strong>General</strong>
