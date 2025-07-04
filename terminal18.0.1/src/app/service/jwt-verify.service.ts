@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import * as CryptoJS from 'crypto-js';
+import { environment } from '../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root'
 })
 export class JwtVerifyService {
-  private readonly haha = 'a-string-secret-at-least-256-bits-long';
-   private base64UrlDecode(input: string): string {
+  private readonly haha = environment.client+'gXXjLL9M9P1lyTg49nJ32GvwMT09rl30IgJWoo712T4IL8CREV';
+  private base64UrlDecode(input: string): string {
     input = input.replace(/-/g, '+').replace(/_/g, '/');
     while (input.length % 4) {
       input += '=';

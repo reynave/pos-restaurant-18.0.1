@@ -28,7 +28,7 @@ exports.getAllData = async (req, res) => {
       SELECT c.*, s.name AS 'tableMapStatus'
       FROM cart AS c
       LEFT JOIN outlet_table_map_status AS s ON c.tableMapStatusId = s.id
-      WHERE c.close  = 0 AND c.presence = 1 AND c.outletId = 15
+      WHERE c.close  = 0 AND c.presence = 1 AND c.outletId = ${outletId}
     `);
 
 

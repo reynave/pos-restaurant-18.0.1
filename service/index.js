@@ -18,12 +18,15 @@ io.on('connection', (socket) => {
         console.log('Received from client:', data);
 
         // Kirim ke SEMUA client yang terhubung
-        // io.emit('message-from-server', 'Broadcast: ' + data); 
-        //
+        // io.emit('message-from-server', 'Broadcast: ' + data);  
 
         // Kirim ke  client yang terhubung kecuali diri sendiri
         socket.broadcast.emit('message-from-server', 'Broadcast to others');
 
+    });
+
+    socket.on('broadcast-reload', (data) => { 
+        socket.broadcast.emit('reload', data); 
     });
 });
 

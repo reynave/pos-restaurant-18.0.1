@@ -145,44 +145,68 @@ exports.terminal = async (req, res) => {
                 });
             }
 
+            const parts = data.split('.');
+            const payload = parts[1];
+            const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+            // Pad if necessary
+            const padded = base64.padEnd(base64.length + (4 - (base64.length % 4)) % 4, '=');
+            const keyLicense = JSON.parse(atob(padded));
+
+            const now = new Date();
+            const expired = new Date(keyLicense['expired']);
+
+            const diffMs = expired - now;
+            const diffDays = parseInt(diffMs / (1000 * 60 * 60 * 24));
+
+           if (diffDays >= 0 && keyLicense['terminalId'] ==  terminalId ) { 
 
 
-            const q3 = `
-            DELETE FROM terminal WHERE 
-                terminalId =  '${terminalId}'
+                const q3 = `
+            DELETE FROM terminal_token WHERE 
+                terminalId =  '${keyLicense['terminalId']}'
             `;
 
-            const [result3] = await db.query(q3);
-            if (result3.affectedRows === 0) {
-                results.push({ status: ' not found', });
-            } else {
-                results.push({ status: 'old id terminal DELETE' });
-            }
+                const [result3] = await db.query(q3);
+                if (result3.affectedRows === 0) {
+                    results.push({ status: ' not found', });
+                } else {
+                    results.push({ status: 'old id terminal DELETE' });
+                }
 
-            const q2 = `
-            INSERT INTO terminal( 
+                const q2 = `
+            INSERT INTO terminal_token( 
                 terminalId, 
                 presence, inputDate, updateDate)
             value(
-                '${terminalId}', 
+                '${keyLicense['terminalId']}', 
                 1,'${today()}', '${today()}') 
             `;
 
-            const [result] = await db.query(q2);
-            if (result.affectedRows === 0) {
-                results.push({ status: ' not found', });
+                const [result] = await db.query(q2);
+                if (result.affectedRows === 0) {
+                    results.push({ status: ' not found', });
+                } else {
+                    results.push({ status: 'terminal insert' });
+                }
+                res.status(200).json({
+                    error: false,
+                    message: 'Read Id success',
+                    address: result.insertId,
+                    terminalId: keyLicense['terminalId'],
+                    fileContent: data, // <-- ini isi file,
+                    keyLicense : keyLicense,
+                    diffDays: diffDays
+                });
             } else {
-                results.push({ status: 'terminal insert' });
+                    res.status(500).json({ 
+                    message: 'Expired Key / Key not valid',  
+                    fileContent: data, // <-- ini isi file,
+                    keyLicense : keyLicense,
+                    diffDays: diffDays
+                });
             }
 
 
-            res.status(200).json({
-                error: false,
-                message: 'Read Id success',
-                address  : result.insertId ,
-                terminalId: terminalId,
-                fileContent: data, // <-- ini isi file
-            });
         });
 
     } catch (err) {
@@ -190,3 +214,59 @@ exports.terminal = async (req, res) => {
         res.status(500).json({ error: 'Server error' });
     }
 };
+
+exports.checkTerminal = async (req, res) => {
+    const results = [];
+    const terminalId = req.query.terminalId;
+    const address = req.query.address;
+
+    try {
+        // Lokasi file relatif ke project root 
+
+        const filePath = path.join(__dirname, '../../public/keyLicence/' + terminalId + '.txt');
+
+        // Baca file secara async
+        fs.readFile(filePath, 'utf8', async (err, data) => {
+            if (err) {
+                console.error('Error reading file:', err);
+                return res.status(500).json({
+                    error: true,
+                    message: 'Cannot read ID',
+                });
+            }
+
+            const parts = data.split('.');
+            const payload = parts[1];
+            const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+            // Pad if necessary
+            const padded = base64.padEnd(base64.length + (4 - (base64.length % 4)) % 4, '=');
+            const keyLicense = JSON.parse(atob(padded));
+
+
+            const q3 = `
+            SELECT * FROM terminal_token  
+            WHERE terminalId =  '${terminalId}' and id = ${address}
+            `;
+
+            const [result] = await db.query(q3);
+            if (result.length == 0) {
+                res.status(500).json({ error: 'Not found id' });
+            }
+            else {
+                res.status(200).json({
+                    error: false,
+                    result: result,
+                    fileContent: data, // <-- ini isi file,
+                    keyLicense: keyLicense
+                });
+            }
+
+
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Server error' });
+    }
+};
+

@@ -46,22 +46,23 @@ export class TerminalLoginComponent {
     }
     this.http.post<any>(url, body).subscribe(
       data => {
-        console.log(data);
         this.loading = false;
         this.error = '';
+        console.log(data)
         if (data['error'] == false) {
-
-          console.log(this.jwtService.verifyToken(data['fileContent']));
-
-          if (this.jwtService.verifyToken(data['fileContent']) == true) {
+          const fileContent = this.jwtService.decodePayload(data['fileContent']);
+          console.log( fileContent)
+          if (this.jwtService.verifyToken(data['fileContent']) == true && fileContent.terminalId == this.terminalId) {
             localStorage.setItem(this.config.nameOfterminal(), this.terminalId);
             localStorage.setItem(this.config.nameOfterminalAddressId(), data['address']);
+ 
+            this.router.navigate(['login']); 
+            const myObject = {
+              terminalId: this.terminalId,
+              address: data['address']
+            }
+            this.socketService.emit('broadcast-reload', JSON.stringify(myObject));
 
-            console.log(this.jwtService.decodePayload(data['fileContent']));
-  
-            this.router.navigate(['login']);
-
-             this.socketService.emit('message-from-client', 'reload'); 
           } else {
             alert("KEY SIGNATURE IS NOT VALID ")
           }

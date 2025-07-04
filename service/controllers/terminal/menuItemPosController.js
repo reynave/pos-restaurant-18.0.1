@@ -4,10 +4,22 @@ const { autoNumber } = require('../../helpers/autoNumber');
 const { taxScUpdate } = require('../../helpers/bill');
 
 exports.getMenuItem = async (req, res) => {
-  const i = 1;
+  let i = 1;
   try {
+    const header = JSON.parse(req.headers['x-terminal']);
+    
     const menuLookupId = req.query.menuLookupId;
     const outletId = req.query.outletId;
+
+    if (outletId) {
+      const [outlet] = await db.query(`SELECT id, priceNo FROM outlet WHERE id = ${outletId}`);
+      i = outlet[0]['priceNo'];
+    }
+
+    const [terminal] = await db.query(`SELECT priceNo FROM terminal WHERE terminalId = ${header['terminalId']}`);
+    if (terminal[0]['priceNo'] != 0) {
+      i = terminal[0]['priceNo'];
+    }
 
 
     const q = `
@@ -37,18 +49,17 @@ exports.getMenuItem = async (req, res) => {
         FROM menu AS m
         LEFT JOIN menu_tax_sc AS t ON t.id = m.menuTaxScId
         WHERE m.presence = 1 and m.menuLookupId = ${menuLookupId} and m.menuLookupId != 0
-      `;
+    `;
 
-    console.log(q);
+
+
     const [items] = await db.query(q);
-
 
     items.forEach(el => {
       if (el['adjustItemsId'] == '') {
         el['qty'] = 99999999
       }
     });
-
 
     const [discountGroup] = await db.query(`
       SELECT t.*
@@ -94,7 +105,7 @@ exports.cart = async (req, res) => {
     let i = 0;
     for (const row of formattedRowsOri) {
       let getIndexById = formattedRows.findIndex((obj) => obj.menuId === row.menuId);
-      console.log(i += 1, getIndexById);
+
       if (getIndexById > -1) {
         formattedRows[getIndexById]['totalAmount'] += parseInt(row.totalAmount);
         formattedRows[getIndexById]['ta'] = parseInt(row.ta) + parseInt(formattedRows[getIndexById]['ta']);
@@ -224,7 +235,7 @@ exports.cartOrdered = async (req, res) => {
     let i = 0;
     for (const row of formattedRowsOri) {
       let getIndexById = formattedRows.findIndex((obj) => obj.menuId === row.menuId);
-      console.log(i += 1, getIndexById);
+
       if (getIndexById > -1) {
         formattedRows[getIndexById]['totalAmount'] += parseInt(row.totalAmount);
         formattedRows[getIndexById]['ta'] = parseInt(row.ta) + parseInt(formattedRows[getIndexById]['ta']);
@@ -415,7 +426,7 @@ exports.addToCart = async (req, res) => {
         ${menu['taxRate']},  ${menu['taxStatus']},
           ${taxAmount}, 0
       )`;
-      //  console.log(q3);
+
       const [result3] = await db.query(q3);
 
       if (result3.affectedRows === 0) {
@@ -613,8 +624,9 @@ exports.voidItem = async (req, res) => {
     }
 
     const q2 = `
-          SELECT id, cartId, presence , void FROM cart_item
-          WHERE cartId = '${cartId}' `;
+          SELECT id, cartId, presence , void 
+          FROM cart_item
+          WHERE cartId = '${cartId}' and presence = 0 and void = 1`;
     const [result2] = await db.query(q2);
 
 
@@ -625,7 +637,7 @@ exports.voidItem = async (req, res) => {
               void = 1,
               presence = 0,
               updateDate = '${today()}'
-          WHERE   cartItemId = '${row['id']}'`;
+          WHERE  cartItemId = '${row['id']}'`;
         const [result] = await db.query(q);
 
         if (result2.affectedRows === 0) {
@@ -961,7 +973,7 @@ exports.cartDetail = async (req, res) => {
       WHERE c.cartId = '${cartId}' AND c.presence = 1 AND c.void = 0
       AND c.menuId = ${menuId} 
     `;
-    console.log(q)
+
     const [formattedRows] = await db.query(q);
     let totalAmount = 0;
     let grandAmount = 0;
@@ -1087,8 +1099,22 @@ exports.cartDetail = async (req, res) => {
 };
 
 exports.getModifier = async (req, res) => {
-  const i = 1;
+  let i = 1;
+
+  const outletId = req.query.outletId;
+  const header = JSON.parse(req.headers['x-terminal']);
+  
   try {
+
+    if (outletId) {
+      const [outlet] = await db.query(`SELECT id, priceNo FROM outlet WHERE id = ${outletId}`);
+      i = outlet[0]['priceNo'];
+    }
+
+    const [terminal] = await db.query(`SELECT priceNo FROM terminal WHERE terminalId = ${header['terminalId']}`);
+    if (terminal[0]['priceNo'] != 0) {
+      i = terminal[0]['priceNo'];
+    }
 
     const [formattedRows] = await db.query(`
       SELECT id, name,min,max, '' as detail
@@ -1470,7 +1496,7 @@ exports.menuLookUp = async (req, res) => {
       FROM menu_lookup 
       WHERE presence = 1 and id = ${parentId} 
     `;
-    console.log(q2);
+
     const [lookUpHeader] = await db.query(q2);
 
 

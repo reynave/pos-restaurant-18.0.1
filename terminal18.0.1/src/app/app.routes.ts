@@ -22,6 +22,7 @@ import { SplitBillComponent } from './pos/bill/split-bill/split-bill.component';
 import { TransferItemsComponent } from './pos/menu/transfer-items/transfer-items.component';
 import { TerminalLoginComponent } from './login/terminal-login/terminal-login.component';
 import { terminalGuard } from './guard/terminal.guard';
+import { TerminalReloginComponent } from './login/terminal-relogin/terminal-relogin.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -54,7 +55,7 @@ export const routes: Routes = [
     { path: 'daily/close', component: DailyCloseComponent, canActivate: [authGuard, dailyStartGuard,terminalGuard] },
     { path: 'daily/cashBalance', component: DailyCashBalanceComponent, canActivate: [authGuard, dailyStartGuard,terminalGuard] },
 
-
+    { path: 'terminalRelogin', component: TerminalReloginComponent },
 
     { path: '**', component: PageNotFoundComponent },
 ];

@@ -180,6 +180,9 @@ export class MenuComponent implements OnInit, OnDestroy {
     const url = environment.api + "menuItemPos/getModifier";
     this.http.get<any>(url, {
       headers: this.configService.headers(),
+      params : {
+        outletId: this.configService.getConfigJson()['outlet']['id']
+      }
     }).subscribe(
       data => {
         this.loading = false;

@@ -20,10 +20,10 @@ export class ConfigService {
     private router: Router
   ) { }
 
-  nameOfterminal(){
+  nameOfterminal() {
     return this.terminalId;
-  } 
-  nameOfterminalAddressId(){
+  }
+  nameOfterminalAddressId() {
     return this.terminalAddressId;
   }
   checkToken() {
@@ -82,6 +82,9 @@ export class ConfigService {
       localStorage.removeItem(this.tokenKey);
       localStorage.removeItem(this.configJson);
       localStorage.removeItem(this.dailyCheck);
+      localStorage.removeItem('pos3.terminal.mitralink');
+      localStorage.removeItem('pos3.address.mitralink');
+
 
       return of(true); // Mengembalikan Observable yang mengirimkan nilai boolean true
     } catch (error) {
@@ -93,14 +96,14 @@ export class ConfigService {
     const token: any = localStorage.getItem(this.tokenKey);
 
     const data = {
-      terminalId : localStorage.getItem(this.terminalId)??'',
-      address : localStorage.getItem(this.terminalAddressId)??'',
+      terminalId: localStorage.getItem(this.terminalId) ?? '',
+      address: localStorage.getItem(this.terminalAddressId) ?? '',
     }
 
     return new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`,
-      'X-Terminal' : JSON.stringify(data),
+      'X-Terminal': JSON.stringify(data),
     });
   }
 }

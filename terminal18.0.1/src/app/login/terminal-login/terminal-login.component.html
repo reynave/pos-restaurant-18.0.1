@@ -1,15 +1,15 @@
-<div class="wrapper-md">
+<div class="wrapper-md border rounded shadow py-2 mt-5">
     <div class="container">
         <div class="row g-2">
             <div class="col-6">
-                <img src="./img/img1.jpg" class="rounded" width="100%">
+                <img src="./img/img1.jpg"  width="100%">
             </div>
             <div class="col-6">
-                <div>
+                <div *ngIf="error != '' " class="alert alert-danger text-center">
                     {{error}}
                 </div>
                 <div class="mb-2">
-                    <input type="text" class="form-control form-control-lg text-end" placeholder="POS / TERMINAL ID"
+                    <input type="text" class="form-control form-control-lg text-end bg-light" placeholder="POS / TERMINAL ID"
                         [(ngModel)]="terminalId">
                 </div>
                 <div class="mb-1">
