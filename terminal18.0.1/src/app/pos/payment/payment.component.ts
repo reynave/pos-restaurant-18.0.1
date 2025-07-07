@@ -75,8 +75,8 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     this.renderer.setStyle(document.body, 'background-color', 'var(--bg-color-primary-1)');
 
-    this.id = this.activeRouter.snapshot.queryParams['id'],
-      this.modalService.dismissAll();
+    this.id = this.activeRouter.snapshot.queryParams['id'];
+    this.modalService.dismissAll();
     this.httpCart();
     this.httpPaymentType();
     this.httpPaid();
@@ -103,7 +103,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     )
   }
-
+discountGroup : any = [];
   httpCart() {
     this.loading = true;
     const url = environment.api + "payment/cart";
@@ -116,6 +116,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     }).subscribe(
       data => {
         this.data = data['data'];
+        this.discountGroup = data['data']['discountGroup'];
         this.closePaymentAmount = data['data']['closePaymentAmount'];
         this.unpaid = data['data']['unpaid']
         if (data['closePayment'] == 1) {
@@ -285,7 +286,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
 
     value = value.toString()
     if (data == 'b') {
-      value = value.slice(0, -1); 
+      value = value.slice(0, -1);
     } else {
       value = value + data;
     }
@@ -296,7 +297,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     else if (this.inputField == 'tips') {
       this.paid[this.paymentIndex].tips = value;
-    } 
+    }
   }
 
   paymentIndex: number = -1;
@@ -307,8 +308,8 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     console.log(index, inputField)
   }
 
-  clearCurrentValue(){
-  if (this.inputField == 'paid') {
+  clearCurrentValue() {
+    if (this.inputField == 'paid') {
       this.paid[this.paymentIndex].paid = 0;
     }
     else if (this.inputField == 'tips') {

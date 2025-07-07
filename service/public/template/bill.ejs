@@ -16,21 +16,31 @@
     %><%= formatLine(row.total+'X '+row.name, formatCurrency(row.totalAmount), line)
     %><% 
     if(row.modifier.length > 0){ 
-        %>
-<%          let i =0;
+        %><%         
+     let i =0;
             row.modifier.forEach(function(rec){  
                 i++;
-                if (rec.descl != '') { 
-    %><%=           formatLine('   + '+rec.descl, formatCurrency(rec.price), line)+( ( i < row.modifier.length ) ? "\n":"");
+                if ( rec.type != 'APPLY_DISCOUNT') { 
+    %>
+<%=           formatLine('   + '+rec.descl, formatCurrency(rec.price), line)+( ( i < row.modifier.length ) ? "\n":"");
     %><%            
                 } 
             }); 
     %><%
     }
     %>
-<% }); %>
+<% }); %> 
+<%= formatLine(`          ITEM TOTAL`, formatCurrency(data.itemTotal), line)%> 
+<% 
+if(data.discountGroup.length > 0){  
+    data.discountGroup.forEach(function(rec){   
+       %>
+<%=formatLine( `          `+rec.name, formatCurrency(rec.amount), line) %><% 
+    });    
+}  
+%>        
 
-<%= formatLine(`          ${data.totalItem} TOTAL ITEM,   SUB TOTAL`, formatCurrency(data.subTotal), line)%>
+<%= formatLine(`          SUB TOTAL`, formatCurrency(data.subTotal), line)%>
 <% data.taxSc.forEach(function(row){ %><%= formatLine('                            '+row.name, formatCurrency(row.totalAmount), line)  %>
 <% }); %><%= formatLine('                        GRAND TOTAL', formatCurrency(data.grandTotal), line)  %>
 <% if(transaction.close == 1){ 

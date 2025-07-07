@@ -1,10 +1,11 @@
 const db = require('../config/db'); // sesuaikan path kalau perlu 
 const { today } = require('./global');
 
-async function cart(cartId = '', subgroup =0) {
+async function cart(cartId = '', subgroup = 0) {
     let subTotal = 0;
     let grandTotal = 0;
     let totalItem = 0;
+    let itemTotal = 0;
     //let subgroup = subgroup;
     const q = `
          SELECT t1.* , (t1.total * t1.price) as 'totalAmount', m.name , 0 as 'checkBox', '' as modifier
@@ -12,7 +13,7 @@ async function cart(cartId = '', subgroup =0) {
            SELECT   c.price, c.menuId, COUNT(c.menuId) AS 'total' 
            FROM cart_item AS c
            JOIN menu AS m ON m.id = c.menuId
-           WHERE c.cartId = '${cartId}' AND c.presence = 1 AND c.void  = 0  ${subgroup == 0 ? '':' and c.subgroup = '+subgroup }
+           WHERE c.cartId = '${cartId}' AND c.presence = 1 AND c.void  = 0  ${subgroup == 0 ? '' : ' and c.subgroup = ' + subgroup}
            GROUP BY  c.menuId, c.price
            ORDER BY MAX(c.inputDate) ASC
          ) AS t1
@@ -24,7 +25,7 @@ async function cart(cartId = '', subgroup =0) {
 
         const s = `
             -- MODIFIER 
-           SELECT COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price
+           SELECT 'MODIFIER' as 'type',  COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price
            FROM (
              SELECT r.modifierId, m.descl, r.price
              FROM cart_item  AS i 
@@ -39,7 +40,7 @@ async function cart(cartId = '', subgroup =0) {
 
            UNION  
             -- APPLYDISCOUNT
-            SELECT COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price
+            SELECT 'APPLY_DISCOUNT' as 'type', COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price
            FROM ( SELECT r.modifierId,   r.price, r.applyDiscount, d.name AS 'descl'
              FROM cart_item  AS i
                JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
@@ -58,24 +59,26 @@ async function cart(cartId = '', subgroup =0) {
     }
 
     const [sc] = await db.query(`
-         SELECT t1.* , a.name FROM (
+        SELECT t1.*, 'SC' as 'type' , a.name FROM (
             SELECT m.menuTaxScId, SUM(m.price) AS 'totalAmount', COUNT(m.menuTaxScId) AS 'totalQty'
             FROM cart_item_modifier AS m
             JOIN cart_item AS i ON i.id = m.cartItemId
-            WHERE m.presence= 1 AND m.void = 0    ${subgroup == 0 ? '':' AND i.subgroup = '+subgroup } 
+            WHERE m.presence= 1 AND m.void = 0    ${subgroup == 0 ? '' : ' AND i.subgroup = ' + subgroup} 
             AND m.cartId = '${cartId}'  AND m.menuTaxScId != 0 AND m.scStatus != 0
-            GROUP BY m.menuTaxScId )AS t1
-            JOIN check_sc_type AS a ON a.id = t1.menuTaxScId
-       `);
+            GROUP BY m.menuTaxScId 
+        )AS t1
+        JOIN check_sc_type AS a ON a.id = t1.menuTaxScId
+    `);
 
     const [tax] = await db.query(`
-        SELECT t1.* , a.name FROM (
-        SELECT m.menuTaxScId, SUM(m.price) AS 'totalAmount', COUNT(m.menuTaxScId) AS 'totalQty'
-        FROM cart_item_modifier AS m
-        JOIN cart_item AS i ON i.id = m.cartItemId
-        WHERE m.presence= 1 AND m.void = 0  ${subgroup == 0 ? '':' AND i.subgroup = '+subgroup } 
-        AND  m.cartId = '${cartId}' AND m.menuTaxScId != 0 AND m.taxStatus != 0
-        GROUP BY menuTaxScId )AS t1
+        SELECT t1.* , 'SC' as 'TAX' , a.name FROM (
+            SELECT m.menuTaxScId, SUM(m.price) AS 'totalAmount', COUNT(m.menuTaxScId) AS 'totalQty'
+            FROM cart_item_modifier AS m
+            JOIN cart_item AS i ON i.id = m.cartItemId
+            WHERE m.presence= 1 AND m.void = 0  ${subgroup == 0 ? '' : ' AND i.subgroup = ' + subgroup} 
+            AND  m.cartId = '${cartId}' AND m.menuTaxScId != 0 AND m.taxStatus != 0
+            GROUP BY menuTaxScId 
+        )AS t1
         JOIN check_tax_type AS a ON a.id = t1.menuTaxScId 
     `);
 
@@ -91,8 +94,12 @@ async function cart(cartId = '', subgroup =0) {
     formattedRows.forEach(element => {
         subTotal += parseInt(element['totalAmount']);
         totalItem += element['total'];
+        itemTotal += parseInt(element['totalAmount']);
         element['modifier'].forEach(element => {
             subTotal += parseInt(element['price']);
+            if (parseInt(element['price']) > 0) {
+                itemTotal += parseInt(element['price']);
+            }
         });
     });
     grandTotal = grandTotal + subTotal;
@@ -115,10 +122,26 @@ async function cart(cartId = '', subgroup =0) {
     });
 
 
+    const [discountGroup] = await db.query(`
+       SELECT d.name,
+            m.applyDiscount, COUNT(m.applyDiscount) AS 'qty', 
+        SUM(m.price) AS 'amount'
+        FROM cart_item_modifier AS m 
+        LEFT JOIN check_disc_type AS d ON d.id = m.applyDiscount
+        WHERE m.applyDiscount != 0 AND m.cartId = '${cartId}'
+        GROUP BY m.applyDiscount
+    `);
+
+
+
+
+
     return {
         cart: formattedRows,
         taxSc: taxSc,
+        itemTotal: itemTotal,
         subTotal: subTotal,
+        discountGroup: discountGroup,
         grandTotal: grandTotal,
         totalItem: totalItem,
         cartPayment: cartPayment,
@@ -349,7 +372,18 @@ async function taxScUpdate(cartItem = 0) {
         scAmount = itemPrice * (parseFloat(scRow[0]['scRate']) / 100);
     }
     if (taxRow.length > 0) {
-        taxAmount = (itemPrice + scAmount) * (parseFloat(taxRow[0]['taxRate']) / 100);
+
+
+        const m3 = ` 
+            SELECT price  
+            FROM cart_item 
+            WHERE id = ${cartItem} AND presence =1 AND void = 0 
+        `;
+
+        const [orgPrice] = await db.query(m3);
+
+
+        taxAmount = (orgPrice[0]['price'] + scAmount) * (parseFloat(taxRow[0]['taxRate']) / 100);
     }
 
     const a = `
