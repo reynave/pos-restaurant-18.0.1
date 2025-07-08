@@ -41,6 +41,98 @@
 		<button type="button" class="btn-close" aria-label="Close" (click)="offcanvas.dismiss('Cross click')"></button>
 	</div>
 	<div class="offcanvas-body">
-		Soon
+		
+        <div class="row g-1">
+            <div class="col-12">
+               <strong>Information</strong>
+               <table class="table table-sm">
+                  <tbody>
+                     <tr>
+                        <td class="align-content-center">Daily Start</td>
+                        <td>
+                           : {{dataHeader['startDate'] | date:'medium'}} 
+                        </td>
+                     </tr>
+                      <tr>
+                        <td class="align-content-center">User</td>
+                        <td>
+                            : {{getTokenJson['name']  }} 
+                        </td>
+                     </tr>  
+                     <tr>
+                        <td class="align-content-center">Level</td>
+                        <td>
+                           : {{getTokenJson['authlevel']  }} 
+                        </td>
+                     </tr>
+                       <tr>
+                        <td class="align-content-center">Terminal ID</td>
+                        <td>
+                           : {{terminalId}} 
+                        </td>
+                     </tr>
+                  </tbody>
+               </table>
+              
+            </div>
+            <div class="col-6 mb-3">
+               <strong>General</strong>
+               <!-- <div class="d-grid">
+                  <a class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="reload(); logService.logAction('Click reload')">
+                     <i class="bi bi-arrow-clockwise"></i> Refresh</a> 
+               </div> -->
+
+               <div class="d-grid">
+                  <a class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="logService.logAction('click setting')" [routerLink]="['/setting']"> <i
+                        class="bi bi-gear"></i> Setting</a>
+               </div>
+
+               <div class="d-grid">
+                  <button class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="logService.logAction('items')" [routerLink]="['/items/']"><i
+                        class="bi bi-bag-plus"></i> Adjust Item</button>
+               </div>
+
+               <!-- <div class="d-grid">
+                  <button class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="modal(modalSwitchOutlet); logService.logAction('modalSwitchOutlet')"><i
+                        class="bi bi-diagram-3"></i> Switch Outlet</button>
+               </div> -->
+
+
+            </div>
+            <div class="col-6 mb-3">
+               <strong>Operation</strong>
+               <div class="d-grid">    
+                  <button class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="offcanvasService.dismiss();logService.logAction('click Report')" [routerLink]="['/transaction']"><i
+                        class="bi bi-receipt"></i> Report</button>
+               </div>
+
+               <div class="d-grid">
+                  <button class="btn btn-lg btn-outline-dark rounded-0 m-1"  (click)="offcanvasService.dismiss();logService.logAction('click daily/cashBalance')" [routerLink]="['/daily/cashBalance']"><i
+                        class="bi bi-cash-coin"></i> Cash</button>
+               </div>
+               <div class="d-grid">
+                  <a class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="offcanvasService.dismiss();" [routerLink]="['/userLogs']" routerLinkActive="router-link-active"> <i class="bi bi-person-exclamation"></i> User Log</a>
+               </div>
+
+               <div class="d-grid" >
+                  <a class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)=" signOff(); "><i
+                        class="bi bi-box-arrow-left"></i> Sign Off</a>
+               </div>
+               <div class="d-grid" *ngIf="getTokenJson['dailyAccess'] == 1 ">
+                  <button class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="dailyClose();">
+                     <i class="bi bi-key"></i> Daily Close</button>
+               </div>
+            </div>
+            <div class="col-12">
+               <!-- https://www.npmjs.com/package/node-thermal-printer -->
+
+               <div class="d-grid">
+                  <a class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="logOff(); logService.logAction('logOff')"> <i class="bi bi-power"></i>
+                     Log off</a>
+               </div>
+            </div>
+         </div>
+
+
 	</div>
 </ng-template>

@@ -16,13 +16,16 @@ import { TransactionBillComponent } from './transaction/transaction-bill/transac
 import { DailyStartComponent } from './pos/daily/daily-start/daily-start.component';
 import { DailyCloseComponent } from './pos/daily/daily-close/daily-close.component';
 import { dailyStartGuard } from './guard/daily-start.guard';
-import { ItemsComponent } from './items/items.component';
+ 
 import { DailyCashBalanceComponent } from './pos/daily/daily-cash-balance/daily-cash-balance.component';
 import { SplitBillComponent } from './pos/bill/split-bill/split-bill.component';
 import { TransferItemsComponent } from './pos/menu/transfer-items/transfer-items.component';
 import { TerminalLoginComponent } from './login/terminal-login/terminal-login.component';
 import { terminalGuard } from './guard/terminal.guard';
 import { TerminalReloginComponent } from './login/terminal-relogin/terminal-relogin.component';
+import { loginGuard } from './guard/login.guard';
+import { ItemsComponent } from './setting/items/items.component';
+import { UserLogsComponent } from './setting/user-logs/user-logs.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -30,30 +33,33 @@ export const routes: Routes = [
     { path: 'login', component: LoginComponent },
     { path: 'login/terminal', component: TerminalLoginComponent },
 
-    { path: 'setting', component: SettingComponent, canActivate: [authGuard] },
+    { path: 'setting', component: SettingComponent, canActivate: [authGuard, loginGuard] },
 
     // DAILYSTARTGUARD REQUREMENT
-    { path: 'tables', component: TablesComponent, canActivate: [authGuard, dailyStartGuard, terminalGuard] },
-    { path: 'menu', component: MenuComponent, canActivate: [authGuard, dailyStartGuard, terminalGuard] },
-    { path: 'menu/modifier', component: MenuModifierComponent, canActivate: [authGuard, dailyStartGuard, terminalGuard] },
-    { path: 'menu/transferItems', component: TransferItemsComponent, canActivate: [authGuard, dailyStartGuard, terminalGuard] },
+    { path: 'tables', component: TablesComponent, canActivate: [authGuard, dailyStartGuard, terminalGuard, loginGuard] },
+    { path: 'menu', component: MenuComponent, canActivate: [authGuard, dailyStartGuard, terminalGuard, loginGuard] },
+    { path: 'menu/modifier', component: MenuModifierComponent, canActivate: [authGuard, dailyStartGuard, terminalGuard, loginGuard] },
+    { path: 'menu/transferItems', component: TransferItemsComponent, canActivate: [authGuard, dailyStartGuard, terminalGuard, loginGuard] },
 
-    { path: 'bill', component: BillComponent, canActivate: [authGuard, dailyStartGuard ,terminalGuard] },
-    { path: 'bill/splitBill', component: SplitBillComponent, canActivate: [authGuard, dailyStartGuard,terminalGuard] },
+    { path: 'bill', component: BillComponent, canActivate: [authGuard, dailyStartGuard ,terminalGuard, loginGuard] },
+    { path: 'bill/splitBill', component: SplitBillComponent, canActivate: [authGuard, dailyStartGuard,terminalGuard, loginGuard] },
 
-    { path: 'payment', component: PaymentComponent, canActivate: [authGuard, dailyStartGuard,terminalGuard] },
+    { path: 'payment', component: PaymentComponent, canActivate: [authGuard, dailyStartGuard,terminalGuard, loginGuard] },
 
-    { path: 'items', component: ItemsComponent, canActivate: [authGuard, dailyStartGuard,terminalGuard] },
+    { path: 'items', component: ItemsComponent, canActivate: [authGuard, dailyStartGuard,terminalGuard, loginGuard] },
+    { path: 'userLogs', component: UserLogsComponent, canActivate: [authGuard, dailyStartGuard,terminalGuard, loginGuard] },
 
     // END :: DAILYSTARTGUARD
 
-    { path: 'transaction', component: TransactionComponent, canActivate: [authGuard,terminalGuard] },
-    { path: 'transaction/bill', component: TransactionBillComponent, canActivate: [authGuard,terminalGuard] },
-    { path: 'transaction/detail', component: TransactionDetailComponent, canActivate: [authGuard,terminalGuard] },
+    { path: 'transaction', component: TransactionComponent, canActivate: [authGuard,terminalGuard, loginGuard] },
+    { path: 'transaction/bill', component: TransactionBillComponent, canActivate: [authGuard,terminalGuard, loginGuard] },
+    { path: 'transaction/detail', component: TransactionDetailComponent, canActivate: [authGuard,terminalGuard, loginGuard] },
 
-    { path: 'daily/start', component: DailyStartComponent, canActivate: [authGuard,terminalGuard] },
-    { path: 'daily/close', component: DailyCloseComponent, canActivate: [authGuard, dailyStartGuard,terminalGuard] },
-    { path: 'daily/cashBalance', component: DailyCashBalanceComponent, canActivate: [authGuard, dailyStartGuard,terminalGuard] },
+    { path: 'daily/start', component: DailyStartComponent, canActivate: [authGuard,terminalGuard, loginGuard] },
+    { path: 'daily/close', component: DailyCloseComponent, canActivate: [authGuard, dailyStartGuard,terminalGuard, loginGuard] },
+    { path: 'daily/cashBalance', component: DailyCashBalanceComponent, canActivate: [authGuard, dailyStartGuard,terminalGuard, loginGuard] },
+
+   
 
     { path: 'terminalRelogin', component: TerminalReloginComponent },
 

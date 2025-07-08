@@ -28,7 +28,7 @@ export class AppComponent implements OnInit {
       console.log('AppComponent', data);
       if (localStorage.getItem('pos3.terminal.mitralink') == data['terminalId']) {
         if (localStorage.getItem('pos3.address.mitralink') != data['address']) {
-          this.configService.removeToken().subscribe(
+          this.configService.removeTerminalId().subscribe(
             data => {
               this.router.navigate(['terminalRelogin'])
             },

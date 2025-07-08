@@ -1,34 +1,35 @@
-<div class="container-fluid ">
+<div class="container-fluid sticky-top">
+   <div class="shadow-sm bg-white rounded p-2">
+      <div class="row">
+         <div class="col-6  ">
+            <button type="button" (click)="back()" class="btn border"><i class="bi bi-arrow-left"></i>
+               BACK</button>
+         </div>
+         <div class="col-6 text-end">
+            <a class="btn   border"
+               (click)="showApplyDiscount==false ? showApplyDiscount = true : showApplyDiscount = false">
+               {{showApplyDiscount==false ? 'Show' : 'Hide' }} Apply Discount </a>
+         </div>
+      </div>
+
+   </div>
+</div>
+
+<div class="container-fluid mt-2">
    <div class="row g-0">
       <div class="col-4">
-         <div class="wrapper ">
-            <div class="m-3 bg-light p-3 shadow-sm border rounded" #myDiv>
-               <app-bill-table [data]="data">Loading...</app-bill-table>
-            </div>
-
+         <div class=" bg-light p-3 shadow-sm border rounded" #myDiv>
+            <app-bill-table [data]="data" [showApplyDiscount]="showApplyDiscount">Loading...</app-bill-table>
          </div>
       </div>
 
       <div class="col-6 ">
-         <div class="wrapper   px-2  ">
-            <div class="sticky-top mb-3">
-               <div class=" shadow-sm bg-white rounded p-2">
-                  <div class="row ">
-                     <div class="col-3 align-content-center">
+         <div class="wrapper px-2 ">
 
-                        <button type="button" (click)="back()" class="btn border"><i class="bi bi-arrow-left"></i>
-                           BACK</button>
-                     </div>
-                     <div class="col-9 text-end">
-
-                     </div>
-                  </div>
-               </div>
-            </div>
             <div class="border bg-white p-1 rounded shadow-sm">
                <table class="table table-sm">
                   <thead>
-                     <tr> 
+                     <tr>
                         <th>Payment</th>
                         <th class="text-end">Amount</th>
                         <th class="text-end">Tips</th>
@@ -37,7 +38,7 @@
                      </tr>
                   </thead>
                   <tbody>
-                     <tr *ngFor="let x of paid; let i = index"  [class]="(i==paymentIndex)? 'td-active':''"> 
+                     <tr *ngFor="let x of paid; let i = index" [class]="(i==paymentIndex)? 'td-active':''">
                         <td width="200">
                            <div class="form-control border-0">
                               {{x.name}}
@@ -72,15 +73,17 @@
 
             <div class="d-grid sticky-bottom mt-3 bg-white p-3">
                <div class="row g-3">
-                  <div class="col-6"> 
-                     <app-key-number (dataEmitted)="handleData($event)"></app-key-number> 
+                  <div class="col-6">
+                     <app-key-number (dataEmitted)="handleData($event)"></app-key-number>
                   </div>
                   <div class="col-6">
-                      <div class="d-grid mb-2"> 
-                        <button class="btn btn-warning btn-lg py-4 rounded shadow-sm"  (click)="clearCurrentValue()">CE</button> 
+                     <div class="d-grid mb-2">
+                        <button class="btn btn-warning btn-lg py-4 rounded shadow-sm"
+                           (click)="clearCurrentValue()">CE</button>
                      </div>
-                     <div class="d-grid"> 
-                        <button class="btn btn-success btn-lg py-4 rounded shadow-sm"  (click)="addPaid()">SUBMIT</button> 
+                     <div class="d-grid">
+                        <button class="btn btn-success btn-lg py-4 rounded shadow-sm"
+                           (click)="addPaid()">SUBMIT</button>
                      </div>
                   </div>
                </div>
@@ -90,11 +93,13 @@
 
          </div>
       </div>
-      <div class="col-2  ">
-         <div class="wrapper px-1   text-center">
-            <div *ngFor="let x of paymentType; let i = index" class="d-grid">
-               <button type="button" [class]="cssClass" (click)="addPayment(x);">{{x.name}}</button>
-            </div>
+      <div class="col-2 ">
+         <div class="my-2 text-center">
+            <strong>SELECT PAYMENT GROUP</strong>
+         </div>
+         <div *ngFor="let x of paymentGroups" class="d-grid">
+            <button type="button" (click)="open(modalPayment, x)" class="py-3 btn btn-lg bg-warning mb-1">{{x.name |
+               uppercase}}</button>
          </div>
 
       </div>
@@ -102,6 +107,23 @@
 </div>
 
 
+<ng-template #modalPayment let-modal>
+   <div class="modal-header">
+      <strong class="modal-title">SELECT {{paymentGroup.name | uppercase}}</strong>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+   </div>
+   <div class="modal-body">
+      <div class="row g-2">
+
+         <div class="col-3 d-grid" *ngFor="let x of paymentypes">
+            <button type="button" (click)="addPayment(x)" class="py-3 btn  btn-light border mb-1">{{x.name | uppercase}}</button>
+
+
+         </div>
+      </div>
+   </div>
+
+</ng-template>
 
 <ng-template #myModal let-modal>
    <div class="modal-header">

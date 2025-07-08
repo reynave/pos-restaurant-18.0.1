@@ -13,12 +13,15 @@ export class UserLoggerService {
     private configService: ConfigService,
   ) { }
 
-  logAction(action: string) {
+  logAction(action: string, cartId : string = '') {
     
     const logData = {
       timestamp: new Date(),
       action,
-      userId: this.configService.getTokenJson()['name'] + "(" + this.configService.getConfigJson()['id'] + ")", // opsional, bisa dari auth
+      cartId : cartId,
+      userId: this.configService.getTokenJson()['name'] + "(" + this.configService.getTokenJson()['id'] + ")", // opsional, bisa dari auth
+      outletId : this.configService.getConfigJson()['outlet']['id'],
+      terminalId : localStorage.getItem( this.configService.nameOfterminal()),
       url: window.location.href
     };
 

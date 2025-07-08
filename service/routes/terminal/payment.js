@@ -7,6 +7,8 @@ router.get('/cart', payment.cart);
 router.post('/submit', payment.submit);  
 
 router.get('/paymentType', payment.paymentType);   
+router.get('/paymentGroup', payment.paymentGroup);   
+
 router.get('/paid', payment.paid);  
 
 

@@ -76,14 +76,23 @@ export class ConfigService {
     }
   }
 
+  removeTerminalId() {
+    try { 
+      localStorage.removeItem('pos3.terminal.mitralink');
+      localStorage.removeItem('pos3.address.mitralink'); 
+      return of(true); // Mengembalikan Observable yang mengirimkan nilai boolean true
+    } catch (error) {
+      return of(false); // Mengembalikan Observable yang mengirimkan nilai boolean false jika terjadi kesalahan
+    }
+  }
   removeToken(): Observable<boolean> {
     try {
 
       localStorage.removeItem(this.tokenKey);
       localStorage.removeItem(this.configJson);
       localStorage.removeItem(this.dailyCheck);
-      localStorage.removeItem('pos3.terminal.mitralink');
-      localStorage.removeItem('pos3.address.mitralink');
+      // localStorage.removeItem('pos3.terminal.mitralink');
+      //  localStorage.removeItem('pos3.address.mitralink');
 
 
       return of(true); // Mengembalikan Observable yang mengirimkan nilai boolean true
@@ -105,5 +114,15 @@ export class ConfigService {
       'Authorization': `Bearer ${token}`,
       'X-Terminal': JSON.stringify(data),
     });
+  }
+
+  getLogin(){
+     return localStorage.getItem("pos3.login");
+  }
+  isLogin(){
+     localStorage.setItem("pos3.login","1");
+  }
+   isLogoff(){
+     localStorage.removeItem("pos3.login");
   }
 }

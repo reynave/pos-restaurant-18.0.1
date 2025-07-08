@@ -72,6 +72,8 @@ export class MenuComponent implements OnInit, OnDestroy {
 
   tablesMaps: any = [];
   table: any = [];
+
+  checkBoxAll : boolean = false;
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
@@ -84,6 +86,23 @@ export class MenuComponent implements OnInit, OnDestroy {
     this.renderer.setStyle(document.body, 'background-color', '#fff');
   }
 
+  fnCheckBoxAll(){
+    if(this.checkBoxAll == false){
+      this.checkBoxAll = true;
+      this.isChecked = true
+    }else{
+      this.checkBoxAll = false;
+      this.isChecked = false
+    }
+
+
+    this.cartOrdered.forEach((el: any) => {
+      el['checkBox'] =  this.checkBoxAll;
+    });
+    this.cart.forEach((el: any) => {
+      el['checkBox'] =  this.checkBoxAll;
+    });
+  } 
 
   fnShowModifierDetail(index: number) {
     this.modifierDetail = this.modifiers[index];
@@ -121,10 +140,10 @@ export class MenuComponent implements OnInit, OnDestroy {
         console.log(data);
         this.menuLookUpParent = data['parent']
         this.menuLookUp = data['results'];
-        if(data['parent'].length){
- this.menuLookupId = data['parent'][0]['id'];
+        if (data['parent'].length) {
+          this.menuLookupId = data['parent'][0]['id'];
         }
-       
+
         this.httpMenu();
       },
       error => {
@@ -134,7 +153,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
   btnFinish() {
-   
+
     this.showHeader = true;
     this.showMenu = false;
     this.showModifier = false;
@@ -142,7 +161,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     this.httpMenuLookUp(0);
   }
   backMenu(menuLookUpParent: any = []) {
-     
+
     if (menuLookUpParent.length <= 0) {
       this.showHeader = true;
       this.showMenu = false;
@@ -180,7 +199,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     const url = environment.api + "menuItemPos/getModifier";
     this.http.get<any>(url, {
       headers: this.configService.headers(),
-      params : {
+      params: {
         outletId: this.configService.getConfigJson()['outlet']['id']
       }
     }).subscribe(
@@ -297,7 +316,7 @@ export class MenuComponent implements OnInit, OnDestroy {
         this.modalService.dismissAll();
         this.model.newQty = 1;
         this.reload();
-        if(data['warning']) {
+        if (data['warning']) {
           alert(data['warning']);
         }
       },
@@ -617,10 +636,10 @@ export class MenuComponent implements OnInit, OnDestroy {
     if (x.cardId != '' && x.cardId != this.table['id']) {
       if (confirm("Merge table with " + x.tableName + " ?")) {
         this.loading = true;
-        const body = { 
+        const body = {
           cartId: this.id,
-          table : this.table,
-          newTable : x,
+          table: this.table,
+          newTable: x,
         }
         console.log(body);
         const url = environment.api + "menuItemPos/mergerCheck";
@@ -629,7 +648,7 @@ export class MenuComponent implements OnInit, OnDestroy {
         }).subscribe(
           data => {
             console.log(data);
-           history.back();
+            history.back();
           },
           error => {
             console.log(error);

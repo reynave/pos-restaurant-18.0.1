@@ -1,3 +1,4 @@
+
 <table class=" table-bill" width="100%">
 
     <tbody *ngFor="let x of data['cart']; let i = index">
@@ -8,9 +9,11 @@
             <td width="70%">
                 <div> &#64;{{x.price | number}} </div>
 
+                @if(showApplyDiscount == true){
                 <div *ngFor="let m of x.modifier; let i = index">
                     + {{m.descl}} &#64;{{m.price | number}}
                 </div>
+                }
             </td>
             <td width="20%" class="text-end align-text-top">
                 x {{x.total | number}}
@@ -19,9 +22,11 @@
                 <div>
                     {{x.totalAmount | number}}
                 </div>
+                @if(showApplyDiscount == true){
                 <div *ngFor="let m of x.modifier; let i = index">
                     {{(m.price * m.total )| number}}
                 </div>
+                }
             </td>
         </tr>
     </tbody>
@@ -33,18 +38,18 @@
             </td>
         </tr>
         <tr>
-            <td class="text-end" colspan="2">  Item total : </td>
+            <td class="text-end" colspan="2"> Item total : </td>
             <td class="text-end "> {{data['itemTotal'] | number}} </td>
         </tr>
         <tr>
-             <td colspan="3">&nbsp; </td>
+            <td colspan="3">&nbsp; </td>
         </tr>
 
         <tr *ngFor="let x of data['discountGroup']">
             <td colspan="2" class="text-end">{{x.name}} : </td>
             <td class="text-end">{{x.amount | number}}</td>
         </tr>
-         <tr>
+        <tr>
             <td colspan="3">&nbsp; </td>
         </tr>
 

@@ -5,3 +5,6 @@
 .td-active td {
      background-color: var(--bg-color-primary-40);
 }
+.wrapper{
+     max-height: 65vh !important;
+}

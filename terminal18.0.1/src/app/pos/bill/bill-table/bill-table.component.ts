@@ -10,7 +10,8 @@ import { CommonModule } from '@angular/common';
 })
 export class BillTableComponent   {
   @Input() data: any  = [];
-
+  @Input() showApplyDiscount: boolean  = false;
+ 
  
 
 

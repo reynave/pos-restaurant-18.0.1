@@ -17,7 +17,7 @@ exports.validateToken = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, SECRET_KEY);
-    console.log('✅ Token valid:', decoded);
+   // console.log('✅ Token valid:', decoded);
 
     // Simpan decoded ke req untuk digunakan di controller berikutnya
     req.user = decoded;
@@ -29,7 +29,7 @@ exports.validateToken = (req, res, next) => {
 
     next(); // lanjut ke controller berikutnya
   } catch (err) {
-    console.error('❌ Token tidak valid:', err.message);
+  //  console.error('❌ Token tidak valid:', err.message);
     return res.status(401).json({ error: 'Invalid token', message: err.message });
   }
 };

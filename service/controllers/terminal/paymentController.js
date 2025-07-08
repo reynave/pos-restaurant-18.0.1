@@ -140,12 +140,31 @@ exports.cart = async (req, res) => {
 };
 
 
+exports.paymentGroup = async (req, res) => {
+  try {
+    const [formattedRows] = await db.query(`
+       SELECT  * from check_payment_group 
+       where presence = 1 
+       order by name asc
+    `);
+    res.json({
+      error: false,
+      items: formattedRows,
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+};
+
 exports.paymentType = async (req, res) => {
 
+ const paymentGroupId = req.query.paymentGroupId;
   try {
     const [formattedRows] = await db.query(`
        SELECT  * from check_payment_type 
-       where presence = 1 
+       where presence = 1 and paymentGroupId = ${paymentGroupId}
        order by name asc
     `);
     res.json({

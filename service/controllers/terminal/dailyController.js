@@ -25,12 +25,34 @@ exports.getAllData = async (req, res) => {
     }
 };
 
+
+exports.checkItems = async (req, res) => {
+
+    try {
+        const [formattedRows] = await db.query(`
+            SELECT c.id, c.outletId, c.dailyCheckId, s.name
+            FROM cart AS c
+            LEFT JOIN outlet_table_map_status AS s ON c.tableMapStatusId = s.id
+            WHERE c.close  = 0 AND c.presence = 1
+        `);
+        res.json({
+            error: false,
+            items: formattedRows,
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+    }
+};
+
+
 exports.getDailyStart = async (req, res) => {
     const id = req.query.id;
 
-     const headerTerminal = req.headers['x-terminal'];
-     console.log(headerTerminal);
-     
+    const headerTerminal = req.headers['x-terminal'];
+    console.log(headerTerminal);
+
     try {
         const [formattedRows] = await db.query(`
             SELECT * FROM daily_check
@@ -38,7 +60,7 @@ exports.getDailyStart = async (req, res) => {
         `);
         res.json({
             error: false,
-            item: formattedRows[0], 
+            item: formattedRows[0],
         });
 
     } catch (err) {
@@ -228,18 +250,18 @@ exports.addCashIn = async (req, res) => {
                 `SELECT count(id) as 'total' from daily_cash_balance 
                 WHERE dailyCheckId = '${dailyCheckId}' and presence = 1 
             `);
-            
+
 
 
 
             const [result] = await db.query(
-                    `INSERT INTO daily_cash_balance (
+                `INSERT INTO daily_cash_balance (
                     presence, inputDate, updateDate, openingBalance, 
                     dailyCheckId, cashIn) 
                 VALUES (1, '${inputDate}', '${inputDate}', ${openingBalance[0]['total'] == 0 ? 1 : 0}, 
             '${dailyCheckId}' , ${cashIn}
             )`
-                );
+            );
             if (result.affectedRows === 0) {
                 results.push({ status: 'not found' });
             } else {

@@ -1,14 +1,19 @@
-<div class="container">
-    <div class="row">
-        <div class="col-12 text-center">
-            <p>daily-start works!</p>
-            <strong>Do Daily Start now ?</strong>
-
-          <div>
-              <button type="button" class="btn btn-light border mx-1">No</button>
-<button type="button" class="btn btn-dark border mx-1" (click)="onStart()">Yes</button>
-          </div>
+<div class="wrapper-md border rounded shadow py-5 mt-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center ">
+                <h4>Do Daily Start now ?</h4>
+            </div>
+        </div>
+        <div class="row g-1">
+            <div class="col-6 d-grid">
+                <button type="button" class="btn btn-lg btn-light border mx-1">No Yet</button>
+            </div>
+              <div class="col-6 d-grid">
+                <button type="button" class="btn  btn-lg btn-dark border mx-1" (click)="onStart()">Yes</button>
+            </div>
 
         </div>
+
     </div>
 </div>

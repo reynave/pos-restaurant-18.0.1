@@ -1,0 +1,8 @@
+Time,Outlet Id,WorkStation Id,User/Id,Bill,Action,url
+18:19:34,15,0001,IT Melanie(1),,click daily/cashBalance,http://localhost:4850/#/tables
+18:20:44,15,0001,IT Melanie(1),,logOff,http://localhost:4850/#/tables
+18:20:44,15,0001,IT Melanie(1),,logOff,http://localhost:4850/#/tables
+18:25:07,15,0001,IT Melanie(1),,items,http://localhost:4850/#/tables
+18:27:35,15,0001,IT Melanie(1),,click Report,http://localhost:4850/#/items
+18:29:43,15,0001,IT Melanie(1),,click Report,http://localhost:4850/#/tables
+18:34:51,15,0001,IT Melanie(1),,please close 3 tables!,http://localhost:4850/#/tables

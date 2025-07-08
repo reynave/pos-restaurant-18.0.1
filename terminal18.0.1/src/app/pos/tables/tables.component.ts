@@ -40,12 +40,12 @@ export class TablesComponent implements OnInit {
   api: string = environment.api;
   model = new Actor(0, 1, 0);
   activeView: string = localStorage.getItem("pos3.view") ?? 'map';
-  terminalId : any = localStorage.getItem("pos3.terminal.mitralink");
-   getTokenJson : any = [];
-  
+  terminalId: any = localStorage.getItem("pos3.terminal.mitralink");
+  getTokenJson: any = [];
+
   getConfigJson: any = [];
   dataHeader: any = {};
-  public : string = environment.api+"../public/floorMap/";
+  public: string = environment.api + "../public/floorMap/";
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
@@ -62,8 +62,8 @@ export class TablesComponent implements OnInit {
     this.current = 0;
     if (!localStorage.getItem("pos3.onMap")) {
       localStorage.setItem("pos3.onMap", '0')
-    }else{
-       this.current = parseInt(localStorage.getItem("pos3.onMap") || '0');
+    } else {
+      this.current = parseInt(localStorage.getItem("pos3.onMap") || '0');
     }
 
 
@@ -91,7 +91,7 @@ export class TablesComponent implements OnInit {
   }
   sendMessage() {
     console.log("EMIT");
-    this.socketService.emit('message-from-client', 'reload'); 
+    this.socketService.emit('message-from-client', 'reload');
   }
 
   handleData(data: string) {
@@ -221,6 +221,7 @@ export class TablesComponent implements OnInit {
   }
 
   logOff() {
+    this.configService.isLogoff();
     this.router.navigate(['/']);
   }
 
@@ -232,20 +233,7 @@ export class TablesComponent implements OnInit {
     )
   }
 
-  dailyClose() {
 
-
-
-    if (this.totalCart > 0) {
-      alert("please close all tables!");
-      this.logService.logAction('please close all tables!')
-    } else {
-      this.modalService.open(DailyCloseComponent, { size: 'sm' });
-      this.logService.logAction('Daily Close ?')
-    }
-
-
-  }
 
   httpHeader() {
     let id = this.configService.getDailyCheck();
@@ -265,7 +253,28 @@ export class TablesComponent implements OnInit {
       }
     )
   }
+  dailyClose() {
 
+    this.http.get<any>(environment.api + "daily/checkItems", {
+      headers: this.configService.headers()
+    }).subscribe(
+      data => {
+        console.log(data);
+
+        if (data['items'].length > 0) {
+          alert("Please close " + data['items'].length + " tables!");
+          this.logService.logAction('please close ' + data['items'].length + ' tables!')
+        } else {
+          this.modalService.open(DailyCloseComponent, { size: 'sm' });
+          this.logService.logAction('Daily Close ?')
+        }
+      },
+      error => {
+        console.log(error);
+      }
+    )
+
+  }
 
   selectActiveView(activeView: string) {
     this.activeView = activeView;

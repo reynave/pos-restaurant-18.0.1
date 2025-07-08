@@ -2,22 +2,24 @@ const path = require('path');
 const fs = require('fs');
 const { formatDateTime } = require('../../helpers/global');
 const winston = require('winston');
-
+const csv = require('csv-parser'); // npm install csv-parser
 const getTodayDate = () => new Date().toISOString().split('T')[0];
-const logDir = path.join(__dirname, './../../public', 'userLog', getTodayDate());
+const logFilePath = path.join(__dirname, './../../public/userLog', getTodayDate()+'.csv');
 
-if (!fs.existsSync(logDir)) {
-    fs.mkdirSync(logDir, { recursive: true });
+// Buat file jika belum ada (optional, bisa dihapus juga)
+if (!fs.existsSync(logFilePath)) {
+    fs.writeFileSync(logFilePath, 'Time,Outlet Id,WorkStation Id,User/Id,Bill,Action,url\n'); // atau kasih header CSV
 }
 
 const logger = winston.createLogger({
     level: 'info',
     format: winston.format.combine(
-        winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-        winston.format.printf(({ timestamp, message }) => `[${timestamp}] ${message}`)
+        winston.format.timestamp({ format: 'HH:mm:ss' }),
+        winston.format.printf(({ timestamp, message }) => `${timestamp},${message}`)
     ),
     transports: [
-        new winston.transports.File({ filename: path.join(logDir, 'user-actions.log') })
+   //     new winston.transports.File({ filename: path.join(logDir,  getTodayDate()+'.csv') })
+        new winston.transports.File({ filename: logFilePath })
     ]
 });
 
@@ -25,10 +27,33 @@ exports.userLogIndex = (req, res) => {
 
     const log = req.body;
 
-    const logMsg = `${log.userId} - ${log.action} @ ${log.url}`;
+    const logMsg = `${log.outletId},${log.terminalId},${log.userId},${log.cartId},${log.action},${log.url}`;
     logger.info(logMsg); // ✅ ini akan error kalau logger undefined
 
     res.json({ status: 'ok', message: 'Log saved' });
+};
+
+
+exports.getLog = (req, res) => {
+    const date = req.query.date;
+
+  const filePath = path.join(__dirname, './../../public/userLog', date+'.csv');
+
+  if (!fs.existsSync(filePath)) {
+    return res.status(404).json({ error: 'Log file not found' });
+  }
+
+  const results = [];
+
+  fs.createReadStream(filePath)
+    .pipe(csv()) // konversi CSV ke object
+    .on('data', (data) => results.push(data))
+    .on('end', () => {
+      res.json({ log: results }); // kirim ke Angular
+    })
+    .on('error', (err) => {
+      res.status(500).json({ error: 'CSV parsing failed', details: err.message });
+    });
 };
 
 exports.userLogIndex_NATIVE = (req, res) => {

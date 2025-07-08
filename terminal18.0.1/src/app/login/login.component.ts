@@ -41,6 +41,7 @@ export class LoginComponent implements OnInit {
     this.renderer.setStyle(document.body, 'background-color', '#fff');
 
   }
+
   ngOnInit(): void {
     this.renderer.setStyle(document.body, 'background-color', 'var(--bg-color-primary-1)');
     this.httpGet();
@@ -49,6 +50,7 @@ export class LoginComponent implements OnInit {
       this.router.navigate(['tables']);
     }
   }
+
   httpGet() {
     this.loading = true;
     const url = environment.api + "login/outlet";
@@ -65,8 +67,7 @@ export class LoginComponent implements OnInit {
       }
     )
   }
-
-
+ 
   onSubmit() {
     this.error = '';
     const getIndexById = this.outletSelect.findIndex((obj: { id: any; }) => obj.id === parseInt(this.model.outletId));
@@ -100,6 +101,7 @@ export class LoginComponent implements OnInit {
         let dailyCheck = data['dailyCheck']
         this.config.setToken(myJSONString, data['token']).subscribe(
           data => {
+             this.config.isLogin();
             console.log(dailyCheck);
             if (dailyCheck[0] == null) {
               this.router.navigate(['/daily/start']);
@@ -118,8 +120,7 @@ export class LoginComponent implements OnInit {
       }
     )
   }
-
-
+ 
   handleData(data: string) {
     console.log(data);
 

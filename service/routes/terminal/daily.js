@@ -16,6 +16,7 @@ router.get('/checkCashType', c.checkCashType);
 router.post('/addCashIn', c.addCashIn);
 
 
+router.get('/checkItems', c.checkItems);
 
 // router.post('/create', tableMap.postCreate);
 // router.post('/delete', tableMap.postDelete);

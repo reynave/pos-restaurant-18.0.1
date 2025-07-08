@@ -9,6 +9,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { NgxCurrencyDirective } from "ngx-currency";
 import { BillTableComponent } from "../bill/bill-table/bill-table.component";
 import { KeyNumberComponent } from "../../keypad/key-number/key-number.component";
+import { HeaderMenuComponent } from "../../header/header-menu/header-menu.component";
 export class Actor {
   constructor(
     public newQty: number,
@@ -17,7 +18,7 @@ export class Actor {
 @Component({
   selector: 'app-payment',
   standalone: true,
-  imports: [HttpClientModule, CommonModule, FormsModule, NgbDropdownModule, RouterModule, NgxCurrencyDirective, BillTableComponent, KeyNumberComponent],
+  imports: [HttpClientModule, CommonModule, FormsModule, NgbDropdownModule, RouterModule, NgxCurrencyDirective, BillTableComponent, KeyNumberComponent, HeaderMenuComponent],
   templateUrl: './payment.component.html',
   styleUrl: './payment.component.css'
 })
@@ -46,9 +47,14 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
   closePaymentAmount: number = 1;
   unpaid: number = 0;
 
+  paymentIndex: number = -1;
+  inputField: string = '';
+  discountGroup: any = [];
+ paymentGroups : any = [];
   cssClass: string = 'btn btn-sm p-3 bg-warning me-2 mb-2 rounded shadow-sm';
   cssMenu: string = 'btn btn-sm py-3 bg-white me-1 lh-1  rounded shadow-sm';
 
+  showApplyDiscount: boolean = false;
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
@@ -103,7 +109,8 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     )
   }
-discountGroup : any = [];
+
+
   httpCart() {
     this.loading = true;
     const url = environment.api + "payment/cart";
@@ -128,15 +135,15 @@ discountGroup : any = [];
       }
     )
   }
-
+ 
   httpPaymentType() {
     this.loading = true;
-    const url = environment.api + "payment/paymentType";
+    const url = environment.api + "payment/paymentGroup";
     this.http.get<any>(url, {
       headers: this.configService.headers(),
     }).subscribe(
       data => {
-        this.paymentType = data['items']
+        this.paymentGroups = data['items']
       },
       error => {
         console.log(error);
@@ -178,6 +185,7 @@ discountGroup : any = [];
       headers: this.configService.headers(),
     }).subscribe(
       data => {
+        this.modalService.dismissAll();
         console.log(data);
         this.httpPaid();
         this.httpCart()
@@ -300,8 +308,6 @@ discountGroup : any = [];
     }
   }
 
-  paymentIndex: number = -1;
-  inputField: string = '';
   paymentActive(index: number, inputField: string) {
     this.paymentIndex = index;
     this.inputField = inputField;
@@ -315,5 +321,28 @@ discountGroup : any = [];
     else if (this.inputField == 'tips') {
       this.paid[this.paymentIndex].tips = 0;
     }
+  }
+  paymentGroup : any = {}
+  paymentypes : any = [];
+  open(content :any, paymentGroup : any){
+    this.paymentGroup = paymentGroup;
+    this.modalService.open(content, {size:'lg'});
+
+ 
+    const url = environment.api + "payment/paymentType";
+    this.http.get<any>(url, {
+      headers: this.configService.headers(),
+      params : {
+        paymentGroupId : paymentGroup.id
+      }
+    }).subscribe(
+      data => {
+        this.paymentypes = data['items']
+      },
+      error => {
+        console.log(error);
+      }
+    )
+
   }
 }

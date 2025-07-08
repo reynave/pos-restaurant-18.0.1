@@ -1,13 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { ConfigService } from '../service/config.service';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { environment } from '../../environments/environment.development';
+import { Component, OnInit } from '@angular/core'; 
+import { HttpClient, HttpClientModule } from '@angular/common/http'; 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { HeaderMenuComponent } from "../header/header-menu/header-menu.component";
-import { KeyNumberComponent } from "../keypad/key-number/key-number.component";
+import { ActivatedRoute, Router, RouterModule } from '@angular/router'; 
+import { HeaderMenuComponent } from '../../header/header-menu/header-menu.component';
+import { KeyNumberComponent } from '../../keypad/key-number/key-number.component';
+import { ConfigService } from '../../service/config.service';
+import { environment } from '../../../environments/environment';
 
 
 @Component({

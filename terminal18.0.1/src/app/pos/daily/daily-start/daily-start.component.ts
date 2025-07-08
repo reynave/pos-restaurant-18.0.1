@@ -26,7 +26,11 @@ export class DailyStartComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    
+    console.log(this.config.getTokenJson()['dailyAccess'])
+    if(this.config.getTokenJson()['dailyAccess'] != 1){
+       this.router.navigate(['setting']);
+       console.log("ERROR")
+    }
   }
    
   onStart() {
