@@ -8,7 +8,7 @@
 
          <div class="row g-1 mb-2">
 
-            <div class="col-8 ">
+            <div class="col-7 ">
                <div class="bg-light p-1  border rounded-pill d-inline-block">
                   <span *ngFor="let x of items; let i = index">
                      <button type="button" class="btn rounded-pill px-3" (click)="onMap(i)" [class]="{
@@ -28,7 +28,10 @@
                </div>
 
             </div>
-            <div class="col-4 text-end">
+            <div class="col-5 text-end">
+               <a class="btn  lg btn-outline-dark  me-1" (click)="modal(modalSwitchOutlet); logService.logAction('modalSwitchOutlet')"><i
+                     class="bi bi-diagram-3"></i> Switch Outlet</a>
+
                <a href="javascript:;" class="btn  me-1" [class]="{'btn-dark' : activeView == 'map'}"
                   (click)="selectActiveView('map')"><i class="bi bi-grid"></i>
                   Map</a>
@@ -36,6 +39,11 @@
                <a href="javascript:;" class="btn  " [class]="{'btn-dark' : activeView == 'table'}"
                   (click)="selectActiveView('table')"><i class="bi bi-list-ul"></i>
                   List</a>
+
+
+
+
+
             </div>
 
          </div>
@@ -46,30 +54,30 @@
 
          @if(activeView == 'map'){
          <div class="map">
-         
-            <div class="table-map border p-1 shadow-sm  rounded " 
-            style="background: url('{{public}}{{items[current]?.image}}') left top no-repeat;" >
+
+            <div class="table-map border p-1 shadow-sm  rounded "
+               style="background: url('{{public}}{{items[current]?.image}}') left top no-repeat;">
                <div class="floorPlan" *ngFor="let x of items[current]?.maps">
 
 
-                  <div class="items   table-{{x.tableMapStatusId}}" 
+                  <div class="items   table-{{x.tableMapStatusId}}"
                      [style.transform]="'translate(' + x.posX + 'px,' + x.posY + 'px)'" [style.width.px]="x.width"
                      [style.height.px]="x.height" [style.backgroundImage]="'url('+public+x.icon+')'"
                      style="background-size: cover;"
                      (click)="(x.cover <= 0 || x.cover=='' ) ? open(modalCheckIn, x) : gotTo(x) ">
                      <div class="text-end p-1" style=" cursor: pointer;">
-                        
+
                         <div class="table-pos-label">
                            <strong class="table-name">{{x.tableName}} </strong>
                         </div>
 
                         <h5>
                            <span *ngIf="x.tableMapStatusId == '12' "> <i class="bi bi-fork-knife"></i></span>
-                           <span *ngIf="x.tableMapStatusId == '18' "> <i class="bi bi-receipt-cutoff"></i></span> 
+                           <span *ngIf="x.tableMapStatusId == '18' "> <i class="bi bi-receipt-cutoff"></i></span>
                         </h5>
 
 
-                     </div> 
+                     </div>
                   </div>
 
                </div>
@@ -83,7 +91,7 @@
                <thead class="sticky-top">
                   <tr>
                      <th>#</th>
-                     <th>Table Name</th> 
+                     <th>Table Name</th>
                      <th>Bill</th>
                      <th class="text-center">Capacity</th>
                      <th class="text-center">Cover</th>
@@ -94,21 +102,21 @@
                   <tr *ngFor="let x of items[current]['maps']; let i = index">
                      <td>{{i+1}}</td>
                      <td>{{x.tableName}}</td>
-                      <td>{{x.cardId}}</td>
-                     <td class="text-center">{{x.capacity}}</td> 
+                     <td>{{x.cardId}}</td>
+                     <td class="text-center">{{x.capacity}}</td>
                      <td class="text-center">{{x.cover > 0 ? x.cover : ''}}</td>
                      <td class="text-center">
                         <div class="d-grid">
-                           @if(x.cover <= 0 || x.cover=='' ){ 
-                              <button type="button"
+                           @if(x.cover <= 0 || x.cover=='' ){ <button type="button"
                               class="btn btn-sm border btn-light shadow-sm rounded-pill"
                               (click)="open(modalCheckIn, x)">
                               NEW ORDER</button>
-                           }
-                           @else{
-                           <a class="btn btn-sm rounded-pill table-{{x.tableMapStatusId}}" 
-                     (click)="(x.cover <= 0 || x.cover=='' ) ? open(modalCheckIn, x) : gotTo(x) "> {{x.tableMapStatus}}</a>
-                           }
+                              }
+                              @else{
+                              <a class="btn btn-sm rounded-pill table-{{x.tableMapStatusId}}"
+                                 (click)="(x.cover <= 0 || x.cover=='' ) ? open(modalCheckIn, x) : gotTo(x) ">
+                                 {{x.tableMapStatus}}</a>
+                              }
                         </div>
                      </td>
                   </tr>
@@ -132,85 +140,39 @@
                      <tr>
                         <td class="align-content-center">Daily Start</td>
                         <td>
-                           : {{dataHeader['startDate'] | date:'medium'}} 
+                           : {{dataHeader['startDate'] | date:'medium'}}
                         </td>
                      </tr>
-                      <tr>
+                     <tr>
                         <td class="align-content-center">User</td>
                         <td>
-                            : {{getTokenJson['name']  }} 
+                           : {{getTokenJson['name'] }}
                         </td>
-                     </tr>  
+                     </tr>
                      <tr>
                         <td class="align-content-center">Level</td>
                         <td>
-                           : {{getTokenJson['authlevel']  }} 
+                           : {{getTokenJson['authlevel'] }}
                         </td>
                      </tr>
-                       <tr>
+                     <tr>
                         <td class="align-content-center">Terminal ID</td>
                         <td>
-                           : {{terminalId}} 
+                           : {{terminalId}}
                         </td>
                      </tr>
                   </tbody>
                </table>
-              
-            </div>
-            <div class="col-6 mb-3">
-               <strong>General</strong>
-               <!-- <div class="d-grid">
-                  <a class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="reload(); logService.logAction('Click reload')">
-                     <i class="bi bi-arrow-clockwise"></i> Refresh</a> 
-               </div> -->
-
-               <div class="d-grid">
-                  <a class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="logService.logAction('click setting')" [routerLink]="['/setting']"> <i
-                        class="bi bi-gear"></i> Setting</a>
-               </div>
-
-               <div class="d-grid">
-                  <button class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="logService.logAction('items')" [routerLink]="['/items/']"><i
-                        class="bi bi-bag-plus"></i> Adjust Item</button>
-               </div>
-
-               <div class="d-grid">
-                  <button class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="modal(modalSwitchOutlet); logService.logAction('modalSwitchOutlet')"><i
-                        class="bi bi-diagram-3"></i> Switch Outlet</button>
-               </div>
-
 
             </div>
-            <div class="col-6 mb-3">
-               <strong>Operation</strong>
-               <div class="d-grid">
-                  <button class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="logService.logAction('click transaction')" [routerLink]="['/transaction']"><i
-                        class="bi bi-receipt"></i> Report</button>
-               </div>
-
-               <div class="d-grid">
-                  <button class="btn btn-lg btn-outline-dark rounded-0 m-1"  (click)="logService.logAction('click daily/cashBalance')" [routerLink]="['/daily/cashBalance']"><i
-                        class="bi bi-cash-coin"></i> Cash</button>
-               </div>
-               <div class="d-grid" *ngIf="getTokenJson['userSignin'] == 1 ">
-                  <a class="btn btn-lg btn-outline-dark rounded-0 m-1" [routerLink]="['/report/userSignin']" routerLinkActive="router-link-active"   >Manager Report</a>
-               </div>
-
-               <div class="d-grid" >
-                  <a class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)=" signOff(); "><i
-                        class="bi bi-box-arrow-left"></i> Sign Off</a>
-               </div>
-               <div class="d-grid" *ngIf="getTokenJson['dailyAccess'] == 1 ">
-                  <button class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="dailyClose();">
-                     <i class="bi bi-key"></i> Daily Close</button>
-               </div>
-            </div>
+           
             <div class="col-12">
                <!-- https://www.npmjs.com/package/node-thermal-printer -->
 
                <div class="d-grid">
-                  <a class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="logOff(); logService.logAction('logOff')"> <i class="bi bi-power"></i>
-                     Log off</a>
+                  <a class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="logOff();"> 
+                     <i class="bi bi-power"></i> Log off
+                  </a>
                </div>
             </div>
          </div>

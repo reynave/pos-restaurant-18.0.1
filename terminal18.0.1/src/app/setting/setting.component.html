@@ -1,12 +1,54 @@
 <app-header-menu></app-header-menu>
-<div class="container-fluid body-with-header">
+<div class="container body-with-header">
     <div class="row">
-        
+
         <div class="col-12">
             <h4>SETTING</h4>
-            <div class="p-2 mt-3 border bg-light">
-                <pre> {{config | json}}</pre>
-            </div>
+        </div>
+
+        <div class="col-6">
+            <strong>PRINTER</strong>
+            <table class="table table-bordered">
+                <tr>
+                    <td class="align-self-center">Printer Connection</td>
+                    <td> <select class="form-control" [(ngModel)]="config['printer']['con']">
+                            <option value="ip">IP</option>
+                            <option value="com">SERIAL/COM</option>
+                        </select>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="align-self-center">Printer Address</td>
+                    <td><input type="text" class="form-control" [(ngModel)]="config['printer']['address']"> </td>
+                </tr>
+
+                <tr>
+                    <td class="align-self-center">Printer port</td>
+                    <td><input type="text" class="form-control" [(ngModel)]="config['printer']['port']"> </td>
+                </tr>
+
+                <tr>
+                    <td class="align-self-center">Name</td>
+                    <td><input type="text" class="form-control" [(ngModel)]="config['printer']['name']"> </td>
+                </tr>
+
+                <tr>
+                    <td>Test Printing</td>
+                    <td>
+                        <div class="mb-1"> 
+                            <textarea class="form-control" rows="4" [(ngModel)]="printTest"></textarea>
+                        </div>
+                        <div class="d-grid ">
+                            <button type="button" (click)="onTestPrinting()" [disabled]="loading"
+                                class="btn btn-lg btn-dark mx-1 ">TEST </button>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+          
+                <div class="alert alert-warning" *ngIf="restPrinter != ''">{{restPrinter}}</div>
+ 
         </div>
     </div>
 </div>

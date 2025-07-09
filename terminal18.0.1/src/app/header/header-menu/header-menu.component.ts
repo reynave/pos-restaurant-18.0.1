@@ -55,8 +55,8 @@ export class HeaderMenuComponent implements OnInit, OnDestroy {
     history.back();
   }
   signOff() {
-   
-    this.logService.logAction('signOff')
+
+    this.logService.logAction('Sign Off')
     this.offcanvasService.dismiss();
     this.configService.removeToken().subscribe(
       () => {
@@ -78,9 +78,9 @@ export class HeaderMenuComponent implements OnInit, OnDestroy {
           alert("Please close " + data['items'].length + " tables!");
           this.logService.logAction('please close ' + data['items'].length + ' tables!')
         } else {
-              this.offcanvasService.dismiss();
+          this.offcanvasService.dismiss();
           this.modalService.open(DailyCloseComponent, { size: 'sm' });
-          this.logService.logAction('Daily Close ?')
+          this.logService.logAction('WARNING Daily Close ?')
         }
       },
       error => {

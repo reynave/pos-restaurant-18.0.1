@@ -20,7 +20,7 @@ export class UserLoggerService {
       action,
       cartId : cartId,
       userId: this.configService.getTokenJson()['name'] + "(" + this.configService.getTokenJson()['id'] + ")", // opsional, bisa dari auth
-      outletId : this.configService.getConfigJson()['outlet']['id'],
+      outletId : this.configService.getConfigJson()['outlet']['name']+"("+this.configService.getConfigJson()['outlet']['id']+")",
       terminalId : localStorage.getItem( this.configService.nameOfterminal()),
       url: window.location.href
     };

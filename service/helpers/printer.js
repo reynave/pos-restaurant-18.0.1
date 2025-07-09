@@ -4,10 +4,10 @@ const net = require('net');
 const printToPrinter = (message, printerIp = '10.51.122.20', printerPort = 9100) => {
   return new Promise((resolve, reject) => {
     const client = new net.Socket();
-
+    const cut = "\x1B\x69"; // ESC i = cut paper (Epson-style)
     client.connect(printerPort, printerIp, () => {
       console.log(`Connected to printer at ${printerIp}:${printerPort}`);
-      client.write(message);
+      client.write(message+cut);
       client.end();
     });
 

@@ -2,6 +2,7 @@ const db = require('../../config/db');
 const net = require('net');
 const {formatDateTime, formatCurrency, formatLine, centerText } = require('../../helpers/global');
 const { cart } = require('../../helpers/bill');
+const { printToPrinter } = require('../../helpers/printer'); // arahkan ke path file yg kamu punya
 
 const ejs = require('ejs');
 const path = require('path');
@@ -121,3 +122,28 @@ exports.kitchen = async (req, res) => {
     res.status(500).send('Gagal render HTML');
   }
 };
+
+exports.test = async (req, res) => {
+  const note = req.body.note || 'Test print from server';
+    const printer = req.body.printer;
+  console.log(printer)
+  try {
+    const message = `
+*** TEST PRINT ***
+NOTE: ${note}
+======================
+Thank you.
+`;
+
+    // Panggil fungsi printToPrinter
+    const result = await printToPrinter(message,printer.address, printer.port);
+
+    console.log(result);
+    res.json({ success: true, message: 'Printed successfully', detail: result });
+  
+  } catch (err) {
+    console.error('Print error:', err);
+    res.status(500).json({ error: 'Failed to print', detail: err.message });
+  }
+};
+

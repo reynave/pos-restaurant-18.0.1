@@ -1,13 +1,14 @@
-import { Component, OnInit } from '@angular/core'; 
-import { HttpClient, HttpClientModule } from '@angular/common/http'; 
+import { Component, OnInit } from '@angular/core';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router'; 
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HeaderMenuComponent } from '../../header/header-menu/header-menu.component';
 import { KeyNumberComponent } from '../../keypad/key-number/key-number.component';
 import { ConfigService } from '../../service/config.service';
 import { environment } from '../../../environments/environment';
+import { UserLoggerService } from '../../service/user-logger.service';
 
 
 @Component({
@@ -29,8 +30,7 @@ export class ItemsComponent implements OnInit {
     public configService: ConfigService,
     private http: HttpClient,
     public modalService: NgbModal,
-    private router: Router,
-    private activeRouter: ActivatedRoute
+    public logService: UserLoggerService
   ) { }
   ngOnInit(): void {
     this.httpMenu();
@@ -92,12 +92,14 @@ export class ItemsComponent implements OnInit {
       headers: this.configService.headers(),
     }).subscribe(
       data => {
+        this.logService.logAction('Add ' + this.addQty + ', Qty for ' + items.length + ' items  ')
         console.log(data);
         this.loading = false;
         this.httpMenu();
       },
       error => {
         console.log(error);
+        this.logService.logAction('ERROR Add Qty')
       }
     )
 
@@ -105,8 +107,6 @@ export class ItemsComponent implements OnInit {
 
   onResetAdjust() {
     if ((confirm("Remove Adjustment item will be unlimited qty?"))) {
-
-
       const items: any[] = [];
       this.items.forEach((el: any) => {
         if (el['checkBox'] == 1) {
@@ -124,11 +124,13 @@ export class ItemsComponent implements OnInit {
         headers: this.configService.headers(),
       }).subscribe(
         data => {
+          this.logService.logAction('REMOVE ADJUST / UNLIMITED ' + items.length + ' items')
           console.log(data);
           this.loading = false;
           this.httpMenu();
         },
         error => {
+          this.logService.logAction('ERROR Reset Adjust')
           console.log(error);
         }
       )

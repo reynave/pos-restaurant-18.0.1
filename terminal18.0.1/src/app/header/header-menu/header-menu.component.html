@@ -83,12 +83,12 @@
                </div> -->
 
                <div class="d-grid">
-                  <a class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="logService.logAction('click setting')" [routerLink]="['/setting']"> <i
+                  <a class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="logService.logAction('click setting');offcanvasService.dismiss()" [routerLink]="['/setting']"> <i
                         class="bi bi-gear"></i> Setting</a>
                </div>
 
                <div class="d-grid">
-                  <button class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="logService.logAction('items')" [routerLink]="['/items/']"><i
+                  <button class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="logService.logAction('click Adjustment Item');offcanvasService.dismiss()" [routerLink]="['/items/']"><i
                         class="bi bi-bag-plus"></i> Adjust Item</button>
                </div>
 
@@ -111,7 +111,7 @@
                         class="bi bi-cash-coin"></i> Cash</button>
                </div>
                <div class="d-grid">
-                  <a class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="offcanvasService.dismiss();" [routerLink]="['/userLogs']" routerLinkActive="router-link-active"> <i class="bi bi-person-exclamation"></i> User Log</a>
+                  <a class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="offcanvasService.dismiss();logService.logAction('click User logs')" [routerLink]="['/userLogs']" routerLinkActive="router-link-active"> <i class="bi bi-person-exclamation"></i> User Log</a>
                </div>
 
                <div class="d-grid" >

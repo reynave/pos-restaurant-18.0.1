@@ -7,6 +7,7 @@ import { KeyNumberComponent } from "../keypad/key-number/key-number.component";
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfigService } from '../service/config.service';
 import { HttpClient } from '@angular/common/http';
+import { UserLoggerService } from '../service/user-logger.service';
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -18,9 +19,10 @@ export class HomeComponent implements OnInit, OnDestroy {
   password: string = '';
   showKeyboard: boolean = false;
   getTokenJson: any = []
-  warning : string = '';
+  warning: string = '';
   constructor(
-       private router: Router,
+    public logService: UserLoggerService,
+    private router: Router,
     private renderer: Renderer2,
     public modalService: NgbModal,
     private http: HttpClient,
@@ -36,8 +38,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.renderer.setStyle(document.body, 'background-color', 'var(--bg-color-primary-1)');
   }
 
-  ngAfterViewInit(){
-    if(this.configService.getLogin() == '1'){
+  ngAfterViewInit() {
+    if (this.configService.getLogin() == '1') {
       this.router.navigate(['tables'])
     }
   }
@@ -53,6 +55,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   open(content: any) {
+    this.logService.logAction('Log In')
     this.modalService.open(content, { size: 'sm' })
   }
 
@@ -70,12 +73,14 @@ export class HomeComponent implements OnInit, OnDestroy {
         console.log(data);
         this.warning = '';
         this.modalService.dismissAll();
-           this.configService.isLogin();
+        this.configService.isLogin();
         this.router.navigate(['tables'])
+        this.logService.logAction('Log In Success')
       },
       error => {
         console.log(error);
-       this.warning  = 'ERROR PASSWORD';
+        this.warning = 'ERROR PASSWORD';
+        this.logService.logAction('Log In ERROR PASSWORD')
       }
     )
   }

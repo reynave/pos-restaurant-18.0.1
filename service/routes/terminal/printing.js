@@ -11,6 +11,7 @@ router.get('/', (req, res) => {
 
 router.get('/tableChecker', c.tableChecker);   
 router.get('/kitchen', c.kitchen);  
+router.post('/test', c.test);  
 
 
 module.exports = router;

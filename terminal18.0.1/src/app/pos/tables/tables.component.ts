@@ -50,8 +50,7 @@ export class TablesComponent implements OnInit {
     public configService: ConfigService,
     private http: HttpClient,
     public modalService: NgbModal,
-    private router: Router,
-    private activeRouter: ActivatedRoute,
+    private router: Router, 
     private socketService: SocketService,
     public logService: UserLoggerService
 
@@ -65,28 +64,17 @@ export class TablesComponent implements OnInit {
     } else {
       this.current = parseInt(localStorage.getItem("pos3.onMap") || '0');
     }
-
-
     this.getConfigJson = this.configService.getConfigJson();
     this.getTokenJson = this.configService.getTokenJson();
     this.sendMessage();
-
     this.modalService.dismissAll();
     this.httpOutlet();
     this.httpGet();
     this.httpHeader();
-
-
-
     this.socketService.listen<string>('message-from-server').subscribe((msg) => {
       console.log(msg);
       this.httpGet();
     });
-
-
-
-    //     this.current = localStorage.getItem("pos3.onMap");
-
 
   }
   sendMessage() {
@@ -151,6 +139,7 @@ export class TablesComponent implements OnInit {
   }
 
   onMap(index: number) {
+    this.logService.logAction('Change Map ' + this.items[index]['desc1'])
     localStorage.setItem("pos3.onMap", index.toString());
     this.current = index;
   }
@@ -168,11 +157,14 @@ export class TablesComponent implements OnInit {
   gotTo(x: any) {
     if (x.tableMapStatusId == '12') {
       this.router.navigate(['/menu'], { queryParams: { id: x.cardId } });
+      this.logService.logAction('Go to Menu', x.cardId)
     }
     else if (x.tableMapStatusId == '18') {
       this.router.navigate(['/payment'], { queryParams: { id: x.cardId } });
+      this.logService.logAction('Go to payment', x.cardId)
     } else {
       this.router.navigate(['/menu'], { queryParams: { id: x.cardId } });
+      this.logService.logAction('Go to Menu', x.cardId)
     }
 
   }
@@ -182,20 +174,28 @@ export class TablesComponent implements OnInit {
   }
 
   fnSelectOutlet(index: number) {
+    localStorage.setItem("pos3.onMap", "0");
+    this.current = 0;
     this.getConfigJson['outlet']['id'] = this.outletSelect[index]['id'];
     this.getConfigJson['outlet']['name'] = this.outletSelect[index]['name'];
 
     this.configService.updateConfigJson(this.getConfigJson).subscribe(
       data => {
         if (data == true) {
+
           this.httpGet();
+          this.logService.logAction('Change Outlet to ' + this.outletSelect[index]['name'])
         }
       }
     )
   }
 
   onSubmit() {
+  
     const outletId = this.configService.getConfigJson()['outlet']['id'];
+
+    this.logService.logAction('New Order '+this.configService.getConfigJson()['outlet']['name']+
+    '('+this.configService.getConfigJson()['outlet']['id']+') Cover : '+this.model['cover']+', Table : '+this.tableSelect.tableName+'('+this.model['outletTableMapId']+')')
     const body = {
       model: this.model,
       outletId: outletId,
@@ -205,17 +205,20 @@ export class TablesComponent implements OnInit {
       headers: this.configService.headers(),
     }).subscribe(
       data => {
-        if (data['error'] != true) {
+        if (data['error'] != true) { 
           this.router.navigate(['/menu'], { queryParams: { id: data['cardId'] } });
           this.modalService.dismissAll();
+          this.logService.logAction('Go to Menu', data['cardId'])
         } else {
-          alert("Table Used");
+          alert("Table Used"); 
+          this.logService.logAction('ERROR Table Used')
           this.reload();
         }
 
       },
       error => {
         console.log(error);
+         this.logService.logAction('ERROR now order')
       }
     )
   }
@@ -223,12 +226,15 @@ export class TablesComponent implements OnInit {
   logOff() {
     this.configService.isLogoff();
     this.router.navigate(['/']);
+    this.logService.logAction('Log Off')
   }
 
   signOff() {
+
     this.configService.removeToken().subscribe(
       () => {
         this.router.navigate(['login']);
+        this.logService.logAction('Sign Off')
       }
     )
   }
@@ -254,7 +260,7 @@ export class TablesComponent implements OnInit {
     )
   }
   dailyClose() {
-
+    this.logService.logAction('Click Daily Close')
     this.http.get<any>(environment.api + "daily/checkItems", {
       headers: this.configService.headers()
     }).subscribe(
@@ -262,11 +268,11 @@ export class TablesComponent implements OnInit {
         console.log(data);
 
         if (data['items'].length > 0) {
+          this.logService.logAction('Daily Close ' + "Please close " + data['items'].length + " tables!")
           alert("Please close " + data['items'].length + " tables!");
-          this.logService.logAction('please close ' + data['items'].length + ' tables!')
         } else {
           this.modalService.open(DailyCloseComponent, { size: 'sm' });
-          this.logService.logAction('Daily Close ?')
+          this.logService.logAction('Confirm Daily Close')
         }
       },
       error => {
@@ -278,7 +284,7 @@ export class TablesComponent implements OnInit {
 
   selectActiveView(activeView: string) {
     this.activeView = activeView;
-
+    this.logService.logAction('Change View to ' + activeView)
     localStorage.setItem("pos3.view", activeView);
   }
 }

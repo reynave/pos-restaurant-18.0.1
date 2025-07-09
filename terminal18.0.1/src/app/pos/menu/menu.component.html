@@ -40,7 +40,7 @@
                         </div>
                         <small class="font-monospace">&#64;{{x.price | number}} </small>
                         <span class="badge text-bg-secondary ">SO {{x.sendOrder}}</span>
-                        <span *ngIf="x.ta > 0 " class="badge text-bg-warning ms-2">TA ({{x.ta}})</span>
+                        <span *ngIf="x.ta > 0 " class="badge text-bg-warning ms-2">TA </span>
                      </td>
 
                      <td class="font-monospace text-center">
@@ -50,6 +50,7 @@
                      <td class="text-end font-monospace">{{(x.totalAmount < 0 ? 0 : x.totalAmount )| number}}</td>
                      <td>
                         <a [routerLink]="['/menu/modifier']" class="btn btn-success btn-lg"
+                        (click)="logService.logAction('menu/modifier SO '+x.name+' menuId : '+x.menuId+', price : '+x.price, id)"
                            [queryParams]="{id:id, menuId : x.menuId, price : x.price, sendOrder : x.sendOrder }"><i
                               class="bi bi-box-arrow-up-right"></i></a>
                      </td>
@@ -72,20 +73,17 @@
 
                <tbody *ngFor="let x of cart; let i = index" [class]="{'tr-active':x.checkBox == 1 }">
                   <tr (click)="fnChecked(i)  ">
-                     <td>
-
+                     <td> 
                         <h3>
                            <i *ngIf="x.checkBox == 0 " class="bi bi-square"></i>
                            <i *ngIf="x.checkBox == 1 " class="bi bi-check-square-fill"></i>
-                        </h3>
-
-
+                        </h3>  
                      <td>
                         <div class="lh-1">
                            <strong>{{x.name }} {{x.modifier.length > 0 ? '*':''}} </strong>
                         </div>
                         <small class="font-monospace">&#64;{{x.price | number}}</small>
-                        <span *ngIf="x.ta > 0 " class="badge text-bg-warning  ms-2">TA {{x.ta}}</span>
+                        <span *ngIf="x.ta > 0 " class="badge text-bg-warning  ms-2">TA</span>
 
                      </td>
 
@@ -100,6 +98,7 @@
 
                      <td>
                         <a [routerLink]="['/menu/modifier']" class="btn btn-success btn-lg"
+                          (click)="logService.logAction('menu/modifier '+x.name+' menuId : '+x.menuId+', price : '+x.price, id)"
                            [queryParams]="{id:id, menuId : x.menuId, price : x.price, sendOrder : x.sendOrder }"><i
                               class="bi bi-box-arrow-up-right"></i></a>
                      </td>
@@ -188,7 +187,7 @@
                         <i class="bi bi-fork-knife"></i> SEND ORDER</button>
                   </div>
                   <div class="col-3 d-grid">
-                     <button type="button" [class]="cssClass" class="bg-white" (click)="openComponent(id)">
+                     <button type="button" [class]="cssClass" class="bg-white" (click)="openComponent(id);logService.logAction('Click BILL', id)">
                         <i class="bi bi-receipt-cutoff"></i> BILL</button>
                   </div>
                   <div class="col-3 d-grid">

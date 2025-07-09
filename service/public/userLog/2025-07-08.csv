@@ -1,4 +1,4 @@
-Time,Outlet Id,WorkStation Id,User/Id,Bill,Action,url
+time,outletId,workStationId,userId,bill,action,url
 18:19:34,15,0001,IT Melanie(1),,click daily/cashBalance,http://localhost:4850/#/tables
 18:20:44,15,0001,IT Melanie(1),,logOff,http://localhost:4850/#/tables
 18:20:44,15,0001,IT Melanie(1),,logOff,http://localhost:4850/#/tables

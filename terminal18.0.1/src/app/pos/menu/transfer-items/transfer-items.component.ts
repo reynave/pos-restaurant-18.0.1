@@ -6,6 +6,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ConfigService } from '../../../service/config.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { environment } from '../../../../environments/environment.development';
+import { UserLoggerService } from '../../../service/user-logger.service';
 
 @Component({
   selector: 'app-transfer-items',
@@ -28,6 +29,7 @@ export class TransferItemsComponent implements OnInit {
     public modalService: NgbModal,
     private router: Router,
     private activeRouter: ActivatedRoute,
+    public logService: UserLoggerService
 
   ) { }
   ngOnInit(): void {
@@ -52,9 +54,9 @@ export class TransferItemsComponent implements OnInit {
   }
 
 
-  reload(){
-      this.httpTables();
-      this.httpGet();
+  reload() {
+    this.httpTables();
+    this.httpGet();
   }
 
   httpGet() {
@@ -110,9 +112,10 @@ export class TransferItemsComponent implements OnInit {
   fnTransferItems(table: any) {
 
     if (this.table['outletTableMapId'] == table.id) {
-      alert("Select other table")
+      alert("Select other table");
+      this.logService.logAction('WARNING fnTransferItems - Select other table', this.id)
     } else {
-
+      this.logService.logAction('fnTransferItems', this.id)
 
 
       const items: any[] = [];
@@ -125,13 +128,13 @@ export class TransferItemsComponent implements OnInit {
       console.log(table, items);
 
       const body = {
-        cart : this.table,
-        table: table, 
+        cart: this.table,
+        table: table,
         items: items,
         dailyCheckId: this.configService.getDailyCheck(),
         outletId: this.table['outletId'],
       }
-    
+
       this.http.post<any>(environment.api + "menuItemPos/transferTable", body, {
         headers: this.configService.headers(),
       }).subscribe(
@@ -139,9 +142,11 @@ export class TransferItemsComponent implements OnInit {
           console.log(data);
           this.modalService.dismissAll();
           this.reload();
+          this.logService.logAction('fnTransferItems tableID '+table.id+' to '+this.table['tableName']+'('+['outletTableMapId']+')', this.id)
         },
         error => {
           console.log(error)
+          this.logService.logAction('ERROR fnTransferItems', this.id)
         }
       )
     }

@@ -1,20 +1,50 @@
 <app-header-menu></app-header-menu>
 <div class="container-fluid body-with-header">
-    <div class="row g-2">
-        <div class="col-12">
-            <form class="row row-cols-sm-auto">
-                <div class="col-12">
-                    <div class="input-group">
-                        <input class="form-control" placeholder="yyyy-mm-dd" name="dp" [(ngModel)]="date" ngbDatepicker
-                            #d="ngbDatepicker" />
-                        <button class="btn btn-outline-dark bi bi-calendar3" (click)="d.toggle()"
-                            type="button"></button>
-                    </div>
-                    {{date | json}}
+    <div class="d-flex flex-row-reverse">
+        <div class="p-1"><button class="btn btn-outline-dark" [disabled]="items.length < 1" (click)="donwload()"
+                type="button">Download *<div class="csv"></div></button></div>
+        <div class="p-1"><button class="btn btn-dark" (click)="onSearch()" type="button">Search</button></div>
+        <div class="p-1">
+            <div class="input-group">
+                <input class="form-control" placeholder="yyyy-mm-dd" name="dp" [(ngModel)]="date" ngbDatepicker
+                    #d="ngbDatepicker" />
+                <button class="btn btn-outline-dark bi bi-calendar3" (click)="d.toggle()" type="button"></button>
+            </div>
+        </div>
+    </div>
 
-                    http://localhost:3000/terminal/log/getLog?date=2025-07-08
-                </div>
-            </form>
+    <div class="row">
+        <div class="col-12">
+
+            <table class="table table-sm border shadow-sm">
+                <thead class="sticky-top">
+                    <tr>
+                        <th class="bg-light">No</th>
+                        <th class="bg-light">Time</th>
+                        <th class="bg-light">outlet</th>
+                        <th class="bg-light">POS</th>
+                        <th class="bg-light">user Id</th>
+                        <th class="bg-light">bill</th>
+                        <th class="bg-light">action</th>
+                        <th class="bg-light">from</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let x of items; let i = index ">
+                        <td>{{i+1}}</td>
+                        <td>{{x.time}}</td>
+                        <td>{{x.outletId}}</td>
+                        <td>{{x.workStationId}}</td>
+                        <td>{{x.userId}}</td>
+                        <td>{{x.bill}}</td>
+                        <td>{{x.action}}</td>
+                        <td>{{x.url}}</td>
+
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="text-center my-5" *ngIf="loading">Loading</div>
         </div>
     </div>
 </div>

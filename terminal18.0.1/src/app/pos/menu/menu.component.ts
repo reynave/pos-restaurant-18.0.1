@@ -11,6 +11,7 @@ import { BillComponent } from '../bill/bill.component';
 import { KeyNumberComponent } from "../../keypad/key-number/key-number.component";
 import { param } from 'jquery';
 import { TransferLogComponent } from './transfer-log/transfer-log.component';
+import { UserLoggerService } from '../../service/user-logger.service';
 export class Actor {
   constructor(
     public newQty: number,
@@ -73,36 +74,37 @@ export class MenuComponent implements OnInit, OnDestroy {
   tablesMaps: any = [];
   table: any = [];
 
-  checkBoxAll : boolean = false;
+  checkBoxAll: boolean = false;
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
     public modalService: NgbModal,
     private router: Router,
     private activeRouter: ActivatedRoute,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    public logService: UserLoggerService
   ) { }
   ngOnDestroy(): void {
     this.renderer.setStyle(document.body, 'background-color', '#fff');
   }
 
-  fnCheckBoxAll(){
-    if(this.checkBoxAll == false){
+  fnCheckBoxAll() {
+    if (this.checkBoxAll == false) {
       this.checkBoxAll = true;
       this.isChecked = true
-    }else{
+    } else {
       this.checkBoxAll = false;
       this.isChecked = false
     }
 
 
     this.cartOrdered.forEach((el: any) => {
-      el['checkBox'] =  this.checkBoxAll;
+      el['checkBox'] = this.checkBoxAll;
     });
     this.cart.forEach((el: any) => {
-      el['checkBox'] =  this.checkBoxAll;
+      el['checkBox'] = this.checkBoxAll;
     });
-  } 
+  }
 
   fnShowModifierDetail(index: number) {
     this.modifierDetail = this.modifiers[index];
@@ -303,11 +305,13 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
   updateQty() {
+    const qty = this.model.newQty;
     const body = {
       model: this.model,
       item: this.item,
       cartId: this.activeRouter.snapshot.queryParams['id'],
     }
+
     this.http.post<any>(environment.api + "menuItemPos/updateQty", body, {
       headers: this.configService.headers(),
     }).subscribe(
@@ -317,11 +321,15 @@ export class MenuComponent implements OnInit, OnDestroy {
         this.model.newQty = 1;
         this.reload();
         if (data['warning']) {
+          this.logService.logAction('WARNING Add Qty ' + qty + ' ' + this.item['name'], this.id)
           alert(data['warning']);
+        } else {
+          this.logService.logAction('Add Qty ' + qty + ' ' + this.item['name'], this.id)
         }
       },
       error => {
         console.log(error);
+        this.logService.logAction('ERROR Add Qty ' + qty + ' ' + this.item['name'], this.id)
       }
     )
   }
@@ -364,13 +372,12 @@ export class MenuComponent implements OnInit, OnDestroy {
 
   onVoid() {
 
-
     if (this.isChecked == false) {
       alert("Please check item first!");
     } else {
       if (confirm("Are you sure  void this select items ?")) {
         console.log(this.cart)
-
+        this.logService.logAction('Void item ', this.id)
         this.loading = true;
         const body = {
           cart: this.cart,
@@ -382,10 +389,12 @@ export class MenuComponent implements OnInit, OnDestroy {
         }).subscribe(
           data => {
             console.log(data);
+
             this.reload();
           },
           error => {
             console.log(error);
+            this.logService.logAction('ERROR Void item ', this.id)
           }
         )
       }
@@ -459,9 +468,11 @@ export class MenuComponent implements OnInit, OnDestroy {
         console.log(data);
         this.reload();
         history.back();
+        this.logService.logAction('Send Order', this.id)
       },
       error => {
         console.log(error);
+        this.logService.logAction('ERROR Send Order', this.id)
       }
     )
   }
@@ -476,17 +487,20 @@ export class MenuComponent implements OnInit, OnDestroy {
         headers: this.configService.headers(),
       }).subscribe(
         data => {
+          this.logService.logAction('Exit Without Order', this.id)
           console.log(data);
           this.router.navigate(['tables']);
         },
         error => {
           console.log(error);
+          this.logService.logAction('ERROR Exit Without Order', this.id)
         }
       )
     }
   }
 
   payment() {
+    this.logService.logAction('Click PAYMENT', this.id)
     this.loading = true;
     const body = {
       id: this.id,
@@ -501,10 +515,12 @@ export class MenuComponent implements OnInit, OnDestroy {
         history.back();
         setTimeout(() => {
           this.router.navigate(['payment'], { queryParams: { id: this.id } });
+          this.logService.logAction('Update to payment', this.id)
         }, 500);
       },
       error => {
         console.log(error);
+        this.logService.logAction('ERROR Update to payment', this.id)
       }
     )
   }
@@ -555,12 +571,14 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
   transferItems() {
+     this.logService.logAction('menu/transferItems', this.id)
     this.router.navigate(['menu/transferItems'], { queryParams: { id: this.id } }).then(
       () => { this.modalService.dismissAll() }
     )
   }
 
   transferLog() {
+     this.logService.logAction('Popup transfer Log', this.id)
     const modalRef = this.modalService.open(TransferLogComponent, { size: 'lg' });
     modalRef.componentInstance.cartId = this.id;
   }
@@ -589,11 +607,13 @@ export class MenuComponent implements OnInit, OnDestroy {
         headers: this.configService.headers(),
       }).subscribe(
         data => {
+          this.logService.logAction('Item TA '+cart.length, this.id)
           console.log(data);
           this.reload();
         },
         error => {
           console.log(error);
+          this.logService.logAction('ERROR Item TA'+cart.length, this.id)
         }
       )
     }

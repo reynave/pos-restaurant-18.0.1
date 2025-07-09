@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { UserLoggerService } from '../../../service/user-logger.service';
 export class Actor {
   constructor(
     public newQty: number,
@@ -46,7 +47,8 @@ export class MenuModifierComponent implements OnInit, OnDestroy {
     public modalService: NgbModal,
     private router: Router,
     private activeRouter: ActivatedRoute,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+     public logService: UserLoggerService
   ) { }
   ngOnDestroy(): void {
     this.renderer.setStyle(document.body, 'background-color', '#fff');

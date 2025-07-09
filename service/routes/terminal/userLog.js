@@ -6,6 +6,7 @@ const c = require('../../controllers/terminal/userLogController');
 router.post('/', c.userLogIndex); 
   
 router.get('/getLog', c.getLog);   
+router.get('/downloadLog', c.downloadLog);   
 
 
 module.exports = router;
