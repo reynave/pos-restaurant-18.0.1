@@ -328,3 +328,7 @@ time,outletId,workStationId,userId,bill,action,url
 18:04:08,Imperial Kitchen(15),0001,IT Melanie(1),250709000202,Click PAYMENT,http://localhost:4850/#/menu?id=250709000202
 18:04:08,Imperial Kitchen(15),0001,IT Melanie(1),250709000202,Update to payment,http://localhost:4850/#/tables
 18:04:34,Imperial Kitchen(15),0001,IT Melanie(1),,click User logs,http://localhost:4850/#/tables
+18:06:33,Imperial Kitchen(15),0001,IT Melanie(1),250709000201,Go to Menu,http://localhost:4850/#/tables
+18:06:44,Imperial Kitchen(15),0001,IT Melanie(1),250708000198,Go to payment,http://localhost:4850/#/tables
+18:06:55,Imperial Kitchen(15),0001,IT Melanie(1),250708000198,Go to payment,http://localhost:4850/#/tables
+18:06:57,Imperial Kitchen(15),0001,IT Melanie(1),250709000202,Go to payment,http://localhost:4850/#/tables
