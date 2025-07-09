@@ -48,7 +48,7 @@ export class MenuModifierComponent implements OnInit, OnDestroy {
     private router: Router,
     private activeRouter: ActivatedRoute,
     private renderer: Renderer2,
-     public logService: UserLoggerService
+    public logService: UserLoggerService
   ) { }
   ngOnDestroy(): void {
     this.renderer.setStyle(document.body, 'background-color', '#fff');
@@ -67,7 +67,7 @@ export class MenuModifierComponent implements OnInit, OnDestroy {
     const url = environment.api + "menuItemPos/getModifier";
     this.http.get<any>(url, {
       headers: this.configService.headers(),
-      params : {
+      params: {
         outletId: this.configService.getConfigJson()['outlet']['id']
       }
     }).subscribe(
@@ -140,9 +140,11 @@ export class MenuModifierComponent implements OnInit, OnDestroy {
         data => {
           console.log(data);
           this.httpCart();
+          this.logService.logAction('Add Modifier ' + menu['descl'] + ' @' + menu['price'], this.id)
         },
         error => {
           console.log(error);
+          this.logService.logAction('ERROR Add Modifier ' + menu['descl'] + ' @' + menu['price'], this.id)
         }
       )
     }
@@ -210,9 +212,11 @@ export class MenuModifierComponent implements OnInit, OnDestroy {
           data => {
             console.log(data);
             this.httpCart();
+            this.logService.logAction('onVoid item detail', this.id)
           },
           error => {
             console.log(error);
+            this.logService.logAction('ERROR onVoid item detail', this.id)
           }
         )
       }
@@ -232,9 +236,11 @@ export class MenuModifierComponent implements OnInit, OnDestroy {
       data => {
         console.log(data);
         this.httpCart();
+           this.logService.logAction('Remove Modifier item detail', this.id)
       },
       error => {
         console.log(error);
+           this.logService.logAction('ERROR Remove Modifier item detail', this.id)
       }
     )
   }
@@ -248,11 +254,10 @@ export class MenuModifierComponent implements OnInit, OnDestroy {
       this.cart.forEach((el: any) => {
         if (el['checkBox'] == 1) {
           cart.push(el)
-        }
-
+        } 
       });
 
-  
+
       this.loading = true;
       const body = {
         cart: cart,
@@ -266,9 +271,11 @@ export class MenuModifierComponent implements OnInit, OnDestroy {
         data => {
           console.log(data);
           this.reload();
+           this.logService.logAction(' take Out Detail', this.id)
         },
         error => {
           console.log(error);
+           this.logService.logAction('ERROR take Out Detail', this.id)
         }
       )
     }

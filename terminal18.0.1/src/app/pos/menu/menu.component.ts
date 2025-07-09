@@ -130,6 +130,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
   httpMenuLookUp(id: number) {
+    this.logService.logAction('Menu Lookup '+id, this.id)
     this.loading = true;
     const url = environment.api + "menuItemPos/menuLookUp";
     this.http.get<any>(url, {
@@ -295,10 +296,12 @@ export class MenuComponent implements OnInit, OnDestroy {
         headers: this.configService.headers(),
       }).subscribe(
         data => {
-          this.reload();
+           this.logService.logAction('Add Menu '+ menu['name']+'('+menu['id']+') @'+menu['price'], this.id)
+           this.reload();
         },
         error => {
           console.log(error);
+          this.logService.logAction('ERROR Add Menu '+ menu['name']+'('+menu['id']+') @'+menu['price'], this.id)
         }
       )
     }
@@ -418,10 +421,12 @@ export class MenuComponent implements OnInit, OnDestroy {
       }).subscribe(
         data => {
           console.log(data);
+           this.logService.logAction('Add Modifier '+ a['descs']+'('+a['id']+') @'+a['price'], this.id)
           this.reload();
         },
         error => {
           console.log(error);
+             this.logService.logAction('ERROR Add Modifier '+ a['descs']+'('+a['id']+') @'+a['price'], this.id)
         }
       )
     }
@@ -447,9 +452,11 @@ export class MenuComponent implements OnInit, OnDestroy {
         data => {
           console.log(data);
           this.reload();
+           this.logService.logAction('Apply Discount Group '+ a['name']+'('+a['id']+') @'+a['discRate']+'%', this.id)
         },
         error => {
           console.log(error);
+           this.logService.logAction('ERROR Apply Discount Group '+ a['name']+'('+a['id']+') @'+a['discRate']+'%', this.id)
         }
       )
     }
@@ -654,6 +661,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     console.log(x);
 
     if (x.cardId != '' && x.cardId != this.table['id']) {
+       this.logService.logAction("Merge table with " + x.tableName + " ?", this.id)
       if (confirm("Merge table with " + x.tableName + " ?")) {
         this.loading = true;
         const body = {
@@ -669,9 +677,11 @@ export class MenuComponent implements OnInit, OnDestroy {
           data => {
             console.log(data);
             history.back();
+          this.logService.logAction("Merge to table :" + x.tableName , this.id)
           },
           error => {
             console.log(error);
+            this.logService.logAction("ERROR Merge to table :" + x.tableName, this.id)
           }
         )
       }

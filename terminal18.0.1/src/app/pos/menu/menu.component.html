@@ -295,7 +295,7 @@
             <div class="row g-1 mb-3">
                <div class="col-3 mb-1 d-grid" *ngFor="let x of modifiers; let i = index">
                   <button type="button" [class]="cssMenu" [disabled]=" x.id == modifierDetail['id'] ? true : false "
-                     (click)="fnShowModifierDetail(i)">
+                     (click)="fnShowModifierDetail(i);logService.logAction('Click MODIFIER : '+ x.name,id) ">
                      <div class="mb-1"> {{x.name}}</div>
                   </button>
                </div>
@@ -304,7 +304,7 @@
             <div class="row g-1 mb-3">
                <h6 class="text-center">{{modifierDetail['name']}}</h6>
                <div class="col-3 mb-1 d-grid" *ngFor="let a of modifierDetail['detail']">
-                  <a type="button" [class]="cssMenu" (click)="addToItemModifier(a)">
+                  <a type="button" [class]="cssMenu" (click)="addToItemModifier(a);">
                      <div class="mb-1"> {{a.descs}}</div>
                   </a>
                </div>

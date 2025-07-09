@@ -134,7 +134,7 @@ export class TransferItemsComponent implements OnInit {
         dailyCheckId: this.configService.getDailyCheck(),
         outletId: this.table['outletId'],
       }
-
+      console.log(body);
       this.http.post<any>(environment.api + "menuItemPos/transferTable", body, {
         headers: this.configService.headers(),
       }).subscribe(
@@ -142,7 +142,7 @@ export class TransferItemsComponent implements OnInit {
           console.log(data);
           this.modalService.dismissAll();
           this.reload();
-          this.logService.logAction('fnTransferItems tableID '+table.id+' to '+this.table['tableName']+'('+['outletTableMapId']+')', this.id)
+          this.logService.logAction('fnTransferItems Items table '+table.tableName+'('+table.id+') to '+items[0]['tableName']+'('+this.table['outletTableMapId']+')', this.id)
         },
         error => {
           console.log(error)
