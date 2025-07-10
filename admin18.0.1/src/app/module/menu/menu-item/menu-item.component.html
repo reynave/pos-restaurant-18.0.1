@@ -48,13 +48,13 @@
                                 </a>
                             </th>
                             <th>#</th>
-                            <th>name</th>
-                            <th class="text-end">price1</th>
-                            <th class="text-end">price2</th>
-                            <th class="text-end">price3</th>
-                            <th class="text-end">price4</th>
-                            
-                            <th class="text-end">special Price1</th>
+                            <th>Name</th>
+                            <th class="text-end">price 1</th>
+                            <th class="text-end">price 2</th>
+                            <th class="text-end">price 3</th>
+                            <th class="text-end">price 4</th>
+                            <th class="text-end">price 5</th>
+
 
                             <th>Department</th>
                             <th>Category</th>
@@ -76,37 +76,40 @@
                             </td>
                             <td>{{i+1}}</td>
 
-                            <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.name" (focus)="onHere(x)"
-                                    [disabled]="disabled"> </td>
-                            <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.price1" currencyMask 
-                                    [disabled]="disabled"> </td>
-                                    
-                            <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.price2" currencyMask 
-                                    [disabled]="disabled"> </td>
-                            <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.price3" currencyMask 
-                                    [disabled]="disabled"> </td>
-                            <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.price4" currencyMask 
-                                    [disabled]="disabled"> </td>
-                            <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.specialPrice1" currencyMask 
-                                    [disabled]="disabled"> </td>
+                            <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.name"
+                                    (focus)="onHere(x)" [disabled]="disabled"> </td>
+                            <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.price1"
+                                    currencyMask [disabled]="disabled"> </td>
+
+                            <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.price2"
+                                    currencyMask [disabled]="disabled"> </td>
+                            <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.price3"
+                                    currencyMask [disabled]="disabled"> </td>
+                            <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.price4"
+                                    currencyMask [disabled]="disabled"> </td>
+                            <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.price5"
+                                    currencyMask [disabled]="disabled"> </td>
                             <td>
-                                <select  class="form-control form-control-sm" [(ngModel)]="x.menuDepartmentId"   [disabled]="disabled">
+                                <select class="form-control form-control-sm" [(ngModel)]="x.menuDepartmentId"
+                                    [disabled]="disabled">
                                     <option *ngFor="let a of selectDept" [value]="a.id">{{a.desc1}}</option>
-                                </select>    
+                                </select>
                             </td>
 
                             <td>
-                                <select  class="form-control form-control-sm" [(ngModel)]="x.menuCategoryId"   [disabled]="disabled">
+                                <select class="form-control form-control-sm" [(ngModel)]="x.menuCategoryId"
+                                    [disabled]="disabled">
                                     <option *ngFor="let a of selectCategory" [value]="a.id">{{a.desc1}}</option>
-                                </select>    
+                                </select>
                             </td>
 
                             <td>
-                                <select  class="form-control form-control-sm" [(ngModel)]="x.menuClassId"   [disabled]="disabled">
+                                <select class="form-control form-control-sm" [(ngModel)]="x.menuClassId"
+                                    [disabled]="disabled">
                                     <option *ngFor="let a of selectClass" [value]="a.id">{{a.desc1}}</option>
-                                </select>    
+                                </select>
                             </td>
-    
+
                             <td>{{ x.inputDate | date:'medium'}} </td>
 
                         </tr>

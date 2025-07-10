@@ -9,8 +9,8 @@ function generateToken(payload, password) {
 // Contoh pakai
 const client = 'MITRALINK';
 const payload = {
-  terminalId : '0001',
-  expired: '2025-07-20'
+  terminalId : '0003',
+  expired: '2025-08-20'
 };
 
 const matchPass = client+myPassword;

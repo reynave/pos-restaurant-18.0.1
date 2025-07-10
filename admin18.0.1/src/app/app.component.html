@@ -2,10 +2,9 @@
 
 <div class="wrapper">
   <nav class="sidebar px-1">
+ 
 
-
-
-    <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
+    <ul ngbNav #nav="ngbNav" [(activeId)]="active" (click)="saveActive(active)" class="nav-tabs">
       <li [ngbNavItem]="1">
         <button ngbNavLink class="px-2 py-1"><small>General</small></button>
         <ng-template ngbNavContent>
@@ -57,7 +56,7 @@
             <tree-root #treeComponent [nodes]="outletTab" [options]="options" (activate)="onEvent($event)">
               <ng-template #treeNodeTemplate let-node let-index="index">
                 <span class="file-icon" [innerHTML]="node.data.icon"></span>
-                {{ node.data.name }}
+                {{ node.data.name }} 
               </ng-template> 
             </tree-root>
           </div>

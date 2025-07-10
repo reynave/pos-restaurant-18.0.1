@@ -158,13 +158,52 @@ exports.terminal = async (req, res) => {
             const diffMs = expired - now;
             const diffDays = parseInt(diffMs / (1000 * 60 * 60 * 24));
 
-           if (diffDays >= 0 && keyLicense['terminalId'] ==  terminalId ) { 
+            if (diffDays >= 0 && keyLicense['terminalId'] == terminalId) {
+
+                const q1 = `
+                    SELECT *  FROM terminal WHERE 
+                    terminalId =  '${keyLicense['terminalId']}'
+                    `;
+                const [terminal] = await db.query(q1);
+
+
+                if (terminal.length) { 
+                    const q0 = `UPDATE terminal
+                        SET
+                            exp = '${keyLicense['expired']}',
+                            updateDate = '${today()}'
+                        WHERE terminalId =  '${keyLicense['terminalId']}' `;
+                    const [result] = await db.query(q0);
+                    if (result.affectedRows === 0) {
+                        results.push({ status: ' not found', });
+                    } else {
+                        results.push({ status: 'Update terminal insert' });
+                    } 
+                } else {
+                    const q0 = `
+                    INSERT INTO terminal( 
+                        terminalId, 
+                        exp,
+                        presence, inputDate, updateDate)
+                    value(
+                        '${keyLicense['terminalId']}', 
+                        '${keyLicense['expired']}',
+                        1,'${today()}', '${today()}') 
+                    `;
+                    const [result] = await db.query(q0);
+                    if (result.affectedRows === 0) {
+                        results.push({ status: ' not found', });
+                    } else {
+                        results.push({ status: 'terminal insert' });
+                    }
+                }
+
 
 
                 const q3 = `
-            DELETE FROM terminal_token WHERE 
-                terminalId =  '${keyLicense['terminalId']}'
-            `;
+                    DELETE FROM terminal_token WHERE 
+                        terminalId =  '${keyLicense['terminalId']}'
+                    `;
 
                 const [result3] = await db.query(q3);
                 if (result3.affectedRows === 0) {
@@ -174,13 +213,13 @@ exports.terminal = async (req, res) => {
                 }
 
                 const q2 = `
-            INSERT INTO terminal_token( 
-                terminalId, 
-                presence, inputDate, updateDate)
-            value(
-                '${keyLicense['terminalId']}', 
-                1,'${today()}', '${today()}') 
-            `;
+                    INSERT INTO terminal_token( 
+                        terminalId, 
+                        presence, inputDate, updateDate)
+                    value(
+                        '${keyLicense['terminalId']}', 
+                        1,'${today()}', '${today()}') 
+                    `;
 
                 const [result] = await db.query(q2);
                 if (result.affectedRows === 0) {
@@ -194,14 +233,14 @@ exports.terminal = async (req, res) => {
                     address: result.insertId,
                     terminalId: keyLicense['terminalId'],
                     fileContent: data, // <-- ini isi file,
-                    keyLicense : keyLicense,
+                    keyLicense: keyLicense,
                     diffDays: diffDays
                 });
             } else {
-                    res.status(500).json({ 
-                    message: 'Expired Key / Key not valid',  
+                res.status(500).json({
+                    message: 'Expired Key / Key not valid',
                     fileContent: data, // <-- ini isi file,
-                    keyLicense : keyLicense,
+                    keyLicense: keyLicense,
                     diffDays: diffDays
                 });
             }

@@ -5,56 +5,67 @@ exports.getAllData = async (req, res) => {
   try {
 
     const outletTab = [
-      {
-        name: 'Basic Outlet Setup', href: '', icon:'<i class="bi bi-display"></i>',
-        children: [
-          { name: 'Outlet Details', href: 'outlet', icon:'<i class="bi bi-credit-card"></i>', },  
-        ]
-      },  
-      {
-        name: 'Advance Outlet Setup', href: '', icon:'<i class="bi bi-display"></i>',
-        children: [
-          { name: 'Payment', href: 'outlet/payment', icon:'<i class="bi bi-credit-card"></i>', }, 
-          { name: 'Cash Types', href: 'outlet/cashType', icon:'<i class="bi bi-credit-card"></i>', }, 
-          { name: 'Autority', href: 'outlet/funcAuthority', icon:'<i class="bi bi-person-fill-gear"></i>', }, 
-          { name: 'Order level', href: 'outlet/orderLevel', icon:'<i class="bi bi-person-fill-gear"></i>', },  
-          { name: 'Discount', href: 'outlet/discount', icon:'<i class="bi bi-percent"></i>', },  
-          { name: 'Special Hours', href: 'outlet/specialHour', icon:'<i class="bi bi-clock"></i>', },  
-  
-          { name: 'Table Map', href: 'tableMap', icon:'<i class="bi bi-display"></i>', 
-            children: [
-          
-            ] 
-          }, 
-          { name: 'Floor Map', href: 'floorMap', icon:'<i class="bi bi-display"></i>',  },  
-  
-          { name: 'Tips Pool', href: 'outlet/tipsPool', icon:'<i class="bi bi-display"></i>',  },  
-          { name: 'Mix & Match Rules', href: 'outlet/mixAndMatch', icon:'<i class="bi bi-display"></i>',  },  
-          { name: 'Bonus Rules', href: 'outlet/bonusRules', icon:'<i class="bi bi-display"></i>',  },  
-  
-  
-        ]
-      },  
-      
-    ] 
+      { name: 'Outlet Setup', href: 'outlet', icon: '<i class="bi bi-display"></i>' },
+      { name: 'Floor Map', href: 'floorMap', icon: '<i class="bi bi-display"></i>', },
+      { name: 'Table Map', href: 'tableMap', icon: '<i class="bi bi-display"></i>', },
+    ]
+    const [floorMap] = await db.query(
+      ` SELECT id, name, 'floorMap' as 'href' , CONCAT('{"outletId":"',id,'"}')  as 'params'
+      FROM outlet
+      WHERE presence = 1
+      order by name asc`,
+    );
+    outletTab[1]['children'] = floorMap;
 
 
-   
+    const [tableMap] = await db.query(
+      ` SELECT id, name, 'tableMap' as 'href' , CONCAT('{"outletId":"',id,'"}')  as 'params'
+      FROM outlet
+      WHERE presence = 1
+      order by name asc`,
+    );
+    outletTab[2]['children'] = tableMap;
 
 
     const menuTab = [
-      { name: 'Department', href: 'menu/department', icon:'<i class="bi bi-display"></i>', },  
-      { name: 'Category', href: 'menu/category', icon:'<i class="bi bi-display"></i>', },  
-      { name: 'Class', href: 'menu/class', icon:'<i class="bi bi-display"></i>', },  
-      { name: 'Item', href: 'menu/item', icon:'<i class="bi bi-display"></i>', },   
-      { name: 'Item Look Up', href: 'menu/lookUp', icon:'<i class="bi bi-display"></i>', },   
-      
-    ] 
+      { name: 'Department', href: 'menu/department', icon: '<i class="bi bi-display"></i>', },
+      { name: 'Category', href: 'menu/category', icon: '<i class="bi bi-display"></i>', },
+      { name: 'Class', href: 'menu/class', icon: '<i class="bi bi-display"></i>', },
+      { name: 'Item', href: 'menu/item', icon: '<i class="bi bi-display"></i>', children: [] },
+      { name: 'Item Look Up', href: 'menu/lookUp', icon: '<i class="bi bi-display"></i>', },
+
+    ]
+
+    const [department] = await db.query(
+      ` SELECT id, desc1 as 'name' ,  'menu/item/'  as 'href' ,  
+     CONCAT('{"departmentId":"',id,'"}')  as 'params'
+        FROM  menu_department WHERE presence = 1`,
+    );
+    menuTab[0]['children'] = department;
+
+    const stationTab = [
+      {
+        name: 'Terminal', href: 'workStation/terminal', icon: '<i class="bi bi-display"></i>',
+        
+      },
+
+      {
+        name: 'Pantry', href: 'workStation/pantry', icon: '<i class="bi bi-display"></i>', 
+      },
+    
+
+      {
+        name: 'Printer', href: 'workStation/printer', icon: '<i class="bi bi-printer"></i>', 
+      },
+    ];
+
+
     const data = {
       error: false,
-      menuTab: menuTab, 
-      outletTab: outletTab, 
-      
+      menuTab: menuTab,
+      outletTab: outletTab,
+      stationTab: stationTab,
+
     }
 
     res.json(data);

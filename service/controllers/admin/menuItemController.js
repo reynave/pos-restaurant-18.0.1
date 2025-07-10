@@ -2,14 +2,18 @@ const db = require('../../config/db');
 const { today, formatDateOnly } = require('../../helpers/global');
 
 exports.getAllData = async (req, res) => {
+
+  const menuDepartmentId = req.query.departmentId == 'undefined' ? '': req.query.departmentId;
+  console.log(menuDepartmentId)
+ 
   try {
 
     const [rows] = await db.query(`
-      SELECT id,name, price1, specialPrice1,
+      SELECT id,name, price1, price2, price3,price4,price5,
       menuDepartmentId, menuCategoryId, menuClassId ,inputDate ,updateDate
       , 0 as 'checkbox'
       FROM menu  
-      WHERE presence = 1
+      WHERE presence = 1    ${menuDepartmentId? 'and menuDepartmentId = '+menuDepartmentId:'' }
     `);
 
     const formattedRows = rows.map(row => ({
@@ -57,7 +61,7 @@ exports.getMasterData = async (req, res) => {
       error: false,
       category: category,
       class: itemClass,
-      dept: dept, 
+      dept: dept,
       get: req.query
     }
 
@@ -122,7 +126,11 @@ exports.postUpdate = async (req, res) => {
         `UPDATE menu SET 
           name = '${emp['name']}',     
           price1 = ${emp['price1']},   
-          specialPrice1 = ${emp['specialPrice1']},  
+          price2 = ${emp['price2']},  
+           price3 = ${emp['price3']},  
+           price4 = ${emp['price4']},  
+           price5 = ${emp['price5']},  
+          
 
           menuDepartmentId = ${emp['menuDepartmentId']},  
           menuCategoryId = ${emp['menuCategoryId']},  

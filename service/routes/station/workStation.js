@@ -3,6 +3,10 @@ const router = express.Router();
 const stationTaxRun = require('../../controllers/admin/stationTaxRunController'); 
 const pantryStation = require('../../controllers/admin/pantryStationController'); 
 const printQueue = require('../../controllers/admin/printQueueController'); 
+const t = require('../../controllers/admin/terminalController'); 
+
+router.get('/terminal/', t.getAllData); 
+router.post('/terminal/update', t.postUpdate);
 
 
 router.get('/taxRun/', stationTaxRun.getAllData);

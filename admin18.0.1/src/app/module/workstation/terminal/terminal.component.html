@@ -1,0 +1,41 @@
+<div class="row">
+    <div class="col-12 ">
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Terminal Id</th>
+                    <th>Exp</th>
+                    <th>Price No</th> 
+                </tr>
+            </thead>
+
+            <tbody> 
+                <tr *ngFor="let x of items; let i = index">
+                    <td>{{i+1}}</td>
+                    <td> {{x.terminalId}} </td>
+                    <td> {{x.exp}} </td>
+                    <td>
+                        <select class="form-control form-control-sm" [(ngModel)]="x.priceNo">
+                            <option value="0">Base on Outlet</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="d-grid">
+            <button class="btn btn-dark" type="button" (click)="update();">Update</button>
+        </div>
+      
+        <div class="text-center my-3" *ngIf="loading">Loading</div>
+
+    </div>
+
+</div>
+ 

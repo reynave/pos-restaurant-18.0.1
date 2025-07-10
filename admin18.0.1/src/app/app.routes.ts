@@ -55,6 +55,7 @@ import { MenuCategoryComponent } from './module/menu/menu-category/menu-category
 import { MenuClassComponent } from './module/menu/menu-class/menu-class.component';
 import { PrinterComponent } from './module/printer/printer.component';
 import { MenuLookupComponent } from './module/menu/menu-lookup/menu-lookup.component';
+import { TerminalComponent } from './module/workstation/terminal/terminal.component';
 
 export const routes: Routes = [
     { path: '',component: HomeComponent},
@@ -113,6 +114,10 @@ export const routes: Routes = [
     { path: 'workStation/printQueue', component: PantryStationQueueComponent }, 
     { path: 'workStation/stationTaxRun', component: StationTaxRunComponent },
  
+    { path: 'workStation/terminal', component: TerminalComponent },
+ 
+
+
     { path: 'outlet', component: OutletComponent }, 
     { path: 'outlet/payment', component: OutletPaymentComponent },
     { path: 'outlet/cashType', component: OutletCashTypeComponent },

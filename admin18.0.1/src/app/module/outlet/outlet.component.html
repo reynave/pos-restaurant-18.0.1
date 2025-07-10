@@ -45,11 +45,10 @@
                         </a>
                      </th>
                      <th>#</th>
-                     <th>name1</th>
-                     <th>descs1</th>
-                     <th>comname1</th>
-                     <th>cityname1</th>
-                     <th>tel</th>
+                     <th>Name</th>
+                     <th>Descs</th>
+                     <th>Company Name</th>
+                     <th>Price No</th> 
                      <th>inputDate</th>
                      <th></th>
 
@@ -64,11 +63,10 @@
                         </a>
                      </td>
                      <td>{{i+1}}</td>
-                     <td>{{x.name1 }}</td>
-                     <td>{{x.descs1 }}</td>
-                     <td>{{x.comname1 }}</td>
-                     <td>{{x.cityname1 }}</td>
-                     <td>{{x.tel }}</td>
+                     <td>{{x.name }}</td>
+                     <td>{{x.descs }}</td>
+                     <td>{{x.company }}</td>
+                     <td>{{x.priceNo }}</td> 
                      <td>{{ x.updateDate | date:'medium'}} </td>
                      <td> <button type="button" (click)="openLg(detail, x);" class="btn btn-sm btn-primary py-0">Detail</button> </td>
 
@@ -100,78 +98,91 @@
                            <div class="form-control form-control-sm">{{item.id}}</div>
                         </td>
                      </tr>
+                      <tr>
+                        <td> <label for="company">Country</label></td>
+                        <td>
+                           <input id="company" class="form-control form-control-sm mb-1" name="company"
+                              [(ngModel)]="item.company" />
+                        </td>
+                     </tr>
+
+                     <tr>
+                        <td><strong>Price No</strong> </td>
+                        <td>
+                           <select class="form-control form-control-sm" name="priceNo" [(ngModel)]="item.priceNo">
+                              <option value="1">1</option>
+                              <option value="2">2</option>
+                              <option value="3">3</option>
+                              <option value="4">4</option>
+                              <option value="5">5</option>  
+                           </select> 
+                        </td>
+                     </tr>
                      <tr>
                         <td width="30%"> <label for="descl1">Name *</label></td>
                         <td>
-                           <input id="name1" class="form-control form-control-sm" name="name1" [(ngModel)]="item.name1"
-                              required #name1="ngModel" />
-                           <small [hidden]="name1.valid || name1.pristine" class="text-danger">
-                              *name is required
+                           <input id="name" class="form-control form-control-sm" name="name" [(ngModel)]="item.name"
+                              required #name="ngModel" />
+                           <small [hidden]="name.valid || name.pristine" class="text-danger">
+                              *Name is required
                            </small>
                         </td>
                      </tr>
 
                      <tr>
-                        <td> <label for="descl1">descs1*</label></td>
+                        <td> <label for="descs">Description *</label></td>
                         <td>
-                           <input id="descl1" class="form-control form-control-sm" name="descl1"
-                              [(ngModel)]="item.descs1" required #descl1="ngModel" />
-                           <small [hidden]="descl1.valid || descl1.pristine" class="text-danger">
-                              *descl1 is required
+                           <input id="descs" class="form-control form-control-sm" name="descs"
+                              [(ngModel)]="item.descs" required #descs="ngModel" />
+                           <small [hidden]="descs.valid || descs.pristine" class="text-danger">
+                              *descs is required
                            </small>
                         </td>
                      </tr>
                      <tr>
-                        <td> <label for="tel">tel</label></td>
+                        <td> <label for="tel">Tel</label></td>
                         <td>
                            <input id="tel" class="form-control form-control-sm" name="tel" [(ngModel)]="item.tel" />
                         </td>
                      </tr>
                      <tr>
-                        <td> <label for="fax">fax</label></td>
+                        <td> <label for="fax">Fax</label></td>
                         <td>
                            <input id="fax" class="form-control form-control-sm" name="fax" [(ngModel)]="item.fax" />
 
                         </td>
                      </tr>
-                     <tr>
-                        <td> <label for="comname1">comname1</label></td>
-                        <td>
-                           <input id="comname1" class="form-control form-control-sm" name="comname1"
-                              [(ngModel)]="item.comname1" />
+                    
 
+                     <tr>
+                        <td> <label for="addr1">Address</label></td>
+                        <td>
+                           <input id="addr1" class="form-control form-control-sm mb-1" name="address"
+                              [(ngModel)]="item.address" />
                         </td>
                      </tr>
 
                      <tr>
-                        <td> <label for="addr1">addr1</label></td>
-                        <td>
-                           <input id="addr1" class="form-control form-control-sm mb-1" name="addr1"
-                              [(ngModel)]="item.addr1" />
-                        </td>
-                     </tr>
-
-                     <tr>
-                        <td> <label for="street1">street1</label></td>
+                        <td> <label for="street1">Street</label></td>
                         <td>
                            <input id="street1" class="form-control form-control-sm mb-1" name="street1"
-                              [(ngModel)]="item.street1" />
+                              [(ngModel)]="item.street" />
                         </td>
                      </tr>
 
                      <tr>
-                        <td> <label for="cityname1">cityname1</label></td>
+                        <td> <label for="cityname1">City</label></td>
                         <td>
                            <input id="cityname1" class="form-control form-control-sm mb-1" name="cityname1"
-                              [(ngModel)]="item.cityname1" />
+                              [(ngModel)]="item.city" />
                         </td>
                      </tr>
 
                      <tr>
-                        <td> <label for="country1">country1</label></td>
+                        <td> <label for="country1">Country</label></td>
                         <td>
                            <input id="country1" class="form-control form-control-sm mb-1" name="country1"
-                              [(ngModel)]="item.country1" />
+                              [(ngModel)]="item.country" />
                         </td>
                      </tr>
 
@@ -179,6 +190,7 @@
                </table>
             </div>
             <div class="col-6">
+               
                <strong>Greeting </strong>
                <table class="table table-sm">
                   <tbody>
@@ -251,98 +263,7 @@
             </div>
 
          </div>
-
-         <div class="row">
-            <strong>Global Setting</strong>
-            <div class="col-12">
-               <table class="table table-sm">
-                  <thead>
-                     <tr> 
-                        <th>panelid</th>
-                        <th>price</th>
-                        <th>sendpend</th>
-                        <th>itmrnd</th>
-                        <th>taxrnd</th> 
-                        <th>scrnd</th>
-                        <th>discrnd</th>
-                        <th>ckrnd</th> 
-                     </tr>
-                  </thead>
-                  <tbody> 
-                     <tr> 
-                        <td> <input id="panelid" class="form-control form-control-sm" name="panelid"  [(ngModel)]="item.panelid" /> </td>
-                        <td><input id="price" class="form-control form-control-sm" name="price"  [(ngModel)]="item.price" /></td>
-                        <td><input id="sendpend" class="form-control form-control-sm" name="sendpend"  [(ngModel)]="item.sendpend" /></td>
-                        <td><input id="itmrnd" class="form-control form-control-sm" name="itmrnd"  [(ngModel)]="item.itmrnd" /></td>
-
-                        <td><input id="taxrnd" class="form-control form-control-sm" name="taxrnd"  [(ngModel)]="item.taxrnd" /></td>
-                        <td><input id="scrnd" class="form-control form-control-sm" name="scrnd"  [(ngModel)]="item.scrnd" /></td>
-                        <td><input id="discrnd" class="form-control form-control-sm" name="discrnd"  [(ngModel)]="item.discrnd" /></td>
-                        <td><input id="ckrnd" class="form-control form-control-sm" name="ckrnd"  [(ngModel)]="item.ckrnd" /></td> 
-                        
-                     </tr>
-                  </tbody>
-               </table>
-            </div>
-
-            <div class="col-12">
-               <table class="table table-sm">
-                  <thead>
-                     <tr>  
-                        <th>itmdec</th>
-                        <th>taxdec</th> 
-                        <th>scdec</th>
-                        <th>discdec</th>
-
-                        <th>ckdec</th>
-                        <th>begchk</th>
-                        <th>endchk</th>
-                        <th>nextchk</th>
-                     </tr>
-                  </thead>
-                  <tbody> 
-                     <tr> 
-                        <td><input id="itmdec" class="form-control form-control-sm" name="itmdec"  [(ngModel)]="item.itmdec" /></td>
-                        <td><input id="taxdec" class="form-control form-control-sm" name="taxdec"  [(ngModel)]="item.taxdec" /></td>
-                        <td><input id="scdec" class="form-control form-control-sm" name="scdec"  [(ngModel)]="item.scdec" /></td>
-                        <td><input id="discdec" class="form-control form-control-sm" name="discdec"  [(ngModel)]="item.discdec" /></td>
-
-                         <td><input id="ckdec" class="form-control form-control-sm" name="ckdec"  [(ngModel)]="item.ckdec" /></td>
-                         <td><input id="begchk" class="form-control form-control-sm" name="begchk"  [(ngModel)]="item.begchk" /></td>
-                         <td><input id="endchk" class="form-control form-control-sm" name="endchk"  [(ngModel)]="item.endchk" /></td>
-                         <td><input id="nextchk" class="form-control form-control-sm" name="nextchk"  [(ngModel)]="item.nextchk" /></td>
-                     </tr>
-                  </tbody>
-               </table>
-            </div>
-
-            <div class="col-12">
-               <table class="table table-sm">
-                  <thead>
-                     <tr>  
-                        <th>bizbegchk</th>
-                        <th>drwprefix</th>
-                        <th>drwamt</th>
-                        <th>drwmethod</th>
-                        <th>drwrun</th>
-                        <th>drwmem</th>
-                     </tr>
-                  </thead>
-                  <tbody> 
-                     <tr>  
-                         <td><input id="bizbegchk" class="form-control form-control-sm" name="bizbegchk"  [(ngModel)]="item.bizbegchk" /></td>
-                         <td><input id="drwprefix" class="form-control form-control-sm" name="drwprefix"  [(ngModel)]="item.drwprefix" /></td>
-                         <td><input id="drwamt" class="form-control form-control-sm" name="drwamt"  [(ngModel)]="item.drwamt" /></td>
-                         <td><input id="drwmethod" class="form-control form-control-sm" name="drwmethod"  [(ngModel)]="item.drwmethod" /></td>
-                         <td><input id="drwrun" class="form-control form-control-sm" name="drwrun"  [(ngModel)]="item.drwrun" /></td>
-                         <td><input id="drwmem" class="form-control form-control-sm" name="drwmem"  [(ngModel)]="item.drwmem" /></td>
-                       
-                     </tr>
-                  </tbody>
-               </table>
-            </div>
-         </div>
-
+ 
 
          <div class="d-grid">
             <button type="submit" class="btn btn-sm btn-dark" [disabled]="!heroForm.form.valid">Save</button>

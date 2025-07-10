@@ -36,3 +36,12 @@ time,outletId,workStationId,userId,bill,action,url,method,server
 11:38:43,Imperial Kitchen(15),0001,IT Melanie(1),,Search log 2025-07-10,http://localhost:4850/#/userLogs
 11:38:46,Imperial Kitchen(15),0001,IT Melanie(1),,ERROR Search log 2025-07-05,http://localhost:4850/#/userLogs
 11:39:16,Imperial Kitchen(15),0001,IT Melanie(1),,ERROR Search log / not found 2025-07-04,http://localhost:4850/#/userLogs
+18:14:34,Imperial Kitchen(15),0001,IT Melanie(1),,logOff,http://localhost:4850/#/tables
+18:14:34,Imperial Kitchen(15),0001,IT Melanie(1),,logOff,http://localhost:4850/#/tables
+18:14:37,Imperial Kitchen(15),0001,IT Melanie(1),,Log In,http://localhost:4850/#/
+18:14:40,Imperial Kitchen(15),0001,IT Melanie(1),,Log In Success,http://localhost:4850/#/
+18:14:45,Imperial Kitchen(15),0001,IT Melanie(1),,Sign Off,http://localhost:4850/#/tables
+18:16:02,Imperial Kitchen(15),null,IT Melanie(1),,click setting,http://localhost:4850/#/tables
+18:32:08,Imperial Kitchen(15),null,IT Melanie(1),,Change Map Dine In,http://localhost:4850/#/tables
+18:32:09,Imperial Kitchen(15),null,IT Melanie(1),,Change Map Other,http://localhost:4850/#/tables
+18:32:11,Imperial Kitchen(15),null,IT Melanie(1),,click Report,http://localhost:4850/#/tables
