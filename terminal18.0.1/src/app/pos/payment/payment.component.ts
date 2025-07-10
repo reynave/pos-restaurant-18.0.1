@@ -4,12 +4,13 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { environment } from '../../../environments/environment.development';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdownModule, NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { NgxCurrencyDirective } from "ngx-currency";
 import { BillTableComponent } from "../bill/bill-table/bill-table.component";
 import { KeyNumberComponent } from "../../keypad/key-number/key-number.component";
 import { HeaderMenuComponent } from "../../header/header-menu/header-menu.component";
+import { UserLoggerService } from '../../service/user-logger.service';
 export class Actor {
   constructor(
     public newQty: number,
@@ -50,10 +51,11 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
   paymentIndex: number = -1;
   inputField: string = '';
   discountGroup: any = [];
- paymentGroups : any = [];
+  paymentGroups: any = [];
   cssClass: string = 'btn btn-sm p-3 bg-warning me-2 mb-2 rounded shadow-sm';
   cssMenu: string = 'btn btn-sm py-3 bg-white me-1 lh-1  rounded shadow-sm';
-
+  paymentGroup: any = {}
+  paymentypes: any = [];
   showApplyDiscount: boolean = false;
   constructor(
     public configService: ConfigService,
@@ -61,8 +63,14 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     public modalService: NgbModal,
     private router: Router,
     private activeRouter: ActivatedRoute,
-    private renderer: Renderer2
-  ) { }
+    private renderer: Renderer2,
+    public logService: UserLoggerService,
+    config: NgbModalConfig,
+  ) {
+    config.backdrop = 'static';
+    config.keyboard = false;
+
+  }
 
   ngOnDestroy(): void {
     this.renderer.setStyle(document.body, 'background-color', '#fff');
@@ -93,6 +101,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   httpPaid() {
+
     this.loading = true;
     const url = environment.api + "payment/paid";
     this.http.get<any>(url, {
@@ -103,6 +112,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     }).subscribe(
       data => {
         this.paid = data['items'];
+        console.log('httpPaid', data);
       },
       error => {
         console.log(error);
@@ -135,7 +145,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     )
   }
- 
+
   httpPaymentType() {
     this.loading = true;
     const url = environment.api + "payment/paymentGroup";
@@ -174,6 +184,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   addPayment(payment: any) {
+
     this.loading = true;
     const body = {
       cartId: this.id,
@@ -188,10 +199,12 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
         this.modalService.dismissAll();
         console.log(data);
         this.httpPaid();
-        this.httpCart()
+        this.httpCart();
+        this.logService.logAction('Add Payment ' + body['payment']['name'], this.id);
       },
       error => {
         console.log(error);
+        this.logService.logAction('ERROR Add Payment ' + body['payment']['name'], this.id);
       }
     )
   }
@@ -222,9 +235,11 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
           console.log(data);
           this.httpPaid();
           this.httpCart();
+          this.logService.logAction('Delete Paid ' + body.paid.name + ' @' + body.paid.paid, this.id);
         },
         error => {
           console.log(error);
+          this.logService.logAction('ERROR Delete Paid ' + body.paid.name + ' @' + body.paid.paid, this.id);
         }
       )
     }
@@ -245,9 +260,11 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
         console.log(data);
         this.httpCart();
         this.httpPaid();
+        this.logService.logAction('Submit Payment', this.id);
       },
       error => {
         console.log(error);
+        this.logService.logAction('ERROR Submit Payment', this.id);
       }
     )
   }
@@ -256,10 +273,12 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     this.modalService.open(this.myModal).result.then(
       (result) => {
         console.log("result");
+        this.logService.logAction('CLOSE PAYMENT', this.id);
         this.router.navigate(['tables']);
       },
       (reason) => {
         console.log("reason");
+        this.logService.logAction('CLOSED payment without action', this.id);
         this.router.navigate(['tables']);
       },
     );
@@ -276,9 +295,11 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     }).subscribe(
       data => {
         console.log(data);
+        this.logService.logAction('Update Paid value', this.id);
       },
       error => {
         console.log(error);
+        this.logService.logAction('ERROR Update Paid value', this.id);
       }
     )
   }
@@ -322,18 +343,17 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
       this.paid[this.paymentIndex].tips = 0;
     }
   }
-  paymentGroup : any = {}
-  paymentypes : any = [];
-  open(content :any, paymentGroup : any){
-    this.paymentGroup = paymentGroup;
-    this.modalService.open(content, {size:'lg'});
 
- 
+  open(content: any, paymentGroup: any) {
+    this.paymentGroup = paymentGroup;
+    this.modalService.open(content, { size: 'lg' });
+
+
     const url = environment.api + "payment/paymentType";
     this.http.get<any>(url, {
       headers: this.configService.headers(),
-      params : {
-        paymentGroupId : paymentGroup.id
+      params: {
+        paymentGroupId: paymentGroup.id
       }
     }).subscribe(
       data => {

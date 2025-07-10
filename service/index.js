@@ -1,34 +1,13 @@
 require('dotenv').config();
 const express = require('express');
-const app = express();
-const fs = require('fs');
-const http = require('http').Server(app);
-const path = require('path');
+const app = express(); 
+const http = require('http').Server(app); 
 const io = require('socket.io')(http, {
     cors: {
         origin: "*", // Ganti kalau pakai frontend berbeda
     },
 });
-
-let user = 0;
-io.on('connection', (socket) => {
-    console.log('Client connected');
-
-    socket.on('message-from-client', (data) => {
-        console.log('Received from client:', data);
-
-        // Kirim ke SEMUA client yang terhubung
-        // io.emit('message-from-server', 'Broadcast: ' + data);  
-
-        // Kirim ke  client yang terhubung kecuali diri sendiri
-        socket.broadcast.emit('message-from-server', 'Broadcast to others');
-
-    });
-
-    socket.on('broadcast-reload', (data) => { 
-        socket.broadcast.emit('reload', data); 
-    });
-});
+ 
 
 const db = require('./config/db'); // koneksi pool dari mysql2
 const employeeRoutes = require('./routes/general/employee');
@@ -139,6 +118,24 @@ const PORT = process.env.PORT || 3000;
 // app.listen(PORT, () => {
 //     console.log(`Server running on port ${PORT}`);
 // });
+io.on('connection', (socket) => {
+   // console.log('Client connected');
+
+    socket.on('message-from-client', (data) => {
+       // console.log('Received from client:', data);
+
+        // Kirim ke SEMUA client yang terhubung
+        // io.emit('message-from-server', 'Broadcast: ' + data);  
+
+        // Kirim ke  client yang terhubung kecuali diri sendiri
+        socket.broadcast.emit('message-from-server', 'Broadcast to others');
+
+    });
+
+    socket.on('broadcast-reload', (data) => { 
+        socket.broadcast.emit('reload', data); 
+    });
+});
 
 
 http.listen(PORT, () => {

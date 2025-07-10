@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { NgbDatepickerModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfigService } from '../../service/config.service';
 import { environment } from '../../../environments/environment';
+import { UserLoggerService } from '../../service/user-logger.service';
 
 @Component({
   selector: 'app-user-logs',
@@ -23,6 +24,7 @@ export class UserLogsComponent {
     public configService: ConfigService,
     private http: HttpClient,
     public modalService: NgbModal,
+    public logService: UserLoggerService,
   ) { }
   donwload() {
     const date = this.date['year'] + "-" + this.date['month'].toString().padStart(2, '0') + "-" + this.date['day'].toString().padStart(2, '0');
@@ -41,9 +43,12 @@ export class UserLogsComponent {
         a.download = 'userLog-' + date + '.csv';
         a.click();
         window.URL.revokeObjectURL(url);
+
+         this.logService.logAction('Download CSV ' + a.download);
       }, err => {
         alert('Download failed');
         console.error('Download failed', err);
+             this.logService.logAction('ERROR Download CSV ');
       });
   }
   onSearch() {
@@ -61,9 +66,13 @@ export class UserLogsComponent {
         console.log(data);
         this.items = data['log'];
         this.loading = false;
+        this.logService.logAction('Search log '+date);
       },
       error => {
         console.log(error);
+        alert(error['error']['error'])
+         this.loading = false;
+        this.logService.logAction('ERROR Search log / not found '+date);
       }
     )
   }

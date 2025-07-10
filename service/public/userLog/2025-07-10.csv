@@ -1,0 +1,38 @@
+time,outletId,workStationId,userId,bill,action,url,method,server
+11:04:10,Imperial Kitchen(15),0001,IT Melanie(1),250708000198,Go to payment,http://localhost:4850/#/tables
+11:13:53,Imperial Kitchen(15),0001,IT Melanie(1),250708000198,Add Payment BCA FLAZZ ,http://localhost:4850/#/payment?id=250708000198
+11:18:28,Imperial Kitchen(15),0001,IT Melanie(1),250708000198,Add Payment CIMB DEBIT ,http://localhost:4850/#/payment?id=250708000198
+11:18:49,Imperial Kitchen(15),0001,IT Melanie(1),250708000198,Submit Payment,http://localhost:4850/#/payment?id=250708000198
+11:26:14,Imperial Kitchen(15),0001,IT Melanie(1),250709000200,Go to Menu,http://localhost:4850/#/tables
+11:26:16,Imperial Kitchen(15),0001,IT Melanie(1),250708000197,Go to payment,http://localhost:4850/#/tables
+11:26:19,Imperial Kitchen(15),0001,IT Melanie(1),250708000197,Add Payment CASH,http://localhost:4850/#/payment?id=250708000197
+11:26:25,Imperial Kitchen(15),0001,IT Melanie(1),250708000197,Add Payment BCA CREDIT ,http://localhost:4850/#/payment?id=250708000197
+11:27:24,Imperial Kitchen(15),0001,IT Melanie(1),250708000197,system check close payment ,http://localhost:4850/#/payment?id=250708000197
+11:27:26,Imperial Kitchen(15),0001,IT Melanie(1),250708000197,system check close payment ,http://localhost:4850/#/payment?id=250708000197
+11:27:26,Imperial Kitchen(15),0001,IT Melanie(1),250708000197,Delete Paid,http://localhost:4850/#/payment?id=250708000197
+11:28:19,Imperial Kitchen(15),0001,IT Melanie(1),250708000197,system check close payment ,http://localhost:4850/#/payment?id=250708000197
+11:28:30,Imperial Kitchen(15),0001,IT Melanie(1),250708000197,system check close payment ,http://localhost:4850/#/payment?id=250708000197
+11:28:41,Imperial Kitchen(15),0001,IT Melanie(1),250708000197,system check close payment ,http://localhost:4850/#/payment?id=250708000197
+11:28:41,Imperial Kitchen(15),0001,IT Melanie(1),250708000197,Add Payment BCA CREDIT ,http://localhost:4850/#/payment?id=250708000197
+11:28:43,Imperial Kitchen(15),0001,IT Melanie(1),250708000197,system check close payment ,http://localhost:4850/#/payment?id=250708000197
+11:28:43,Imperial Kitchen(15),0001,IT Melanie(1),250708000197,Delete Paid BCA CREDIT  @485305,http://localhost:4850/#/payment?id=250708000197
+11:28:50,Imperial Kitchen(15),0001,IT Melanie(1),250708000197,system check close payment ,http://localhost:4850/#/payment?id=250708000197
+11:28:50,Imperial Kitchen(15),0001,IT Melanie(1),250708000197,Add Payment CIMB DEBIT ,http://localhost:4850/#/payment?id=250708000197
+11:28:56,Imperial Kitchen(15),0001,IT Melanie(1),250708000197,system check close payment ,http://localhost:4850/#/payment?id=250708000197
+11:28:56,Imperial Kitchen(15),0001,IT Melanie(1),250708000197,Submit Payment,http://localhost:4850/#/payment?id=250708000197
+11:32:12,Imperial Kitchen(15),0001,IT Melanie(1),250709000202,Go to payment,http://localhost:4850/#/tables
+11:32:14,Imperial Kitchen(15),0001,IT Melanie(1),250709000202,Add Payment CIMB DEBIT ,http://localhost:4850/#/payment?id=250709000202
+11:32:16,Imperial Kitchen(15),0001,IT Melanie(1),250709000202,Submit Payment,http://localhost:4850/#/payment?id=250709000202
+11:32:22,Imperial Kitchen(15),0001,IT Melanie(1),250709000202,REASON Close payment without action,http://localhost:4850/#/payment?id=250709000202
+11:33:59,Imperial Kitchen(15),0001,IT Melanie(1),250709000200,Go to Menu,http://localhost:4850/#/tables
+11:34:02,Imperial Kitchen(15),0001,IT Melanie(1),250709000200,Click PAYMENT,http://localhost:4850/#/menu?id=250709000200
+11:34:03,Imperial Kitchen(15),0001,IT Melanie(1),250709000200,Update to payment,http://localhost:4850/#/tables
+11:34:05,Imperial Kitchen(15),0001,IT Melanie(1),250709000200,Add Payment CIMB DEBIT ,http://localhost:4850/#/payment?id=250709000200
+11:34:06,Imperial Kitchen(15),0001,IT Melanie(1),250709000200,Submit Payment,http://localhost:4850/#/payment?id=250709000200
+11:34:09,Imperial Kitchen(15),0001,IT Melanie(1),250709000200,Finish Payment,http://localhost:4850/#/payment?id=250709000200
+11:34:09,Imperial Kitchen(15),0001,IT Melanie(1),250709000200,RESULT Close payment without action,http://localhost:4850/#/payment?id=250709000200
+11:34:43,Imperial Kitchen(15),0001,IT Melanie(1),,click User logs,http://localhost:4850/#/tables
+11:38:34,Imperial Kitchen(15),0001,IT Melanie(1),,Search log 2025-07-09,http://localhost:4850/#/userLogs
+11:38:43,Imperial Kitchen(15),0001,IT Melanie(1),,Search log 2025-07-10,http://localhost:4850/#/userLogs
+11:38:46,Imperial Kitchen(15),0001,IT Melanie(1),,ERROR Search log 2025-07-05,http://localhost:4850/#/userLogs
+11:39:16,Imperial Kitchen(15),0001,IT Melanie(1),,ERROR Search log / not found 2025-07-04,http://localhost:4850/#/userLogs
