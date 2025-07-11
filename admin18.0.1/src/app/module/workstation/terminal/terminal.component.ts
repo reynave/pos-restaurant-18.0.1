@@ -13,8 +13,11 @@ import { environment } from '../../../../environments/environment';
   styleUrl: './terminal.component.css'
 })
 export class TerminalComponent implements OnInit {
-  loading : boolean = false;
-  items : any = [];
+  loading: boolean = false;
+  items: any = [];
+  selectPrinter: any = [];
+
+  disabled: boolean = true;
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
@@ -29,38 +32,76 @@ export class TerminalComponent implements OnInit {
     this.loading = true;
     const url = environment.api + "workStation/terminal";
     this.http.get<any>(url, {
-      headers: this.configService.headers(), 
+      headers: this.configService.headers(),
     }).subscribe(
       data => {
+        this.selectPrinter = data['printer']
         this.items = data['items']
-        console.log(data); 
-           this.loading = false;
+        this.loading = false;
       },
       error => {
         console.log(error);
-           this.loading = false;
+        this.loading = false;
       }
     )
   }
 
 
-  update(){
+  update() {
     this.loading = true;
     const url = environment.api + "workStation/terminal/update";
     const body = {
-      items : this.items,
+      items: this.items,
     }
     this.http.post<any>(url, body, {
-      headers: this.configService.headers(), 
+      headers: this.configService.headers(),
     }).subscribe(
-      data => { 
-         this.loading = false;
-        console.log(data); 
+      data => {
+        this.loading = false;
+        console.log(data);
       },
       error => {
-           this.loading = false;
+        this.loading = false;
         console.log(error);
       }
     )
   }
+
+  fnLoadKey() {
+    this.loading = true;
+    const url = environment.api + "workStation/terminal/loadKey";  
+    this.http.get<any>(url, {
+      headers: this.configService.headers(),
+    }).subscribe(
+      data => {
+        console.log(data);
+        this.loading = false;
+        this.httpGet();
+      },
+      error => {
+        this.loading = false;
+      }
+    );
+  }
+
+
+  fnDelete() {
+    this.loading = true;
+    const url = environment.api + "workStation/terminal/delete";
+    const body = {
+      items: this.items,
+    }
+    this.http.post<any>(url, body, {
+      headers: this.configService.headers(),
+    }).subscribe(
+      data => {
+        this.loading = false;
+        this.httpGet();
+      },
+      error => {
+        this.loading = false;
+      }
+    )
+  }
+
 }

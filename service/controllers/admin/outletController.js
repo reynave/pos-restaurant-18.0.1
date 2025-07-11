@@ -5,9 +5,10 @@ exports.getAllData = async (req, res) => {
   try {
 
     const [rows] = await db.query(`
-      SELECT *, 0 as 'checkbox'
-      FROM outlet  
-      WHERE presence =1
+      SELECT o.*, 0 as 'checkbox', p.name as 'printer'
+      FROM outlet as o 
+      join printer as p on p.id = o.printerId
+      WHERE o.presence =1
     `);
  
     const formattedRows = rows.map(row => ({
@@ -16,11 +17,19 @@ exports.getAllData = async (req, res) => {
       enddate: formatDateOnly(row.enddate), 
     }));
 
+    const [printer] = await db.query(`
+      SELECT *
+      FROM printer  
+      WHERE presence =1
+    `);
+ 
+   
+
 
     const data = {
       error: false,
       items: formattedRows,
-      get: req.query
+      printer: printer
     }
 
     res.json(data);
@@ -101,7 +110,8 @@ exports.postUpdate = async (req, res) => {
       const q = 
         `UPDATE outlet SET  
           name = '${emp['name']}',    
-          priceNo = '${emp['priceNo']}',     
+          priceNo = '${emp['priceNo']}',  
+          printerId = '${emp['printerId']}',  
           descs  = '${emp['descs']}',      
           tel  = '${emp['tel']}',    
           fax  = '${emp['fax']}',     

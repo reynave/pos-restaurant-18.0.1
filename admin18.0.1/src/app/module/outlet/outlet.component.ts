@@ -50,7 +50,7 @@ export class Hero {
     public drwamt: string,
     public drwmethod: string,
     public drwrun: string,
-    public drwmem: string,
+    public printerId: string,
 
   ) { }
 }
@@ -74,6 +74,7 @@ export class OutletComponent implements OnInit {
   selectorderLevel: any = [];
   selectAuthLevel: any = [];
   selectOrdLevel: any = [];
+ selectPrinter: any = [];
 
 
   model = new Actor('', 0);
@@ -97,6 +98,7 @@ export class OutletComponent implements OnInit {
         console.log(data);
         this.loading = false;
         this.items = data['items'];
+        this.selectPrinter = data['printer'];
         this.modalService.dismissAll();
       },
       error => {

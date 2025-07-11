@@ -4,9 +4,24 @@ const stationTaxRun = require('../../controllers/admin/stationTaxRunController')
 const pantryStation = require('../../controllers/admin/pantryStationController'); 
 const printQueue = require('../../controllers/admin/printQueueController'); 
 const t = require('../../controllers/admin/terminalController'); 
+const printer = require('../../controllers/admin/printerController'); 
 
 router.get('/terminal/', t.getAllData); 
 router.post('/terminal/update', t.postUpdate);
+router.post('/terminal/delete', t.postDelete);
+router.get('/terminal/loadKey', t.loadKey);
+
+
+
+router.get('/printer/', printer.getAllData);
+router.post('/printer/update', printer.postUpdate);
+router.post('/printer/delete', printer.postDelete);
+router.post('/printer/create', printer.postCreate);
+
+router.post('/printer/test/', printer.testPrinting);
+//router.get('/printer/test/ip', printer.testPrintingIP);
+// router.get('/printer/test/com', printer.testPrintingCom);
+
 
 
 router.get('/taxRun/', stationTaxRun.getAllData);

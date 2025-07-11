@@ -1,18 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { ConfigService } from '../../service/config.service';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { environment } from '../../../environments/environment.development';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgbDatepickerModule, NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ConfigService } from '../../../service/config.service';
+import { environment } from '../../../../environments/environment';
 export class Actor {
   constructor(
-    public desc1: string,
-    public outletId: string,
+    public printerTypeCon: string,
     public ip: string,
     public port: string,
     public name: string,
-    
+
   ) { }
 }
 @Component({
@@ -27,10 +26,11 @@ export class PrinterComponent implements OnInit {
   checkboxAll: number = 0;
   disabled: boolean = true;
   items: any = [];
-  selectOutlet: any = []; 
-
-
-  model = new Actor('', '', '','','');
+  selectOutlet: any = [];
+  item: any = {}
+  com: any = ['com1', 'com2', 'com3', 'com4', 'com5', 'com6', 'com7', 'com8',]
+  note: string = 'Test';
+  model = new Actor('', '', '', '');
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
@@ -38,29 +38,12 @@ export class PrinterComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.httpOutlet(); 
+    this.httpGet();
   }
-  httpOutlet(){
-    this.loading = true;
-    const url = environment.api + "outlet/select";
-    this.http.get<any>(url, {
-      headers: this.configService.headers(),
-    }).subscribe(
-      data => {
-        console.log(data);
-        this.loading = false;
-        this.selectOutlet = data['items'];
-        this.modalService.dismissAll();
-        this.httpGet()
-      },
-      error => {
-        console.log(error);
-      }
-    )
-  }
+
   httpGet() {
     this.loading = true;
-    const url = environment.api + "printer/";
+    const url = environment.api + "workStation/printer/";
     this.http.get<any>(url, {
       headers: this.configService.headers(),
     }).subscribe(
@@ -68,13 +51,14 @@ export class PrinterComponent implements OnInit {
         console.log(data);
         this.loading = false;
         this.items = data['items'];
-      //  this.modalService.dismissAll();
+        //  this.modalService.dismissAll();
       },
       error => {
         console.log(error);
       }
     )
   }
+
   checkAll() {
     if (this.checkboxAll == 0) {
       this.checkboxAll = 1;
@@ -89,13 +73,15 @@ export class PrinterComponent implements OnInit {
       }
     }
   }
+
   cancel() {
     this.disabled = true;
     this.httpGet();
   }
+
   onUpdate() {
     this.loading = true;
-    const url = environment.api + "printer/update";
+    const url = environment.api + "workStation/printer/update";
     const body = this.items;
     this.http.post<any>(url, body, {
       headers: this.configService.headers(),
@@ -111,9 +97,9 @@ export class PrinterComponent implements OnInit {
   }
 
   onDelete() {
-    if (confirm("Delete this checklist?")) { 
+    if (confirm("Delete this checklist?")) {
       this.loading = true;
-      const url = environment.api + "printer/delete";
+      const url = environment.api + "workStation/printer/delete";
       const body = this.items;
       this.http.post<any>(url, body, {
         headers: this.configService.headers(),
@@ -131,7 +117,7 @@ export class PrinterComponent implements OnInit {
 
   onSubmit() {
     this.loading = true;
-    const url = environment.api + "printer/create";
+    const url = environment.api + "workStation/printer/create";
     const body = {
       model: this.model,
     };
@@ -158,4 +144,29 @@ export class PrinterComponent implements OnInit {
     this.modalService.open(content);
   }
 
+  printLoading: boolean = false;
+  printerRest : string = '';
+  testPrint() {
+    this.printLoading = true;
+    this.printerRest = 'Conneting, please wait..';
+    const url = environment.api + "workStation/printer/test";
+    const body = {
+      item: this.item,
+      note: this.note
+    };
+    this.http.post<any>(url, body, {
+      headers: this.configService.headers(),
+    }).subscribe(
+      data => {
+            this.printerRest = data['message'];
+        this.printLoading = true;
+        console.log(data);
+      },
+      error => {
+         this.printerRest = error['error']['error'];
+        this.printLoading = true;
+        console.log(error);
+      }
+    )
+  }
 }

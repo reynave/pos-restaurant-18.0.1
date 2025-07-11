@@ -126,6 +126,10 @@ body, html {
   background: linear-gradient(to bottom, #fff, #ccc);
 }
 
+.table .btn-sm{
+  font-size: 0.7rem;
+  padding: 2px 8px;
+}
 
 /* @media (max-width: 1180px) {
     .fixed-width-container {

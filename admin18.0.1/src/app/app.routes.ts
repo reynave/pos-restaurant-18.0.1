@@ -53,7 +53,7 @@ import { MenuItemComponent } from './module/menu/menu-item/menu-item.component';
 import { MenuDeptComponent } from './module/menu/menu-dept/menu-dept.component';
 import { MenuCategoryComponent } from './module/menu/menu-category/menu-category.component';
 import { MenuClassComponent } from './module/menu/menu-class/menu-class.component';
-import { PrinterComponent } from './module/printer/printer.component';
+import { PrinterComponent } from './module/workstation/printer/printer.component';
 import { MenuLookupComponent } from './module/menu/menu-lookup/menu-lookup.component';
 import { TerminalComponent } from './module/workstation/terminal/terminal.component';
 
@@ -113,7 +113,8 @@ export const routes: Routes = [
     { path: 'workStation/pantryStation', component: PantryStationComponent },
     { path: 'workStation/printQueue', component: PantryStationQueueComponent }, 
     { path: 'workStation/stationTaxRun', component: StationTaxRunComponent },
- 
+ { path: 'workStation/printer', component: PrinterComponent },
+    
     { path: 'workStation/terminal', component: TerminalComponent },
  
 
@@ -137,7 +138,6 @@ export const routes: Routes = [
     { path: 'menu/class', component: MenuClassComponent },
      { path: 'menu/lookUp', component: MenuLookupComponent },
     
-    { path: 'printer', component: PrinterComponent },
     
 
 

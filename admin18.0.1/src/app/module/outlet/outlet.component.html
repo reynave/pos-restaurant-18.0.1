@@ -28,52 +28,53 @@
 
       </div>
       <div class="mainContent border">
-         <div class="">
+         <div class="table table-sm table-hover" style="width: max-content;">
+            <thead class="sticky-top ">
+               <tr>
 
-            <div class="table table-sm table-hover" style="width: max-content;">
-               <thead class="sticky-top ">
-                  <tr>
+                  <th *ngIf="disabled==false">
+                     <a href="javascript:;" (click)="checkAll();">
+                        @if(checkboxAll == 1){
+                        <i class="bi bi-check-square"></i>
+                        }@else {
+                        <i class="bi bi-square"></i>
+                        }
 
-                     <th *ngIf="disabled==false">
-                        <a href="javascript:;" (click)="checkAll();">
-                           @if(checkboxAll == 1){
-                           <i class="bi bi-check-square"></i>
-                           }@else {
-                           <i class="bi bi-square"></i>
-                           }
+                     </a>
+                  </th>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Descs</th>
+                  <th>Company Name</th>
+                  <th>Price No</th>
+                  <th>Printer</th>
 
-                        </a>
-                     </th>
-                     <th>#</th>
-                     <th>Name</th>
-                     <th>Descs</th>
-                     <th>Company Name</th>
-                     <th>Price No</th> 
-                     <th>inputDate</th>
-                     <th></th>
+                  <th>inputDate</th>
+                  <th></th>
 
-                  </tr>
-               </thead>
-               <tbody>
-                  <tr *ngFor="let x of items; let i = index"> 
-                     <td *ngIf="disabled==false">
-                        <a href="javascript:;" (click)=" x.checkbox == 0 ? x.checkbox = 1 : x.checkbox = 0">
-                           <i *ngIf="x.checkbox == 0" class="bi bi-square"></i>
-                           <i *ngIf="x.checkbox == 1" class="bi bi-check-square"></i>
-                        </a>
-                     </td>
-                     <td>{{i+1}}</td>
-                     <td>{{x.name }}</td>
-                     <td>{{x.descs }}</td>
-                     <td>{{x.company }}</td>
-                     <td>{{x.priceNo }}</td> 
-                     <td>{{ x.updateDate | date:'medium'}} </td>
-                     <td> <button type="button" (click)="openLg(detail, x);" class="btn btn-sm btn-primary py-0">Detail</button> </td>
+               </tr>
+            </thead>
+            <tbody>
+               <tr *ngFor="let x of items; let i = index">
+                  <td *ngIf="disabled==false">
+                     <a href="javascript:;" (click)=" x.checkbox == 0 ? x.checkbox = 1 : x.checkbox = 0">
+                        <i *ngIf="x.checkbox == 0" class="bi bi-square"></i>
+                        <i *ngIf="x.checkbox == 1" class="bi bi-check-square"></i>
+                     </a>
+                  </td>
+                  <td>{{i+1}}</td>
+                  <td>{{x.name }}</td>
+                  <td>{{x.descs }}</td>
+                  <td>{{x.company }}</td>
+                  <td>{{x.priceNo }}</td>
+                  <td>{{x.printer }}</td>
 
-                  </tr>
-               </tbody>
-            </div>
+                  <td>{{ x.updateDate | date:'medium'}} </td>
+                  <td> <button type="button" (click)="openLg(detail, x);"
+                        class="btn btn-sm btn-primary py-0">Detail</button> </td>
 
+               </tr>
+            </tbody>
          </div>
       </div>
    </div>
@@ -85,7 +86,7 @@
       <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
    </div>
    <div class="modal-body">
-       
+
       <form (ngSubmit)="onUpdate()" #heroForm="ngForm">
          <div class="row mb-3">
             <div class="col-6">
@@ -98,26 +99,15 @@
                            <div class="form-control form-control-sm">{{item.id}}</div>
                         </td>
                      </tr>
-                      <tr>
-                        <td> <label for="company">Country</label></td>
+                     <tr>
+                        <td> <label for="company">Company</label></td>
                         <td>
                            <input id="company" class="form-control form-control-sm mb-1" name="company"
                               [(ngModel)]="item.company" />
                         </td>
                      </tr>
 
-                     <tr>
-                        <td><strong>Price No</strong> </td>
-                        <td>
-                           <select class="form-control form-control-sm" name="priceNo" [(ngModel)]="item.priceNo">
-                              <option value="1">1</option>
-                              <option value="2">2</option>
-                              <option value="3">3</option>
-                              <option value="4">4</option>
-                              <option value="5">5</option>  
-                           </select> 
-                        </td>
-                     </tr>
+
                      <tr>
                         <td width="30%"> <label for="descl1">Name *</label></td>
                         <td>
@@ -132,8 +122,8 @@
                      <tr>
                         <td> <label for="descs">Description *</label></td>
                         <td>
-                           <input id="descs" class="form-control form-control-sm" name="descs"
-                              [(ngModel)]="item.descs" required #descs="ngModel" />
+                           <input id="descs" class="form-control form-control-sm" name="descs" [(ngModel)]="item.descs"
+                              required #descs="ngModel" />
                            <small [hidden]="descs.valid || descs.pristine" class="text-danger">
                               *descs is required
                            </small>
@@ -152,7 +142,7 @@
 
                         </td>
                      </tr>
-                    
+
 
                      <tr>
                         <td> <label for="addr1">Address</label></td>
@@ -190,7 +180,33 @@
                </table>
             </div>
             <div class="col-6">
-               
+               <strong>Setting</strong>
+               <table class="table table-sm">
+                  <tbody>
+                     <tr>
+                        <td>Price No </td>
+                        <td>
+                           <select class="form-control form-control-sm" name="priceNo" [(ngModel)]="item.priceNo">
+                              <option value="1">1</option>
+                              <option value="2">2</option>
+                              <option value="3">3</option>
+                              <option value="4">4</option>
+                              <option value="5">5</option>
+                           </select>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td>Printer </td>
+                        <td>
+                           <select class="form-control form-control-sm" name="printerId" [(ngModel)]="item.printerId">
+                              <option [value]="x.id" *ngFor="let x of selectPrinter">{{x.name}}</option>
+
+                           </select>
+                        </td>
+                     </tr>
+                  </tbody>
+               </table>
+
                <strong>Greeting </strong>
                <table class="table table-sm">
                   <tbody>
@@ -263,7 +279,7 @@
             </div>
 
          </div>
- 
+
 
          <div class="d-grid">
             <button type="submit" class="btn btn-sm btn-dark" [disabled]="!heroForm.form.valid">Save</button>

@@ -1,13 +1,14 @@
 const db = require('../../config/db');
 const { today, formatDateOnly } = require('../../helpers/global');
 const { printToPrinter } = require('../../helpers/printer');
-  
-exports.testPrintingIp = async (req, res) => {
+
+
+exports.testPrintingIP = async (req, res) => {
   const printerIp = '10.51.122.20'; // ganti dengan IP printer kamu
   const printerPort = 9100;
   const cut = "\x1B\x69"; // ESC i = cut paper
   const date = new Date();
-  const message = '\n\n\n Hello Printer  \n'+date+' \n\n\n\n' + cut;
+  const message = '\n\n\n Hello Printer  \n' + date + ' \n\n\n\n' + cut;
 
   // Panggil dan tangani promise dari printToPrinter
   try {
@@ -26,49 +27,30 @@ exports.testPrintingIp = async (req, res) => {
   }
 };
 
-/*
-exports.testPrintingFromDB = async (req, res) => {
-  const cut = "\x1B\x69"; // ESC i = cut
-  const message = "Hello Printer\n" + cut;
 
+exports.testPrinting = async (req, res) => {
+  const printerIp = req.body['item']['ipAddress'];  
+  const printerPort = req.body['item']['port'];  
+  const cut = "\x1B\x69"; // ESC i = cut paper
+  const date = new Date();
+  const message = req.body['message']  + cut;
+
+  // Panggil dan tangani promise dari printToPrinter
   try {
-    // Ambil IP dan Port dari global_setting
-    const [settings] = await db.query(`
-      SELECT name, value FROM global_setting 
-      WHERE name IN ('printer_ip', 'printer_port')
-    `);
-
-    const config = {};
-    settings.forEach(s => config[s.name] = s.value);
-
-    const printerIp = config['printer_ip'];
-    const printerPort = parseInt(config['printer_port'], 10);
-
-    if (!printerIp || !printerPort) {
-      return res.status(400).json({ error: 'Printer config not found in DB' });
-    }
-
     const result = await printToPrinter(message, printerIp, printerPort);
-    res.json({ success: true, message: result });
+    res.json({
+      success: true,
+      message: result
+    });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, error: err.message });
+    console.error('Printer error:', err);
+    res.status(500).json({
+      success: false,
+      error: 'Printer connection or print failed',
+      message: err.message
+    });
   }
 };
-*/
-
-exports.testPrintingCom = (req, res) => {
-
-  res.json({
-    success: true,
-    message: 'wait Printer com'
-  });
-
-};
-
-
-
-
 
 
 exports.getAllData = async (req, res) => {
@@ -80,7 +62,7 @@ exports.getAllData = async (req, res) => {
       WHERE presence = 1
     `);
 
-      
+
     const data = {
       error: false,
       items: items,
@@ -94,27 +76,6 @@ exports.getAllData = async (req, res) => {
   }
 };
 
-exports.getMasterData = async (req, res) => {
-  try {
-
-    const [outlet] = await db.query(`
-      SELECT id, name1
-      FROM outlet  
-      WHERE presence = 1 order by name1 ASC
-    `);
-
-    const data = {
-      error: false,
-      outlet: outlet,
-      get: req.query
-    }
-
-    res.json(data);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Database error' });
-  }
-};
 
 exports.postCreate = async (req, res) => {
   const model = req.body['model'];
@@ -123,14 +84,13 @@ exports.postCreate = async (req, res) => {
   try {
 
     const [result] = await db.query(
-      `INSERT INTO printer (presence, inputDate, outletId, printerTypeCon, name, ipAddress, port ) 
-      VALUES (?, ?, ?,?, ?, ?,? )`,
+      `INSERT INTO printer (presence, inputDate,   printerTypeCon, name, ipAddress, port ) 
+      VALUES (?,   ?,?, ?, ?,? )`,
       [
         1,
         inputDate,
-        model['outletId'],
-        '1',
-        model['desc1'],
+        model['printerTypeCon'],
+        model['name'],
         model['ip'],
         model['port'],
       ]
@@ -172,7 +132,7 @@ exports.postUpdate = async (req, res) => {
 
       const [result] = await db.query(
         `UPDATE printer SET 
-          outletId = '${emp['outletId']}',   
+          printerTypeCon = '${emp['printerTypeCon']}',   
           name = '${emp['name']}',   
           ipAddress = '${emp['ipAddress']}',   
           port = '${emp['port']}',    

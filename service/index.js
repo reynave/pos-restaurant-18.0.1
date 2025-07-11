@@ -25,8 +25,7 @@ const tableMap = require('./routes/outlet/tableMap');
 const global = require('./routes/global/global');
 const outlet = require('./routes/outlet/outlet');
 const floorMap = require('./routes/outlet/floorMap');
-const menu = require('./routes/menu/menu');
-const printer = require('./routes/station/printer');
+const menu = require('./routes/menu/menu'); 
 
 const loginPos = require('./routes/terminal/loginPos');
 const terminalMap = require('./routes/terminal/tableMap');
@@ -90,8 +89,7 @@ app.use(process.env.PREFIX + 'workStation', workStation);
 app.use(process.env.PREFIX + 'tableMap', tableMap);
 app.use(process.env.PREFIX + 'outlet', outlet);
 app.use(process.env.PREFIX + 'floorMap', floorMap);
-app.use(process.env.PREFIX + 'menu', menu);
-app.use(process.env.PREFIX + 'printer', paymentPos);
+app.use(process.env.PREFIX + 'menu', menu); 
 
 
 // TERMINAL SERVICE HERE
