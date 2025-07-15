@@ -121,20 +121,38 @@ exports.cart = async (req, res) => {
     for (const row of formattedRows) {
       // MODIFIER 
       const s = `
-      -- cart_item_modifier / SC / TAX
-        SELECT 
+      -- cart_item_modifier SC
+         SELECT
           COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price
-        FROM (
-          SELECT r.modifierId, m.descl, r.price
-            FROM cart_item  AS i 
-            RIGHT JOIN cart_item_modifier AS r ON r.cartItemId = i.id
-            JOIN modifier AS m ON m.id = r.modifierId 
-          WHERE i.menuId = ${row['menuId']}  
-              AND i.cartId = '${cartId}' AND i.void = 0 AND i.presence = 1
-              AND i.sendOrder = '' AND r.sendOrder = ''
-              AND r.presence = 1 AND i.void = 0   
-        ) AS t1
-        GROUP BY t1.descl, t1.price
+          FROM (
+            SELECT r.menuTaxScId AS 'modifierId', t.scNote AS descl, r.price, r.scRate
+              FROM cart_item  AS i
+              RIGHT JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
+              JOIN menu_tax_sc AS t ON t.id = r.menuTaxScId
+            WHERE i.menuId = ${row['menuId']} 
+                AND i.cartId = '${cartId}' AND i.void = 0 AND i.presence = 1
+                AND i.sendOrder = '' AND r.sendOrder = ''
+                AND r.presence = 1 AND i.void = 0 AND r.scRate != 0
+          ) AS t1
+          GROUP BY t1.descl, t1.price
+
+        UNION 
+
+
+      -- cart_item_modifier TAX
+         SELECT
+          COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price
+          FROM (
+            SELECT r.menuTaxScId AS 'modifierId', t.taxNote AS descl, r.price, r.scRate
+              FROM cart_item  AS i
+              RIGHT JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
+              JOIN menu_tax_sc AS t ON t.id = r.menuTaxScId
+            WHERE i.menuId = ${row['menuId']}
+                AND i.cartId = '${cartId}' AND i.void = 0 AND i.presence = 1
+                AND i.sendOrder = '' AND r.sendOrder = ''
+                AND r.presence = 1 AND i.void = 0 AND r.scRate != 0
+          ) AS t1
+          GROUP BY t1.descl, t1.price
 
         UNION 
 
@@ -155,6 +173,7 @@ exports.cart = async (req, res) => {
 ;
       `;
 
+      console.log(s);
       const [modifier] = await db.query(s);
       row.modifier = modifier;
       let totalAmountModifier = 0;
@@ -253,6 +272,43 @@ exports.cartOrdered = async (req, res) => {
     for (const row of formattedRows) {
 
       const s = `
+
+
+       -- cart_item_modifier SC
+         SELECT
+          COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price
+          FROM (
+            SELECT r.menuTaxScId AS 'modifierId', t.scNote AS descl, r.price, r.scRate
+              FROM cart_item  AS i
+              RIGHT JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
+              JOIN menu_tax_sc AS t ON t.id = r.menuTaxScId
+            WHERE i.menuId = ${row['menuId']} 
+                AND i.cartId = '${cartId}' AND i.void = 0 AND i.presence = 1
+                AND i.sendOrder != '' AND r.sendOrder != ''
+                AND r.presence = 1 AND i.void = 0 AND r.scRate != 0
+          ) AS t1
+          GROUP BY t1.descl, t1.price
+
+        UNION 
+
+
+      -- cart_item_modifier TAX
+         SELECT
+          COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price
+          FROM (
+            SELECT r.menuTaxScId AS 'modifierId', t.taxNote AS descl, r.price, r.scRate
+              FROM cart_item  AS i
+              RIGHT JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
+              JOIN menu_tax_sc AS t ON t.id = r.menuTaxScId
+            WHERE i.menuId = ${row['menuId']}
+                AND i.cartId = '${cartId}' AND i.void = 0 AND i.presence = 1
+                AND i.sendOrder != '' AND r.sendOrder != ''
+                AND r.presence = 1 AND i.void = 0 AND r.scRate != 0
+          ) AS t1
+          GROUP BY t1.descl, t1.price
+
+        UNION 
+
        SELECT COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price
         FROM (
           SELECT r.modifierId, m.descl, r.price

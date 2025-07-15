@@ -5,6 +5,8 @@ import { Router, RouterModule } from '@angular/router';
 import { environment } from '../../../../environments/environment';
 import { ConfigService } from '../../../service/config.service';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { UserLoggerService } from '../../../service/user-logger.service';
+import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-daily-start',
@@ -20,21 +22,23 @@ export class DailyStartComponent implements OnInit {
   outletSelect: any = [];
   employeeSelect: any = [];
   constructor(
-    private config: ConfigService,
+    private configService: ConfigService,
     private router: Router,
-    private http: HttpClient,
+    private http: HttpClient, 
+    public offcanvasService: NgbOffcanvas,
+    public logService: UserLoggerService
   ) { }
 
   ngOnInit() {
-    console.log(this.config.getTokenJson()['dailyAccess'])
-    if(this.config.getTokenJson()['dailyAccess'] != 1){
-       this.router.navigate(['setting']);
-       console.log("ERROR")
+    console.log(this.configService.getTokenJson()['dailyAccess'])
+    if (this.configService.getTokenJson()['dailyAccess'] != 1) {
+      this.router.navigate(['setting']);
+      console.log("ERROR")
     }
   }
-   
+
   onStart() {
-    const configData = this.config.getConfigJson();
+    const configData = this.configService.getConfigJson();
     this.error = '';
     this.loading = true;
     const url = environment.api + "daily/start";
@@ -42,8 +46,8 @@ export class DailyStartComponent implements OnInit {
       outletId: configData['outlet']['id'],
     }
     console.log(body)
-    this.http.post<any>(url, body,{
-      headers : this.config.headers(),
+    this.http.post<any>(url, body, {
+      headers: this.configService.headers(),
     }).subscribe(
       data => {
         console.log(data);
@@ -56,5 +60,15 @@ export class DailyStartComponent implements OnInit {
       }
     )
 
+  }
+
+  logOff() {
+    this.logService.logAction('Sign Off')
+    this.offcanvasService.dismiss();
+    this.configService.removeToken().subscribe(
+      () => {
+        this.router.navigate(['login']);
+      }
+    )
   }
 }

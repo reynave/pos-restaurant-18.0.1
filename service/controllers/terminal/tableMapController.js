@@ -11,8 +11,7 @@ exports.getAllData = async (req, res) => {
       FROM outlet_floor_plan  
       WHERE presence = 1  ${!outletId ? '' : 'AND outletId = ' + outletId}
     `);
-
-    // Loop dengan for...of agar bisa pakai await
+ 
     for (const row of formattedRows) {
       const [maps] = await db.query(`
        SELECT o.id, o.id as 'outletTableMapId', o.outletFloorPlandId, o.tableName, o.posY, o.posX, o.width, 
@@ -22,16 +21,14 @@ exports.getAllData = async (req, res) => {
       `, [row.id]);
       row.maps = maps;
     }
-
-
+ 
     const [cart] = await db.query(`
       SELECT c.*, s.name AS 'tableMapStatus'
       FROM cart AS c
       LEFT JOIN outlet_table_map_status AS s ON c.tableMapStatusId = s.id
       WHERE c.close  = 0 AND c.presence = 1 AND c.outletId = ${outletId}
     `);
-
-
+ 
     for (let i = 0; i < formattedRows.length; i++) {
       let checking = 0;
       for (let n = 0; n < formattedRows[i]['maps'].length; n++) {
@@ -41,7 +38,12 @@ exports.getAllData = async (req, res) => {
       }
       formattedRows[i]['checking'] = checking;
     }
-
+ 
+  const [statusMap] = await db.query(`
+          SELECT *
+      FROM outlet_table_map_status  
+      WHERE  showOnUser = 1 order by id desc
+    `);
 
     formattedRows.forEach(rec => {
       rec.maps.forEach(x => {
@@ -77,6 +79,7 @@ exports.getAllData = async (req, res) => {
       //  error: false,
       items: formattedRows,
       cart: cart,
+      statusMap : statusMap,
       //get: req.query
     });
 

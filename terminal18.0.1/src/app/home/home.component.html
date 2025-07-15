@@ -1,51 +1,43 @@
-<div class=" text-center mt-2 ">
-    <img src="./img/logo.png" width="200">
+<div class="container mt-3">
+    <div class="row g-2">
+        <div class="col-9">
+            <div class="p-2 bg-white rounded rounded-end-0 shadow-sm">
+                <app-view-tables></app-view-tables>
+            </div> 
+        </div>
+        <div class="col-3 bg-white rounded rounded-start-0 shadow-sm">
+            <div class="p-2  ">
+
+
+                <div class="p-1 text-center my-5">
+                    <img src="./img/logo.png" width="200">
+                </div>
+                <div *ngIf="warning != '' " class="alert alert-danger">{{warning}}</div>
+                <div class="form-control form-control-lg  bg-light mb-1">
+                    {{getTokenJson.username}}
+                </div>
+                <input type="password" class="form-control form-control-lg  bg-light mb-2" placeholder="PASSWORD"
+                    [(ngModel)]="password">
+
+                <div class="mb-2">
+                    <app-key-number (dataEmitted)="handleData($event)"></app-key-number>
+                </div>
+
+                <div class="row g-1">
+                    <div class="col-6 d-grid">
+                        <button type="button" class="btn btn-warning btn-lg" (click)="password=''">CE</button>
+                    </div>
+                    <div class="col-6 d-grid">
+                        <button type="button" class="btn btn-dark btn-lg" (click)="onSubmit()">SUBMIT</button>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="text-center text-white"><small>Mitralink POS ver {{ver}}</small></div>
+        </div>
+    </div>
 </div>
-<div class="wrapper-md">
-
-    <div class="container-fluid rounded bg-light mt-3 border p-2 shadow-lg">
-        <div class="row">
-
-            <div class="col-12 mb-2">
-                <a href="javascript:;" [routerLink]="['/login']">
-                    <img src="./img/img1.jpg" class="rounded" width="100%">
-                </a>
-            </div>
-     
- 
-            <div class="col-12 text-center d-grid">
-                <a href="javascript:;" (click)="open(modal)" class="btn btn-lg btn-outline-dark rounded shadow py-4">
-                    <strong> <i class="bi bi-box-arrow-in-right"></i> LOG IN {{getTokenJson.username}}</strong></a>
-            </div>
-
-        </div>
-    </div>
-    <div class="text-center mt-3"><small>Mitralink POS ver 3.0.5</small></div>
-</div>
-
-
-<ng-template #modal let-modal>
-    <div class="modal-header">
-        <strong>Password</strong>
-        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
-    </div>
-    <div class="modal-body">
-        <div *ngIf="warning != '' " class="alert alert-danger">{{warning}}</div>
-        <input type="password" class="form-control form-control-lg  bg-light mb-2" placeholder="PASSWORD"
-            [(ngModel)]="password">
-        
-        <div class="mb-2">
-            <app-key-number (dataEmitted)="handleData($event)"></app-key-number>
-        </div>
-
-        <div class="row g-1">
-            <div class="col-6 d-grid">
-                <button type="button" class="btn btn-warning btn-lg" (click)="password=''">CE</button>
-            </div>
-            <div class="col-6 d-grid">
-                <button type="button" class="btn btn-dark btn-lg" (click)="onSubmit()">SUBMIT</button>
-            </div>
-        </div>
-    </div>
-
-</ng-template>

@@ -8,10 +8,11 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfigService } from '../service/config.service';
 import { HttpClient } from '@angular/common/http';
 import { UserLoggerService } from '../service/user-logger.service';
+import { ViewTablesComponent } from "../pos/tables/view-tables/view-tables.component";
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, KeyNumberComponent],
+  imports: [CommonModule, FormsModule, RouterModule, KeyNumberComponent, ViewTablesComponent],
   templateUrl: './home.component.html',
 })
 export class HomeComponent implements OnInit, OnDestroy {
@@ -19,6 +20,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   password: string = '';
   showKeyboard: boolean = false;
   getTokenJson: any = []
+  ver : string = environment.ver;
   warning: string = '';
   constructor(
     public logService: UserLoggerService,
@@ -35,7 +37,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
   ngOnInit(): void {
     this.getTokenJson = this.configService.getTokenJson() ?? [];
-    this.renderer.setStyle(document.body, 'background-color', 'var(--bg-color-primary-1)');
+    this.renderer.setStyle(document.body, 'background-color', '#578FCA');
   }
 
   ngAfterViewInit() {
