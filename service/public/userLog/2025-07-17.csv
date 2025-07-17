@@ -1,0 +1,31 @@
+time,outletId,workStationId,userId,bill,action,url,method,server
+18:37:20,Imperial Kitchen(15),0001,IT Melanie(1),250715000207,Go to Menu,http://localhost:4850/#/tables
+18:43:49,Imperial Kitchen(15),0001,IT Melanie(1),250715000207,Item TA 0,http://localhost:4850/#/menu?id=250715000207
+18:46:14,Imperial Kitchen(15),0001,IT Melanie(1),250715000207,Item TA 0,http://localhost:4850/#/menu?id=250715000207
+18:49:34,Imperial Kitchen(15),0001,IT Melanie(1),250715000207,Menu Lookup 0,http://localhost:4850/#/menu?id=250715000207
+18:49:34,Imperial Kitchen(15),0001,IT Melanie(1),250715000207,Menu Lookup 1,http://localhost:4850/#/menu?id=250715000207
+18:49:35,Imperial Kitchen(15),0001,IT Melanie(1),250715000207,Menu Lookup 3,http://localhost:4850/#/menu?id=250715000207
+18:49:36,Imperial Kitchen(15),0001,IT Melanie(1),250715000207,Add Menu MANGGO KYOTO(24) @30000.00,http://localhost:4850/#/menu?id=250715000207
+18:49:37,Imperial Kitchen(15),0001,IT Melanie(1),250715000207,Menu Lookup 0,http://localhost:4850/#/menu?id=250715000207
+18:49:45,Imperial Kitchen(15),0001,IT Melanie(1),250715000207,Item TA 1,http://localhost:4850/#/menu?id=250715000207
+18:49:53,Imperial Kitchen(15),0001,IT Melanie(1),250715000207,Item TA 1,http://localhost:4850/#/menu?id=250715000207
+18:49:55,Imperial Kitchen(15),0001,IT Melanie(1),250715000207,Item TA 0,http://localhost:4850/#/menu?id=250715000207
+18:49:59,Imperial Kitchen(15),0001,IT Melanie(1),250715000207,Item TA 1,http://localhost:4850/#/menu?id=250715000207
+18:50:19,Imperial Kitchen(15),0001,IT Melanie(1),250715000207,Item TA 0,http://localhost:4850/#/menu?id=250715000207
+18:52:06,Imperial Kitchen(15),0001,IT Melanie(1),250715000207,Void item ,http://localhost:4850/#/menu?id=250715000207
+18:52:50,Imperial Kitchen(15),0001,IT Melanie(1),250715000207,Click BILL,http://localhost:4850/#/menu?id=250715000207
+18:52:54,Imperial Kitchen(15),0001,IT Melanie(1),250715000207,Click BILL,http://localhost:4850/#/menu?id=250715000207
+19:01:19,Imperial Kitchen(15),0001,IT Melanie(1),250715000207,Click BILL,http://localhost:4850/#/menu?id=250715000207
+19:01:28,Imperial Kitchen(15),0001,IT Melanie(1),250715000207,Click BILL,http://localhost:4850/#/menu?id=250715000207
+19:01:37,Imperial Kitchen(15),0001,IT Melanie(1),250715000207,Click BILL,http://localhost:4850/#/menu?id=250715000207
+19:01:48,Imperial Kitchen(15),0001,IT Melanie(1),250715000207,Go to payment,http://localhost:4850/#/tables
+19:04:18,Imperial Kitchen(15),0001,IT Melanie(1),250715000207,Add Payment BNI CREDIT ,http://localhost:4850/#/payment?id=250715000207
+19:04:20,Imperial Kitchen(15),0001,IT Melanie(1),250715000207,Submit Payment,http://localhost:4850/#/payment?id=250715000207
+19:04:23,Imperial Kitchen(15),0001,IT Melanie(1),250715000207,Finish Payment And Print Closed Bill,http://localhost:4850/#/payment?id=250715000207
+19:04:23,Imperial Kitchen(15),0001,IT Melanie(1),250715000207,CLOSE PAYMENT,http://localhost:4850/#/payment?id=250715000207
+19:04:27,Imperial Kitchen(15),0001,IT Melanie(1),,Log Off,http://localhost:4850/#/tables
+19:05:44,Imperial Kitchen(15),0001,IT Melanie(1),,Log In Success,http://localhost:4850/#/
+19:05:45,Imperial Kitchen(15),0001,IT Melanie(1),250715000208,Go to Menu,http://localhost:4850/#/tables
+19:05:46,Imperial Kitchen(15),0001,IT Melanie(1),250715000208,Click BILL,http://localhost:4850/#/menu?id=250715000208
+19:08:40,Imperial Kitchen(15),0001,IT Melanie(1),250715000208,Click BILL,http://localhost:4850/#/menu?id=250715000208
+19:08:54,Imperial Kitchen(15),0001,IT Melanie(1),250715000208,Click BILL,http://localhost:4850/#/menu?id=250715000208

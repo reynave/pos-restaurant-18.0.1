@@ -6,9 +6,7 @@
                BACK</button>
          </div>
          <div class="col-6 text-end">
-            <a class="btn   border"
-               (click)="showApplyDiscount==false ? showApplyDiscount = true : showApplyDiscount = false">
-               {{showApplyDiscount==false ? 'Show' : 'Hide' }} Apply Discount </a>
+
          </div>
       </div>
 
@@ -18,7 +16,12 @@
 <div class="container-fluid mt-2">
    <div class="row g-0">
       <div class="col-4">
+
          <div class=" bg-light p-3 shadow-sm border rounded" #myDiv>
+            <a class="btn btn-sm btn-outline-dark"
+               (click)="showApplyDiscount==false ? showApplyDiscount = true : showApplyDiscount = false">
+               {{showApplyDiscount==false ? 'Show' : 'Hide' }} Apply Discount </a>
+               
             <app-bill-table [data]="data" [showApplyDiscount]="showApplyDiscount">Loading...</app-bill-table>
          </div>
       </div>
@@ -116,7 +119,8 @@
       <div class="row g-2">
 
          <div class="col-3 d-grid" *ngFor="let x of paymentypes">
-            <button type="button" (click)="addPayment(x)" class="py-3 btn  btn-light border mb-1">{{x.name | uppercase}}</button>
+            <button type="button" (click)="addPayment(x)" class="py-3 btn  btn-light border mb-1">{{x.name |
+               uppercase}}</button>
 
 
          </div>
@@ -141,12 +145,14 @@
    </div>
    <div class="p-3">
       <div class="d-grid mb-3">
-         <button type="button" class="btn btn-lg btn-outline-dark py-3" (click)="modal.close('OK click'); logService.logAction('Finish Payment', id);"><i
-               class="bi bi-check2"></i> Finish</button>
+         <button type="button" class="btn btn-lg btn-outline-dark py-3"
+            (click)="modal.close('OK click'); logService.logAction('Finish Payment', id);"><i class="bi bi-check2"></i>
+            Finish</button>
       </div>
 
       <div class="d-grid">
-         <button type="button" class="btn btn-lg btn-success py-3" (click)="modal.close('OK click');logService.logAction('Finish Payment And Print Closed Bill', id);"><i
+         <button type="button" class="btn btn-lg btn-success py-3"
+            (click)="modal.close('OK click');logService.logAction('Finish Payment And Print Closed Bill', id);"><i
                class="bi bi-printer"></i> Finish And Print Closed Bill</button>
       </div>
 

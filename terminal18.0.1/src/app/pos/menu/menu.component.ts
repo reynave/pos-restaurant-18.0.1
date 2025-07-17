@@ -602,11 +602,20 @@ export class MenuComponent implements OnInit, OnDestroy {
 
       });
 
+       let cartOrdered: any[] = [];
+      this.cartOrdered.forEach((el: any) => {
+        if (el['checkBox'] == 1) {
+          cartOrdered.push(el)
+        }
+
+      });
+
       console.log(this.cart)
 
       this.loading = true;
       const body = {
         cart: cart,
+        cartOrdered:cartOrdered,
         cartId: this.id,
       }
       const url = environment.api + "menuItemPos/takeOut";

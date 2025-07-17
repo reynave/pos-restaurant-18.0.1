@@ -1,9 +1,11 @@
 <% line = 50 %>
 <%= centerText(company.name, line) %> 
 
-<%= centerText(company.addr1+' '+company.addr2, line) %> 
-<%= centerText(company.addr3, line) %>
-<%= centerText(company.cityName, line) %>
+<%= centerText(company.company, line) %> 
+<%= centerText(company.address, line) %>
+<%= centerText(company.street, line) %>
+<%= centerText(company.city, line) %>
+<%= centerText(company.country, line) %>
 <%= centerText('Telp :'+company.tel, line) %> 
 
 <%= formatLine('BILL', transaction.bill, line)%>

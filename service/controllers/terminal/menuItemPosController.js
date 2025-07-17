@@ -1743,14 +1743,16 @@ exports.transferLog = async (req, res) => {
 };
 
 exports.takeOut = async (req, res) => {
-  const data = req.body['cart'];
+  const cart = req.body['cart'];
+  const cartOrdered = req.body['cartOrdered'];
+  
   const cartId = req.body['cartId'];
 
   const inputDate = today();
   const results = [];
   try {
 
-    for (const emp of data) {
+    for (const emp of cart) {
       const { menuId, ta } = emp;
 
       if (!menuId) {
@@ -1771,8 +1773,7 @@ exports.takeOut = async (req, res) => {
       }
 
     }
-
-    const q2 = `SELECT id, ta FROM  cart_item 
+     const q2 = `SELECT id, ta FROM  cart_item 
       WHERE  cartId = '${cartId}' and sendOrder = '' AND presence = 1 AND void = 0 `;
     const [result] = await db.query(q2);
     for (const data of result) {
@@ -1793,6 +1794,52 @@ exports.takeOut = async (req, res) => {
       }
 
     }
+
+    // CARD SEND ORDER
+    for (const emp of cartOrdered) {
+      const { menuId, ta } = emp;
+
+      if (!menuId) {
+        results.push({ id, status: 'failed', reason: 'Missing fields' });
+        continue;
+      }
+
+      const q = `UPDATE cart_item
+            SET
+              ta = ${parseInt(ta) > 0 ? 0 : 1}, 
+              updateDate = '${today()}'
+          WHERE menuId = ${menuId}  and cartId = '${cartId}' and sendOrder != '' `;
+      const [result] = await db.query(q);
+      if (result.affectedRows === 0) {
+        results.push({ status: 'not found' });
+      } else {
+        results.push({ status: 'cart_item updated' });
+      }
+
+    }
+    const q3 = `SELECT id, ta FROM  cart_item 
+      WHERE  cartId = '${cartId}' and sendOrder != '' AND presence = 1 AND void = 0 `;
+    const [result3] = await db.query(q3);
+    for (const data of result3) {
+
+      const q = `UPDATE cart_item_modifier
+            SET
+              void = ${parseInt(data['ta'])}, 
+              updateDate = '${today()}'
+          WHERE cartItemId = ${data['id']}  and scStatus  = 1  `;
+
+
+
+      const [result3] = await db.query(q);
+      if (result.affectedRows === 0) {
+        results.push({ status: 'not found' });
+      } else {
+        results.push({ status: 'cart_item_modifier updated' });
+      }
+
+    }
+
+   
 
 
     res.json({
