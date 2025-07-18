@@ -138,10 +138,10 @@ export class ItemsComponent implements OnInit {
   }
 
   fnCheck(index: number) {
-    this.items[index].checkBox == 0 ? this.items[index].checkBox = 1 : this.items[index].checkBox = 0;
+    this.searchResults[index].checkBox == 0 ? this.searchResults[index].checkBox = 1 : this.searchResults[index].checkBox = 0;
 
     this.checkTotal = 0;
-    this.items.forEach((el: any) => {
+    this.searchResults.forEach((el: any) => {
       if (el['checkBox'] == 1) {
         this.checkTotal += 1;
       }

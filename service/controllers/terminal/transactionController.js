@@ -5,29 +5,49 @@ const { cart } = require('../../helpers/bill');
 exports.getAllData = async (req, res) => {
   const outletId = req.query.outletId;
 
-  try {
+  try { 
+    const q = `
+    SELECT 
+        c.id,
+        c.outletId,
+        c.outletTableMapId,
+        c.tableMapStatusId,
+        c.presence,
+        c.close,
+        c.grandTotal,
+        -- tambahkan kolom lain dari cart jika perlu
+        o.name AS outlet, 
+        m.tableName, 
+        '' AS paymentType, 
+        s.name AS status,
+        COUNT(ci.id) AS 'totalItem',  
+        c.startDate,
+        c.endDate,
+        c.cover
+      FROM cart AS c
+      JOIN outlet AS o ON o.id = c.outletId 
+      JOIN outlet_table_map AS m ON m.id = c.outletTableMapId
+      LEFT JOIN outlet_table_map_status AS s ON s.id = c.tableMapStatusId
+      LEFT JOIN cart_item AS ci ON ci.cartId = c.id
+      WHERE c.presence = 1 AND c.close = 1 AND ci.sendOrder != ''  ${outletId ? ' AND c.outletId = ' + outletId : ''} 
+      GROUP BY 
+        c.id, c.outletId, c.outletTableMapId, c.tableMapStatusId, c.presence, c.close,
+        o.name, m.tableName, s.name, 
+        c.startDate,  c.grandTotal,
+        c.endDate, c.cover
+      ORDER BY c.id DESC   
+    `;
 
-    const [formattedRows] = await db.query(`
-
-            SELECT c.*, o.name AS 'outlet' , m.tableName, '' as paymentType, s.name as 'status'
-            FROM cart AS c
-            JOIN outlet AS o ON o.id = c.outletId 
-            JOIN outlet_table_map AS m ON m.id = c.outletTableMapId
-            left join outlet_table_map_status as s on s.id = c.tableMapStatusId
-            WHERE c.presence = 1 and c.close = 1    ${outletId ? 'and c.outletId = ' + outletId : ''}
-            order BY c.id DESC 
-            limit 200
- 
-        `);
+    const [formattedRows] = await db.query(q);
 
     for (const row of formattedRows) {
 
       const s = `
-                SELECT c.id, c.checkPaymentTypeId, p.name
-                FROM cart_payment  AS c
-                JOIN check_payment_type AS p ON p.id = c.checkPaymentTypeId
-                WHERE c.presence = 1 and  c.cartId = '${row['id']}'
-            `;
+        SELECT c.id, c.checkPaymentTypeId, p.name
+        FROM cart_payment  AS c
+        JOIN check_payment_type AS p ON p.id = c.checkPaymentTypeId
+        WHERE c.presence = 1 and  c.cartId = '${row['id']}'
+      `;
 
       const [paymentType] = await db.query(s);
       row.paymentType = paymentType;
@@ -77,16 +97,15 @@ exports.detail = async (req, res) => {
 
     const q2 = `
        SELECT 
-       ROW_NUMBER() OVER (ORDER BY i.inputDate ASC, i.sendOrder ASC) AS no,
-       i.id, 0 as 'cartItemModifierId',  i.sendOrder, m.name, i.price,
-        c.desc1 AS 'category', d.desc1 AS 'department', i.inputDate
-       
-      from cart_item  AS i
-      JOIN menu AS m ON m.id = i.menuId
-      LEFT JOIN menu_category AS c ON c.id = i.menuCategoryId
-      LEFT JOIN menu_department AS d ON d.id = i.menuDepartmentId
-      WHERE i.cartId =  '${id}'  and i.presence = 1 and i.void = 0
-      order by i.inputDate ASC, i.sendOrder ASC
+        ROW_NUMBER() OVER (ORDER BY i.inputDate ASC, i.sendOrder ASC) AS no, i.void,
+        i.id, 0 as 'cartItemModifierId',  i.sendOrder, m.name, i.price,
+        c.desc1 AS 'category', d.desc1 AS 'department', i.inputDate 
+        FROM cart_item  AS i
+          JOIN menu AS m ON m.id = i.menuId
+          LEFT JOIN menu_category AS c ON c.id = i.menuCategoryId
+          LEFT JOIN menu_department AS d ON d.id = i.menuDepartmentId
+        WHERE i.cartId =  '${id}'  and i.presence = 1  and i.sendOrder != ''
+        ORDER BY i.inputDate ASC, i.sendOrder ASC
        `;
     const [cartItem] = await db.query(q2);
     const items = [];
@@ -95,43 +114,41 @@ exports.detail = async (req, res) => {
 
       const q2 = `
         -- modifier
-        SELECT  c.cartItemId as 'id',  c.id 'cartItemModifierId' , c.sendOrder,   
-        m.descl AS 'name', c.price,
-        0 AS 'applyDiscount', 0 AS 'rate', c.inputDate
+        SELECT  
+          c.cartItemId as 'id',  c.id 'cartItemModifierId' , c.sendOrder,   c.void, 
+          m.descl AS 'name', c.price,
+          0 AS 'applyDiscount', 0 AS 'rate', c.inputDate
         FROM cart_item_modifier AS c
-        JOIN modifier AS m ON m.id = c.modifierId
-        WHERE c.cartItemId = ${row['id']}
-        AND c.presence = 1 AND c.void = 0  
+          JOIN modifier AS m ON m.id = c.modifierId
+        WHERE c.cartItemId = ${row['id']}  AND c.presence = 1  
         
         UNION
         -- applyDiscount
-        SELECT c.cartItemId as 'id',  c.id 'cartItemModifierId' , c.sendOrder,
-        d.name , c.price,
-        c.applyDiscount , 0 AS 'rate' , c.inputDate
+        SELECT 
+          c.cartItemId as 'id',  c.id 'cartItemModifierId' , c.sendOrder,c.void, 
+          d.name , c.price, c.applyDiscount , 0 AS 'rate' , c.inputDate
         FROM cart_item_modifier AS c
-        JOIN check_disc_type AS d ON d.id = c.applyDiscount
-        WHERE c.cartItemId =  ${row['id']}
-        AND c.presence = 1 AND c.void = 0  
+          JOIN check_disc_type AS d ON d.id = c.applyDiscount
+        WHERE c.cartItemId =  ${row['id']}  AND c.presence = 1  
 
         UNION
         -- SC
-        SELECT c.cartItemId as 'id',  c.id 'cartItemModifierId' , c.sendOrder,
-        d.name , c.price,
-        0 AS 'applyDiscount', c.scRate  AS 'rate' , c.inputDate
+        SELECT 
+          c.cartItemId as 'id',  c.id 'cartItemModifierId' , c.sendOrder,c.void, 
+          d.scNote AS 'name' , c.price,
+          0 AS 'applyDiscount', c.scRate  AS 'rate' , c.inputDate
         FROM cart_item_modifier AS c
-        JOIN check_sc_type AS d ON d.id = c.menuTaxScId
-        WHERE c.cartItemId =  ${row['id']}
-        AND c.presence = 1 AND c.void = 0  AND c.scStatus != 0   
+          JOIN menu_tax_sc AS d ON d.id = c.menuTaxScId
+        WHERE c.cartItemId =  ${row['id']}   AND c.presence = 1   AND c.scStatus != 0   
 
         UNION
         -- TAX
-        SELECT c.cartItemId as 'id',  c.id 'cartItemModifierId' , c.sendOrder,
-        d.name , c.price,
-        0 AS 'applyDiscount', c.taxRate AS 'rate' , c.inputDate
+        SELECT 
+          c.cartItemId as 'id',  c.id 'cartItemModifierId' , c.sendOrder, c.void, 
+          d.taxNote AS 'name' , c.price,  0 AS 'applyDiscount', c.taxRate AS 'rate' , c.inputDate
         FROM cart_item_modifier AS c
-        JOIN check_tax_type AS d ON d.id = c.menuTaxScId
-        WHERE c.cartItemId =  ${row['id']}
-        AND c.presence = 1 AND c.void = 0  AND c.taxStatus != 0;
+          JOIN menu_tax_sc AS d ON d.id = c.menuTaxScId
+          WHERE c.cartItemId =  ${row['id']} AND c.presence = 1   AND c.taxStatus != 0;
 
        `;
       const [cartItem] = await db.query(q2);
@@ -182,8 +199,7 @@ exports.getCopyBill = async (req, res) => {
     res.status(500).json({ error: 'Database error' });
   }
 };
-
-
+ 
 exports.addCopyBill = async (req, res) => {
 
   const cartId = req.body['id'];

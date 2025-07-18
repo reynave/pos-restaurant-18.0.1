@@ -16,8 +16,8 @@
                 <div class="form-control form-control-lg  bg-light mb-1">
                     {{getTokenJson.username}}
                 </div>
-                <input type="password" class="form-control form-control-lg  bg-light mb-2" placeholder="PASSWORD"
-                    [(ngModel)]="password">
+                <input type="password" autocomplete="off" class="form-control form-control-lg  bg-light mb-2" placeholder="PASSWORD"
+                    [(ngModel)]="password" #myInput>
 
                 <div class="mb-2">
                     <app-key-number (dataEmitted)="handleData($event)"></app-key-number>

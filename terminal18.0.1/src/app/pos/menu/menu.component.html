@@ -26,6 +26,7 @@
                      </td>
                   </tr>
                </tbody>
+               
                <tbody *ngFor="let x of cartOrdered; let i = index" [class]="{'tr-active':x.checkBox == 1 }">
                   <tr [class]="{'bg-light':x.sendOrder !== ''}" (click)="fnCheckedOrdered(i)">
                      <td>
@@ -37,7 +38,7 @@
 
                      <td>
                         <div class="lh-1">
-                           <strong> <span><i class="bi bi-fork-knife"></i></span> {{x.name }} {{x.modifier.length > 0 ?
+                           <strong> <span><i class="bi bi-fork-knife"></i></span> {{x.name }}  {{x.totalModifier > 0 ?
                               '*':''}} </strong>
                         </div>
                         <small class="font-monospace">&#64;{{x.price | number}} </small>
@@ -82,7 +83,7 @@
                         </h3>
                      <td>
                         <div class="lh-1">
-                           <strong>{{x.name }} {{x.modifier.length > 0 ? '*':''}} </strong>
+                           <strong>{{x.name }} {{x.totalModifier > 0 ? '*':''}} </strong>
                         </div>
                         <small class="font-monospace">&#64;{{x.price | number}}</small>
                         <span *ngIf="x.ta > 0 " class="badge text-bg-warning  ms-2">TA</span>
@@ -90,9 +91,8 @@
                      </td>
 
                      <td class="text-end font-monospace">
-                        <button type="button" class="btn  btn-light border" style="width: 60px;"
-                           [disabled]="x.sendOrder == 1" (click)="model.newQty = 0;open(modalQty, x, i)"> x {{x.total |
-                           number}}
+                        <button type="button" class="btn  btn-light border" 
+                              style="width: 60px;" (click)="model.newQty = x.total;open(modalQty, x, i)"> x {{x.total |  number}}
                         </button>
                      </td>
 
@@ -204,7 +204,7 @@
                   <div class="col-3 d-grid">
                      <button type="button" [class]="cssClass" class="btn-danger" (click)="exitWithoutOrder();"><i
                            class="bi bi-trash"></i>
-                        CANCEL ORDER</button>
+                        EXIT WITHOUT ORDER</button>
                   </div>
                   <div class="col-3 d-grid">
                      <button type="button" [class]="cssClass" class="btn-warning" (click)="transferItems()"> <i
@@ -229,6 +229,13 @@
                         <i class="bi bi-intersect"></i>
                         MERGE CHECK </button>
                   </div>
+
+                  <div class="col-3 d-grid">
+                     <button type="button" [class]="cssClass" class="bg-white" (click)="model.newQty = 0; openSm(modalChangeCover)" >
+                      <i class="bi bi-people"></i>
+                       CHANGE COVER </button>
+                  </div>
+
                </div>
             </div>
             }
@@ -347,26 +354,27 @@
 
 <ng-template #modalQty let-modal>
    <div class="modal-header">
-      <strong>Change New Item Quantity </strong>
+      <strong>Change Quantity Item</strong>
       <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
    </div>
    <div class="modal-body">
 
       <form (ngSubmit)="updateQty()" #actorForm="ngForm">
-         <div class="mb-3">
-            <div class="mb-1"><label for="newQty">Input New Quantity</label></div>
-
+         <div class="mb-3"> 
             <div class="row g-1">
-               <div class="col-9">
+               <div class="col-5">
+                    <div class="mb-1"><strong for="newQty">Current </strong></div>
+                    <div class="form-control form-control-lg bg-light">{{item.total}}</div>
+               </div>
+               <div class="col-1"> 
+                   <i class="bi bi-arrow-right"></i>  
+               </div>
+               <div class="col-6">
+                   <div class="mb-1"><strong for="newQty">Change to</strong></div>
                   <input type="number" class="form-control form-control-lg" id="newQty" required
-                     [(ngModel)]="model.newQty" name="newQty" #newQty="ngModel">
-                  <div [hidden]="newQty.valid || newQty.pristine" class="text-danger">
-                     Input New Quantity is required
-                  </div>
+                     [(ngModel)]="model.newQty" name="newQty" #newQty="ngModel"> 
                </div>
-               <div class="col-3 d-grid">
-                  <button type="button" class="btn btn-lg btn-warning" (click)="model.newQty=0">CE</button>
-               </div>
+              
             </div>
          </div>
          <div class="mb-3">
@@ -374,12 +382,11 @@
          </div>
 
          <div class="row g-1">
-            <div class="col d-grid">
-               <button type="button" class="btn btn-outline-secondary"
-                  (click)="modal.close('Save click')">Cancel</button>
+             <div class="col d-grid">
+                <button type="button" class="btn btn-lg btn-warning"  (click)="model.newQty=0">CE</button> 
             </div>
             <div class="col  d-grid">
-               <button type="submit" class="btn btn-dark" [disabled]="!actorForm.form.valid">OK</button>
+               <button type="submit" class="btn btn-lg btn-dark" [disabled]="!actorForm.form.valid ||  model.newQty == 0">OK</button>
             </div>
          </div>
 
@@ -497,6 +504,52 @@
 
 
 
+   </div>
+
+</ng-template>
+
+
+<ng-template #modalChangeCover let-modal>
+   <div class="modal-header">
+      <strong>Change Cover </strong>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+   </div>
+   <div class="modal-body">
+
+      <form (ngSubmit)="updateCover()" #actorForm="ngForm">
+         <div class="mb-3">
+           
+
+            <div class="row g-1">
+               <div class="col-5">
+                    <div class="mb-1"><label for="newQty">Current  Cover</label></div>
+                    <div class="form-control form-control-lg">{{table['cover']}}</div>
+               </div>
+               <div class="col-1"> 
+                   <i class="bi bi-arrow-right"></i>  
+               </div>
+               <div class="col-6">
+                   <div class="mb-1"><label for="newQty">Change Cover</label></div>
+                  <input type="number" class="form-control form-control-lg" id="newQty" required
+                     [(ngModel)]="model.newQty" name="newQty" #newQty="ngModel"> 
+               </div>
+              
+            </div>
+         </div>
+         <div class="mb-3">
+            <app-key-number (dataEmitted)="handleData($event)"></app-key-number>
+         </div>
+
+         <div class="row g-1">
+            <div class="col d-grid">
+                <button type="button" class="btn btn-lg btn-warning"  (click)="model.newQty=0">CE</button> 
+            </div>
+            <div class="col  d-grid">
+               <button type="submit" class="btn btn-lg btn-dark" [disabled]="!actorForm.form.valid">OK</button>
+            </div>
+         </div>
+
+      </form>
    </div>
 
 </ng-template>

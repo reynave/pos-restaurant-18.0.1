@@ -17,7 +17,7 @@
                      [hidden]="x.menuTaxScId != 0 && hideTaxSc != 0">
                      <td>
 
-                        <div *ngIf="x.sendOrder == '' && (x.menuTaxScId == 0    )">
+                        <div *ngIf="x.menuTaxScId == 0 ">
                            <i *ngIf="x.checkBox == 0 " class="bi bi-square"></i>
                            <i *ngIf="x.checkBox == 1 " class="bi bi-check-square-fill"></i>
                         </div>
@@ -115,6 +115,16 @@
                   <a type="button" [class]="cssMenu" (click)="addToCart(a)">
                      <div class="mb-1"> {{a.descs}}</div>
                   </a>
+               </div>
+            </div>
+
+            <div class="row">
+               <div class="col-12">
+                  <ul>
+                     <li><small>Cannot <span class="badge text-bg-danger"> VOID ITEM</span> if SendOrder (SO)</small></li>
+                     <li><small>Cannot <span class="badge text-bg-danger"> REMOVE MODIFIER</span> if SendOrder (SO)</small></li>
+                     
+                  </ul>
                </div>
             </div>
 

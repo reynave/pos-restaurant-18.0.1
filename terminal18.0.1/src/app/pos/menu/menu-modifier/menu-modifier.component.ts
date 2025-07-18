@@ -173,23 +173,20 @@ export class MenuModifierComponent implements OnInit, OnDestroy {
 
 
   fnChecked(index: number) {
-    if (this.cart[index].sendOrder == '' && (this.cart[index].modifierId != 0 || this.cart[index].applyDiscount != null)) {
 
-      this.cart[index].checkBox == 0 ? this.cart[index].checkBox = 1 : this.cart[index].checkBox = 0;
+    this.cart[index].checkBox == 0 ? this.cart[index].checkBox = 1 : this.cart[index].checkBox = 0;
 
-      let isVoid = 0;
-      for (let i = 0; i < this.cart.length; i++) {
-        if (this.cart[i]['checkBox'] == 1) {
-          isVoid++;
-          i = this.cart.length + 10;
-        }
+    let isVoid = 0;
+    for (let i = 0; i < this.cart.length; i++) {
+      if (this.cart[i]['checkBox'] == 1) {
+        isVoid++;
+        i = this.cart.length + 10;
       }
-      if (isVoid == 0) {
-        this.isChecked = false;
-      } else {
-        this.isChecked = true;
-      }
-
+    }
+    if (isVoid == 0) {
+      this.isChecked = false;
+    } else {
+      this.isChecked = true;
     }
   }
   onVoid() {
@@ -236,11 +233,11 @@ export class MenuModifierComponent implements OnInit, OnDestroy {
       data => {
         console.log(data);
         this.httpCart();
-           this.logService.logAction('Remove Modifier item detail', this.id)
+        this.logService.logAction('Remove Modifier item detail', this.id)
       },
       error => {
         console.log(error);
-           this.logService.logAction('ERROR Remove Modifier item detail', this.id)
+        this.logService.logAction('ERROR Remove Modifier item detail', this.id)
       }
     )
   }
@@ -254,7 +251,7 @@ export class MenuModifierComponent implements OnInit, OnDestroy {
       this.cart.forEach((el: any) => {
         if (el['checkBox'] == 1) {
           cart.push(el)
-        } 
+        }
       });
 
 
@@ -271,11 +268,11 @@ export class MenuModifierComponent implements OnInit, OnDestroy {
         data => {
           console.log(data);
           this.reload();
-           this.logService.logAction(' take Out Detail', this.id)
+          this.logService.logAction(' take Out Detail', this.id)
         },
         error => {
           console.log(error);
-           this.logService.logAction('ERROR take Out Detail', this.id)
+          this.logService.logAction('ERROR take Out Detail', this.id)
         }
       )
     }

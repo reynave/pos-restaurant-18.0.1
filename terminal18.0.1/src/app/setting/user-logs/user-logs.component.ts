@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { HeaderMenuComponent } from "../../header/header-menu/header-menu.component";
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
@@ -16,9 +16,10 @@ import { UserLoggerService } from '../../service/user-logger.service';
   templateUrl: './user-logs.component.html',
   styleUrl: './user-logs.component.css'
 })
-export class UserLogsComponent {
+export class UserLogsComponent implements OnInit {
   items: any = [];
   date: any = [];
+  today : any = new Date();
   loading: boolean = false;
   constructor(
     public configService: ConfigService,
@@ -26,6 +27,12 @@ export class UserLogsComponent {
     public modalService: NgbModal,
     public logService: UserLoggerService,
   ) { }
+  ngOnInit(): void {
+    this.date['year'] = this.today.getFullYear();
+    this.date['month'] = this.today.getMonth()+1;
+    this.date['day'] = this.today.getDate();
+
+  }
   donwload() {
     const date = this.date['year'] + "-" + this.date['month'].toString().padStart(2, '0') + "-" + this.date['day'].toString().padStart(2, '0');
 

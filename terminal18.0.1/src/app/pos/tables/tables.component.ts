@@ -31,6 +31,7 @@ export class TablesComponent implements OnInit {
   loading: boolean = false;
   current: number = 0;
   checkboxAll: number = 0;
+   statusMap : any = [];
   disabled: boolean = true;
   items: any = [{
     map: []
@@ -126,6 +127,7 @@ export class TablesComponent implements OnInit {
         this.loading = false;
         this.items = data['items'];
         this.totalCart = data['cart'].length;
+            this.statusMap = data['statusMap'];
       },
       error => {
         console.log(error);
