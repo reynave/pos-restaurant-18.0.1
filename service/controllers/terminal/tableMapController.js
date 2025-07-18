@@ -15,7 +15,7 @@ exports.getAllData = async (req, res) => {
     for (const row of formattedRows) {
       const [maps] = await db.query(`
        SELECT o.id, o.id as 'outletTableMapId', o.outletFloorPlandId, o.tableName, o.posY, o.posX, o.width, 
-        o.height, o.capacity, o.icon
+        o.height, o.capacity, o.icon, 0 as active
         FROM outlet_table_map AS o 
         WHERE o.presence = 1 AND o.outletFloorPlandId = ?
       `, [row.id]);

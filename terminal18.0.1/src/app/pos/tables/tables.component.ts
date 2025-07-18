@@ -145,15 +145,29 @@ export class TablesComponent implements OnInit {
     localStorage.setItem("pos3.onMap", index.toString());
     this.current = index;
   }
+  currentTable : number = 0;
+  open(content: any, x: any,  current : number, i: number) {
+    console.log(x.id, x ,current ,i);
+    this.currentTable = x;
+    
+    for(let i = 0 ; i < this.items.length ; i++){
+      this.items[i]['maps'].forEach((row: any) => {
+          row['active'] = 0;
+      });
+    }
 
-  open(content: any, x: any) {
+    this.items[current]['maps'][i]['active']= 1;
+    // if(x.cover <= 0 || x.cover=='' ){
+    //   this.tableSelect = x;
+    //   this.model.cover = x.capacity
+    //   this.model.outletTableMapId = x.id
+    //   this.model.outletFloorPlandId = x.outletFloorPlandId
 
-    this.tableSelect = x;
-    this.model.cover = x.capacity
-    this.model.outletTableMapId = x.id
-    this.model.outletFloorPlandId = x.outletFloorPlandId
-
-    this.modalService.open(content, { size: 'sm' });
+    //   this.modalService.open(content, { size: 'sm' });
+    // }else{
+    //   this.gotTo(x)
+    // }
+   
   }
 
   gotTo(x: any) {

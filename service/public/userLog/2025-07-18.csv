@@ -369,3 +369,11 @@ time,outletId,workStationId,userId,bill,action,url,method,server
 18:09:52,Imperial Kitchen(15),0001,IT Melanie(1),250718000223,Menu Lookup 0,http://localhost:4850/#/menu?id=250718000223
 18:09:54,Imperial Kitchen(15),0001,IT Melanie(1),250718000223,Send Order,http://localhost:4850/#/menu?id=250718000223
 18:09:55,Imperial Kitchen(15),0001,IT Melanie(1),250718000223,Go to Menu,http://localhost:4850/#/tables
+18:11:27,Imperial Kitchen(15),0001,IT Melanie(1),250718000223,Go to Menu,http://localhost:4850/#/tables
+18:11:36,Imperial Kitchen(15),0001,IT Melanie(1),250718000222,Go to Menu,http://localhost:4850/#/tables
+18:14:59,Imperial Kitchen(15),0001,IT Melanie(1),250718000222,Go to Menu,http://localhost:4850/#/tables
+18:18:51,Imperial Kitchen(15),0001,IT Melanie(1),250718000222,Go to Menu,http://localhost:4850/#/tables
+18:20:03,Imperial Kitchen(15),0001,IT Melanie(1),,Change Map Dine In,http://localhost:4850/#/tables
+18:20:07,Imperial Kitchen(15),0001,IT Melanie(1),,Change Map Other,http://localhost:4850/#/tables
+18:30:44,Imperial Kitchen(15),0001,IT Melanie(1),,Change Map Dine In,http://localhost:4850/#/tables
+18:30:46,Imperial Kitchen(15),0001,IT Melanie(1),,Change Map Other,http://localhost:4850/#/tables
