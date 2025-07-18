@@ -332,7 +332,7 @@ exports.cartOrdered = async (req, res) => {
         GROUP BY t1.descl, t1.price    
 
         UNION 
-       -- cart_item_modifier SC
+       --  SC
          SELECT
           COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price, 0 as 'modifier'
           FROM (
@@ -350,18 +350,18 @@ exports.cartOrdered = async (req, res) => {
         UNION 
 
 
-      -- cart_item_modifier TAX
+      --  TAX
          SELECT
           COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price, 0 as 'modifier'
           FROM (
-            SELECT r.menuTaxScId AS 'modifierId', t.taxNote AS descl, r.price, r.scRate
+            SELECT r.menuTaxScId AS 'modifierId', t.taxNote AS descl, r.price, r.taxRate
               FROM cart_item  AS i
               RIGHT JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
               JOIN menu_tax_sc AS t ON t.id = r.menuTaxScId
             WHERE i.menuId = ${row['menuId']}
                 AND i.cartId = '${cartId}' AND i.void = 0 AND i.presence = 1
                 AND i.sendOrder != '' AND r.sendOrder != ''
-                AND r.presence = 1 AND i.void = 0 AND r.scRate != 0
+                AND r.presence = 1 AND i.void = 0 AND r.taxRate != 0
           ) AS t1
           GROUP BY t1.descl, t1.price
 
