@@ -1,0 +1,190 @@
+time,outletId,workStationId,userId,bill,action,url,method,server
+12:00:39,Imperial Kitchen(15),0001,IT Melanie(1),250718000223,Go to Menu,http://localhost:4850/#/tables
+12:00:42,Imperial Kitchen(15),0001,IT Melanie(1),250718000223,Go to Menu,http://localhost:4850/#/tables
+12:00:45,Imperial Kitchen(15),0001,IT Melanie(1),250718000223,Go to Menu,http://localhost:4850/#/tables
+12:01:26,Imperial Kitchen(15),0001,IT Melanie(1),250718000223,Go to Menu,http://localhost:4850/#/tables
+12:39:33,Imperial Kitchen(15),0001,IT Melanie(1),,Change Map Dine In,http://localhost:4850/#/tables
+12:39:34,Imperial Kitchen(15),0001,IT Melanie(1),,Change Map Other,http://localhost:4850/#/tables
+12:39:34,Imperial Kitchen(15),0001,IT Melanie(1),,Change View to table,http://localhost:4850/#/tables
+12:39:37,Imperial Kitchen(15),0001,IT Melanie(1),,Change View to map,http://localhost:4850/#/tables
+12:39:38,Imperial Kitchen(15),0001,IT Melanie(1),250718000222,Go to Menu,http://localhost:4850/#/tables
+13:00:49,Imperial Kitchen(15),0001,IT Melanie(1),250718000222,Go to Menu,http://localhost:4850/#/tables
+13:01:12,Imperial Kitchen(15),0001,IT Melanie(1),250718000222,Go to Menu,http://localhost:4850/#/tables
+14:19:23,Imperial Kitchen(15),0001,IT Melanie(1),250718000223,Go to Menu,http://localhost:4850/#/tables
+14:19:27,Imperial Kitchen(15),0001,IT Melanie(1),250718000223,menu/transferItems,http://localhost:4850/#/menu?id=250718000223
+14:19:34,Imperial Kitchen(15),0001,IT Melanie(1),250718000223,Menu Lookup 0,http://localhost:4850/#/menu?id=250718000223
+14:19:35,Imperial Kitchen(15),0001,IT Melanie(1),250718000223,Menu Lookup 1,http://localhost:4850/#/menu?id=250718000223
+14:19:35,Imperial Kitchen(15),0001,IT Melanie(1),250718000223,Menu Lookup 3,http://localhost:4850/#/menu?id=250718000223
+14:19:36,Imperial Kitchen(15),0001,IT Melanie(1),250718000223,Add Menu MANGGO KYOTO(24) @30000.00,http://localhost:4850/#/menu?id=250718000223
+14:19:36,Imperial Kitchen(15),0001,IT Melanie(1),250718000223,Add Menu MANGGO KYOTO(24) @30000.00,http://localhost:4850/#/menu?id=250718000223
+14:19:36,Imperial Kitchen(15),0001,IT Melanie(1),250718000223,Add Menu MANGGO KYOTO(24) @30000.00,http://localhost:4850/#/menu?id=250718000223
+14:19:36,Imperial Kitchen(15),0001,IT Melanie(1),250718000223,Add Menu MANGGO KYOTO(24) @30000.00,http://localhost:4850/#/menu?id=250718000223
+14:19:37,Imperial Kitchen(15),0001,IT Melanie(1),250718000223,Add Menu PASSION CCNT DELIGHT(25) @20000.00,http://localhost:4850/#/menu?id=250718000223
+14:19:37,Imperial Kitchen(15),0001,IT Melanie(1),250718000223,Add Menu PASSION CCNT DELIGHT(25) @20000.00,http://localhost:4850/#/menu?id=250718000223
+14:19:37,Imperial Kitchen(15),0001,IT Melanie(1),250718000223,Add Menu PASSION CCNT DELIGHT(25) @20000.00,http://localhost:4850/#/menu?id=250718000223
+14:19:37,Imperial Kitchen(15),0001,IT Melanie(1),250718000223,Add Menu STRAWBERRY MOJITO(26) @10000.00,http://localhost:4850/#/menu?id=250718000223
+14:19:39,Imperial Kitchen(15),0001,IT Melanie(1),250718000223,Menu Lookup 0,http://localhost:4850/#/menu?id=250718000223
+14:19:40,Imperial Kitchen(15),0001,IT Melanie(1),250718000223,Send Order,http://localhost:4850/#/menu?id=250718000223
+14:19:42,Imperial Kitchen(15),0001,IT Melanie(1),250718000223,Go to Menu,http://localhost:4850/#/tables
+14:19:44,Imperial Kitchen(15),0001,IT Melanie(1),250718000223,menu/transferItems,http://localhost:4850/#/menu?id=250718000223
+14:22:26,Imperial Kitchen(15),0001,IT Melanie(1),250718000223,Go to Menu,http://localhost:4850/#/tables
+14:22:41,Imperial Kitchen(15),0001,IT Melanie(1),250718000223,Merge table with TA3 ?,http://localhost:4850/#/menu?id=250718000223
+14:22:44,Imperial Kitchen(15),0001,IT Melanie(1),250718000223,Merge table with TA3 ?,http://localhost:4850/#/menu?id=250718000223
+14:22:48,Imperial Kitchen(15),0001,IT Melanie(1),250718000223,Merge to table :TA3,http://localhost:4850/#/menu?id=250718000223
+14:22:51,Imperial Kitchen(15),0001,IT Melanie(1),250718000222,Go to Menu,http://localhost:4850/#/tables
+14:22:58,Imperial Kitchen(15),0001,IT Melanie(1),250718000222,Popup transfer Log,http://localhost:4850/#/menu?id=250718000222
+14:23:00,Imperial Kitchen(15),0001,IT Melanie(1),250718000222,Popup transfer Log,http://localhost:4850/#/menu?id=250718000222
+14:24:24,Imperial Kitchen(15),0001,IT Melanie(1),250718000222,Popup transfer Log,http://localhost:4850/#/menu?id=250718000222
+14:24:37,Imperial Kitchen(15),0001,IT Melanie(1),250718000222,Popup transfer Log,http://localhost:4850/#/menu?id=250718000222
+14:24:39,Imperial Kitchen(15),0001,IT Melanie(1),250718000222,menu/transferItems,http://localhost:4850/#/menu?id=250718000222
+14:24:46,Imperial Kitchen(15),0001,IT Melanie(1),250718000222,fnTransferItems,http://localhost:4850/#/menu/transferItems?id=250718000222
+14:24:46,Imperial Kitchen(15),0001,IT Melanie(1),250718000222,fnTransferItems Items table TA2(4) to TA3(3),http://localhost:4850/#/menu/transferItems?id=250718000222
+14:24:53,Imperial Kitchen(15),0001,IT Melanie(1),250718000222,fnTransferItems,http://localhost:4850/#/menu/transferItems?id=250718000222
+14:24:53,Imperial Kitchen(15),0001,IT Melanie(1),250718000222,fnTransferItems Items table TA5(1) to TA3(3),http://localhost:4850/#/menu/transferItems?id=250718000222
+14:24:58,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Go to Menu,http://localhost:4850/#/tables
+14:25:01,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+14:25:05,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+14:25:11,Imperial Kitchen(15),0001,IT Melanie(1),250718000222,Go to Menu,http://localhost:4850/#/tables
+14:25:12,Imperial Kitchen(15),0001,IT Melanie(1),250718000222,Popup transfer Log,http://localhost:4850/#/menu?id=250718000222
+14:26:48,Imperial Kitchen(15),0001,IT Melanie(1),250718000222,Go to Menu,http://localhost:4850/#/tables
+14:26:51,Imperial Kitchen(15),0001,IT Melanie(1),250718000222,Popup transfer Log,http://localhost:4850/#/menu?id=250718000222
+14:28:12,Imperial Kitchen(15),0001,IT Melanie(1),250718000222,Go to Menu,http://localhost:4850/#/tables
+15:28:16,Imperial Kitchen(15),0001,IT Melanie(1),250718000222,Merge table with TA2 ?,http://localhost:4850/#/menu?id=250718000222
+15:28:19,Imperial Kitchen(15),0001,IT Melanie(1),250718000222,ERROR Merge to table :TA2,http://localhost:4850/#/menu?id=250718000222
+15:29:42,Imperial Kitchen(15),0001,IT Melanie(1),250718000222,Merge table with TA2 ?,http://localhost:4850/#/menu?id=250718000222
+15:29:45,Imperial Kitchen(15),0001,IT Melanie(1),250718000222,Merge to table :TA2,http://localhost:4850/#/menu?id=250718000222
+15:34:14,Imperial Kitchen(15),0001,IT Melanie(1),250721000224,Go to Menu,http://localhost:4850/#/tables
+15:34:18,Imperial Kitchen(15),0001,IT Melanie(1),250721000224,Merge table with TA5 ?,http://localhost:4850/#/menu?id=250721000224
+15:34:19,Imperial Kitchen(15),0001,IT Melanie(1),250721000224,Merge to table :TA5,http://localhost:4850/#/menu?id=250721000224
+15:34:37,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Go to Menu,http://localhost:4850/#/tables
+15:35:57,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+15:36:02,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+15:36:11,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Go to Menu,http://localhost:4850/#/tables
+15:36:12,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+15:36:21,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+15:37:41,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+15:43:39,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+16:11:43,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+16:12:25,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+16:18:15,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+16:18:53,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+16:27:33,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+16:28:46,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+16:32:27,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+16:33:04,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+16:34:20,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+16:36:22,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+16:38:13,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+16:38:20,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+16:38:39,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+16:38:51,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+16:38:59,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+16:39:16,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+16:39:30,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+16:39:44,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+16:39:55,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+16:40:37,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+16:43:36,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+16:44:23,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+16:45:42,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+16:46:08,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+16:46:35,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+16:46:48,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+16:46:54,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+16:47:03,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+16:53:19,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+16:53:55,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+16:54:21,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+16:56:30,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+16:56:53,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+16:57:24,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+16:58:34,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+16:59:29,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+16:59:46,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+17:00:51,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+17:00:58,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+17:01:43,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+17:03:03,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+17:03:10,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+17:04:07,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+17:04:21,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+17:04:22,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+17:05:07,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+17:05:16,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+17:05:30,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+17:05:32,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+17:05:34,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+17:05:40,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+17:05:43,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+17:06:06,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+17:06:32,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+17:06:45,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+17:07:50,Imperial Kitchen(15),0001,IT Melanie(1),,Change View to table,http://localhost:4850/#/tables
+17:07:51,Imperial Kitchen(15),0001,IT Melanie(1),,Change View to table,http://localhost:4850/#/tables
+17:07:52,Imperial Kitchen(15),0001,IT Melanie(1),,Change View to map,http://localhost:4850/#/tables
+17:07:59,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Go to Menu,http://localhost:4850/#/tables
+17:08:00,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+17:08:33,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+17:09:16,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+17:09:28,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+17:12:54,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Popup transfer Log,http://localhost:4850/#/menu?id=250721000225
+17:19:41,Imperial Kitchen(15),0001,IT Melanie(1),,New Order Imperial Kitchen(15) Cover : 4, Table : TA2(4),http://localhost:4850/#/tables
+17:19:41,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Go to Menu,http://localhost:4850/#/tables
+17:19:46,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Menu Lookup 0,http://localhost:4850/#/menu?id=250721000226
+17:19:47,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Menu Lookup 2,http://localhost:4850/#/menu?id=250721000226
+17:19:47,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Menu Lookup 7,http://localhost:4850/#/menu?id=250721000226
+17:19:48,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Add Menu SIEW MAI RPT LT DD(78) @15000.00,http://localhost:4850/#/menu?id=250721000226
+17:19:48,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Add Menu SIEW MAI DORI DD(77) @15000.00,http://localhost:4850/#/menu?id=250721000226
+17:19:48,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Add Menu BAKPAO CHASIEW DD(81) @15000.00,http://localhost:4850/#/menu?id=250721000226
+17:19:49,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Add Menu TIM UDG SYRN DD(82) @15000.00,http://localhost:4850/#/menu?id=250721000226
+17:19:50,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Menu Lookup 0,http://localhost:4850/#/menu?id=250721000226
+17:20:08,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Click MODIFIER : Kitchen Info,http://localhost:4850/#/menu?id=250721000226
+17:20:09,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Add Modifier Tidak Pedas(36) @0,http://localhost:4850/#/menu?id=250721000226
+17:20:10,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,menu/modifier SIEW MAI RPT LT DD menuId : 78, price : 15000,http://localhost:4850/#/menu?id=250721000226
+17:29:21,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Click MODIFIER : MEMO,http://localhost:4850/#/menu?id=250721000226
+17:29:23,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Click MODIFIER : Bar Info,http://localhost:4850/#/menu?id=250721000226
+17:29:23,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Click MODIFIER : Kitchen Info,http://localhost:4850/#/menu?id=250721000226
+17:29:24,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Click MODIFIER : MEMO,http://localhost:4850/#/menu?id=250721000226
+17:29:25,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Click MODIFIER : Bar Info,http://localhost:4850/#/menu?id=250721000226
+17:30:17,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Click MODIFIER : MEMO,http://localhost:4850/#/menu?id=250721000226
+17:30:20,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Click MODIFIER : Kitchen Info,http://localhost:4850/#/menu?id=250721000226
+17:30:21,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Click MODIFIER : Bar Info,http://localhost:4850/#/menu?id=250721000226
+17:30:22,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Click MODIFIER : MEMO,http://localhost:4850/#/menu?id=250721000226
+17:30:22,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Click MODIFIER : Juice Mix,http://localhost:4850/#/menu?id=250721000226
+17:35:33,Imperial Kitchen(15),0001,IT Melanie(1),,Click MODIFIER : Custom Notes,http://localhost:4850/#/menu?id=250721000226
+17:35:36,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Click MODIFIER : Kitchen Info,http://localhost:4850/#/menu?id=250721000226
+17:35:39,Imperial Kitchen(15),0001,IT Melanie(1),,Click MODIFIER : Custom Notes,http://localhost:4850/#/menu?id=250721000226
+17:48:42,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Popup transfer Log,http://localhost:4850/#/menu?id=250721000226
+17:48:59,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Popup transfer Log,http://localhost:4850/#/menu?id=250721000226
+18:23:26,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,ERROR Add Qty 1 undefined,http://localhost:4850/#/menu?id=250721000226
+18:23:43,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Modifier Custom  Notes :test 123,http://localhost:4850/#/menu?id=250721000226
+18:25:00,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Click MODIFIER : Bar Info,http://localhost:4850/#/menu?id=250721000226
+18:26:20,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Modifier Custom  Notes :test 11111,http://localhost:4850/#/menu?id=250721000226
+18:27:11,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Modifier Custom  Notes :6445345,http://localhost:4850/#/menu?id=250721000226
+18:28:02,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Modifier Custom  Notes :4234,http://localhost:4850/#/menu?id=250721000226
+18:30:43,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Modifier Custom  Notes :534234,http://localhost:4850/#/menu?id=250721000226
+18:38:38,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Modifier Custom  Notes :123123,http://localhost:4850/#/menu?id=250721000226
+18:38:41,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,menu/modifier SIEW MAI RPT LT DD menuId : 78, price : 15000,http://localhost:4850/#/menu?id=250721000226
+18:38:56,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Click MODIFIER : Bar Info,http://localhost:4850/#/menu?id=250721000226
+18:38:57,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Add Modifier dingin(48) @0,http://localhost:4850/#/menu?id=250721000226
+18:39:01,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Modifier Custom  Notes :test 123,http://localhost:4850/#/menu?id=250721000226
+18:39:08,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Popup transfer Log,http://localhost:4850/#/menu?id=250721000226
+18:39:15,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Modifier Custom  Notes :11111,http://localhost:4850/#/menu?id=250721000226
+18:39:24,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Modifier Custom  Notes :5345345345,http://localhost:4850/#/menu?id=250721000226
+18:40:52,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Modifier Custom  Notes :123,http://localhost:4850/#/menu?id=250721000226
+18:41:05,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,menu/modifier SIEW MAI RPT LT DD menuId : 78, price : 15000,http://localhost:4850/#/menu?id=250721000226
+18:41:08,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,menu/modifier SIEW MAI RPT LT DD menuId : 78, price : 15000,http://localhost:4850/#/menu?id=250721000226
+18:41:10,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,menu/modifier BAKPAO CHASIEW DD menuId : 81, price : 15000,http://localhost:4850/#/menu?id=250721000226
+18:41:17,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Modifier Custom  Notes :123123123123123123,http://localhost:4850/#/menu?id=250721000226
+18:41:18,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,menu/modifier TIM UDG SYRN DD menuId : 82, price : 15000,http://localhost:4850/#/menu?id=250721000226
+19:06:18,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Send Order,http://localhost:4850/#/menu?id=250721000226
+19:06:20,Imperial Kitchen(15),0001,IT Melanie(1),250721000225,Go to Menu,http://localhost:4850/#/tables
+19:06:24,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Go to Menu,http://localhost:4850/#/tables
+19:07:08,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Click BILL,http://localhost:4850/#/menu?id=250721000226
+19:08:22,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Click BILL,http://localhost:4850/#/menu?id=250721000226
+19:08:36,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Click BILL,http://localhost:4850/#/menu?id=250721000226
+19:08:52,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Click BILL,http://localhost:4850/#/menu?id=250721000226
+19:10:04,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Click BILL,http://localhost:4850/#/menu?id=250721000226
+19:12:12,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Click BILL,http://localhost:4850/#/menu?id=250721000226
+19:12:30,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,menu/modifier SO TIM UDG SYRN DD menuId : 82, price : 15000,http://localhost:4850/#/menu?id=250721000226
+19:12:37,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,menu/modifier SO TIM UDG SYRN DD menuId : 82, price : 15000,http://localhost:4850/#/menu?id=250721000226

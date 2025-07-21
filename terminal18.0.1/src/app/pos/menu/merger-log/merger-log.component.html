@@ -1,0 +1,82 @@
+<div class="modal-header">
+    <strong class="modal-title">Marge log</strong>
+    <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+</div>
+<div class="modal-body">
+    <ng-template #recursive let-item>
+        <div class=" border-start ms-4 ">
+            <div class="mb-3 ms-2 p-2 bg-light shadow-sm border rounded">
+
+                <div class="mb-1">
+                    <strong>
+                        <span class="badge text-bg-secondary">{{ !item.parent ? 'PAST MERGED' : ''}}</span>
+                        Log Id : {{item.id}}</strong>
+                </div>
+
+                <div class="row">
+                    <div class="col-6">
+                        <div class="mb-1">
+                            <strong>Origin Table</strong>
+                        </div>
+                        <table class="table table-sm">
+                            <tbody>
+
+                                <tr>
+                                    <td> Bill</td>
+                                    <td>: {{item.cartId}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Cover</td>
+                                    <td>: {{item.cover1}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Table name</td>
+                                    <td>: {{item.oldTable}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Input date</td>
+                                    <td>: {{item.inputDate | date:'medium'}}</td>
+                                </tr>
+                            </tbody>
+
+                        </table>
+
+                    </div>
+                    <div class="col-6">
+                        <div class="mb-1">
+                            <strong>Merger table to {{item.newTable}}</strong>
+                        </div>
+                        <table class="table table-sm">
+                            <tbody>
+
+                                <tr>
+                                    <td> Bill</td>
+                                    <td>: {{item.cartIdNew}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Cover</td>
+                                    <td>: {{item.coverNew}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Table name</td>
+                                    <td>: {{item.newTable}}</td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+
+            <ng-container *ngIf="item.parent">
+                <ng-container *ngTemplateOutlet="recursive; context: { $implicit: item.parent }"></ng-container>
+            </ng-container>
+        </div>
+    </ng-template>
+
+    <!-- Trigger pertama -->
+    <ng-container *ngTemplateOutlet="recursive; context: { $implicit: data.items }"></ng-container>
+
+</div>

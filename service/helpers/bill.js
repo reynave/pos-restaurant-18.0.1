@@ -38,6 +38,20 @@ async function cart(cartId = '', subgroup = 0) {
            ) AS t1
            GROUP BY t1.descl, t1.price 
 
+              UNION 
+        --  CUSTOM NOTES
+         SELECT 'MODIFIER' as 'type',  COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price
+           FROM (
+             SELECT r.modifierId, r.note AS 'descl', r.price
+             FROM cart_item  AS i 
+             LEFT JOIN cart_item_modifier AS r ON r.cartItemId = i.id  
+             WHERE i.menuId = ${row['menuId']}  
+             AND i.cartId = '${cartId}' AND i.void = 0 AND i.presence = 1
+            AND r.modifierId = 0 AND r.note != ''
+             AND r.presence = 1 AND i.void = 0   
+           ) AS t1
+           GROUP BY t1.descl, t1.price 
+
            UNION  
             -- APPLYDISCOUNT
             SELECT 'APPLY_DISCOUNT' as 'type', COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price

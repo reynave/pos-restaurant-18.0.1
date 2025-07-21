@@ -2,8 +2,9 @@ const express = require('express');
 const router = express.Router();
 const tableMap = require('../../controllers/terminal/tableMapController');  
   
-// table/*
+// tableMap/*
 router.get('/', tableMap.getAllData);
+router.get('/detail', tableMap.tableDetail);
 
 router.post('/newOrder', tableMap.newOrder);
 

@@ -7,7 +7,7 @@
             <div *ngIf="cartOrdered.length+cart.length < 1 " class="text-center py-3">No Order</div>
 
             <table class="table table-hover table-cart">
-               <tbody class="sticky-top">
+               <tbody class="sticky-top bg-white">
                   <tr>
                      <td class="align-content-center" (click)="fnCheckBoxAll()">
 
@@ -26,7 +26,7 @@
                      </td>
                   </tr>
                </tbody>
-               
+
                <tbody *ngFor="let x of cartOrdered; let i = index" [class]="{'tr-active':x.checkBox == 1 }">
                   <tr [class]="{'bg-light':x.sendOrder !== ''}" (click)="fnCheckedOrdered(i)">
                      <td>
@@ -38,7 +38,7 @@
 
                      <td>
                         <div class="lh-1">
-                           <strong> <span><i class="bi bi-fork-knife"></i></span> {{x.name }}  {{x.totalModifier > 0 ?
+                           <strong> <span><i class="bi bi-fork-knife"></i></span> {{x.name }} {{x.totalModifier > 0 ?
                               '*':''}} </strong>
                         </div>
                         <small class="font-monospace">&#64;{{x.price | number}} </small>
@@ -60,11 +60,11 @@
                   </tr>
 
                   @if(checkBoxAllModifier && x.modifier.length > 0){
-                  <tr  [class]="{'bg-light':x.sendOrder !== ''}" *ngFor="let a of x.modifier; let i = index">
+                  <tr [class]="{'bg-light':x.sendOrder !== ''}" *ngFor="let a of x.modifier; let i = index">
                      <td></td>
                      <td>
-                        {{ a.descl}} 
-                        <small class="font-monospace">&#64;{{a.price | number}}</small>  
+                        {{ a.descl}}
+                        <small class="font-monospace" *ngIf="a.price > 0">&#64;{{a.price | number}}</small>
                      </td>
                      <td class="text-center"><span class="font-monospace"> x {{ a.total}}</span></td>
                      <td class="text-end"> <span class="font-monospace">{{a.totalAmount |number}}</span></td>
@@ -91,8 +91,8 @@
                      </td>
 
                      <td class="text-end font-monospace">
-                        <button type="button" class="btn  btn-light border" 
-                              style="width: 60px;" (click)="model.newQty = x.total;open(modalQty, x, i)"> x {{x.total |  number}}
+                        <button type="button" class="btn  btn-light border" style="width: 60px;"
+                           (click)="model.newQty = x.total;open(modalQty, x, i)"> x {{x.total | number}}
                         </button>
                      </td>
 
@@ -110,8 +110,8 @@
                   <tr *ngFor="let a of x.modifier; let i = index">
                      <td></td>
                      <td>
-                        {{ a.descl}} 
-                        <small class="font-monospace">&#64;{{a.price | number}}</small>  
+                        {{ a.descl}}
+                        <small *ngIf="a.price > 0" class="font-monospace">&#64;{{a.price | number}}</small>
                      </td>
                      <td class="text-center"><span class="font-monospace"> x {{ a.total}}</span></td>
                      <td class="text-end"> <span class="font-monospace">{{a.totalAmount |number}}</span></td>
@@ -211,15 +211,10 @@
                            class="bi bi-send-plus"></i>
                         TRANSFER ITEMS</button>
                   </div>
-                  <div class="col-3 d-grid">
-                     <button type="button" [class]="cssClass" class="bg-white" (click)="transferLog()"> <i
-                           class="bi bi-clock-history"></i>
-                        TRANSFER LOG</button>
-                  </div>
+
 
                   <div class="col-3 d-grid">
-                     <button type="button" [class]="cssClass" class="bg-white"  
-                        (click)="takeOut()">
+                     <button type="button" [class]="cssClass" class="bg-white" (click)="takeOut()">
                         <i class="bi bi-bag-check"></i>
                         TAKE OUT</button>
                   </div>
@@ -231,11 +226,25 @@
                   </div>
 
                   <div class="col-3 d-grid">
-                     <button type="button" [class]="cssClass" class="bg-white" (click)="model.newQty = 0; openSm(modalChangeCover)" >
-                      <i class="bi bi-people"></i>
-                       CHANGE COVER </button>
+                     <button type="button" [class]="cssClass" class="bg-white"
+                        (click)="model.newQty = 0; openSm(modalChangeCover)">
+                        <i class="bi bi-people"></i>
+                        CHANGE COVER </button>
                   </div>
 
+               </div>
+
+               <div class="row g-2">
+                  <div class="col-3 d-grid">
+                     <button type="button" [class]="cssClass" class="bg-white" (click)="transferLog()">
+                        <i class="bi bi-clock-history"></i>
+                        TRANSFER LOG</button>
+                  </div>
+                  <div class="col-3 d-grid">
+                     <button type="button" [class]="cssClass" class="bg-white" (click)="mergerLog()">
+                        <i class="bi bi-clock-history"></i>
+                        MERGE LOG</button>
+                  </div>
                </div>
             </div>
             }
@@ -308,6 +317,12 @@
                      <div class="mb-1"> {{x.name}}</div>
                   </button>
                </div>
+
+               <div class="col-3 mb-1 d-grid">
+                  <button type="button" [class]="cssMenu" (click)="modal(modalAddMemo,'md');">
+                     <div class="mb-1"><i class="bi bi-pen"></i> Custom Notes</div>
+                  </button>
+               </div>
             </div>
 
             <div class="row g-1 mb-3">
@@ -335,11 +350,11 @@
                      <div class="mb-1">FINISH</div>
                   </button>
                </div>
-                 <div class="col-3 mb-1 d-grid">
+               <div class="col-3 mb-1 d-grid">
                   <button type="button" [class]="cssMenu" (click)="onVoid();">
-                     <div class="mb-1">  <i class="bi bi-x-lg"></i> DELETE</div>
+                     <div class="mb-1"> <i class="bi bi-x-lg"></i> DELETE</div>
                   </button>
-               </div> 
+               </div>
             </div>
             }
 
@@ -360,21 +375,21 @@
    <div class="modal-body">
 
       <form (ngSubmit)="updateQty()" #actorForm="ngForm">
-         <div class="mb-3"> 
+         <div class="mb-3">
             <div class="row g-1">
                <div class="col-5">
-                    <div class="mb-1"><strong for="newQty">Current </strong></div>
-                    <div class="form-control form-control-lg bg-light">{{item.total}}</div>
+                  <div class="mb-1"><strong for="newQty">Current </strong></div>
+                  <div class="form-control form-control-lg bg-light">{{item.total}}</div>
                </div>
-               <div class="col-1"> 
-                   <i class="bi bi-arrow-right"></i>  
+               <div class="col-1">
+                  <i class="bi bi-arrow-right"></i>
                </div>
                <div class="col-6">
-                   <div class="mb-1"><strong for="newQty">Change to</strong></div>
+                  <div class="mb-1"><strong for="newQty">Change to</strong></div>
                   <input type="number" class="form-control form-control-lg" id="newQty" required
-                     [(ngModel)]="model.newQty" name="newQty" #newQty="ngModel"> 
+                     [(ngModel)]="model.newQty" name="newQty" #newQty="ngModel">
                </div>
-              
+
             </div>
          </div>
          <div class="mb-3">
@@ -382,11 +397,12 @@
          </div>
 
          <div class="row g-1">
-             <div class="col d-grid">
-                <button type="button" class="btn btn-lg btn-warning"  (click)="model.newQty=0">CE</button> 
+            <div class="col d-grid">
+               <button type="button" class="btn btn-lg btn-warning" (click)="model.newQty=0">CE</button>
             </div>
             <div class="col  d-grid">
-               <button type="submit" class="btn btn-lg btn-dark" [disabled]="!actorForm.form.valid ||  model.newQty == 0">OK</button>
+               <button type="submit" class="btn btn-lg btn-dark"
+                  [disabled]="!actorForm.form.valid ||  model.newQty == 0">OK</button>
             </div>
          </div>
 
@@ -398,27 +414,31 @@
 
 <ng-template #modalAddMemo let-modal>
    <div class="modal-header">
-      <strong>Change New Item Quantity </strong>
+      <strong>Add Custom Notes </strong>
       <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
    </div>
    <div class="modal-body">
 
-      <form (ngSubmit)="updateQty()" #actorForm="ngForm">
+      <form (ngSubmit)="addCustomNotes()" #actorForm="ngForm">
          <div class="mb-3">
-            <div class="mb-1"><label for="newQty">Input New Quantity</label></div>
-
-            <input type="number" class="form-control form-control-lg" id="newQty" required [(ngModel)]="model.newQty"
-               name="newQty" #newQty="ngModel">
-            <div [hidden]="newQty.valid || newQty.pristine" class="text-danger">
-               Input New Quantity is required
+            <input type="text" class="form-control form-control-lg"  #myInput  id="note" 
+               required [(ngModel)]="model.note"  name="note" #note="ngModel" autofocus >
+            <div [hidden]="note.valid || note.pristine" class="text-danger">
+               Note is required
             </div>
          </div>
-         <div class="text-center">
-            <button type="button" class="btn btn-outline-secondary mx-2" style="width: 100px;"
-               (click)="modal.close('Save click')">Cancel</button>
-            <button type="submit" class="btn btn-dark  mx-2" style="width: 100px;"
-               [disabled]="!actorForm.form.valid">OK</button>
-         </div>
+
+         <div class="row g-1">
+            <div class="col-6 d-grid">
+               <button type="button" class="btn btn-lg btn-outline-secondary"  
+                  (click)="modal.close('Save click')">Cancel</button>
+            </div>
+             <div class="col-6 d-grid">
+               <button type="submit" class="btn btn-lg btn-dark"  
+                  [disabled]="!actorForm.form.valid">OK</button>
+            </div>
+         </div> 
+
       </form>
    </div>
 
@@ -518,22 +538,22 @@
 
       <form (ngSubmit)="updateCover()" #actorForm="ngForm">
          <div class="mb-3">
-           
+
 
             <div class="row g-1">
                <div class="col-5">
-                    <div class="mb-1"><label for="newQty">Current  Cover</label></div>
-                    <div class="form-control form-control-lg">{{table['cover']}}</div>
+                  <div class="mb-1"><label for="newQty">Current Cover</label></div>
+                  <div class="form-control form-control-lg">{{table['cover']}}</div>
                </div>
-               <div class="col-1"> 
-                   <i class="bi bi-arrow-right"></i>  
+               <div class="col-1">
+                  <i class="bi bi-arrow-right"></i>
                </div>
                <div class="col-6">
-                   <div class="mb-1"><label for="newQty">Change Cover</label></div>
+                  <div class="mb-1"><label for="newQty">Change Cover</label></div>
                   <input type="number" class="form-control form-control-lg" id="newQty" required
-                     [(ngModel)]="model.newQty" name="newQty" #newQty="ngModel"> 
+                     [(ngModel)]="model.newQty" name="newQty" #newQty="ngModel">
                </div>
-              
+
             </div>
          </div>
          <div class="mb-3">
@@ -542,7 +562,7 @@
 
          <div class="row g-1">
             <div class="col d-grid">
-                <button type="button" class="btn btn-lg btn-warning"  (click)="model.newQty=0">CE</button> 
+               <button type="button" class="btn btn-lg btn-warning" (click)="model.newQty=0">CE</button>
             </div>
             <div class="col  d-grid">
                <button type="submit" class="btn btn-lg btn-dark" [disabled]="!actorForm.form.valid">OK</button>

@@ -11,6 +11,7 @@ import { DailyCloseComponent } from '../daily/daily-close/daily-close.component'
 import { HeaderMenuComponent } from "../../header/header-menu/header-menu.component";
 import { SocketService } from './../../service/socket.service';
 import { UserLoggerService } from '../../service/user-logger.service';
+import { param } from 'jquery';
 
 export class Actor {
   constructor(
@@ -31,7 +32,7 @@ export class TablesComponent implements OnInit {
   loading: boolean = false;
   current: number = 0;
   checkboxAll: number = 0;
-   statusMap : any = [];
+  statusMap: any = [];
   disabled: boolean = true;
   items: any = [{
     map: []
@@ -51,7 +52,7 @@ export class TablesComponent implements OnInit {
     public configService: ConfigService,
     private http: HttpClient,
     public modalService: NgbModal,
-    private router: Router, 
+    private router: Router,
     private socketService: SocketService,
     public logService: UserLoggerService
 
@@ -127,7 +128,7 @@ export class TablesComponent implements OnInit {
         this.loading = false;
         this.items = data['items'];
         this.totalCart = data['cart'].length;
-            this.statusMap = data['statusMap'];
+        this.statusMap = data['statusMap'];
       },
       error => {
         console.log(error);
@@ -145,31 +146,64 @@ export class TablesComponent implements OnInit {
     localStorage.setItem("pos3.onMap", index.toString());
     this.current = index;
   }
-  currentTable : number = 0;
-  open(content: any, x: any,  current : number, i: number) {
-    console.log(x.id, x ,current ,i);
+  currentTable: number = 0;
+  item: any = [];
+  open(content: any, x: any, current: number, i: number) {
+
+    if (this.items[current]['maps'][i]['active'] == 1) {
+      if (x.cover <= 0 || x.cover == '') {
+        this.tableSelect = x;
+        this.model.cover = x.capacity
+        this.model.outletTableMapId = x.id
+        this.model.outletFloorPlandId = x.outletFloorPlandId
+
+        this.modalService.open(content, { size: 'sm' });
+      } else {
+        this.gotTo(x)
+      }
+    }
+
+    //  console.log(x.id, x, current, i);
     this.currentTable = x;
-    
-    for(let i = 0 ; i < this.items.length ; i++){
+
+    for (let i = 0; i < this.items.length; i++) {
       this.items[i]['maps'].forEach((row: any) => {
-          row['active'] = 0;
+        row['active'] = 0;
       });
     }
 
-    this.items[current]['maps'][i]['active']= 1;
-    // if(x.cover <= 0 || x.cover=='' ){
-    //   this.tableSelect = x;
-    //   this.model.cover = x.capacity
-    //   this.model.outletTableMapId = x.id
-    //   this.model.outletFloorPlandId = x.outletFloorPlandId
+    this.items[current]['maps'][i]['active'] = 1;
+    console.log(this.items[current]['maps'][i])
+    this.item = this.items[current]['maps'][i];
+    this.item['indexed'] = {
+      current: current,
+      i: i,
+    }
+    this.http.get<any>(environment.api + "tableMap/detail", {
+      headers: this.configService.headers(),
+      params: {
+        cartId: this.item.cardId
+      }
+    }).subscribe(
+      data => {
+        console.log(data)
+        this.item['detail'] = data['detail'];
+        this.item['cart'] = data['cart'];
 
-    //   this.modalService.open(content, { size: 'sm' });
-    // }else{
-    //   this.gotTo(x)
-    // }
-   
+      },
+      error => {
+        console.log(error);
+      }
+    )
+
+
+
   }
 
+  onRemoveCurrentTable() {
+    this.currentTable = 0;
+    this.items[this.item.indexed.current]['maps'][this.item.indexed.i]['active'] = 0;
+  }
   gotTo(x: any) {
     if (x.tableMapStatusId == '12') {
       this.router.navigate(['/menu'], { queryParams: { id: x.cardId } });
@@ -207,11 +241,11 @@ export class TablesComponent implements OnInit {
   }
 
   onSubmit() {
-  
+
     const outletId = this.configService.getConfigJson()['outlet']['id'];
 
-    this.logService.logAction('New Order '+this.configService.getConfigJson()['outlet']['name']+
-    '('+this.configService.getConfigJson()['outlet']['id']+') Cover : '+this.model['cover']+', Table : '+this.tableSelect.tableName+'('+this.model['outletTableMapId']+')')
+    this.logService.logAction('New Order ' + this.configService.getConfigJson()['outlet']['name'] +
+      '(' + this.configService.getConfigJson()['outlet']['id'] + ') Cover : ' + this.model['cover'] + ', Table : ' + this.tableSelect.tableName + '(' + this.model['outletTableMapId'] + ')')
     const body = {
       model: this.model,
       outletId: outletId,
@@ -221,12 +255,12 @@ export class TablesComponent implements OnInit {
       headers: this.configService.headers(),
     }).subscribe(
       data => {
-        if (data['error'] != true) { 
+        if (data['error'] != true) {
           this.router.navigate(['/menu'], { queryParams: { id: data['cardId'] } });
           this.modalService.dismissAll();
           this.logService.logAction('Go to Menu', data['cardId'])
         } else {
-          alert("Table Used"); 
+          alert("Table Used");
           this.logService.logAction('ERROR Table Used')
           this.reload();
         }
@@ -234,7 +268,7 @@ export class TablesComponent implements OnInit {
       },
       error => {
         console.log(error);
-         this.logService.logAction('ERROR now order')
+        this.logService.logAction('ERROR now order')
       }
     )
   }

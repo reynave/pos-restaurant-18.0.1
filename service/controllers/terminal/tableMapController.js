@@ -11,7 +11,7 @@ exports.getAllData = async (req, res) => {
       FROM outlet_floor_plan  
       WHERE presence = 1  ${!outletId ? '' : 'AND outletId = ' + outletId}
     `);
- 
+
     for (const row of formattedRows) {
       const [maps] = await db.query(`
        SELECT o.id, o.id as 'outletTableMapId', o.outletFloorPlandId, o.tableName, o.posY, o.posX, o.width, 
@@ -21,14 +21,14 @@ exports.getAllData = async (req, res) => {
       `, [row.id]);
       row.maps = maps;
     }
- 
+
     const [cart] = await db.query(`
       SELECT c.*, s.name AS 'tableMapStatus'
       FROM cart AS c
       LEFT JOIN outlet_table_map_status AS s ON c.tableMapStatusId = s.id
       WHERE c.close  = 0 AND c.presence = 1 AND c.outletId = ${outletId}
     `);
- 
+
     for (let i = 0; i < formattedRows.length; i++) {
       let checking = 0;
       for (let n = 0; n < formattedRows[i]['maps'].length; n++) {
@@ -38,8 +38,8 @@ exports.getAllData = async (req, res) => {
       }
       formattedRows[i]['checking'] = checking;
     }
- 
-  const [statusMap] = await db.query(`
+
+    const [statusMap] = await db.query(`
           SELECT *
       FROM outlet_table_map_status  
       WHERE  showOnUser = 1 order by id desc
@@ -50,23 +50,23 @@ exports.getAllData = async (req, res) => {
 
         const index = cart.findIndex(y => y.outletTableMapId === x.outletTableMapId);
 
-        if (index !== -1) { 
+        if (index !== -1) {
 
           x['close'] = cart[index]['close'];
           x['cardId'] = cart[index]['id'];
           x['totalItem'] = cart[index]['totalItem'];
-          x['cover'] = cart[index]['cover']; 
+          x['cover'] = cart[index]['cover'];
           x['tableMapStatusId'] = cart[index]['tableMapStatusId'];
-          x['tableMapStatus'] = cart[index]['tableMapStatus']; 
+          x['tableMapStatus'] = cart[index]['tableMapStatus'];
           x['grandTotal'] = cart[index]['grandTotal'];
 
-        }else{
+        } else {
           x['close'] = null
           x['cardId'] = ''
           x['totalItem'] = 0;
-          x['cover'] = null; 
+          x['cover'] = null;
           x['tableMapStatusId'] = null;
-          x['tableMapStatus'] = null; 
+          x['tableMapStatus'] = null;
           x['grandTotal'] = 0;
         }
 
@@ -79,7 +79,7 @@ exports.getAllData = async (req, res) => {
       //  error: false,
       items: formattedRows,
       cart: cart,
-      statusMap : statusMap,
+      statusMap: statusMap,
       //get: req.query
     });
 
@@ -89,7 +89,43 @@ exports.getAllData = async (req, res) => {
   }
 };
 
+exports.tableDetail = async (req, res) => {
+  const cartId = req.query.cartId; 
+  try {
+    const q = `
+    SELECT SUM(total) AS 'total', sum(qty) AS 'qty'  FROM (
+      SELECT sum(price) AS 'total', count(id) AS 'qty' 
+      FROM cart_item WHERE cartId = '${cartId}' AND presence =1 AND void = 0
+      union
+      SELECT sum(price) AS 'total', 0 AS 'qty' 
+      FROM cart_item_modifier WHERE cartId = '${cartId}' AND presence =1 AND void = 0
+    ) AS a
+    `; 
+    const [cart] = await db.query(q);
  
+    const q2 = `
+      SELECT c.*, e.name as 'employee', s.*
+      FROM cart as c 
+        LEFT JOIN employee as e on e.id = c.inputBy
+        LEFT JOIN outlet_table_map_status AS s ON s.id = c.tableMapStatusId 
+      WHERE c.id = '${cartId}' AND  c.presence = 1 
+    `; 
+    const [detail] = await db.query(q2);
+
+    res.status(201).json({
+      error: false,
+      cart: cart[0],
+      detail: detail.length ? detail[0]: {}
+    });
+
+
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: true, note: 'Database insert error' });
+  }
+};
+
 exports.newOrder = async (req, res) => {
   const model = req.body['model'];
   const dailyCheckId = req.body['dailyCheckId'];
@@ -105,7 +141,7 @@ exports.newOrder = async (req, res) => {
     WHERE  o.presence = 1 AND o.id = ${model['outletTableMapId']} AND c.presence = 1 AND c.void = 0
     AND c.tableMapStatusId != 20
     `;
-   
+
     const [rows] = await db.query(q);
     const total = rows[0]?.total || 0; // gunakan optional chaining biar aman
     const { insertId } = await autoNumber('cart');

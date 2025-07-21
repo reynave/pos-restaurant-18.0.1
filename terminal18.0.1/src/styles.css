@@ -158,7 +158,9 @@ button[disabled]{
     text-align: center;
 }
 
-
+.table > :not(caption) > * > * {
+    background: none;
+}
 
 
 /* for component  tables.component.html */

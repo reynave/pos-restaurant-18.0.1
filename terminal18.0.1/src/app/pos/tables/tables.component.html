@@ -51,77 +51,78 @@
 
          @if(items.length > 0){
 
-            @if(activeView == 'map'){
-            <div class="map">
+         @if(activeView == 'map'){
+         <div class="map">
 
-               <div class="table-map border p-1 shadow-sm  rounded "
-                  style="background: url('{{public}}{{items[current]?.image}}') left top no-repeat;">
-                  <div class="floorPlan" *ngFor="let x of items[current]?.maps ; let i = index">
+            <div class="table-map border p-1 shadow-sm  rounded "
+               style="background: url('{{public}}{{items[current]?.image}}') left top no-repeat;">
+               <div class="floorPlan" *ngFor="let x of items[current]?.maps ; let i = index">
 
-                     <div class="items   table-{{x.tableMapStatusId}}"
-                        [style.transform]="'translate(' + x.posX + 'px,' + x.posY + 'px)'" [style.width.px]="x.width"
-                        [style.height.px]="x.height" [style.backgroundImage]="'url('+public+x.icon+')'"
-                        style="background-size: cover;" (click)="open(modalCheckIn, x, current, i)">
-                        <div class="text-end p-1" style=" cursor: pointer;">
-                           <div class="table-pos-label">
-                              <strong class="table-name">{{x.tableName}} </strong>
-                           </div>
-                           <h5>
-                              <span *ngIf="x.tableMapStatusId == '12' "> <i class="bi bi-fork-knife"></i></span>
-                              <span *ngIf="x.tableMapStatusId == '18' "> <i class="bi bi-receipt-cutoff"></i></span>
-                              <span *ngIf="x.active == 1 "> <i class="bi bi-check"></i></span>
-                              
-                           </h5>
-
-
+                  <div class="items   table-{{x.tableMapStatusId}}"
+                     [style.transform]="'translate(' + x.posX + 'px,' + x.posY + 'px)'" [style.width.px]="x.width"
+                     [style.height.px]="x.height" [style.backgroundImage]="'url('+public+x.icon+')'"
+                     style="background-size: cover;" (click)="open(modalCheckIn, x, current, i)">
+                     <div class="text-end p-1" style=" cursor: pointer;">
+                        <div class="table-pos-label">
+                           <strong class="table-name">{{x.tableName}} </strong>
                         </div>
-                     </div>
+                        <h5>
+                           <span *ngIf="x.active == 1 "> <i class="bi bi-check"></i></span>
+                           <span *ngIf="x.tableMapStatusId == '12' "> <i class="bi bi-fork-knife"></i></span>
+                           <span *ngIf="x.tableMapStatusId == '18' "> <i class="bi bi-receipt-cutoff"></i></span>
 
+
+                        </h5>
+
+
+                     </div>
                   </div>
+
                </div>
             </div>
-            }
-            @else {
-            <div class="content-table border shadow-sm">
+         </div>
+         }
+         @else {
+         <div class="content-table border shadow-sm">
 
-               <table class="table ">
-                  <thead class="sticky-top">
-                     <tr>
-                        <th>#</th>
-                        <th>Table Name</th>
-                        <th>Bill</th>
-                        <th class="text-center">Capacity</th>
-                        <th class="text-center">Cover</th>
-                        <th></th>
-                     </tr>
-                  </thead>
-                  <tbody>
-                     <tr *ngFor="let x of items[current]['maps']; let i = index">
-                        <td>{{i+1}}</td>
-                        <td>{{x.tableName}}</td>
-                        <td>{{x.cardId}}</td>
-                        <td class="text-center">{{x.capacity}}</td>
-                        <td class="text-center">{{x.cover > 0 ? x.cover : ''}}</td>
-                        <td class="text-center">
-                           <div class="d-grid">
-                              @if(x.cover <= 0 || x.cover=='' ){ <button type="button"
-                                 class="btn btn-sm border btn-light shadow-sm rounded-pill"
-                                 (click)="open(modalCheckIn, x,current,i)">
-                                 NEW ORDER</button>
-                                 }
-                                 @else{
-                                 <a class="btn btn-sm rounded-pill table-{{x.tableMapStatusId}}"
-                                    (click)="(x.cover <= 0 || x.cover=='' ) ? open(modalCheckIn, x,current,i) : gotTo(x) ">
-                                    {{x.tableMapStatus}}</a>
-                                 }
-                           </div>
-                        </td>
-                     </tr>
-                  </tbody>
-               </table>
+            <table class="table ">
+               <thead class="sticky-top">
+                  <tr>
+                     <th>#</th>
+                     <th>Table Name</th>
+                     <th>Bill</th>
+                     <th class="text-center">Capacity</th>
+                     <th class="text-center">Cover</th>
+                     <th></th>
+                  </tr>
+               </thead>
+               <tbody>
+                  <tr *ngFor="let x of items[current]['maps']; let i = index">
+                     <td>{{i+1}}</td>
+                     <td>{{x.tableName}}</td>
+                     <td>{{x.cardId}}</td>
+                     <td class="text-center">{{x.capacity}}</td>
+                     <td class="text-center">{{x.cover > 0 ? x.cover : ''}}</td>
+                     <td class="text-center">
+                        <div class="d-grid">
+                           @if(x.cover <= 0 || x.cover=='' ){ <button type="button"
+                              class="btn btn-sm border btn-light shadow-sm rounded-pill"
+                              (click)="open(modalCheckIn, x,current,i)">
+                              NEW ORDER</button>
+                              }
+                              @else{
+                              <a class="btn btn-sm rounded-pill table-{{x.tableMapStatusId}}"
+                                 (click)="(x.cover <= 0 || x.cover=='' ) ? open(modalCheckIn, x,current,i) : gotTo(x) ">
+                                 {{x.tableMapStatus}}</a>
+                              }
+                        </div>
+                     </td>
+                  </tr>
+               </tbody>
+            </table>
 
-            </div>
-            }
+         </div>
+         }
          }
 
          <div class="d-flex flex-row-reverse ">
@@ -134,10 +135,67 @@
       <div class="col-4 d-none d-xl-block">
          <div class="row g-1">
             <div class="col-12">
-               @if(currentTable != 0){  
-                  <div class="border p-2 shadow-sm mb-3">
-                     <strong>TABLE INFO</strong>
+               @if(currentTable != 0){
+               <div class="border p-2 shadow-sm mb-3">
+
+                  <div class="row">
+                     <div class="col-6">
+                        <strong>TABLE INFO</strong>
+                     </div>
+                     <div class="col-6 text-end">
+                        <button class="btn btn-sm border" (click)="onRemoveCurrentTable()"><i class="bi bi-x-lg"></i>
+                           CLOSE</button>
+                     </div>
                   </div>
+                  @if(item.detail){
+                  <table class="table table-sm">
+                     <tbody>
+                        <tr>
+                           <td>Table Name</td>
+                           <td>: {{item.tableName}}</td>
+                        </tr>
+                        @if(item.detail.id){
+                        <tr>
+                           <td>Bill</td>
+                           <td>: {{item.cardId}}</td>
+                        </tr>
+                        <tr>
+                           <td>Start Date</td>
+                           <td>: {{item.detail.startDate | date : 'medium'}} </td>
+                        </tr>
+                        <tr>
+                           <td>Cover / Capacity</td>
+                           <td>: {{item.cover}} / {{item.capacity}} </td>
+                        </tr>
+                        <tr>
+                           <td>Status</td>
+                           <td>: <span [class]="item.detail.color"><i class="bi bi-square-fill"></i> </span>
+                              {{item.tableMapStatus}} </td>
+                        </tr>
+                        <tr>
+                           <td>Total</td>
+                           <td>: {{item.cart.total | number}}</td>
+                        </tr>
+                        <tr>
+                           <td>Item</td>
+                           <td>: {{item.cart.qty}}</td>
+                        </tr>
+                        <tr>
+                           <td>User</td>
+                           <td>: {{item.detail.employee}}</td>
+                        </tr>
+                        }
+                        @else {
+                        <tr>
+                           <td>Capacity</td>
+                           <td>: {{item.capacity}} </td>
+                        </tr>
+                        }
+                     </tbody>
+
+                  </table>
+                  }
+               </div>
                }
                <strong>Information</strong>
                <table class="table table-sm">
@@ -168,7 +226,7 @@
                      </tr>
                   </tbody>
                </table>
-       
+
             </div>
 
             <div class="col-12">

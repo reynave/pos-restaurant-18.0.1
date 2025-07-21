@@ -191,11 +191,21 @@ exports.cart = async (req, res) => {
           ) AS t1
           GROUP BY t1.descl, t1.price
 
-        
- 
-;
+         UNION 
+        --  CUSTOM NOTES
+          SELECT COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price, 1 as 'modifier'
+          FROM (
+            SELECT r.menuTaxScId AS 'modifierId', r.note AS descl, r.price
+            FROM cart_item  AS i
+            RIGHT JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
+          WHERE i.menuId = ${row['menuId']}
+              AND i.cartId = '${cartId}' AND i.void = 0 AND i.presence = 1
+              AND i.sendOrder = '' AND r.sendOrder = ''
+              AND r.presence = 1 AND i.void = 0 AND r.modifierId = 0 AND r.note != ''
+          ) AS t1
+          GROUP BY t1.descl, t1.price 
       `;
-
+      console.log(s);
 
       const [modifier] = await db.query(s);
       row.modifier = modifier;
@@ -365,7 +375,19 @@ exports.cartOrdered = async (req, res) => {
           ) AS t1
           GROUP BY t1.descl, t1.price
 
-;
+ UNION 
+        --  CUSTOM NOTES
+          SELECT COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price, 1 as 'modifier'
+          FROM (
+            SELECT r.menuTaxScId AS 'modifierId', r.note AS descl, r.price
+            FROM cart_item  AS i
+            RIGHT JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
+          WHERE i.menuId = ${row['menuId']}
+              AND i.cartId = '${cartId}' AND i.void = 0 AND i.presence = 1
+              AND i.sendOrder != '' AND r.sendOrder != ''
+              AND r.presence = 1 AND i.void = 0 AND r.modifierId = 0 AND r.note != ''
+          ) AS t1
+          GROUP BY t1.descl, t1.price 
       `;
 
       const [modifier] = await db.query(s);
@@ -1169,6 +1191,15 @@ exports.cartDetail = async (req, res) => {
           where c.cartItemId = ${row.id}
           and c.presence = 1 and c.void = 0 and c.modifierId != 0
         and c.applyDiscount = 0
+
+        UNION
+        -- GENERAL
+        SELECT c.id, c.modifierId, c.price, c.note AS 'descl', c.cartItemId, c.applyDiscount,  c.menuTaxScId,
+            c.priceIncluded,   0 as 'checkBox'
+        FROM cart_item_modifier AS c 
+        WHERE c.cartItemId = ${row.id}
+          and c.presence = 1 and c.void = 0  and c.modifierId = 0 AND c.note
+          and c.applyDiscount = 0
  
         UNION 
         -- APPLYDISCOUNT
@@ -2065,9 +2096,11 @@ exports.mergerCheck = async (req, res) => {
   const newTable = req.body['newTable'];
   const cartId = req.body['cartId'];
   const table = req.body['table'];
+  const dailyCheckId = req.body['dailyCheckId'];
   const inputDate = today();
   const results = [];
   try {
+
 
     const q1 = `UPDATE cart SET 
           void = 1,   
@@ -2081,7 +2114,7 @@ exports.mergerCheck = async (req, res) => {
     if (result1.affectedRows === 0) {
       results.push({ status: 'not found' });
     } else {
-      results.push({ status: 'void cart  ' + cartId });
+      results.push({ status: 'header void cart  ' + cartId });
     }
 
     const q0 = `UPDATE cart SET   
@@ -2093,7 +2126,7 @@ exports.mergerCheck = async (req, res) => {
     if (result0.affectedRows === 0) {
       results.push({ status: 'not found' });
     } else {
-      results.push({ status: 'update cart updated ' + newTable['cardId'] });
+      results.push({ status: 'header other update cart updated ' + newTable['cardId'] });
     }
 
     const q2 = `UPDATE cart_item SET 
@@ -2101,7 +2134,6 @@ exports.mergerCheck = async (req, res) => {
           updateDate = '${today()}'
         WHERE cartId = ${cartId}`;
     const [result2] = await db.query(q2);
-
     if (result2.affectedRows === 0) {
       results.push({ status: 'not found' });
     } else {
@@ -2113,14 +2145,36 @@ exports.mergerCheck = async (req, res) => {
           updateDate = '${today()}'
         WHERE cartId = ${cartId}`;
     const [result3] = await db.query(q3);
-
     if (result3.affectedRows === 0) {
       results.push({ status: 'not found' });
     } else {
       results.push({ status: 'cart updated' });
     }
 
+    const inputBy = 1;
+    // LOG
+    let q =
+      `INSERT INTO cart_merge_log (
+        presence, inputDate, inputBy,
+        cartId, cartIdNew, 
+        outletTableMapId, outletTableMapIdNew, 
+        cover1, cover2,  coverNew, 
+        dailyCheckId
+      )
+      VALUES (
+        1, '${inputDate}', ${inputBy}, 
+        '${cartId}',  '${newTable['cardId']}',
+        '${table['outletTableMapId']}', '${newTable['outletTableMapId']}', 
+        ${table['cover']}, ${newTable['cover']}, ${table['cover'] + newTable['cover']},
+        '${dailyCheckId}'
+      )`;
+    const [resultlog] = await db.query(q);
 
+    if (resultlog.affectedRows === 0) {
+      results.push({ status: 'not found' });
+    } else {
+      results.push({ status: 'cart updated' });
+    }
 
     res.json({
       error: false,
@@ -2130,5 +2184,107 @@ exports.mergerCheck = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Database error' });
+  }
+};
+
+const getChildrenRecursive = async (parentId, db) => {
+  const [children] = await db.query(`SELECT *  FROM cart_merge_log WHERE cartId = '${parentId}'`);
+
+  // Rekursif: untuk setiap anak, cari anak-anaknya
+  for (const child of children) {
+    child.children = await getChildrenRecursive(child.cartIdNew, db);
+  }
+
+  return children;
+};
+
+const getAncestorRecursive = async (childId, db) => {
+  // Ambil data dirinya
+  const q = `SELECT m.*, t1.tableName AS 'oldTable', t2.tableName AS 'newTable'
+    FROM cart_merge_log AS m
+    LEFT JOIN outlet_table_map AS t1 ON t1.id = m.outletTableMapId
+    LEFT JOIN outlet_table_map AS t2 ON t2.id = m.outletTableMapIdNew
+  WHERE m.cartIdNew = '${childId}' `;
+  const [rows] = await db.query(q);
+
+  if (rows.length === 0) return null;
+
+  const current = rows[0];
+
+  // Jika tidak ada parent (sudah paling atas), stop
+  if (!current.cartId) return current;
+
+  // Ambil parent-nya
+  current.parent = await getAncestorRecursive(current.cartId, db);
+
+  return current;
+};
+
+exports.mergeLog = async (req, res) => {
+  const cartId = req.query.cartId;
+  try {
+
+    if (isNaN(cartId)) {
+      return res.status(400).json({ error: 'Invalid cartId ID' });
+    }
+    const items = await getAncestorRecursive(cartId, db);
+
+    res.json({
+      items,
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error', detail: err.message });
+  }
+};
+
+exports.addCustomNotes = async (req, res) => {
+  const cartId = req.body['cartId'];
+  const model = req.body['model'];
+  const items = req.body['items'];
+
+  const inputDate = today();
+  const results = [];
+  try {
+
+    for (const emp of items) {
+      const { menuId, price } = emp;
+
+      const q = `
+        SELECT * FROM cart_item 
+        WHERE cartId = '${cartId}' AND menuId = ${menuId} AND price = ${price} AND presence = 1 AND void = 0 `;
+
+      const [result] = await db.query(q);
+
+      for (const row of result) { 
+
+        const q3 =
+          `INSERT INTO cart_item_modifier (
+            presence, inputDate, updateDate,  
+            cartId , note, cartItemId
+          )
+          VALUES (
+            1, '${inputDate}', '${inputDate}',  
+            '${cartId}', '${model['note']}', ${row['id']}
+          )`;
+        const [result3] = await db.query(q3);
+        if (result3.affectedRows === 0) {
+          results.push({ status: 'cart_item_modifier not found', });
+        } else {
+          results.push({ status: 'cart_item_modifier insert', });
+        }
+      }
+    }
+
+    res.status(201).json({
+      error: false,
+      results: results,
+    });
+
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database update error', details: err.message });
   }
 };

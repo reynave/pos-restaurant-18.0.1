@@ -34,7 +34,9 @@ router.post('/takeOut', menuItemPos.takeOut);
 router.post('/takeOutDetail', menuItemPos.takeOutDetail);
 router.post('/mergerCheck', menuItemPos.mergerCheck);
 
-// router.post('/create', menuItemPos.postCreate);
-// router.post('/delete', menuItemPos.postDelete);
+
+router.get('/mergeLog', menuItemPos.mergeLog);
+ router.post('/addCustomNotes', menuItemPos.addCustomNotes);
+ 
  
 module.exports = router;
