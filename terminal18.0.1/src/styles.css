@@ -135,6 +135,11 @@ button[disabled]{
   border: none; 
 }
 
+.table-30{
+    background-color: var(--bg-color-danger) !important;
+}
+
+
 .table-10{
     background-color: var(--bg-color-primary-50) !important;
 }
@@ -147,6 +152,7 @@ button[disabled]{
 }
 .table-name{
     text-shadow: 2px 2px 2px #f4f4f4;
+    color:#333;
    
 }
 

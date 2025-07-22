@@ -188,3 +188,10 @@ time,outletId,workStationId,userId,bill,action,url,method,server
 19:12:12,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Click BILL,http://localhost:4850/#/menu?id=250721000226
 19:12:30,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,menu/modifier SO TIM UDG SYRN DD menuId : 82, price : 15000,http://localhost:4850/#/menu?id=250721000226
 19:12:37,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,menu/modifier SO TIM UDG SYRN DD menuId : 82, price : 15000,http://localhost:4850/#/menu?id=250721000226
+19:16:10,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,menu/modifier SO BAKPAO CHASIEW DD menuId : 81, price : 15000,http://localhost:4850/#/menu?id=250721000226
+19:16:31,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,menu/modifier SO SIEW MAI RPT LT DD menuId : 78, price : 15000,http://localhost:4850/#/menu?id=250721000226
+19:16:55,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Menu Lookup 0,http://localhost:4850/#/menu?id=250721000226
+19:16:55,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Menu Lookup 1,http://localhost:4850/#/menu?id=250721000226
+19:16:56,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Menu Lookup 3,http://localhost:4850/#/menu?id=250721000226
+19:16:56,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Add Menu MANGGO KYOTO(24) @30000.00,http://localhost:4850/#/menu?id=250721000226
+19:16:59,Imperial Kitchen(15),0001,IT Melanie(1),250721000226,Menu Lookup 0,http://localhost:4850/#/menu?id=250721000226

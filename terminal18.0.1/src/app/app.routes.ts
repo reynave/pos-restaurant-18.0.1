@@ -26,6 +26,7 @@ import { TerminalReloginComponent } from './login/terminal-relogin/terminal-relo
 import { loginGuard } from './guard/login.guard';
 import { ItemsComponent } from './setting/items/items.component';
 import { UserLogsComponent } from './setting/user-logs/user-logs.component';
+import { TransferItemsGroupComponent } from './pos/menu/transfer-items-group/transfer-items-group.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -40,6 +41,7 @@ export const routes: Routes = [
     { path: 'menu', component: MenuComponent, canActivate: [authGuard, dailyStartGuard, terminalGuard, loginGuard] },
     { path: 'menu/modifier', component: MenuModifierComponent, canActivate: [authGuard, dailyStartGuard, terminalGuard, loginGuard] },
     { path: 'menu/transferItems', component: TransferItemsComponent, canActivate: [authGuard, dailyStartGuard, terminalGuard, loginGuard] },
+    { path: 'menu/transferItemsGroup', component: TransferItemsGroupComponent, canActivate: [authGuard, dailyStartGuard, terminalGuard, loginGuard] },
 
     { path: 'bill', component: BillComponent, canActivate: [authGuard, dailyStartGuard ,terminalGuard, loginGuard] },
     { path: 'bill/splitBill', component: SplitBillComponent, canActivate: [authGuard, dailyStartGuard,terminalGuard, loginGuard] },

@@ -1,0 +1,151 @@
+<app-header-menu></app-header-menu>
+<div class="container-fluid body-with-header">
+    <div class="row">
+        <div class="col-5 col-md-6">
+
+            <div class="border p-1 shadow-sm">
+                <strong>ITEMS</strong>
+
+                <div class="wrapper border bg-white">
+                    <pre>{{items | json}}</pre>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Menu</th>
+                                <th class="text-end">Price</th>
+                                <th class="text-end">Qty</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let x of items; let i = index"  (click)=" openKey(modalKey,x,i)"  [hidden]="x.total <=0 " >
+                                <td>{{i+1}}</td> 
+                                <td>{{x.name}}</td>
+                                <td class="text-end">{{x.price | number}}</td>
+                                <td class="text-end">{{x.total}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+
+                </div>
+            </div>
+
+        </div>
+        <div class="col-7 col-md-6">
+            <div class="border p-1 shadow-sm">
+                <strong>ITEMS TRANSFER </strong> 
+                <pre>{{itemsTransfer | json}}</pre> 
+
+                <div class="wrapper border bg-white"> 
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Menu</th>
+                                <th class="text-end">Price</th>
+                                <th class="text-end">Qty</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let x of itemsTransfer; let i = index">
+                                <td>{{i+1}}</td>
+                                <td>{{x.name}}</td>
+                                <td class="text-end">{{x.price | number}}</td>
+                                <td class="text-end">{{x.total}}</td>
+                                <td><button class="btn btn-sm btn-danger" (click)="fnCancel(i)">CANCEL</button></td>
+                            </tr>
+                        </tbody>
+                    </table> 
+
+                </div>
+
+
+
+                <div class="d-grid m-2 sticky-bottom" *ngIf="itemsTransfer.length > 0">
+                    <button type="button" class="btn btn-lg btn-dark" (click)="open(content)">SELECT TABLES</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<ng-template #modalKey let-modal>
+    <div class="modal-header">
+        <strong class="modal-title" id="modal-basic-title">Select Tables for Transfer</strong>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <input type="number" autocomplete="off" class="form-control form-control-lg  bg-light mb-2 text-end"
+            placeholder="0" [(ngModel)]="qty" #myInput>
+
+        <div class="mb-2">
+            <app-key-number (dataEmitted)="handleData($event)"></app-key-number>
+        </div>
+
+        <div class="row g-1">
+            <div class="col-6 d-grid">
+                <button type="button" class="btn btn-warning btn-lg" (click)="qty=0">CE</button>
+            </div>
+            <div class="col-6 d-grid">
+                <button type="button" class="btn btn-dark btn-lg" (click)="onSubmit()">SUBMIT</button>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <strong class="modal-title" id="modal-basic-title">Select Tables for Transfer</strong>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <div class="mb-2">
+            <div class="bg-light p-1  border rounded-pill d-inline-block">
+                <span *ngFor="let x of tablesMaps; let i = index">
+                    <button type="button" class="btn btn-sm rounded-pill px-3" (click)="onMap(i)" [class]="{
+                           'border': current == i,
+                            'bg-white': current == i,
+                            'shadow-sm': current == i,
+                           }"> {{x.desc1}}
+
+                        <span *ngIf="x.checking > 0  " class="badge text-bg-danger rounded-circle">
+                            {{x.checking}}
+                        </span>
+
+
+                    </button>
+                </span>
+
+            </div>
+        </div>
+
+        <div class="map">
+            <div class="table-map border p-1 shadow-sm  rounded ">
+                <div class="floorPlan" *ngFor="let x of tablesMaps[current]?.maps">
+
+
+                    <div class="items border rounded shadow-sm table-{{x.tableMapStatusId}}"
+                        [style.transform]="'translate(' + x.posX + 'px,' + x.posY + 'px)'" [style.width.px]="x.width"
+                        [style.height.px]="x.height" [style.backgroundImage]="'url(' + x.icon + ')'"
+                        style="background-size: cover; margin: 30% auto; cursor: pointer;"
+                        [style.opacity]="x.id == table.outletTableMapId ? 0.4 : 1" (click)="fnTransferItems(x)">
+                        <div class="text-center">
+                            {{x.tableName}}
+
+                            <div>
+                                <span *ngIf="x.tableMapStatusId == '12' "> <i class="bi bi-fork-knife"></i></span>
+                                <span *ngIf="x.tableMapStatusId == '18' "> <i class="bi bi-receipt-cutoff"></i></span>
+                            </div>
+
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</ng-template>

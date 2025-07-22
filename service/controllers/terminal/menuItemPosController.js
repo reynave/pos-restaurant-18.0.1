@@ -205,7 +205,7 @@ exports.cart = async (req, res) => {
           ) AS t1
           GROUP BY t1.descl, t1.price 
       `;
-      console.log(s);
+     
 
       const [modifier] = await db.query(s);
       row.modifier = modifier;
@@ -768,7 +768,7 @@ exports.updateCover = async (req, res) => {
               cover = ${model['newQty']}, 
               updateDate = '${today()}'
           WHERE  id = '${cartId}'   `;
-    console.log(q);
+ 
     const [result] = await db.query(q);
     if (result.affectedRows === 0) {
       results.push({ status: 'not found' });
@@ -1183,9 +1183,9 @@ exports.cartDetail = async (req, res) => {
       const q = `
 
         -- GENERAL
-        SELECT c.id, c.modifierId, c.price, m.descl, c.cartItemId, c.applyDiscount,  c.menuTaxScId,
-         c.priceIncluded, 
-        0 as 'checkBox'
+        SELECT 
+            c.id, c.modifierId, c.price, m.descl, c.cartItemId, c.applyDiscount,  c.menuTaxScId,
+            c.priceIncluded,  0 as 'checkBox'
           FROM cart_item_modifier AS c
            JOIN modifier AS m ON m.id = c.modifierId
           where c.cartItemId = ${row.id}
@@ -1744,7 +1744,6 @@ exports.menuLookUp = async (req, res) => {
   }
 };
 
-
 exports.transferItems = async (req, res) => {
 
   try {
@@ -1780,6 +1779,62 @@ ORDER BY i.inputDate ASC;
     res.status(500).json({ error: 'Database error' });
   }
 };
+
+exports.transferItemsGroup = async (req, res) => {
+  const i = 1;
+  try {
+    const cartId = req.query.id;
+    let totalItem = 0;
+    const q = `
+      SELECT t1.* ,  m.name  ,t1.total as 'totalReset'
+      FROM (
+        SELECT  c.price,   c.menuId, COUNT(c.menuId) AS 'total' , sum(c.ta) as 'ta'
+        FROM cart_item AS c
+        JOIN menu AS m ON m.id = c.menuId
+        WHERE c.cartId = '${cartId}' AND c.presence = 1 AND c.void  = 0 
+        GROUP BY  c.menuId, c.price, c.ta
+        ORDER BY MAX(c.inputDate) ASC
+      ) AS t1
+      JOIN menu AS m ON m.id = t1.menuId 
+    `; 
+    const [formattedRowsOri] = await db.query(q);
+
+    const formattedRows = [];
+    let i = 0;
+    for (const row of formattedRowsOri) {
+      let getIndexById = formattedRows.findIndex((obj) => obj.menuId === row.menuId);
+
+      if (getIndexById > -1) {
+        formattedRows[getIndexById]['totalAmount'] += parseInt(row.totalAmount);
+        formattedRows[getIndexById]['ta'] = parseInt(row.ta) + parseInt(formattedRows[getIndexById]['ta']);
+        formattedRows[getIndexById]['total'] += parseInt(row.total);
+      } else {
+        formattedRows.push(row);
+      }
+
+    }
+ 
+ 
+  
+
+    const q2 = `
+      SELECT * FROM cart WHERE id = '${cartId}' and presence = 1;
+    `;
+
+    const [table] = await db.query(q2);
+
+    res.json({
+      error: false,
+      table: table[0],
+      items: formattedRows, 
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+};
+
 
 
 exports.transferTable = async (req, res) => {

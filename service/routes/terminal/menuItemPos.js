@@ -28,6 +28,8 @@ router.post('/removeDetailModifier', menuItemPos.removeDetailModifier);
 
 
 router.get('/transferItems', menuItemPos.transferItems);
+router.get('/transferItemsGroup', menuItemPos.transferItemsGroup);
+
 router.post('/transferTable', menuItemPos.transferTable); 
 router.get('/transferLog', menuItemPos.transferLog);
 router.post('/takeOut', menuItemPos.takeOut);

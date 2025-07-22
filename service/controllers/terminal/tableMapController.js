@@ -15,17 +15,21 @@ exports.getAllData = async (req, res) => {
     for (const row of formattedRows) {
       const [maps] = await db.query(`
        SELECT o.id, o.id as 'outletTableMapId', o.outletFloorPlandId, o.tableName, o.posY, o.posX, o.width, 
-        o.height, o.capacity, o.icon, 0 as active
+        o.height, o.capacity, o.icon, 0 as active, t.name as 'outlet', t.overdue
         FROM outlet_table_map AS o 
+        LEFT JOIN outlet as t on t.id = o.outletId
         WHERE o.presence = 1 AND o.outletFloorPlandId = ?
       `, [row.id]);
       row.maps = maps;
     }
 
     const [cart] = await db.query(`
-      SELECT c.*, s.name AS 'tableMapStatus'
+      SELECT 
+        c.*, s.name AS 'tableMapStatus',  
+        TIMESTAMPDIFF(MINUTE,  overDue, NOW()) AS overdueMinute,
+        s.bgn, s.color
       FROM cart AS c
-      LEFT JOIN outlet_table_map_status AS s ON c.tableMapStatusId = s.id
+      LEFT JOIN outlet_table_map_status AS s ON c.tableMapStatusId = s.id 
       WHERE c.close  = 0 AND c.presence = 1 AND c.outletId = ${outletId}
     `);
 
@@ -39,8 +43,19 @@ exports.getAllData = async (req, res) => {
       formattedRows[i]['checking'] = checking;
     }
 
+    const [overdueClass] = await db.query(`
+      SELECT *
+      FROM outlet_table_map_status  
+      WHERE  id = 30
+    `);
+    const [avaiableClass] = await db.query(`
+      SELECT *
+      FROM outlet_table_map_status  
+      WHERE  id = 1
+    `);
+
     const [statusMap] = await db.query(`
-          SELECT *
+      SELECT *
       FROM outlet_table_map_status  
       WHERE  showOnUser = 1 order by id desc
     `);
@@ -56,18 +71,32 @@ exports.getAllData = async (req, res) => {
           x['cardId'] = cart[index]['id'];
           x['totalItem'] = cart[index]['totalItem'];
           x['cover'] = cart[index]['cover'];
-          x['tableMapStatusId'] = cart[index]['tableMapStatusId'];
-          x['tableMapStatus'] = cart[index]['tableMapStatus'];
+
+
+          if (cart[index]['overdueMinute'] > 0) {
+
+            x['bgn'] = overdueClass[0]['bgn'];
+            x['tableMapStatusId'] = overdueClass[0]['id'];
+            x['tableMapStatus'] = overdueClass[0]['name'];
+          } else {
+            x['bgn'] = cart[index]['bgn'];
+            x['tableMapStatusId'] = cart[index]['tableMapStatusId'];
+            x['tableMapStatus'] = cart[index]['tableMapStatus'];
+          }
+
           x['grandTotal'] = cart[index]['grandTotal'];
+          x['overdueMinute'] = cart[index]['overdueMinute'];
 
         } else {
           x['close'] = null
           x['cardId'] = ''
           x['totalItem'] = 0;
           x['cover'] = null;
-          x['tableMapStatusId'] = null;
-          x['tableMapStatus'] = null;
+          x['bgn'] = avaiableClass[0]['bgn'];
+          x['tableMapStatusId'] = avaiableClass[0]['id'];
+          x['tableMapStatus'] = avaiableClass[0]['name'];
           x['grandTotal'] = 0;
+          x['overdueMinute'] = 0;
         }
 
 
@@ -90,32 +119,51 @@ exports.getAllData = async (req, res) => {
 };
 
 exports.tableDetail = async (req, res) => {
-  const cartId = req.query.cartId; 
+  const cartId = req.query.cartId;
   try {
     const q = `
     SELECT SUM(total) AS 'total', sum(qty) AS 'qty'  FROM (
       SELECT sum(price) AS 'total', count(id) AS 'qty' 
       FROM cart_item WHERE cartId = '${cartId}' AND presence =1 AND void = 0
-      union
+      UNION
       SELECT sum(price) AS 'total', 0 AS 'qty' 
       FROM cart_item_modifier WHERE cartId = '${cartId}' AND presence =1 AND void = 0
     ) AS a
-    `; 
+    `;
     const [cart] = await db.query(q);
- 
+
     const q2 = `
-      SELECT c.*, e.name as 'employee', s.*
+      SELECT c.*, e.name as 'employee', s.*,
+       TIMESTAMPDIFF(MINUTE,  c.overDue, NOW()) AS overdueMinute
       FROM cart as c 
         LEFT JOIN employee as e on e.id = c.inputBy
         LEFT JOIN outlet_table_map_status AS s ON s.id = c.tableMapStatusId 
       WHERE c.id = '${cartId}' AND  c.presence = 1 
-    `; 
+    `;
     const [detail] = await db.query(q2);
+
+
+    if (detail.length) {
+      if (detail[0]['overdueMinute'] > 0) {
+        const [overdueClass] = await db.query(`
+          SELECT *
+          FROM outlet_table_map_status  
+          WHERE  id = 30
+        `);
+
+        detail[0]['outletTableMapId'] = overdueClass[0]['id'];
+        detail[0]['tableMapStatus'] = overdueClass[0]['name'];
+        detail[0]['bgn'] = overdueClass[0]['bgn'];
+        detail[0]['color'] = overdueClass[0]['color'];
+
+      }
+    }
+
 
     res.status(201).json({
       error: false,
       cart: cart[0],
-      detail: detail.length ? detail[0]: {}
+      detail: detail.length ? detail[0] : {}
     });
 
 
@@ -133,6 +181,23 @@ exports.newOrder = async (req, res) => {
   const outletId = req.body['outletId'];
   const inputDate = today();
   const results = [];
+
+  function parseTimeString(timeStr) {
+    const [hours, minutes, seconds] = timeStr.split(':').map(Number);
+    return { hours, minutes, seconds };
+  }
+
+  function addTime(dateStr, hoursToAdd, minutesToAdd, secondsToAdd) {
+    const date = new Date(dateStr);
+
+    const totalMilliseconds =
+      (hoursToAdd * 60 * 60 + minutesToAdd * 60 + secondsToAdd) * 1000;
+
+    const newDate = new Date(date.getTime() + totalMilliseconds);
+    return newDate;
+  }
+
+
   try {
     const q = `
     SELECT  count(c.close) AS 'total' 
@@ -145,16 +210,27 @@ exports.newOrder = async (req, res) => {
     const [rows] = await db.query(q);
     const total = rows[0]?.total || 0; // gunakan optional chaining biar aman
     const { insertId } = await autoNumber('cart');
+
+    const originalDate = inputDate;
+    const timeToAdd = '01:01:00';
+
+    const { hours, minutes, seconds } = parseTimeString(timeToAdd);
+    const updatedDate = addTime(originalDate, hours, minutes, seconds);
+
+    // Format hasil
+    const overDue = updatedDate.toLocaleString().replace('T', ' ').substring(0, 19);
+    console.log(overDue); // Output: 2025-07-22 17:03:38
+
     if (total == 0) {
 
       const [newOrder] = await db.query(
         `INSERT INTO cart (
           presence, inputDate, tableMapStatusId, outletTableMapId, 
           cover,  id, outletId, dailyCheckId,
-          startDate, endDate ) 
+          startDate, endDate, overDue ) 
         VALUES (1, '${inputDate}', 10, ${model['outletTableMapId']}, 
           ${model['cover']},  '${insertId}',  ${outletId}, '${dailyCheckId}',
-          '${inputDate}', '${inputDate}'  )`
+          '${inputDate}', '${inputDate}' , '${overDue}' )`
       );
       if (newOrder.affectedRows === 0) {
         results.push({ status: 'not found' });

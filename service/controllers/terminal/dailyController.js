@@ -1,7 +1,7 @@
 const db = require('../../config/db');
 const convertToCsv = require('../../helpers/convertToCsv');
 
-const { today, formatDateOnly } = require('../../helpers/global');
+const { today, formatDateOnly, nextDay } = require('../../helpers/global');
 const { autoNumber } = require('../../helpers/autoNumber');
 
 const ejs = require('ejs');
@@ -25,7 +25,6 @@ exports.getAllData = async (req, res) => {
     }
 };
 
-
 exports.checkItems = async (req, res) => {
 
     try {
@@ -46,20 +45,26 @@ exports.checkItems = async (req, res) => {
     }
 };
 
-
 exports.getDailyStart = async (req, res) => {
     const id = req.query.id;
 
     const headerTerminal = req.headers['x-terminal'];
     console.log(headerTerminal);
+    const days = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat',];
 
+    const date = new Date();
     try {
         const [formattedRows] = await db.query(`
-            SELECT * FROM daily_check
-            WHERE  id = '${id}' and presence = 1 and closed = 0
+            SELECT 
+                d.* , TIMESTAMPDIFF(MINUTE,   NOW(),  d.closeDateLimit) AS 'closeDateWarning', 
+                c.name, c.days, c.closeHour
+            FROM daily_check as d 
+            LEFT JOIN daily_schedule as c on c.id = d.dailyScheduleId
+            WHERE  d.id = '${id}' and d.presence = 1 and d.closed = 0
         `);
         res.json({
             error: false,
+            date: days[date.getDay()],
             item: formattedRows[0],
         });
 
@@ -68,7 +73,6 @@ exports.getDailyStart = async (req, res) => {
         res.status(500).json({ error: 'Database error' });
     }
 };
-
 
 exports.getData = async (req, res) => {
 
@@ -90,37 +94,61 @@ exports.getData = async (req, res) => {
 
 exports.dailyStart = async (req, res) => {
     const outletId = req.body['outletId'];
-
+    const date = new Date();
     const inputDate = today();
+    const days = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat',];
+    const dayName = days[date.getDay()];
     const results = [];
     try {
-        const [dailyCheck] = await db.query(
-            `SELECT * FROM daily_check
-            WHERE presence = 1 and closed = 0;`
-        );
-        if (!dailyCheck.length) {
-            const { insertId } = await autoNumber('dailyCheck');
 
-            const [result] = await db.query(
-                `INSERT INTO daily_check (
-              presence, inputDate, updateDate, startDate, id) 
-            VALUES (1, '${inputDate}', '${inputDate}','${inputDate}', '${insertId}' )`
+        const q = `
+            SELECT id, name, days, closeHour FROM daily_schedule
+            WHERE STATUS = 1 AND ${dayName}  = 1
+            ORDER by days DESC, closeHour desc
+            LIMIT 1
+        `;
+        const [dailySchedule] = await db.query(q);
+
+
+        if (dailySchedule.length) {
+            
+            const closeDateLimit = nextDay(dailySchedule[0]['days'], dailySchedule[0]['closeHour']);
+            const [dailyCheck] = await db.query(
+                `SELECT * FROM daily_check
+                WHERE presence = 1 and closed = 0;`
             );
-            if (result.affectedRows === 0) {
-                results.push({ status: 'not found' });
+            if (!dailyCheck.length) {
+                let dailyScheduleId =  dailySchedule[0]['id'];
+                const { insertId } = await autoNumber('dailyCheck');
+
+                const [result] = await db.query(
+                    `INSERT INTO daily_check (
+                        presence, inputDate, updateDate, 
+                        startDate, id , closeDateLimit, dailyScheduleId
+                    ) 
+                    VALUES (
+                        1, '${inputDate}', '${inputDate}',
+                        '${inputDate}', '${insertId}', '${closeDateLimit}' , ${dailyScheduleId} 
+                    )`
+                );
+                if (result.affectedRows === 0) {
+                    results.push({ status: 'not found' });
+                } else {
+                    results.push({ status: 'updated' });
+                }
+                res.json({
+                    insertId: insertId,
+                    error: false,
+                    results: results,
+                });
             } else {
-                results.push({ status: 'updated' });
+                res.json({
+                    insertId: dailyCheck[0]['id'],
+                    error: false,
+                });
             }
-            res.json({
-                insertId: insertId,
-                error: false,
-                results: results,
-            });
-        } else {
-            res.json({
-                insertId: dailyCheck[0]['id'],
-                error: false,
-            });
+        }else{
+            res.status(500).json({ error: 'Daily Schedule not setting!' });
         }
 
 

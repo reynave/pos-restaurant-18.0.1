@@ -30,6 +30,7 @@ export class Actor {
 })
 export class TablesComponent implements OnInit {
   loading: boolean = false;
+  lock : boolean = true;
   current: number = 0;
   checkboxAll: number = 0;
   statusMap: any = [];
@@ -46,7 +47,7 @@ export class TablesComponent implements OnInit {
   getTokenJson: any = [];
 
   getConfigJson: any = [];
-  dataHeader: any = {};
+  dataDailyStart: any = {};
   public: string = environment.api + "../public/floorMap/";
   constructor(
     public configService: ConfigService,
@@ -72,7 +73,7 @@ export class TablesComponent implements OnInit {
     this.modalService.dismissAll();
     this.httpOutlet();
     this.httpGet();
-    this.httpHeader();
+    this.httpDailyStart();
     this.socketService.listen<string>('message-from-server').subscribe((msg) => {
       console.log(msg);
       this.httpGet();
@@ -151,13 +152,18 @@ export class TablesComponent implements OnInit {
   open(content: any, x: any, current: number, i: number) {
 
     if (this.items[current]['maps'][i]['active'] == 1) {
-      if (x.cover <= 0 || x.cover == '') {
+      if (x.cover <= 0 || x.cover == '' ) {
         this.tableSelect = x;
         this.model.cover = x.capacity
         this.model.outletTableMapId = x.id
         this.model.outletFloorPlandId = x.outletFloorPlandId
 
-        this.modalService.open(content, { size: 'sm' });
+        if(this.lock == false){
+             this.modalService.open(content, { size: 'sm' });
+        }else{
+          alert("Daily Close Requirement!");
+        }
+     
       } else {
         this.gotTo(x)
       }
@@ -291,7 +297,7 @@ export class TablesComponent implements OnInit {
 
 
 
-  httpHeader() {
+  httpDailyStart() {
     let id = this.configService.getDailyCheck();
     const url = environment.api + "daily/getDailyStart";
     this.http.get<any>(url, {
@@ -302,7 +308,11 @@ export class TablesComponent implements OnInit {
     }).subscribe(
       data => {
         this.loading = false;
-        this.dataHeader = data['item'];
+        this.dataDailyStart = data['item'];
+
+        if(this.dataDailyStart['closeDateWarning'] > 0){
+          this.lock = false;
+        }
       },
       error => {
         console.log(error);

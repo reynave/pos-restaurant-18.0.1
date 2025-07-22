@@ -125,10 +125,32 @@ export class MenuComponent implements OnInit, OnDestroy {
       this.httpCartOrdered();
       this.httpGetModifier();
       this.httpTables();
+       this.httpDailyStart();
     }
 
   }
+  lock : boolean = true;
+httpDailyStart() {
+    let id = this.configService.getDailyCheck();
+    const url = environment.api + "daily/getDailyStart";
+    this.http.get<any>(url, {
+      headers: this.configService.headers(),
+      params: {
+        id: id,
+      }
+    }).subscribe(
+      data => {
+        this.loading = false; 
 
+        if(data['item']['closeDateWarning'] > 0){
+          this.lock = false;
+        }
+      },
+      error => {
+        console.log(error);
+      }
+    )
+  }
   httpMenuLookUp(id: number) {
     this.logService.logAction('Menu Lookup ' + id, this.id)
     this.loading = true;
@@ -669,6 +691,12 @@ export class MenuComponent implements OnInit, OnDestroy {
   transferItems() {
     this.logService.logAction('menu/transferItems', this.id)
     this.router.navigate(['menu/transferItems'], { queryParams: { id: this.id } }).then(
+      () => { this.modalService.dismissAll() }
+    )
+  }
+   transferItemsGroup() {
+    this.logService.logAction('menu/transferItemsGroup', this.id)
+    this.router.navigate(['menu/transferItemsGroup'], { queryParams: { id: this.id } }).then(
       () => { this.modalService.dismissAll() }
     )
   }

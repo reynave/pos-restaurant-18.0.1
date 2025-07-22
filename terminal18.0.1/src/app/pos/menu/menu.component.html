@@ -4,7 +4,7 @@
          <!-- TABLE cart -->
          <div class="wrapper border bg-white">
 
-            <div *ngIf="cartOrdered.length+cart.length < 1 " class="text-center py-3">No Order</div>
+            <div *ngIf="cartOrdered.length+cart.length < 1 " class="text-center py-3">No Order </div>
 
             <table class="table table-hover table-cart">
                <tbody class="sticky-top bg-white">
@@ -17,7 +17,7 @@
 
                      </td>
                      <td colspan="3" class="align-content-center">
-                        <h6>LIST ORDERS</h6>
+                        <h6><span *ngIf="lock==true"><i class="bi bi-lock-fill"></i></span>  LIST ORDERS    </h6>
                      </td>
 
                      <td class="align-content-center">
@@ -182,8 +182,8 @@
                         (click)="onVoid()">
                         <i class="bi bi-x-lg"></i> VOID ITEM</button>
                   </div>
-                  <div class="col-3 d-grid">
-                     <button type="button" [class]="cssClass" class="bg-white" [disabled]="cart.length < 1"
+                  <div class="col-3 d-grid"  >
+                     <button type="button" [class]="cssClass" class="bg-white" [disabled]="cart.length < 1 || lock"
                         (click)="sendOrder();">
                         <i class="bi bi-fork-knife"></i> SEND ORDER</button>
                   </div>
@@ -207,14 +207,15 @@
                         EXIT WITHOUT ORDER</button>
                   </div>
                   <div class="col-3 d-grid">
-                     <button type="button" [class]="cssClass" class="btn-warning" (click)="transferItems()"> <i
-                           class="bi bi-send-plus"></i>
-                        TRANSFER ITEMS</button>
+                     <button type="button" [disabled]="lock" [class]="cssClass" 
+                        class="btn-warning" (click)="transferItemsGroup()"> <i class="bi bi-send-plus"></i>
+                        TRANSFER ITEMS
+                     </button>
                   </div>
 
 
                   <div class="col-3 d-grid">
-                     <button type="button" [class]="cssClass" class="bg-white" (click)="takeOut()">
+                     <button type="button" [disabled]="lock" [class]="cssClass" class="bg-white" (click)="takeOut()">
                         <i class="bi bi-bag-check"></i>
                         TAKE OUT</button>
                   </div>
@@ -251,19 +252,19 @@
 
             <div>
 
-               @if(showHeader == true){
+               @if(showHeader == true ){
                <div class="row g-2">
                   <div class="col-3 d-grid">
-                     <button type="button" [class]="cssClass" class="bg-white"
+                     <button type="button" [disabled]="lock" [class]="cssClass" class="bg-white"
                         (click)="httpMenuLookUp(0);showMenu = true; showHeader= false"><i class="bi bi-cup-straw"></i>
                         MENU</button>
                   </div>
                   <div class="col-3 d-grid">
-                     <button type="button" [class]="cssClass" class="bg-white"
+                     <button type="button" [disabled]="lock" [class]="cssClass" class="bg-white"
                         (click)="showModifier = true;  showHeader= false"><i class="bi bi-pencil"></i> MODIFIER</button>
                   </div>
                   <div class="col-4 d-grid">
-                     <button type="button" [class]="cssClass" class="bg-white"
+                     <button type="button" [disabled]="lock" [class]="cssClass" class="bg-white"
                         (click)="showApplyDiscount =true; showHeader= false"><i class="bi bi-percent"></i> APPLY
                         ITEM DISCOUNT</button>
                   </div>
