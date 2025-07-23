@@ -4,22 +4,24 @@
 </div>
 <div class="modal-body">
     <div class="row">
-       <div class="col-6">
-            <strong>Transfer In</strong>
-             <table class="table table-sm">
+        <div class="col-6">
+            <strong>TRANSFER IN</strong>
+            <table class="table table-sm">
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Menu</th>
                         <th>Table</th>
+                        <th>Menu</th>
+                        <th>Total</th> 
                         <th>Time</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr *ngFor="let x of transferIn; let i = index">
-                        <td>{{i+1}}</td>
-                        <td> {{x.menu}} </td>
+                        <td>{{i+1}}</td> 
                         <td> {{x.tableName}} </td>
+                        <td> {{x.menu}} </td>
+                        <td> {{x.total}} </td> 
                         <td>{{x.inputDate | date:'h:mm a'}}</td>
                     </tr>
                 </tbody>
@@ -27,20 +29,22 @@
         </div>
         <div class="col-6">
             <strong>Transfer Out</strong>
-             <table class="table table-sm">
+            <table class="table table-sm">
                 <thead>
                     <tr>
                         <th>#</th>
+                                   <th>Table</th>
                         <th>Menu</th>
-                        <th>Table</th>
+                        <th>Total</th>
                         <th>Time</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr *ngFor="let x of transferOut; let i = index">
                         <td>{{i+1}}</td>
+                           <td> {{x.tableName}} </td>
                         <td> {{x.menu}} </td>
-                        <td> {{x.tableName}} </td>
+                       <th> {{x.total}}</th>
                         <td>{{x.inputDate | date:'h:mm a'}}</td>
                     </tr>
                 </tbody>
@@ -48,4 +52,3 @@
         </div>
     </div>
 </div>
- 

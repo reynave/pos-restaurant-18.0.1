@@ -1,5 +1,5 @@
 const db = require('../../config/db');
-const { today, formatDateOnly, formatDateTime } = require('../../helpers/global');
+const { today, convertCustomDateTime, formatDateTime, parseTimeString, addTime } = require('../../helpers/global');
 const { autoNumber } = require('../../helpers/autoNumber');
 const { taxScUpdate } = require('../../helpers/bill');
 
@@ -205,7 +205,7 @@ exports.cart = async (req, res) => {
           ) AS t1
           GROUP BY t1.descl, t1.price 
       `;
-     
+
 
       const [modifier] = await db.query(s);
       row.modifier = modifier;
@@ -768,7 +768,7 @@ exports.updateCover = async (req, res) => {
               cover = ${model['newQty']}, 
               updateDate = '${today()}'
           WHERE  id = '${cartId}'   `;
- 
+
     const [result] = await db.query(q);
     if (result.affectedRows === 0) {
       results.push({ status: 'not found' });
@@ -1796,7 +1796,7 @@ exports.transferItemsGroup = async (req, res) => {
         ORDER BY MAX(c.inputDate) ASC
       ) AS t1
       JOIN menu AS m ON m.id = t1.menuId 
-    `; 
+    `;
     const [formattedRowsOri] = await db.query(q);
 
     const formattedRows = [];
@@ -1813,9 +1813,9 @@ exports.transferItemsGroup = async (req, res) => {
       }
 
     }
- 
- 
-  
+
+
+
 
     const q2 = `
       SELECT * FROM cart WHERE id = '${cartId}' and presence = 1;
@@ -1826,7 +1826,7 @@ exports.transferItemsGroup = async (req, res) => {
     res.json({
       error: false,
       table: table[0],
-      items: formattedRows, 
+      items: formattedRows,
     });
 
   } catch (err) {
@@ -1840,27 +1840,45 @@ exports.transferItemsGroup = async (req, res) => {
 exports.transferTable = async (req, res) => {
   const table = req.body['table'];
   const cart = req.body['cart'];
-  const data = req.body['items'];
+  const itemsTransfer = req.body['itemsTransfer'];
   const dailyCheckId = req.body['dailyCheckId'];
   const outletId = req.body['outletId'];
 
   const inputDate = today();
   const results = [];
+
   try {
     let cartId = table['cardId'];
 
     if (cartId == '') {
+      const originalDate = inputDate;
+      const timeToAdd = '01:01:00';
+
+      const { hours, minutes, seconds } = parseTimeString(timeToAdd);
+      const updatedDate = addTime(originalDate, hours, minutes, seconds);
+
+      // Format hasil
+      // Format hasil
+      let overDue = updatedDate.toLocaleString(process.env.TO_LOCALE_STRING).replace('T', ' ').substring(0, 19);
+      overDue = convertCustomDateTime(overDue.toString())
+
+
       const { insertId } = await autoNumber('cart');
       cartId = insertId;
 
+
+
+
       const [newOrder] = await db.query(
         `INSERT INTO cart (
-                presence, inputDate,   outletTableMapId, 
-                cover,  id, outletId, dailyCheckId, tableMapStatusId,
-                startDate, endDate ) 
-              VALUES (1, '${inputDate}',  ${table['outletTableMapId']}, 
-                1,  '${insertId}',  ${outletId}, '${dailyCheckId}',   ${cart['tableMapStatusId']}, 
-                '${inputDate}', '${inputDate}'  )`
+          presence, inputDate,   outletTableMapId, 
+          cover,  id, outletId, dailyCheckId, tableMapStatusId,
+          startDate, endDate, overDue
+          ) 
+        VALUES (
+          1, '${inputDate}',  ${table['outletTableMapId']}, 
+          1,  '${insertId}',  ${outletId}, '${dailyCheckId}',   ${cart['tableMapStatusId']}, 
+          '${inputDate}', '${inputDate}', '${overDue}'  )`
       );
       if (newOrder.affectedRows === 0) {
         results.push({ status: 'not found' });
@@ -1869,55 +1887,71 @@ exports.transferTable = async (req, res) => {
       }
     }
 
-    for (const emp of data) {
-      const { id } = emp;
-
-      if (!id) {
-        results.push({ id, status: 'failed', reason: 'Missing fields' });
+    // Detail Item
+    for (const emp of itemsTransfer) {
+      const { menuId, price, total } = emp;
+      console.log(emp);
+      if (!menuId) {
+        results.push({ menuId, status: 'failed', reason: 'menuId Missing fields' });
         continue;
       }
+      const l1 =
+        `SELECT * FROM cart_item 
+        WHERE cartId = '${cart['id']}' AND menuId = ${menuId} AND price = ${price} 
+        ORDER BY id desc 
+        LIMIT ${total}`;
+      console.log(l1);
+      const [cartDb] = await db.query(l1);
 
-      const [result] = await db.query(
-        `UPDATE cart_item SET 
-          cartId = '${cartId}', 
-          subgroup = 1, 
-          updateDate = '${today()}'
-        WHERE id = ${id}`
-      );
+      for (const emp2 of cartDb) {
+        console.log(emp2)
+        const { id } = emp2;
+        const q0 = `
+          UPDATE cart_item SET 
+            cartId = '${cartId}', 
+            subgroup = 1, 
+            updateDate = '${today()}'
+          WHERE id = ${id}`;
+        console.log(q0);
+        const [result] = await db.query(q0);
+        if (result.affectedRows === 0) {
+          results.push({ id, status: 'not found' });
+        } else {
+          results.push({ id, status: 'updated' });
+        }
 
-      if (result.affectedRows === 0) {
-        results.push({ id, status: 'not found' });
-      } else {
-        results.push({ id, status: 'updated' });
-      }
-
-      const q1 = `UPDATE cart_item_modifier SET 
+        const q1 = `
+        UPDATE cart_item_modifier SET 
           cartId = '${cartId}',  
           updateDate = '${today()}'
         WHERE cartItemId = ${id}`;
-      const [result2] = await db.query(q1);
-
-      if (result2.affectedRows === 0) {
-        results.push({ id, status: 'not found' });
-      } else {
-        results.push({ id, status: 'updated' });
-      }
-
+        const [result2] = await db.query(q1);
+        if (result2.affectedRows === 0) {
+          results.push({ id, status: 'not found' });
+        } else {
+          results.push({ id, status: 'updated' });
+        }
 
 
-      const [newOrder] = await db.query(
-        `INSERT INTO cart_transfer_items (
+        const [cart_transfer_items] = await db.query(
+          `INSERT INTO cart_transfer_items (
                 presence, inputDate,  outletTableMapId, outletTableMapIdNew,
                 cartItemId, cartId, cartIdNew, dailyCheckId
                ) 
-        VALUES (1, '${inputDate}',  ${data[0]['outletTableMapId']},  ${table['outletTableMapId']}, 
-            ${data[0]['id']}, '${data[0]['cartId']}' ,'${cartId}',  '${dailyCheckId}'  )`
-      );
-      if (newOrder.affectedRows === 0) {
-        results.push({ status: 'not found' });
-      } else {
-        results.push({ status: 'updated' });
+        VALUES (1, '${inputDate}',  ${cart['outletTableMapId']},  ${table['outletTableMapId']}, 
+             ${id}, '${cart['id']}' ,'${cartId}',  '${dailyCheckId}'  )`
+        );
+        if (cart_transfer_items.affectedRows === 0) {
+          results.push({ status: 'not found' });
+        } else {
+          results.push({ status: 'cart_transfer_items INSERT' });
+        }
+
       }
+
+
+
+
     }
 
 
@@ -1955,11 +1989,48 @@ exports.transferLog = async (req, res) => {
     `;
     const [transferOut] = await db.query(q2);
 
+    const transferInData = [];
+    for (let i = 0; i < transferIn.length; i++) {
+      const targetId = transferIn[i]['menu'];
+      console.log(targetId)
+      const index = transferInData.findIndex((item) => item.menu === targetId);
+      if (index == -1) {
+        const temp = {
+          menu: transferIn[i]['menu'],
+          total: 1,
+          tableName: transferIn[i]['tableName'],
+          inputDate: transferIn[i]['inputDate'],
+        }
+        transferInData.push(temp);
+      } else {
+        transferInData[index]['total']++;
+      }
+    }
+
+
+    const transferOutData = [];
+    for (let i = 0; i < transferOut.length; i++) {
+      const targetId = transferOut[i]['menu'];
+      console.log(targetId)
+      const index = transferOutData.findIndex((item) => item.menu === targetId);
+      if (index == -1) {
+        const temp = {
+          menu: transferOut[i]['menu'],
+          total: 1,
+          tableName: transferOut[i]['tableName'],
+          inputDate: transferOut[i]['inputDate'],
+        }
+        transferOutData.push(temp);
+      } else {
+        transferOutData[index]['total']++;
+      }
+    }
+
 
     res.json({
       error: false,
-      transferIn: transferIn,
-      transferOut: transferOut,
+      transferIn: transferInData,
+      transferOut: transferOutData,
 
     });
 
@@ -2312,7 +2383,7 @@ exports.addCustomNotes = async (req, res) => {
 
       const [result] = await db.query(q);
 
-      for (const row of result) { 
+      for (const row of result) {
 
         const q3 =
           `INSERT INTO cart_item_modifier (

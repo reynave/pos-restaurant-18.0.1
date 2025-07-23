@@ -1,5 +1,5 @@
 const db = require('../../config/db');
-const { today, formatDateOnly } = require('../../helpers/global');
+const { today, convertCustomDateTime,  parseTimeString, addTime  } = require('../../helpers/global');
 const { autoNumber } = require('../../helpers/autoNumber');
 
 exports.getAllData = async (req, res) => {
@@ -181,57 +181,44 @@ exports.newOrder = async (req, res) => {
   const outletId = req.body['outletId'];
   const inputDate = today();
   const results = [];
-
-  function parseTimeString(timeStr) {
-    const [hours, minutes, seconds] = timeStr.split(':').map(Number);
-    return { hours, minutes, seconds };
-  }
-
-  function addTime(dateStr, hoursToAdd, minutesToAdd, secondsToAdd) {
-    const date = new Date(dateStr);
-
-    const totalMilliseconds =
-      (hoursToAdd * 60 * 60 + minutesToAdd * 60 + secondsToAdd) * 1000;
-
-    const newDate = new Date(date.getTime() + totalMilliseconds);
-    return newDate;
-  }
-
-
+ 
   try {
     const q = `
     SELECT  count(c.close) AS 'total' 
       FROM outlet_table_map AS o
       LEFT JOIN cart AS c ON c.outletTableMapId = o.id
     WHERE  o.presence = 1 AND o.id = ${model['outletTableMapId']} AND c.presence = 1 AND c.void = 0
-    AND c.tableMapStatusId != 20
+    AND c.tableMapStatusId != 20 AND c.dailyCheckId = '${dailyCheckId}';
     `;
-
+    console.log(q);
     const [rows] = await db.query(q);
     const total = rows[0]?.total || 0; // gunakan optional chaining biar aman
     const { insertId } = await autoNumber('cart');
 
     const originalDate = inputDate;
-    const timeToAdd = '01:01:00';
+
+ 
+    const [outlet] = await db.query(`SELECT overDue FROM outlet   WHERE  id = ${outletId}`);
+    const timeToAdd = outlet[0]['overDue'];
 
     const { hours, minutes, seconds } = parseTimeString(timeToAdd);
     const updatedDate = addTime(originalDate, hours, minutes, seconds);
 
     // Format hasil
-    const overDue = updatedDate.toLocaleString().replace('T', ' ').substring(0, 19);
+    let overDue = updatedDate.toLocaleString(process.env.TO_LOCALE_STRING).replace('T', ' ').substring(0, 19);
+    overDue = convertCustomDateTime(overDue.toString())
     console.log(overDue); // Output: 2025-07-22 17:03:38
 
     if (total == 0) {
-
-      const [newOrder] = await db.query(
-        `INSERT INTO cart (
+      const a = `INSERT INTO cart (
           presence, inputDate, tableMapStatusId, outletTableMapId, 
           cover,  id, outletId, dailyCheckId,
           startDate, endDate, overDue ) 
         VALUES (1, '${inputDate}', 10, ${model['outletTableMapId']}, 
           ${model['cover']},  '${insertId}',  ${outletId}, '${dailyCheckId}',
-          '${inputDate}', '${inputDate}' , '${overDue}' )`
-      );
+          '${inputDate}', '${inputDate}' , '${overDue}' )`;
+          console.log(a)
+      const [newOrder] = await db.query(a);
       if (newOrder.affectedRows === 0) {
         results.push({ status: 'not found' });
       } else {

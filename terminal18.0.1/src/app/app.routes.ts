@@ -27,11 +27,14 @@ import { loginGuard } from './guard/login.guard';
 import { ItemsComponent } from './setting/items/items.component';
 import { UserLogsComponent } from './setting/user-logs/user-logs.component';
 import { TransferItemsGroupComponent } from './pos/menu/transfer-items-group/transfer-items-group.component';
+import { ReloginComponent } from './login/relogin/relogin.component';
 
 export const routes: Routes = [
-    { path: '', component: HomeComponent },
+    { path: '', component: HomeComponent, canActivate: [authGuard, loginGuard] },
     { path: 'setup', component: SetupComponent },
     { path: 'login', component: LoginComponent },
+    { path: 'relogin', component: ReloginComponent },
+    
     { path: 'login/terminal', component: TerminalLoginComponent },
 
     { path: 'setting', component: SettingComponent, canActivate: [authGuard, loginGuard] },

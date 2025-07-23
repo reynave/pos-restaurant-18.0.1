@@ -6,8 +6,8 @@
             <div class="border p-1 shadow-sm">
                 <strong>ITEMS</strong>
 
-                <div class="wrapper border bg-white">
-                    <pre>{{items | json}}</pre>
+                <div class=" border bg-white">
+
                     <table class="table">
                         <thead>
                             <tr>
@@ -35,9 +35,8 @@
         <div class="col-7 col-md-6">
             <div class="border p-1 shadow-sm">
                 <strong>ITEMS TRANSFER </strong> 
-                <pre>{{itemsTransfer | json}}</pre> 
-
-                <div class="wrapper border bg-white"> 
+               
+                <div class=" border bg-white"> 
                     <table class="table">
                         <thead>
                             <tr>
@@ -73,7 +72,7 @@
 </div>
 <ng-template #modalKey let-modal>
     <div class="modal-header">
-        <strong class="modal-title" id="modal-basic-title">Select Tables for Transfer</strong>
+        <strong class="modal-title" id="modal-basic-title">Select Total Items for Transfer</strong>
         <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
     </div>
     <div class="modal-body">

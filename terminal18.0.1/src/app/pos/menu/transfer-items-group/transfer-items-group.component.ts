@@ -139,15 +139,17 @@ export class TransferItemsGroupComponent implements OnInit {
       const body = {
         cart: this.table,
         table: table,
-        items: items,
+        itemsTransfer: this.itemsTransfer,
         dailyCheckId: this.configService.getDailyCheck(),
         outletId: this.table['outletId'],
       }
       console.log(body);
+     
       this.http.post<any>(environment.api + "menuItemPos/transferTable", body, {
         headers: this.configService.headers(),
       }).subscribe(
         data => {
+          this.itemsTransfer = [];
           console.log(data);
           this.modalService.dismissAll();
           this.reload();
@@ -158,6 +160,7 @@ export class TransferItemsGroupComponent implements OnInit {
           this.logService.logAction('ERROR fnTransferItems', this.id)
         }
       )
+      
     }
 
   }
@@ -242,6 +245,7 @@ export class TransferItemsGroupComponent implements OnInit {
 
 
     }
+    this.modalService.dismissAll();
   }
 
   fnCancel(index: number) {

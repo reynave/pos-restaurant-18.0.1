@@ -133,7 +133,7 @@
             <div class="p-2" *ngIf="dataDailyStart['closeDateWarning'] < 0">
                <div class="badge text-bg-danger">
                   <span *ngIf="lock==true"><i class="bi bi-lock-fill"></i></span>
-                  Warning Daily Close : {{dataDailyStart['closeDateWarning']}} Hour
+                  Warning Daily Close : +{{dataDailyStart['closeDateWarning'] * -1}} Minute
                </div>
             </div>
          </div>
@@ -229,7 +229,7 @@
                      <tr *ngIf="dataDailyStart['closeDateWarning'] < 0">
                         <td class="align-content-center"><strong class="text-danger">Warning Daily Close</strong></td>
                         <td>
-                           : <strong class="text-danger"> {{dataDailyStart['closeDateWarning']}} Hour</strong>
+                           : <strong class="text-danger"> +{{dataDailyStart['closeDateWarning'] * -1}} Minute</strong>
                         </td>
                      </tr>
                      <tr>

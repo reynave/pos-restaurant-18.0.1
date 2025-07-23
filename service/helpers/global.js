@@ -45,7 +45,17 @@ function formatDateTime(dateInput) {
 }
 
 
+function convertCustomDateTime(inputString) {
+  // Pisahkan tanggal dan waktu
+  const [datePart, timePart] = inputString.split(', ');
 
+  // Pecah bagian tanggal dan waktu
+  const [day, month, year] = datePart.split('/');
+  const [hour, minute, second] = timePart.split('.');
+
+  // Format menjadi YYYY-MM-DD HH:mm:ss
+  return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')} ${hour.padStart(2, '0')}:${minute.padStart(2, '0')}:${second.padStart(2, '0')}`;
+}
 
 function formatCurrency(num, symbol = '') {
   num = parseInt(num);
@@ -76,12 +86,28 @@ function centerText(str, width = 50) {
   return ' '.repeat(paddingLeft) + str + ' '.repeat(paddingRight);
 }
 
+function parseTimeString(timeStr) {
+    const [hours, minutes, seconds] = timeStr.split(':').map(Number);
+    return { hours, minutes, seconds };
+  }
+
+  function addTime(dateStr, hoursToAdd, minutesToAdd, secondsToAdd) {
+    const date = new Date(dateStr);
+
+    const totalMilliseconds =
+      (hoursToAdd * 60 * 60 + minutesToAdd * 60 + secondsToAdd) * 1000;
+
+    const newDate = new Date(date.getTime() + totalMilliseconds);
+    return newDate;
+  }
+
 module.exports = {
   today, nextDay,
   formatDateOnly,
   formatDateTime,
-
+parseTimeString, addTime,
   formatCurrency,
   formatLine,
-  centerText
+  centerText,
+  convertCustomDateTime
 };
