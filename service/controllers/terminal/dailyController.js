@@ -49,7 +49,7 @@ exports.getDailyStart = async (req, res) => {
     const id = req.query.id;
 
     const headerTerminal = req.headers['x-terminal'];
-    console.log(headerTerminal);
+   // console.log(headerTerminal);
     const days = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat',];
 
     const date = new Date();

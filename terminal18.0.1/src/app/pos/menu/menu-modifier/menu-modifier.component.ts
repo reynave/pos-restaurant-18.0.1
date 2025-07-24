@@ -10,6 +10,7 @@ import { UserLoggerService } from '../../../service/user-logger.service';
 export class Actor {
   constructor(
     public newQty: number,
+    public note: string,
   ) { }
 }
 @Component({
@@ -34,7 +35,7 @@ export class MenuModifierComponent implements OnInit, OnDestroy {
   totalAmount: number = 0;
   grandAmount: number = 0;
   api: string = environment.api;
-  model = new Actor(1);
+  model = new Actor(1, '');
   hideTaxSc: number = 1;
 
   cssClass: string = 'btn btn-sm p-3 bg-white me-2 mb-2 rounded shadow-sm';
@@ -119,9 +120,13 @@ export class MenuModifierComponent implements OnInit, OnDestroy {
     this.httpCart();
   }
 
-  open(content: any, x: any, i: number) {
-    this.item = x;
-    this.modalService.open(content);
+
+  open(content: any) {
+    if (this.isChecked == false) {
+      alert("Please check first!");
+    } else {
+      this.modalService.open(content);
+    }
   }
 
   addToCart(menu: any) {
@@ -189,6 +194,7 @@ export class MenuModifierComponent implements OnInit, OnDestroy {
       this.isChecked = true;
     }
   }
+
   onVoid() {
 
     if (this.isChecked == false) {
@@ -242,7 +248,6 @@ export class MenuModifierComponent implements OnInit, OnDestroy {
     )
   }
 
-
   takeOutDetail() {
     if (this.isChecked == false) {
       alert("Please check item first!");
@@ -276,5 +281,36 @@ export class MenuModifierComponent implements OnInit, OnDestroy {
         }
       )
     }
+  }
+
+  addCustomNotesDetail() { 
+    const items = []
+    for (let i = 0; i < this.cart.length; i++) {
+      if (this.cart[i]['checkBox'] == 1 && this.cart[i]['parentId'] == 0) {
+        items.push(this.cart[i])
+      }
+    } 
+    const body = {
+      cartId: this.activeRouter.snapshot.queryParams['id'],
+      model: this.model,
+      items: items
+    }
+    console.log(body, this.cart);
+    this.http.post<any>(environment.api + "menuItemPos/addCustomNotesDetail", body, {
+      headers: this.configService.headers(),
+    }).subscribe(
+      data => {
+        this.logService.logAction('Modifier Custom  Notes :' + this.model.note, this.id);
+        console.log(data);
+        this.modalService.dismissAll();
+        this.model.newQty = 1;
+        this.model.note = '';
+        this.reload(); 
+      },
+      error => {
+        console.log(error);
+        this.logService.logAction('ERROR ADD MEMO', this.id)
+      }
+    )
   }
 }

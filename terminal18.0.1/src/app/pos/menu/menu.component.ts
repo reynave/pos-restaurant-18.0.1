@@ -125,12 +125,13 @@ export class MenuComponent implements OnInit, OnDestroy {
       this.httpCartOrdered();
       this.httpGetModifier();
       this.httpTables();
-       this.httpDailyStart();
+      this.httpDailyStart();
     }
 
   }
-  lock : boolean = true;
-httpDailyStart() {
+
+  lock: boolean = true;
+  httpDailyStart() {
     let id = this.configService.getDailyCheck();
     const url = environment.api + "daily/getDailyStart";
     this.http.get<any>(url, {
@@ -140,9 +141,9 @@ httpDailyStart() {
       }
     }).subscribe(
       data => {
-        this.loading = false; 
+        this.loading = false;
 
-        if(data['item']['closeDateWarning'] > 0){
+        if (data['item']['closeDateWarning'] > 0) {
           this.lock = false;
         }
       },
@@ -151,6 +152,7 @@ httpDailyStart() {
       }
     )
   }
+
   httpMenuLookUp(id: number) {
     this.logService.logAction('Menu Lookup ' + id, this.id)
     this.loading = true;
@@ -318,12 +320,12 @@ httpDailyStart() {
 
   addCustomNotes() {
     const qty = this.model.newQty;
-    const items:any = [];
+    const items: any = [];
     this.cart.forEach((row: any) => {
-      if(row['checkBox']){
+      if (row['checkBox']) {
         items.push({
-          menuId : row['menuId'],
-          price : row['price']
+          menuId: row['menuId'],
+          price: row['price']
         });
       }
     });
@@ -343,8 +345,7 @@ httpDailyStart() {
         this.modalService.dismissAll();
         this.model.newQty = 1;
         this.model.note = '';
-        this.reload();
-
+        this.reload(); 
       },
       error => {
         console.log(error);
@@ -352,6 +353,7 @@ httpDailyStart() {
       }
     )
   }
+
   openSm(content: any) {
 
     this.modalService.open(content, { size: 'sm' });
@@ -515,6 +517,7 @@ httpDailyStart() {
     }
   }
 
+  results : any = [];
   addToItemModifier(a: any) {
     if (this.isChecked == false) {
       alert("Please check item first!");
@@ -534,6 +537,7 @@ httpDailyStart() {
           console.log(data);
           this.logService.logAction('Add Modifier ' + a['descs'] + '(' + a['id'] + ') @' + a['price'], this.id)
           this.reload();
+          this.results = data['results']
         },
         error => {
           console.log(error);
@@ -563,6 +567,7 @@ httpDailyStart() {
         data => {
           console.log(data);
           this.reload();
+            this.results = data['results']
           this.logService.logAction('Apply Discount Group ' + a['name'] + '(' + a['id'] + ') @' + a['discRate'] + '%', this.id)
         },
         error => {
@@ -586,7 +591,8 @@ httpDailyStart() {
         console.log(data);
         this.reload();
         history.back();
-        this.logService.logAction('Send Order', this.id)
+        this.logService.logAction('Send Order', this.id);
+        
       },
       error => {
         console.log(error);
@@ -643,7 +649,6 @@ httpDailyStart() {
     )
   }
 
-
   printToKitchen() {
     window.open(environment.api + "printing/kitchen?id=" + this.id);
     // this.http.get<any>(environment.api+"printing/tableChecker",{
@@ -659,6 +664,7 @@ httpDailyStart() {
     //   }
     // )
   }
+
   printTableChecker() {
     window.open(environment.api + "printing/tableChecker?id=" + this.id);
     // this.http.get<any>(environment.api+"printing/tableChecker",{
@@ -694,7 +700,8 @@ httpDailyStart() {
       () => { this.modalService.dismissAll() }
     )
   }
-   transferItemsGroup() {
+
+  transferItemsGroup() {
     this.logService.logAction('menu/transferItemsGroup', this.id)
     this.router.navigate(['menu/transferItemsGroup'], { queryParams: { id: this.id } }).then(
       () => { this.modalService.dismissAll() }

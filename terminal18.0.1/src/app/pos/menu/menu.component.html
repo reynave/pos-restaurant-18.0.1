@@ -52,7 +52,7 @@
 
                      <td class="text-end font-monospace">{{(x.totalAmount < 0 ? 0 : x.totalAmount )| number}}</td>
                      <td>
-                        <a [routerLink]="['/menu/modifier']" class="btn btn-success btn-lg"
+                        <a [routerLink]="['/menu/modifier']" class="btn btn-warning"
                            (click)="logService.logAction('menu/modifier SO '+x.name+' menuId : '+x.menuId+', price : '+x.price, id)"
                            [queryParams]="{id:id, menuId : x.menuId, price : x.price, sendOrder : x.sendOrder }"><i
                               class="bi bi-box-arrow-up-right"></i></a>
@@ -121,9 +121,7 @@
 
                </tbody>
 
-            </table>
-
-
+            </table> 
             <div class="sticky-bottom bg-white">
                <div class="container py-2">
                   <div class="row">
@@ -334,6 +332,12 @@
                   </a>
                </div>
             </div>
+
+            <div class="alert alert-warning" *ngIf="results.length > 0">
+               <ul>
+                  <li *ngFor="let x of results">{{x.status}}</li>
+               </ul>
+            </div>
             }
 
             @if(showApplyDiscount == true){
@@ -341,6 +345,12 @@
                <div class="col-3 mb-1 d-grid" *ngFor="let a of discountGroup">
                   <a href="javascript:;" [class]="cssMenu" (click)="addDiscountGroup(a)">{{a.name}}</a>
                </div>
+            </div>
+
+            <div class="alert alert-warning" *ngIf="results.length > 0">
+               <ul>
+                  <li *ngFor="let x of results">{{x.status}}</li>
+               </ul>
             </div>
             }
 

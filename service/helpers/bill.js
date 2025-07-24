@@ -8,13 +8,13 @@ async function cart(cartId = '', subgroup = 0) {
     let itemTotal = 0;
     //let subgroup = subgroup;
     const q = `
-         SELECT t1.* , (t1.total * t1.price) as 'totalAmount', m.name , 0 as 'checkBox', '' as modifier
+         SELECT t1.* , (t1.total * t1.price) as 'totalAmount', m.name , 0 as 'checkBox', '' as modifier, t1.printerId
          FROM (
-           SELECT   c.price, c.menuId, COUNT(c.menuId) AS 'total' 
+           SELECT   c.price, c.menuId, COUNT(c.menuId) AS 'total' , m.printerId
            FROM cart_item AS c
            JOIN menu AS m ON m.id = c.menuId
            WHERE c.cartId = '${cartId}' AND c.presence = 1 AND c.void  = 0  ${subgroup == 0 ? '' : ' and c.subgroup = ' + subgroup}
-           GROUP BY  c.menuId, c.price
+           GROUP BY  c.menuId, c.price,  m.printerId
            ORDER BY MAX(c.inputDate) ASC
          ) AS t1
          JOIN menu AS m ON m.id = t1.menuId 

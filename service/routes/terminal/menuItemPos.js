@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const menuItemPos = require('../../controllers/terminal/menuItemPosController');  
-  
+const menuItemPos = require('../../controllers/terminal/menuItemPosController');
+
 // terminal/*
 router.get('/', menuItemPos.getMenuItem);
 router.get('/cart', menuItemPos.cart);
@@ -30,7 +30,7 @@ router.post('/removeDetailModifier', menuItemPos.removeDetailModifier);
 router.get('/transferItems', menuItemPos.transferItems);
 router.get('/transferItemsGroup', menuItemPos.transferItemsGroup);
 
-router.post('/transferTable', menuItemPos.transferTable); 
+router.post('/transferTable', menuItemPos.transferTable);
 router.get('/transferLog', menuItemPos.transferLog);
 router.post('/takeOut', menuItemPos.takeOut);
 router.post('/takeOutDetail', menuItemPos.takeOutDetail);
@@ -38,7 +38,8 @@ router.post('/mergerCheck', menuItemPos.mergerCheck);
 
 
 router.get('/mergeLog', menuItemPos.mergeLog);
- router.post('/addCustomNotes', menuItemPos.addCustomNotes);
- 
- 
+router.post('/addCustomNotes', menuItemPos.addCustomNotes);
+router.post('/addCustomNotesDetail', menuItemPos.addCustomNotesDetail);
+
+
 module.exports = router;
