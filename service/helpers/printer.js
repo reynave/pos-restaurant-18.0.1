@@ -1,4 +1,7 @@
 const net = require('net');
+const printerIp = '10.51.122.20'; // Ganti dengan IP printer kamu
+const printerPort = 9100;
+const cutCommand = '\x1B\x69';
 
 // Fungsi reusable untuk mencetak ke printer ESC/POS via IP
 const printToPrinter = (message, printerIp = '10.51.122.20', printerPort = 9100) => {
@@ -21,6 +24,45 @@ const printToPrinter = (message, printerIp = '10.51.122.20', printerPort = 9100)
   });
 };
 
+
+async function sendToPrinter(data) {
+  return new Promise((resolve, reject) => {
+    const client = new net.Socket();
+    console.log(data);
+    const message = data.message+cutCommand;
+    const printerPort = data.port;
+    const printerIp = data.ipAddress;
+
+
+
+
+    client.connect(printerPort, printerIp, () => {
+      console.log('🖨️  Connected to printer');
+      client.write(message);
+      client.end();
+    });
+
+    client.on('close', () => {
+      console.log('✅  Print selesai');
+      resolve();
+    });
+
+    client.on('error', (err) => {
+      reject(err);
+    });
+  });
+}
+
+// Simulasi print
+async function sendToPrinterDummy(data) {
+
+  console.log(`🖨️  Printing:`, data);
+
+  // Delay untuk simulasi cetak
+  await new Promise(resolve => setTimeout(resolve, 2000));
+
+  console.log(`✅  Printed ID :`, data.id || 'unknown');
+}
 module.exports = {
-  printToPrinter,
+  printToPrinter, sendToPrinter, sendToPrinterDummy
 };

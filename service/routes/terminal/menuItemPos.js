@@ -15,6 +15,8 @@ router.post('/voidItem', menuItemPos.voidItem);
 router.post('/addToItemModifier', menuItemPos.addToItemModifier);
 router.post('/addDiscountGroup', menuItemPos.addDiscountGroup);
 
+
+router.get('/printQueue', menuItemPos.printQueue);
 router.post('/sendOrder', menuItemPos.sendOrder);
 router.post('/exitWithoutOrder', menuItemPos.exitWithoutOrder);
 router.post('/updateCover', menuItemPos.updateCover);

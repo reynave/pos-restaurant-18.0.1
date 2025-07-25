@@ -589,10 +589,8 @@ export class MenuComponent implements OnInit, OnDestroy {
     }).subscribe(
       data => {
         console.log(data);
-        this.reload();
-        history.back();
         this.logService.logAction('Send Order', this.id);
-        
+        this.printQueue(data['sendOrder'])
       },
       error => {
         console.log(error);
@@ -600,6 +598,29 @@ export class MenuComponent implements OnInit, OnDestroy {
       }
     )
   }
+
+  printQueue(sendOrder : string = ''){
+     const url = environment.api + "menuItemPos/printQueue";
+    this.http.get<any>(url,  {
+      headers: this.configService.headers(),
+      params : {
+        sendOrder : sendOrder
+      }
+    }).subscribe(
+      data => {
+        console.log(data);
+        this.reload();
+        history.back();
+        this.logService.logAction('printQueue', this.id);
+        
+      },
+      error => {
+        console.log(error);
+        this.logService.logAction('ERROR printQueue', this.id)
+      }
+    )
+  }
+
 
   exitWithoutOrder() {
     if (confirm("Are you sure exit without order?")) {
@@ -650,7 +671,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
   printToKitchen() {
-    window.open(environment.api + "printing/kitchen?id=" + this.id);
+    window.open(environment.api + "printQueue?cartId=" + this.id);
     // this.http.get<any>(environment.api+"printing/tableChecker",{
     //   params : {
     //     id : this.id

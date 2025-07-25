@@ -37,6 +37,7 @@ const transactionPos = require('./routes/terminal/transaction');
 const items = require('./routes/terminal/items');
 const printingPos = require('./routes/terminal/printing');
 const userLog = require('./routes/terminal/userLog');
+const printQueue = require('./routes/terminal/printQueue');
 
 const IsAuth = require('./helpers/IsAuth');
 app.use((req, res, next) => {
@@ -103,6 +104,7 @@ app.use(process.env.PREFIX + process.env.TERMINAL + 'daily', IsAuth.validateToke
 app.use(process.env.PREFIX + process.env.TERMINAL + 'items', IsAuth.validateToken,items);
 app.use(process.env.PREFIX + process.env.TERMINAL + 'printing', printingPos);
 app.use(process.env.PREFIX + process.env.TERMINAL + 'log', userLog);
+app.use(process.env.PREFIX + process.env.TERMINAL + 'printQueue', IsAuth.validateToken, printQueue);
   
 app.use('/', (req, res) => {
     const data = {
@@ -126,13 +128,18 @@ io.on('connection', (socket) => {
         // io.emit('message-from-server', 'Broadcast: ' + data);  
 
         // Kirim ke  client yang terhubung kecuali diri sendiri
-        socket.broadcast.emit('message-from-server', 'Broadcast to others');
+        socket.broadcast.emit('message-from-server', data);
 
     });
 
     socket.on('broadcast-reload', (data) => { 
         socket.broadcast.emit('reload', data); 
     });
+
+    socket.on('printing-reload', (data) => { 
+        socket.broadcast.emit('printing', data); 
+    });
+
 });
 
 

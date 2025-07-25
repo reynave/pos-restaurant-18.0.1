@@ -21,7 +21,7 @@ export class AppComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    console.log(environment.client+'')
+   // console.log(environment.client+'')
     this.httpCheckKey();
     this.socketService.listen<string>('reload').subscribe((msg) => {
       const data = JSON.parse(msg);
@@ -43,7 +43,7 @@ export class AppComponent implements OnInit {
 
   httpCheckKey() {
     if (localStorage.getItem("pos3.terminal.mitralink")) {
-      console.log("cek Key Lisence dublicated");
+    
       const url = environment.api + "login/checkTerminal";
       this.http.get<any>(url, {
         params: {
@@ -52,7 +52,7 @@ export class AppComponent implements OnInit {
         }
       }).subscribe(
         data => {
-          console.log(data);
+          //console.log(data);
         },
         error => {
           console.log(error);

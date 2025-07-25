@@ -1530,6 +1530,94 @@ exports.removeDetailModifier = async (req, res) => {
   }
 };
 
+exports.printQueue = async (req, res) => {
+  // const { id, name, position, email } = req.body;
+  const results = [];
+  const sendOrder = req.query.sendOrder;
+  try {
+    const q1 = `SELECT c.cartId, c.sendOrder,  c.menuId , c.id AS 'cartItemId',    m.descs,   m.printerId,  
+        b.tableName, '' as modifier, 1 as qty, a.dailyCheckId
+      FROM cart_item AS c
+      JOIN cart AS a ON c.cartId = a.id
+      LEFT JOIN menu AS m ON m.id = c.menuId 
+      LEFT JOIN outlet_table_map AS b ON b.id = a.outletTableMapId
+      WHERE c.sendOrder = '${sendOrder}' `;
+    const [result] = await db.query(q1);
+
+    let i = 0;
+    for (const emp of result) {
+       const { cartId, cartItemId, } = emp;
+
+        const q2 = `SELECT  m.descs 
+      FROM cart_item_modifier AS c
+      LEFT JOIN modifier AS m ON m.id = c.modifierId
+      WHERE c.cartId = '${cartId}' AND c.cartItemId = ${cartItemId} AND c.modifierId != 0
+        `;
+   
+      const [cart_item_modifier] = await db.query(q2);
+
+      let n = 0;
+      cart_item_modifier.forEach(element => {
+          result[i]['modifier'] +=  ((n>0)? ', ':'')+element['descs'];
+          n++
+      }); 
+      i++;  
+    }
+
+      const items = []; 
+    for (const row of result) {
+      let getIndexById = items.findIndex((obj) => (obj.menuId === row.menuId) && (obj.modifier == row.modifier)); 
+ 
+      if (getIndexById > -1) { 
+         items[getIndexById]['qty'] += 1;
+      } else {
+        items.push(row);
+      }
+
+    }
+
+   
+    for (const row of items) {
+
+      const q11 =  `INSERT INTO print_queue (
+            dailyCheckId, cartId,  so,
+            message,  printerId, status, 
+            inputDate, updateDate 
+          ) 
+          VALUES (
+            '${result[0]['dailyCheckId']}', '${row['cartId']}', '${row['sendOrder']}',
+            '${JSON.stringify(row)}',  '${row['printerId']}',  0,
+            '${today()}', '${today()}'
+          )`;
+
+      console.log(row,q11)
+
+      const [rest] = await db.query(q11); 
+      if (rest.affectedRows === 0) {
+        results.push({   status: 'not found' });
+      } else {
+        results.push({  status: 'print_queue updated' });
+      }
+      
+    }
+
+
+
+
+
+    res.status(201).json({
+      error: false,
+      items : items, 
+      rest :results
+    });
+
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database update error', details: err.message });
+  }
+};
+
 exports.sendOrder = async (req, res) => {
   // const { id, name, position, email } = req.body;
 
@@ -1547,7 +1635,6 @@ exports.sendOrder = async (req, res) => {
       updateDate = '${today()}'
     WHERE id = ${cartId}  `;
     const [result23] = await db.query(q1);
-
     if (result23.affectedRows === 0) {
       results.push({ cartId, status: 'not found', });
     } else {
@@ -1561,7 +1648,6 @@ exports.sendOrder = async (req, res) => {
       updateDate = '${today()}'
     WHERE cartId = ${cartId}  and presence = 1 and void = 0 and sendOrder = '' `;
     const [result] = await db.query(q);
-
     if (result.affectedRows === 0) {
       results.push({ cartId, status: 'not found', });
     } else {
@@ -1574,7 +1660,6 @@ exports.sendOrder = async (req, res) => {
       updateDate = '${today()}'
     WHERE cartId = ${cartId}  and presence = 1 and void = 0 and sendOrder = ''`;
     const [result2] = await db.query(q2);
-
     if (result2.affectedRows === 0) {
       results.push({ cartId, status: 'not found', });
     } else {
@@ -1604,6 +1689,7 @@ exports.sendOrder = async (req, res) => {
     res.status(201).json({
       error: false,
       results: results,
+      sendOrder : insertId,
       message: 'cart_item close Order',
     });
 

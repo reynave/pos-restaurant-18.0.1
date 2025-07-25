@@ -28,6 +28,7 @@ import { ItemsComponent } from './setting/items/items.component';
 import { UserLogsComponent } from './setting/user-logs/user-logs.component';
 import { TransferItemsGroupComponent } from './pos/menu/transfer-items-group/transfer-items-group.component';
 import { ReloginComponent } from './login/relogin/relogin.component';
+import { PrintQueueComponent } from './pos/print-queue/print-queue.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent, canActivate: [authGuard, loginGuard] },
@@ -50,6 +51,7 @@ export const routes: Routes = [
     { path: 'bill/splitBill', component: SplitBillComponent, canActivate: [authGuard, dailyStartGuard,terminalGuard, loginGuard] },
 
     { path: 'payment', component: PaymentComponent, canActivate: [authGuard, dailyStartGuard,terminalGuard, loginGuard] },
+  { path: 'printQueue', component: PrintQueueComponent, canActivate: [authGuard, dailyStartGuard,terminalGuard, loginGuard] },
 
     { path: 'items', component: ItemsComponent, canActivate: [authGuard, dailyStartGuard,terminalGuard, loginGuard] },
     { path: 'userLogs', component: UserLogsComponent, canActivate: [authGuard, dailyStartGuard,terminalGuard, loginGuard] },

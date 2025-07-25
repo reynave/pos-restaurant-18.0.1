@@ -75,7 +75,6 @@ export class TablesComponent implements OnInit {
     this.httpGet();
     this.httpDailyStart();
     this.socketService.listen<string>('message-from-server').subscribe((msg) => {
-      console.log(msg);
       this.httpGet();
     });
 
@@ -264,7 +263,8 @@ export class TablesComponent implements OnInit {
         if (data['error'] != true) {
           this.router.navigate(['/menu'], { queryParams: { id: data['cardId'] } });
           this.modalService.dismissAll();
-          this.logService.logAction('Go to Menu', data['cardId'])
+          this.logService.logAction('Go to Menu', data['cardId']);
+           this.socketService.emit('message-from-client', 'reload');
         } else {
           alert("Table Used");
           this.logService.logAction('ERROR Table Used')

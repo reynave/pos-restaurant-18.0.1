@@ -470,7 +470,7 @@
             </button>
          </div>
          <div class="col d-grid">
-            <button type="button" class="btn btn-lg btn-outline-dark py-5" (click)="printToKitchen()">
+            <button type="button" class="btn btn-lg btn-outline-dark py-5" (click)="modal.dismiss('Cross click')" [routerLink]="['/printQueue']"  [queryParams]="{cartId:id}"  >
                <h4><i class="bi bi-fire"></i></h4> Kitchen
             </button>
          </div>

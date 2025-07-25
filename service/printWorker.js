@@ -1,0 +1,80 @@
+require('dotenv').config(); 
+const { io } = require('socket.io-client'); 
+const pool = require('./config/db');
+const { sendToPrinter, sendToPrinterDummy } = require('./helpers/printer');
+ 
+const socket = io( process.env.LOCALHOST); 
+socket.emit('message-from-client', 'PrinterWorker Active message-from-client'); 
+ 
+async function processQueue() {
+  console.log("WAITING", new Date())
+  const db = await pool.getConnection();
+  try {
+    await db.beginTransaction();
+
+    // Ambil 1 data status = 0 (PENDING)
+    const [rows] = await db.query(
+      `SELECT q.*, p.printerTypeCon, p.ipAddress, p.port FROM print_queue AS q
+        LEFT JOIN printer AS p ON p.id = q.printerId
+        WHERE q.status = 0  ORDER BY q.id DESC LIMIT 1 FOR UPDATE`
+    );
+
+    if (rows.length === 0) {
+      await db.rollback(); // tetap rollback meski tidak ada data (safe exit)
+      db.release();
+      return;
+    }
+
+    const task = rows[0];
+
+    // Update ke status = 1 (PRINTING)
+    await db.query(`UPDATE print_queue SET status = 1 WHERE id = ?`, [task.id]);
+
+    await db.commit(); // penting! simpan perubahan status
+    db.release();      // kembalikan koneksi ke pool
+
+    const dataToPrint = rows[0];
+    const data = {
+      id : task.id,
+      status : 1,
+      statusName : "PRINTING",
+      consoleError : ''
+    } 
+    socket.emit('printing-reload', data); 
+ 
+    try {
+      // Proses cetak
+      await sendToPrinter(dataToPrint);
+      const data = {
+        id : task.id,
+        status : 2,
+         statusName : "DONE",
+         consoleError : ''
+      } 
+      socket.emit('printing-reload', data); 
+      // Update status jadi 2 (DONE)
+      await pool.query(`UPDATE print_queue SET status = 2 WHERE id = ?`, [task.id]);
+    } catch (printErr) {
+      console.error('❌ Gagal print:', printErr.message);
+      const data = {
+        id : task.id,
+        status : -1,
+        statusName : "FAILED",
+        consoleError : printErr.message
+      } 
+      socket.emit('printing-reload', data); 
+      // Update status jadi -1 (FAILED)
+      await pool.query(`UPDATE print_queue  SET 
+        status = -1 , consoleError = '${printErr.message}'
+        WHERE id = ${task.id}`);
+    }
+
+  } catch (err) {
+    await db.rollback();
+    db.release();
+    console.error('❌ Error saat proses queue:', err.message);
+  }
+}
+
+// Jalankan tiap 3 detik
+setInterval(processQueue, 1000);

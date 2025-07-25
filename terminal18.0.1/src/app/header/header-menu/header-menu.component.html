@@ -82,6 +82,11 @@
                      <i class="bi bi-arrow-clockwise"></i> Refresh</a> 
                </div> -->
 
+                <div class="d-grid">
+                  <a class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="logService.logAction('Click Print Queue');offcanvasService.dismiss()" [routerLink]="['/printQueue']">
+                     <i class="bi bi-list-check"></i> Print Queue</a> 
+               </div>
+
                <div class="d-grid">
                   <a class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="logService.logAction('click setting');offcanvasService.dismiss()" [routerLink]="['/setting']"> <i
                         class="bi bi-gear"></i> Setting</a>
