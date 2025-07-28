@@ -102,7 +102,7 @@ exports.selectMenuSet = async (req, res) => {
 
     res.json({
       error: false,
-      menuSet : menuSet,
+      menuSet: menuSet,
       get: req.query
     });
 
@@ -636,6 +636,35 @@ exports.addToCart = async (req, res) => {
       }
 
     }
+    if (menu['menuSet'] == 'SELECT') {
+
+      const menuSet = req.body['menuSet'];
+      for (const row of menuSet) {
+
+        let q3 =
+          `INSERT INTO cart_item_modifier (
+          presence, inputDate, updateDate,  
+          cartId, cartItemId, note, menuSetMenuId
+          )
+          VALUES (
+            1, '${inputDate}', '${inputDate}', 
+            '${cartId}',  ${cartItemId} , '${row['name']}', '${row['id']}'
+          )`;
+
+        if (row['select'] > 0) {
+          const [result3] = await db.query(q3);
+
+          if (result3.affectedRows === 0) {
+            results.push({ cartId, status: 'not found' });
+          } else {
+            results.push({ cartId, status: 'FIXED menu set insert' });
+          }
+        }
+
+      }
+
+    }
+
 
     res.status(201).json({
       error: false,

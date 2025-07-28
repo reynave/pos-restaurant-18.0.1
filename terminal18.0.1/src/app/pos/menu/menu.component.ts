@@ -299,7 +299,41 @@ export class MenuComponent implements OnInit, OnDestroy {
 
   menuSet : any = [];
   onSubmitMenuSet(){
-    console.log(this.item, this.menuSet)
+    console.log(this.item, this.menuSet);
+
+
+    const menuSetMinQty = this.item['menuSetMinQty']; 
+    let total = 0;
+
+    this.menuSet.forEach((row: any) => {
+      total += row['select'];
+    });
+
+    if(total >= menuSetMinQty){
+       const body = {
+        id: this.activeRouter.snapshot.queryParams['id'],
+        menuSet: this.menuSet,
+        menu : this.item
+      }
+      console.log(body);
+      this.http.post<any>(environment.api + "menuItemPos/addToCart", body, {
+        headers: this.configService.headers(),
+      }).subscribe(
+        data => {
+          this.logService.logAction('Add MenuSet', this.id)
+          this.reload();
+          this.modalService.dismissAll();
+        },
+        error => {
+          console.log(error);
+          this.logService.logAction('ERROR Add MenuSet ' , this.id)
+        }
+      )
+    }else{
+      alert(menuSetMinQty+" menu required!");
+    }
+    console.log(total);
+
   }
   open(content: any, x: any, i: number, size: string = 'sm', name: string = '') {
     this.item = x;
