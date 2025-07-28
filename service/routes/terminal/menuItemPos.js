@@ -6,6 +6,7 @@ const menuItemPos = require('../../controllers/terminal/menuItemPosController');
 router.get('/', menuItemPos.getMenuItem);
 router.get('/cart', menuItemPos.cart);
 router.get('/menuLookUp', menuItemPos.menuLookUp);
+router.get('/selectMenuSet', menuItemPos.selectMenuSet);
 
 router.get('/cartOrdered', menuItemPos.cartOrdered);
 

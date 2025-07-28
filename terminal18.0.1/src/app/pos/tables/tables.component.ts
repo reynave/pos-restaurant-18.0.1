@@ -281,7 +281,7 @@ export class TablesComponent implements OnInit {
 
   logOff() {
     this.configService.isLogoff();
-    this.router.navigate(['/']);
+    this.router.navigate(['/home']);
     this.logService.logAction('Log Off')
   }
 

@@ -9,7 +9,7 @@ export const authGuard: CanActivateFn = (route, state) => {
   if (token) {
     return true; // Jika token ada, izinkan akses
   } else {
-    router.navigate(['/login']); // Jika token tidak ada, arahkan ke halaman login
+    router.navigate(['/error']); // Jika token tidak ada, arahkan ke halaman login
     return false;
   }
   

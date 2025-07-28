@@ -76,5 +76,5 @@ async function processQueue() {
   }
 }
 
-// Jalankan tiap 3 detik
+// Jalankan tiap 1 detik
 setInterval(processQueue, 1000);

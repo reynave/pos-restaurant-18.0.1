@@ -31,7 +31,9 @@ import { ReloginComponent } from './login/relogin/relogin.component';
 import { PrintQueueComponent } from './pos/print-queue/print-queue.component';
 
 export const routes: Routes = [
-    { path: '', component: HomeComponent, canActivate: [authGuard, loginGuard] },
+    { path: '', component: SetupComponent },
+    { path: 'home', component: HomeComponent},
+    
     { path: 'setup', component: SetupComponent },
     { path: 'login', component: LoginComponent },
     { path: 'relogin', component: ReloginComponent },

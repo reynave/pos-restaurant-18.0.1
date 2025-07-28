@@ -102,4 +102,14 @@ export class HomeComponent implements OnInit, OnDestroy {
       }
     )
   }
+
+
+   signOff() { 
+    this.logService.logAction('Sign Off') 
+    this.configService.removeToken().subscribe(
+      () => {
+        this.router.navigate(['login']);
+      }
+    )
+  }
 }

@@ -9,7 +9,8 @@ export const loginGuard: CanActivateFn = (route, state) => {
   if (token == '1') {
     return true; // Jika token ada, izinkan akses
   } else {
-    router.navigate(['/']); // Jika token tidak ada, arahkan ke halaman login
+    console.log(" router.navigate(['/']);")
+    //router.navigate(['/tables']); // Jika token tidak ada, arahkan ke halaman login
     return false;
   }
 };

@@ -297,9 +297,30 @@ export class MenuComponent implements OnInit, OnDestroy {
     this.httpCartOrdered();
   }
 
-  open(content: any, x: any, i: number, size: string = 'sm') {
+  menuSet : any = [];
+  onSubmitMenuSet(){
+    console.log(this.item, this.menuSet)
+  }
+  open(content: any, x: any, i: number, size: string = 'sm', name: string = '') {
     this.item = x;
-    this.modalService.open(content, { size: size });
+    this.modalService.open(content, { size: size }); 
+    if (name == 'SELECT') {
+      this.http.get<any>(environment.api + "menuItemPos/selectMenuSet", {
+        headers: this.configService.headers(),
+        params : {
+          itemId : x.id,
+          menuSetMinQty : x.menuSetMinQty, 
+        }
+      }).subscribe(
+        data => { 
+          console.log(data); 
+          this.menuSet = data['menuSet']
+        },
+        error => {
+          console.log(error); 
+        }
+      )
+    }
   }
 
   modal(content: any, size: string = 'sm') {
@@ -345,7 +366,7 @@ export class MenuComponent implements OnInit, OnDestroy {
         this.modalService.dismissAll();
         this.model.newQty = 1;
         this.model.note = '';
-        this.reload(); 
+        this.reload();
       },
       error => {
         console.log(error);
@@ -517,7 +538,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     }
   }
 
-  results : any = [];
+  results: any = [];
   addToItemModifier(a: any) {
     if (this.isChecked == false) {
       alert("Please check item first!");
@@ -567,7 +588,7 @@ export class MenuComponent implements OnInit, OnDestroy {
         data => {
           console.log(data);
           this.reload();
-            this.results = data['results']
+          this.results = data['results']
           this.logService.logAction('Apply Discount Group ' + a['name'] + '(' + a['id'] + ') @' + a['discRate'] + '%', this.id)
         },
         error => {
@@ -599,12 +620,12 @@ export class MenuComponent implements OnInit, OnDestroy {
     )
   }
 
-  printQueue(sendOrder : string = ''){
-     const url = environment.api + "menuItemPos/printQueue";
-    this.http.get<any>(url,  {
+  printQueue(sendOrder: string = '') {
+    const url = environment.api + "menuItemPos/printQueue";
+    this.http.get<any>(url, {
       headers: this.configService.headers(),
-      params : {
-        sendOrder : sendOrder
+      params: {
+        sendOrder: sendOrder
       }
     }).subscribe(
       data => {
@@ -612,7 +633,7 @@ export class MenuComponent implements OnInit, OnDestroy {
         this.reload();
         history.back();
         this.logService.logAction('printQueue', this.id);
-        
+
       },
       error => {
         console.log(error);

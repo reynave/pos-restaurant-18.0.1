@@ -25,7 +25,7 @@ exports.getMenuItem = async (req, res) => {
     const q = `
        
         SELECT 
-          m.id, m.name, m.price${i} as 'price' , m.adjustItemsId, m.qty,
+          m.id, m.name, m.price${i} as 'price' , m.adjustItemsId, m.qty, m.menuSet, m.menuSetMinQty,
           m.menuDepartmentId, m.menuCategoryId, m.menuTaxScId,
           t.desc, t.taxRate, t.taxNote, t.taxStatus,
             CASE 
@@ -83,6 +83,36 @@ exports.getMenuItem = async (req, res) => {
   }
 };
 
+exports.selectMenuSet = async (req, res) => {
+  const itemId = req.query.itemId;
+
+  try {
+    const [menuSet] = await db.query(`
+       SELECT   m.id,  m.name, s.minQty, s.maxQty, m.adjustItemsId,
+        m.qty - (
+          SELECT COUNT(ci.id)
+          FROM cart_item ci
+          WHERE ci.presence = 1  
+            AND ci.adjustItemsId = m.adjustItemsId
+          ) AS currentQty, 0 as 'select'
+        FROM menu_set AS s
+        JOIN menu AS m ON m.id = s.detailMenuId
+        WHERE s.menuId = ${itemId} 
+      `);
+
+    res.json({
+      error: false,
+      menuSet : menuSet,
+      get: req.query
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+}
+
+
 exports.cart = async (req, res) => {
   const i = 1;
   try {
@@ -124,6 +154,20 @@ exports.cart = async (req, res) => {
     for (const row of formattedRows) {
       // MODIFIER 
       const s = `
+  
+        --  CUSTOM NOTES
+          SELECT COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price, 1 as 'modifier'
+          FROM (
+            SELECT r.menuTaxScId AS 'modifierId', r.note AS descl, r.price
+            FROM cart_item  AS i
+            RIGHT JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
+          WHERE i.menuId = ${row['menuId']}
+              AND i.cartId = '${cartId}' AND i.void = 0 AND i.presence = 1
+              AND i.sendOrder = '' AND r.sendOrder = ''
+              AND r.presence = 1 AND i.void = 0 AND r.modifierId = 0 AND r.note != ''
+          ) AS t1
+          GROUP BY t1.descl, t1.price 
+        UNION
 
 
         -- MODIFIER
@@ -194,19 +238,7 @@ exports.cart = async (req, res) => {
           ) AS t1
           GROUP BY t1.descl, t1.price
 
-         UNION 
-        --  CUSTOM NOTES
-          SELECT COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price, 1 as 'modifier'
-          FROM (
-            SELECT r.menuTaxScId AS 'modifierId', r.note AS descl, r.price
-            FROM cart_item  AS i
-            RIGHT JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
-          WHERE i.menuId = ${row['menuId']}
-              AND i.cartId = '${cartId}' AND i.void = 0 AND i.presence = 1
-              AND i.sendOrder = '' AND r.sendOrder = ''
-              AND r.presence = 1 AND i.void = 0 AND r.modifierId = 0 AND r.note != ''
-          ) AS t1
-          GROUP BY t1.descl, t1.price 
+        
       `;
 
 
@@ -316,6 +348,20 @@ exports.cartOrdered = async (req, res) => {
 
       const s = `
 
+        --  CUSTOM NOTES
+          SELECT COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price, 1 as 'modifier'
+          FROM (
+            SELECT r.menuTaxScId AS 'modifierId', r.note AS descl, r.price
+            FROM cart_item  AS i
+            RIGHT JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
+          WHERE i.menuId = ${row['menuId']}
+              AND i.cartId = '${cartId}' AND i.void = 0 AND i.presence = 1
+              AND i.sendOrder != '' AND r.sendOrder != ''
+              AND r.presence = 1 AND i.void = 0 AND r.modifierId = 0 AND r.note != ''
+          ) AS t1
+          GROUP BY t1.descl, t1.price 
+ UNION 
+
 -- MODIFIER
        SELECT COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price, 1 as 'modifier'
         FROM (
@@ -379,19 +425,7 @@ exports.cartOrdered = async (req, res) => {
           ) AS t1
           GROUP BY t1.descl, t1.price
 
- UNION 
-        --  CUSTOM NOTES
-          SELECT COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price, 1 as 'modifier'
-          FROM (
-            SELECT r.menuTaxScId AS 'modifierId', r.note AS descl, r.price
-            FROM cart_item  AS i
-            RIGHT JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
-          WHERE i.menuId = ${row['menuId']}
-              AND i.cartId = '${cartId}' AND i.void = 0 AND i.presence = 1
-              AND i.sendOrder != '' AND r.sendOrder != ''
-              AND r.presence = 1 AND i.void = 0 AND r.modifierId = 0 AND r.note != ''
-          ) AS t1
-          GROUP BY t1.descl, t1.price 
+
       `;
 
       const [modifier] = await db.query(s);
@@ -480,9 +514,7 @@ exports.addToCart = async (req, res) => {
       results.push({ cartId, status: 'cart_item insert' });
     }
     let scAmount = menu['price'] * (menu['scRate'] / 100);
-
     let taxAmount = (parseInt(menu['price']) + scAmount) * (menu['taxRate'] / 100);
-
 
 
     if (menu['scStatus'] == 1) {
@@ -527,8 +559,6 @@ exports.addToCart = async (req, res) => {
       }
     }
 
-
-
     if (menu['taxStatus'] == 1) {
       let q3 =
         `INSERT INTO cart_item_modifier (
@@ -572,6 +602,39 @@ exports.addToCart = async (req, res) => {
       } else {
         results.push({ cartId, status: 'TAX cart_item_modifier insert' });
       }
+    }
+
+
+    if (menu['menuSet'] == 'FIXED') {
+
+      const q6 = `
+      SELECT s.id , m.name , s.detailMenuId
+        FROM menu_set as s
+      JOIN menu AS m ON m.id = s.detailMenuId
+      WHERE 
+        s.menuId = ${menu['id']}  
+      `;
+      console.log(q6)
+      const [result6] = await db.query(q6);
+      for (const row of result6) {
+        let q3 =
+          `INSERT INTO cart_item_modifier (
+          presence, inputDate, updateDate,  
+          cartId, cartItemId, note, menuSetMenuId
+          )
+          VALUES (
+            1, '${inputDate}', '${inputDate}', 
+            '${cartId}',  ${cartItemId} , '${row['name']}', '${row['detailMenuId']}'
+          )`;
+        const [result3] = await db.query(q3);
+
+        if (result3.affectedRows === 0) {
+          results.push({ cartId, status: 'not found' });
+        } else {
+          results.push({ cartId, status: 'FIXED menu set insert' });
+        }
+      }
+
     }
 
     res.status(201).json({
@@ -1184,7 +1247,7 @@ exports.cartDetail = async (req, res) => {
 
         -- GENERAL
         SELECT 
-            c.id, c.modifierId, c.price, m.descl, c.cartItemId, c.applyDiscount,  c.menuTaxScId,
+            c.id, c.modifierId, c.price, m.descl, c.cartItemId, c.applyDiscount,  c.menuTaxScId, c.menuSetMenuId,
             c.priceIncluded,  0 as 'checkBox'
           FROM cart_item_modifier AS c
            JOIN modifier AS m ON m.id = c.modifierId
@@ -1194,7 +1257,7 @@ exports.cartDetail = async (req, res) => {
 
         UNION
         -- MEMO
-        SELECT c.id, c.modifierId, c.price, c.note AS 'descl', c.cartItemId, c.applyDiscount,  c.menuTaxScId,
+        SELECT c.id, c.modifierId, c.price, c.note AS 'descl', c.cartItemId, c.applyDiscount,  c.menuTaxScId, c.menuSetMenuId,
             c.priceIncluded,   0 as 'checkBox'
         FROM cart_item_modifier AS c 
         WHERE c.cartItemId = ${row.id}
@@ -1203,7 +1266,7 @@ exports.cartDetail = async (req, res) => {
  
         UNION 
         -- APPLYDISCOUNT
-        SELECT c.id, c.modifierId, c.price, m.name AS 'descl' , c.cartItemId, c.applyDiscount, c.menuTaxScId,
+        SELECT c.id, c.modifierId, c.price, m.name AS 'descl' , c.cartItemId, c.applyDiscount, c.menuTaxScId, c.menuSetMenuId,
          c.priceIncluded, 
         0 as 'checkBox'
         FROM cart_item_modifier AS c
@@ -1214,7 +1277,7 @@ exports.cartDetail = async (req, res) => {
 
         UNION 
         -- SC 
-        SELECT c.id, c.modifierId, c.price,  t.scNote AS 'descl' ,  c.cartItemId, c.applyDiscount, c.menuTaxScId,
+        SELECT c.id, c.modifierId, c.price,  t.scNote AS 'descl' ,  c.cartItemId, c.applyDiscount, c.menuTaxScId, c.menuSetMenuId,
          c.priceIncluded, 
         0 as 'checkBox'
         FROM cart_item_modifier AS c
@@ -1225,7 +1288,7 @@ exports.cartDetail = async (req, res) => {
 
         UNION 
         -- TAX 
-        SELECT c.id, c.modifierId, c.price,  t.taxNote AS 'descl' ,  c.cartItemId, c.applyDiscount, c.menuTaxScId,
+        SELECT c.id, c.modifierId, c.price,  t.taxNote AS 'descl' ,  c.cartItemId, c.applyDiscount, c.menuTaxScId, c.menuSetMenuId,
         c.priceIncluded, 
         0 as 'checkBox'
         FROM cart_item_modifier AS c
@@ -1260,7 +1323,9 @@ exports.cartDetail = async (req, res) => {
         modifierId: 'parent',
         applyDiscount: 0,
         menuTaxScId: 0,
-        ta: formattedRows[i]['ta']
+        ta: formattedRows[i]['ta'],
+        menuSetMenuId: 0,
+
       })
       formattedRows[i]['modifier'].forEach(el => {
         orderItems.push({
@@ -1277,6 +1342,7 @@ exports.cartDetail = async (req, res) => {
           modifierId: el['modifierId'],
           applyDiscount: el['applyDiscount'],
           menuTaxScId: el['menuTaxScId'],
+          menuSetMenuId: el['menuSetMenuId'],
         })
         grandAmount += parseInt(el['price']);
 
@@ -1546,40 +1612,40 @@ exports.printQueue = async (req, res) => {
 
     let i = 0;
     for (const emp of result) {
-       const { cartId, cartItemId, } = emp;
+      const { cartId, cartItemId, } = emp;
 
-        const q2 = `SELECT  m.descs 
+      const q2 = `SELECT  m.descs 
       FROM cart_item_modifier AS c
       LEFT JOIN modifier AS m ON m.id = c.modifierId
       WHERE c.cartId = '${cartId}' AND c.cartItemId = ${cartItemId} AND c.modifierId != 0
         `;
-   
+
       const [cart_item_modifier] = await db.query(q2);
 
       let n = 0;
       cart_item_modifier.forEach(element => {
-          result[i]['modifier'] +=  ((n>0)? ', ':'')+element['descs'];
-          n++
-      }); 
-      i++;  
+        result[i]['modifier'] += ((n > 0) ? ', ' : '') + element['descs'];
+        n++
+      });
+      i++;
     }
 
-      const items = []; 
+    const items = [];
     for (const row of result) {
-      let getIndexById = items.findIndex((obj) => (obj.menuId === row.menuId) && (obj.modifier == row.modifier)); 
- 
-      if (getIndexById > -1) { 
-         items[getIndexById]['qty'] += 1;
+      let getIndexById = items.findIndex((obj) => (obj.menuId === row.menuId) && (obj.modifier == row.modifier));
+
+      if (getIndexById > -1) {
+        items[getIndexById]['qty'] += 1;
       } else {
         items.push(row);
       }
 
     }
 
-   
+
     for (const row of items) {
 
-      const q11 =  `INSERT INTO print_queue (
+      const q11 = `INSERT INTO print_queue (
             dailyCheckId, cartId,  so,
             message,  printerId, status, 
             inputDate, updateDate 
@@ -1590,15 +1656,15 @@ exports.printQueue = async (req, res) => {
             '${today()}', '${today()}'
           )`;
 
-      console.log(row,q11)
+      console.log(row, q11)
 
-      const [rest] = await db.query(q11); 
+      const [rest] = await db.query(q11);
       if (rest.affectedRows === 0) {
-        results.push({   status: 'not found' });
+        results.push({ status: 'not found' });
       } else {
-        results.push({  status: 'print_queue updated' });
+        results.push({ status: 'print_queue updated' });
       }
-      
+
     }
 
 
@@ -1607,8 +1673,8 @@ exports.printQueue = async (req, res) => {
 
     res.status(201).json({
       error: false,
-      items : items, 
-      rest :results
+      items: items,
+      rest: results
     });
 
 
@@ -1689,7 +1755,7 @@ exports.sendOrder = async (req, res) => {
     res.status(201).json({
       error: false,
       results: results,
-      sendOrder : insertId,
+      sendOrder: insertId,
       message: 'cart_item close Order',
     });
 

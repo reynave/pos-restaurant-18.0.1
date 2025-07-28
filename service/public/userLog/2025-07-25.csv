@@ -95,3 +95,5 @@ time,outletId,workStationId,userId,bill,action,url,method,server
 19:46:02,Imperial Kitchen(15),0001,IT Melanie(1),250725000271,Go to Menu,http://localhost:4850/#/tables
 19:46:17,Imperial Kitchen(15),0001,IT Melanie(1),,Click Print Queue,http://localhost:4850/#/tables
 19:59:34,Imperial Kitchen(15),0001,IT Melanie(1),250725000271,Go to Menu,http://localhost:4850/#/tables
+20:04:37,Imperial Kitchen(15),0001,IT Melanie(1),250725000274,Go to Menu,http://localhost:4850/#/tables
+20:04:52,Imperial Kitchen(15),0001,IT Melanie(1),250725000274,Click BILL,http://localhost:4850/#/menu?id=250725000274

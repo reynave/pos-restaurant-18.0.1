@@ -8,7 +8,7 @@ exports.getItems = async (req, res) => {
       const [formattedRows] = await db.query(`
        SELECT 
           m.id, m.name,   m.adjustItemsId,  0 as 'checkBox',
-          m.menuDepartmentId, m.menuCategoryId,  
+          m.menuDepartmentId, m.menuCategoryId,  m.startDate, m.endDate,
             m.qty -  (
                 SELECT COUNT(ci.id)
                 FROM cart_item ci

@@ -17,7 +17,7 @@
 
                      </td>
                      <td colspan="3" class="align-content-center">
-                        <h6><span *ngIf="lock==true"><i class="bi bi-lock-fill"></i></span>  LIST ORDERS    </h6>
+                        <h6><span *ngIf="lock==true"><i class="bi bi-lock-fill"></i></span> LIST ORDERS </h6>
                      </td>
 
                      <td class="align-content-center">
@@ -121,7 +121,7 @@
 
                </tbody>
 
-            </table> 
+            </table>
             <div class="sticky-bottom bg-white">
                <div class="container py-2">
                   <div class="row">
@@ -180,7 +180,7 @@
                         (click)="onVoid()">
                         <i class="bi bi-x-lg"></i> VOID ITEM</button>
                   </div>
-                  <div class="col-3 d-grid"  >
+                  <div class="col-3 d-grid">
                      <button type="button" [class]="cssClass" class="bg-white" [disabled]="cart.length < 1 || lock"
                         (click)="sendOrder();">
                         <i class="bi bi-fork-knife"></i> SEND ORDER</button>
@@ -205,8 +205,8 @@
                         EXIT WITHOUT ORDER</button>
                   </div>
                   <div class="col-3 d-grid">
-                     <button type="button" [disabled]="lock" [class]="cssClass" 
-                        class="btn-warning" (click)="transferItemsGroup()"> <i class="bi bi-send-plus"></i>
+                     <button type="button" [disabled]="lock" [class]="cssClass" class="btn-warning"
+                        (click)="transferItemsGroup()"> <i class="bi bi-send-plus"></i>
                         TRANSFER ITEMS
                      </button>
                   </div>
@@ -299,7 +299,8 @@
             <div class="row g-1 mb-3">
                <div class="col-3 mb-1 d-grid" *ngFor="let a of items">
                   <button type="button" [class]="((a.qty - a.usedQty)< 1) ? cssMenuDisable : cssMenu"
-                     (click)="addToCart(a)" [disabled]="(a.qty - a.usedQty) < 1">
+                     (click)=" a.menuSet == 'SELECT' ? open(modalMenuSet,a,0, 'lg','SELECT') :addToCart(a)"
+                     [disabled]="(a.qty - a.usedQty) < 1">
                      <div class="mb-1">{{a.name}}</div>
                      <small>&#64;{{a.price | number}} </small>
                      <small *ngIf="a.adjustItemsId != ''"> / {{(a.qty - a.usedQty)}}</small>
@@ -432,8 +433,8 @@
 
       <form (ngSubmit)="addCustomNotes()" #actorForm="ngForm">
          <div class="mb-3">
-            <input type="text" class="form-control form-control-lg"  #myInput  id="note" 
-               required [(ngModel)]="model.note"  name="note" #note="ngModel" autofocus >
+            <input type="text" class="form-control form-control-lg" #myInput id="note" required [(ngModel)]="model.note"
+               name="note" #note="ngModel" autofocus>
             <div [hidden]="note.valid || note.pristine" class="text-danger">
                Note is required
             </div>
@@ -441,14 +442,13 @@
 
          <div class="row g-1">
             <div class="col-6 d-grid">
-               <button type="button" class="btn btn-lg btn-outline-secondary"  
+               <button type="button" class="btn btn-lg btn-outline-secondary"
                   (click)="modal.close('Save click')">Cancel</button>
             </div>
-             <div class="col-6 d-grid">
-               <button type="submit" class="btn btn-lg btn-dark"  
-                  [disabled]="!actorForm.form.valid">OK</button>
+            <div class="col-6 d-grid">
+               <button type="submit" class="btn btn-lg btn-dark" [disabled]="!actorForm.form.valid">OK</button>
             </div>
-         </div> 
+         </div>
 
       </form>
    </div>
@@ -470,7 +470,8 @@
             </button>
          </div>
          <div class="col d-grid">
-            <button type="button" class="btn btn-lg btn-outline-dark py-5" (click)="modal.dismiss('Cross click')" [routerLink]="['/printQueue']"  [queryParams]="{cartId:id}"  >
+            <button type="button" class="btn btn-lg btn-outline-dark py-5" (click)="modal.dismiss('Cross click')"
+               [routerLink]="['/printQueue']" [queryParams]="{cartId:id}">
                <h4><i class="bi bi-fire"></i></h4> Kitchen
             </button>
          </div>
@@ -583,4 +584,44 @@
       </form>
    </div>
 
+</ng-template>
+
+<ng-template #modalMenuSet let-modal>
+   <div class="modal-header">
+      <strong>Menu Set</strong>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+   </div>
+   <div class="modal-body">
+      <table class="table">
+         <thead>
+            <tr>
+               <th>#</th>
+               <th>Name</th>
+               <th>Qty</th>
+               <th>Select</th>
+            </tr>
+         </thead>
+         <tbody>
+            <tr *ngFor="let x of menuSet; let i = index" [class]="{'bg-light': x.select > 0}">
+               <td>{{i + 1}}</td>
+               <td>{{x.name}}</td>
+               <Td>{{x.currentQty - x.select}}</Td>
+               <td width="200px">
+                  <div class="input-group" *ngIf="x.currentQty > 0">
+                     <button class="input-group-text" (click)="  x.select < 0 ? 0 : x.select = x.select -  1" > <i class="bi bi-dash-lg"></i> </button>
+                     <input type="number" class="form-control text-end"    [(ngModel)]="x.select">
+                     <button class="input-group-text" (click)=" x.select >= x.maxQty ? x.maxQty :  x.select  =  x.select  + 1" > <i class="bi bi-plus-lg"></i> </button>
+                  </div>
+               </td>
+            </tr>
+         </tbody>
+      </table>
+   </div>
+   
+   <div class="modal-body">
+      <div class="d-grid">
+     <button type="button" (click)="onSubmitMenuSet()" class="btn btn-lg btn-primary">SUBMIT</button>
+      </div>
+ 
+   </div>
 </ng-template>
