@@ -267,3 +267,17 @@ time,outletId,workStationId,userId,bill,action,url,method,server
 20:32:48,Imperial Kitchen(15),0001,IT Melanie(1),250728000281,Menu Lookup 2,http://localhost:4850/#/menu?id=250728000281
 20:32:48,Imperial Kitchen(15),0001,IT Melanie(1),250728000281,Menu Lookup 19,http://localhost:4850/#/menu?id=250728000281
 20:32:53,Imperial Kitchen(15),0001,IT Melanie(1),250728000281,Add MenuSet,http://localhost:4850/#/menu?id=250728000281
+20:34:15,Imperial Kitchen(15),0001,IT Melanie(1),250728000281,Void item ,http://localhost:4850/#/menu?id=250728000281
+20:34:23,Imperial Kitchen(15),0001,IT Melanie(1),250728000281,Add MenuSet,http://localhost:4850/#/menu?id=250728000281
+20:34:39,Imperial Kitchen(15),0001,IT Melanie(1),250728000281,Add MenuSet,http://localhost:4850/#/menu?id=250728000281
+20:34:42,Imperial Kitchen(15),0001,IT Melanie(1),250728000281,menu/modifier PAKET 2 menuId : 101, price : 130000,http://localhost:4850/#/menu?id=250728000281
+20:35:39,Imperial Kitchen(15),0001,IT Melanie(1),250728000281,Go to Menu,http://localhost:4850/#/tables
+20:35:42,Imperial Kitchen(15),0001,IT Melanie(1),250728000281,Menu Lookup 0,http://localhost:4850/#/menu?id=250728000281
+20:35:43,Imperial Kitchen(15),0001,IT Melanie(1),250728000281,Menu Lookup 2,http://localhost:4850/#/menu?id=250728000281
+20:35:44,Imperial Kitchen(15),0001,IT Melanie(1),250728000281,Menu Lookup 19,http://localhost:4850/#/menu?id=250728000281
+20:35:47,Imperial Kitchen(15),0001,IT Melanie(1),250728000281,Add Menu PAKET 1(100) @120000.00,http://localhost:4850/#/menu?id=250728000281
+20:36:00,Imperial Kitchen(15),0001,IT Melanie(1),250728000281,Add MenuSet,http://localhost:4850/#/menu?id=250728000281
+20:42:48,Imperial Kitchen(15),0001,IT Melanie(1),250728000281,Add MenuSet,http://localhost:4850/#/menu?id=250728000281
+20:43:02,Imperial Kitchen(15),0001,IT Melanie(1),250728000281,Menu Lookup 2,http://localhost:4850/#/menu?id=250728000281
+20:43:03,Imperial Kitchen(15),0001,IT Melanie(1),250728000281,Menu Lookup 0,http://localhost:4850/#/menu?id=250728000281
+21:02:33,Imperial Kitchen(15),0001,IT Melanie(1),250728000281,Go to Menu,http://localhost:4850/#/tables
