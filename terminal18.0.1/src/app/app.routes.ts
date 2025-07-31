@@ -29,10 +29,12 @@ import { UserLogsComponent } from './setting/user-logs/user-logs.component';
 import { TransferItemsGroupComponent } from './pos/menu/transfer-items-group/transfer-items-group.component';
 import { ReloginComponent } from './login/relogin/relogin.component';
 import { PrintQueueComponent } from './pos/print-queue/print-queue.component';
+import { FactoryComponent } from './login/factory/factory.component';
 
 export const routes: Routes = [
     { path: '', component: SetupComponent },
     { path: 'home', component: HomeComponent},
+     { path: 'factory', component: FactoryComponent},
     
     { path: 'setup', component: SetupComponent },
     { path: 'login', component: LoginComponent },

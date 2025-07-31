@@ -45,7 +45,7 @@ exports.getMenuItem = async (req, res) => {
                 FROM cart_item ci
                 WHERE ci.presence = 1 
                
-                  AND ci.adjustItemsId = m.adjustItemsId AND Ci.menuId = m.id
+                  AND ci.adjustItemsId = m.adjustItemsId AND ci.menuId = m.id
               )  +
               (
               SELECT COUNT(cim.id)
@@ -102,7 +102,7 @@ exports.selectMenuSet = async (req, res) => {
             FROM cart_item ci
             WHERE ci.presence = 1 
              
-              AND ci.adjustItemsId = m.adjustItemsId AND Ci.menuId = m.id
+              AND ci.adjustItemsId = m.adjustItemsId AND ci.menuId = m.id
           )  +
           (
            SELECT COUNT(cim.id)
@@ -737,7 +737,7 @@ exports.updateQty = async (req, res) => {
             FROM cart_item ci
             WHERE ci.presence = 1 
             
-              AND ci.adjustItemsId = m.adjustItemsId AND Ci.menuId = m.id
+              AND ci.adjustItemsId = m.adjustItemsId AND ci.menuId = m.id
           )  +
           (
            SELECT COUNT(cim.id)
@@ -822,7 +822,7 @@ exports.updateQty = async (req, res) => {
                     FROM cart_item ci
                     WHERE ci.presence = 1 
                      
-                      AND ci.adjustItemsId = m.adjustItemsId AND Ci.menuId = m.id
+                      AND ci.adjustItemsId = m.adjustItemsId AND ci.menuId = m.id
                   )  +
                   (
                     SELECT COUNT(cim.id)

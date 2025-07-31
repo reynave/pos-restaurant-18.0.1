@@ -1,5 +1,5 @@
-const db = require('../../config/db');
-const { today, formatDateOnly } = require('../../helpers/global');
+const db = require('../../../config/db');
+const { today, formatDateOnly } = require('../../../helpers/global');
 
 exports.getAllData = async (req, res) => {
   try {
@@ -291,5 +291,27 @@ exports.deleteTree = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Database update error', details: err.message });
+  }
+};
+
+exports.addParent = async (req, res) => {
+  const model = req.body.item;
+  const inputDate = today();
+
+  try {
+    const q = `
+      INSERT INTO menu_lookup (parentId, presence, inputDate, name ) 
+      VALUES ( 0, 1, '${inputDate}','New Lookup')` ;
+    console.log(q)
+    const [result] = await db.query(q);
+
+    res.status(201).json({
+      error: false, 
+      message: 'menu_lookup created',
+      menuId: result.insertId
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: true, note: 'Database insert error' });
   }
 };

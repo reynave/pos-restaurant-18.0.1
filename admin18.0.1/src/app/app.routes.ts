@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { EmployeeComponent } from './module/employee/employee.component';
-import { OutletComponent } from './module/outlet/outlet.component'; 
+import { OutletComponent } from './module/outlet/outlet.component';
 import { AuthLevelComponent } from './module/employee/auth-level/auth-level.component';
 import { DeptEmployeeComponent } from './module/employee/dept-employee/dept-employee.component';
 import { OrderLevelEmployeeComponent } from './module/employee/order-level-employee/order-level-employee.component';
@@ -56,15 +56,18 @@ import { MenuClassComponent } from './module/menu/menu-class/menu-class.componen
 import { PrinterComponent } from './module/workstation/printer/printer.component';
 import { MenuLookupComponent } from './module/menu/menu-lookup/menu-lookup.component';
 import { TerminalComponent } from './module/workstation/terminal/terminal.component';
+import { ModifierListComponent } from './module/menu/modifier-list/modifier-list.component';
+import { ModifierGroupComponent } from './module/menu/modifier-group/modifier-group.component';
+import { ModifierComponent } from './module/menu/modifier/modifier.component';
 
 export const routes: Routes = [
-    { path: '',component: HomeComponent},
+    { path: '', component: HomeComponent },
     { path: 'home', component: HomeComponent },
     { path: 'employee', component: EmployeeComponent },
     { path: 'employee/authLevel', component: AuthLevelComponent },
     { path: 'employee/dept', component: DeptEmployeeComponent },
     { path: 'employee/orderLevel', component: OrderLevelEmployeeComponent },
-    
+
 
     { path: 'specialHour', component: SpecialHoursComponent },
     { path: 'holidayList', component: HolidayListComponent },
@@ -104,22 +107,22 @@ export const routes: Routes = [
 
     { path: 'customer/info', component: CustomerInfoComponent },
     { path: 'customer/grp', component: CustomerGrpComponent },
- 
+
     { path: 'template', component: TemplatesComponent },
     { path: 'template/detail', component: TemplateDetailComponent },
     // { path: 'template/kitchenMessage', component: TemplatesComponent },
     // { path: 'template/kitchenMonitor', component: TemplatesComponent },
     // { path: 'template/kitchenSlip', component: TemplatesComponent },
     { path: 'workStation/pantryStation', component: PantryStationComponent },
-    { path: 'workStation/printQueue', component: PantryStationQueueComponent }, 
+    { path: 'workStation/printQueue', component: PantryStationQueueComponent },
     { path: 'workStation/stationTaxRun', component: StationTaxRunComponent },
- { path: 'workStation/printer', component: PrinterComponent },
-    
+    { path: 'workStation/printer', component: PrinterComponent },
+
     { path: 'workStation/terminal', component: TerminalComponent },
- 
 
 
-    { path: 'outlet', component: OutletComponent }, 
+
+    { path: 'outlet', component: OutletComponent },
     { path: 'outlet/payment', component: OutletPaymentComponent },
     { path: 'outlet/cashType', component: OutletCashTypeComponent },
     { path: 'outlet/discount', component: OutletDiscountComponent },
@@ -129,22 +132,26 @@ export const routes: Routes = [
     { path: 'outlet/bonusRules', component: OutletBonusRulesComponent },
 
     { path: 'outlet/funcAuthority', component: OutletFuncAuthorityComponent },
-    { path: 'outlet/orderLevel', component: OutletBonusRulesComponent }, 
+    { path: 'outlet/orderLevel', component: OutletBonusRulesComponent },
     { path: 'outlet/specialHour', component: OutletSpecialHourComponent },
-    
+
     { path: 'menu/item', component: MenuItemComponent },
     { path: 'menu/department', component: MenuDeptComponent },
     { path: 'menu/category', component: MenuCategoryComponent },
     { path: 'menu/class', component: MenuClassComponent },
-     { path: 'menu/lookUp', component: MenuLookupComponent },
-    
-    
+    { path: 'menu/lookUp', component: MenuLookupComponent },
+
+{ path: 'modifier/list', component: ModifierListComponent },
+{ path: 'modifier/group', component: ModifierGroupComponent },
+{ path: 'modifier', component: ModifierComponent },
+
+
 
 
     { path: 'tableMap', component: TableMapComponent },
     { path: 'floorMap', component: FloorMapComponent },
-    
- 
+
+
 
     { path: '**', component: PageNotFoundComponent },
 ];

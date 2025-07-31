@@ -1,13 +1,16 @@
-const db = require('../../config/db');
-const { today, formatDateOnly } = require('../../helpers/global');
+const db = require('../../../config/db');
+const { today, formatDateOnly } = require('../../../helpers/global');
 
 exports.getAllData = async (req, res) => {
+
+  const modifierListId = req.query.modifierListId == 'undefined' ? '' : req.query.modifierListId;
+ 
   try {
 
     const [rows] = await db.query(`
       SELECT *, 0 as 'checkbox'
-      FROM menu_class  
-      WHERE presence = 1
+      FROM modifier  
+      WHERE presence = 1   ${modifierListId ? 'and modifierListId = ' + modifierListId : ''}
     `);
 
     const formattedRows = rows.map(row => ({
@@ -33,16 +36,22 @@ exports.getAllData = async (req, res) => {
 exports.getMasterData = async (req, res) => {
   try {
 
-    const [outlet] = await db.query(`
-      SELECT id, desc1
-      FROM menu_class  
-      WHERE presence = 1 order by desc1 ASC
+    const [modifierList] = await db.query(`
+      SELECT id, name
+      FROM modifier_list  
+      WHERE presence = 1 order by name ASC
+    `);
+
+    const [modifierGroup] = await db.query(`
+      SELECT id, name
+      FROM modifier_group  
+      WHERE presence = 1 order by name ASC
     `);
 
     const data = {
       error: false,
-      outlet: outlet,
-      get: req.query
+      modifierList: modifierList,
+      modifierGroup: modifierGroup,
     }
 
     res.json(data);
@@ -52,6 +61,7 @@ exports.getMasterData = async (req, res) => {
   }
 };
 
+
 exports.postCreate = async (req, res) => {
   const model = req.body['model'];
   const inputDate = today();
@@ -59,20 +69,24 @@ exports.postCreate = async (req, res) => {
   try {
 
     const [result] = await db.query(
-      `INSERT INTO menu_class (presence, inputDate, desc1 ) 
-      VALUES (?, ?,?)`,
+      `INSERT INTO modifier (presence, inputDate, descl, descm, descs , modifierListId) 
+      VALUES (?, ?,?,?,?,?)`,
       [
         1,
         inputDate,
-        model['desc1']
+        model['name'],
+        model['name'],
+        model['name'],
+        model['modifierListId'],
+        
       ]
     );
 
     res.status(201).json({
       error: false,
       inputDate: inputDate,
-      message: 'menu_class created',
-      menu_classId: result.insertId
+      message: 'modifier created',
+      modifierId: result.insertId
     });
   } catch (err) {
     console.error(err);
@@ -96,18 +110,27 @@ exports.postUpdate = async (req, res) => {
 
   try {
     for (const emp of data) {
-      const { id } = emp;
+      const { id, modifierListId, modifierGroupId, descl, descm, descs, printing, price1, price2, price3, price4, price5 } = emp;
       if (!id) {
         results.push({ id, status: 'failed', reason: 'Missing fields' });
         continue;
       }
 
       const [result] = await db.query(
-        `UPDATE menu_class SET 
-          desc1 = '${emp['desc1']}',     
-          mjclass = '${emp['mjclass']}',    
-          kmcolor = '${emp['kmcolor']}',      
-         
+        `UPDATE modifier SET 
+          modifierListId = '${emp['modifierListId']}',     
+          modifierGroupId = '${emp['modifierGroupId']}',     
+          descl = '${emp['descl']}',
+          descm = '${emp['descm']}',
+          descs = '${emp['descs']}',
+          printing = '${emp['printing']}',
+
+          price1 = '${emp['price1']}',
+          price2 = '${emp['price2']}',
+          price3 = '${emp['price3']}',
+          price4 = '${emp['price4']}',
+          price5 = '${emp['price5']}',
+
           updateDate = '${today()}'
 
         WHERE id = ${id}`,
@@ -156,7 +179,7 @@ exports.postDelete = async (req, res) => {
 
 
       const [result] = await db.query(
-        'UPDATE menu_class SET presence = ?, updateDate = ? WHERE id = ?',
+        'UPDATE modifier SET presence = ?, updateDate = ? WHERE id = ?',
         [checkbox == 0 ? 1 : 0, today(), id]
       );
 

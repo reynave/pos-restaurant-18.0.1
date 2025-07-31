@@ -1,0 +1,24 @@
+time,outletId,workStationId,userId,bill,action,url,method,server
+12:21:13,Imperial Kitchen(15),0001,IT Melanie(1),250729000296,Go to Menu,http://localhost:4850/#/tables
+12:21:17,Imperial Kitchen(15),0001,IT Melanie(1),250729000296,Exit Without Order,http://localhost:4850/#/menu?id=250729000296
+12:21:21,Imperial Kitchen(15),0001,IT Melanie(1),,WARNING Daily Close ?,http://localhost:4850/#/tables
+12:21:22,Imperial Kitchen(15),0001,IT Melanie(1),,Daily Close -> YES,http://localhost:4850/#/tables
+12:23:19,Imperial Kitchen(15),0001,IT Melanie(1),,click Adjustment Item,http://localhost:4850/#/tables
+12:24:47,Imperial Kitchen(15),0001,IT Melanie(1),,click setting,http://localhost:4850/#/tables
+12:25:19,Imperial Kitchen(15),0001,IT Melanie(1),,click setting,http://localhost:4850/#/tables
+12:35:24,Imperial Kitchen(15),0001,IT Melanie(1),,New Order Imperial Kitchen(15) Cover : 4, Table : TA1(15),http://localhost:4850/#/tables
+12:35:25,Imperial Kitchen(15),0001,IT Melanie(1),250730000297,Go to Menu,http://localhost:4850/#/tables
+12:35:26,Imperial Kitchen(15),0001,IT Melanie(1),250730000297,Menu Lookup 0,http://localhost:4850/#/menu?id=250730000297
+12:35:26,Imperial Kitchen(15),0001,IT Melanie(1),250730000297,Menu Lookup 1,http://localhost:4850/#/menu?id=250730000297
+12:35:27,Imperial Kitchen(15),0001,IT Melanie(1),250730000297,Menu Lookup 3,http://localhost:4850/#/menu?id=250730000297
+12:35:27,Imperial Kitchen(15),0001,IT Melanie(1),250730000297,Add Menu MANGGO KYOTO(24) @30000.00,http://localhost:4850/#/menu?id=250730000297
+12:35:28,Imperial Kitchen(15),0001,IT Melanie(1),250730000297,Menu Lookup 0,http://localhost:4850/#/menu?id=250730000297
+12:35:29,Imperial Kitchen(15),0001,IT Melanie(1),250730000297,Menu Lookup 0,http://localhost:4850/#/menu?id=250730000297
+12:35:30,Imperial Kitchen(15),0001,IT Melanie(1),250730000297,Menu Lookup 2,http://localhost:4850/#/menu?id=250730000297
+12:35:31,Imperial Kitchen(15),0001,IT Melanie(1),250730000297,Menu Lookup 19,http://localhost:4850/#/menu?id=250730000297
+12:35:31,Imperial Kitchen(15),0001,IT Melanie(1),250730000297,Add Menu PAKET 1(100) @120000.00,http://localhost:4850/#/menu?id=250730000297
+12:35:34,Imperial Kitchen(15),0001,IT Melanie(1),250730000297,Add MenuSet,http://localhost:4850/#/menu?id=250730000297
+12:35:36,Imperial Kitchen(15),0001,IT Melanie(1),250730000297,Menu Lookup 0,http://localhost:4850/#/menu?id=250730000297
+12:35:37,Imperial Kitchen(15),0001,IT Melanie(1),250730000297,Send Order,http://localhost:4850/#/menu?id=250730000297
+12:35:37,Imperial Kitchen(15),0001,IT Melanie(1),250730000297,printQueue,http://localhost:4850/#/menu?id=250730000297
+12:45:11,Imperial Kitchen(15),0001,IT Melanie(1),,click setting,http://localhost:4850/#/tables

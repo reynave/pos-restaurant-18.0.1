@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgbDatepickerModule, NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxCurrencyDirective } from "ngx-currency";
+import { ActivatedRoute } from '@angular/router';
 
 export class Actor {
   constructor(
@@ -44,10 +45,14 @@ export class MenuLookupComponent implements OnInit {
     public configService: ConfigService,
     private http: HttpClient,
     public modalService: NgbModal,
+    private activatedRoute: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
     this.httpGet();
+    if (this.activatedRoute.snapshot.queryParams['id']) {
+      this.menuRow({ id: this.activatedRoute.snapshot.queryParams['id'] });
+    }
 
   }
 
@@ -266,6 +271,29 @@ export class MenuLookupComponent implements OnInit {
       const url = environment.api + "menu/menuLookup/deleteTree";
       const body = {
         item: item
+      }
+      console.log(body);
+      this.http.post<any>(url, body, {
+        headers: this.configService.headers(),
+      }).subscribe(
+        data => {
+          this.httpGet();
+          this.loading = false;
+        },
+        error => {
+          this.loading = false;
+          console.log(error);
+        }
+      )
+    }
+  }
+
+  addParent() {
+    if (confirm("Add parent menu this look up ?")) {
+      this.loading = true;
+      const url = environment.api + "menu/menuLookup/addParent";
+      const body = {
+        add: true
       }
       console.log(body);
       this.http.post<any>(url, body, {

@@ -1,19 +1,13 @@
-const db = require('../../config/db');
-const { today, formatDateOnly } = require('../../helpers/global');
+const db = require('../../../config/db');
+const { today, formatDateOnly } = require('../../../helpers/global');
 
 exports.getAllData = async (req, res) => {
-
-  const menuDepartmentId = req.query.departmentId == 'undefined' ? '': req.query.departmentId;
-  console.log(menuDepartmentId)
- 
   try {
 
     const [rows] = await db.query(`
-      SELECT id,name, price1, price2, price3,price4,price5,
-      menuDepartmentId, menuCategoryId, menuClassId ,inputDate ,updateDate
-      , 0 as 'checkbox'
-      FROM menu  
-      WHERE presence = 1    ${menuDepartmentId? 'and menuDepartmentId = '+menuDepartmentId:'' }
+      SELECT *, 0 as 'checkbox'
+      FROM modifier_group  
+      WHERE presence = 1
     `);
 
     const formattedRows = rows.map(row => ({
@@ -35,43 +29,7 @@ exports.getAllData = async (req, res) => {
     res.status(500).json({ error: 'Database error' });
   }
 };
-
-exports.getMasterData = async (req, res) => {
-  try {
-
-    const [category] = await db.query(`
-      SELECT id, desc1
-      FROM menu_category  
-      WHERE presence = 1 order by desc1 ASC
-    `);
-
-    const [itemClass] = await db.query(`
-      SELECT id, desc1
-      FROM menu_class  
-      WHERE presence = 1 order by desc1 ASC
-    `);
-
-    const [dept] = await db.query(`
-      SELECT id, desc1
-      FROM menu_department  
-      WHERE presence = 1 order by desc1 ASC
-    `);
-
-    const data = {
-      error: false,
-      category: category,
-      class: itemClass,
-      dept: dept,
-      get: req.query
-    }
-
-    res.json(data);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Database error' });
-  }
-};
-
+ 
 exports.postCreate = async (req, res) => {
   const model = req.body['model'];
   const inputDate = today();
@@ -79,20 +37,20 @@ exports.postCreate = async (req, res) => {
   try {
 
     const [result] = await db.query(
-      `INSERT INTO menu (presence, inputDate, name ) 
+      `INSERT INTO modifier_group (presence, inputDate, name ) 
       VALUES (?, ?,?)`,
       [
         1,
         inputDate,
-        model['desc1']
+        model['name']
       ]
     );
 
     res.status(201).json({
       error: false,
       inputDate: inputDate,
-      message: 'menu created',
-      menuId: result.insertId
+      message: 'modifier_group created',
+      modifier_groupId: result.insertId
     });
   } catch (err) {
     console.error(err);
@@ -123,19 +81,8 @@ exports.postUpdate = async (req, res) => {
       }
 
       const [result] = await db.query(
-        `UPDATE menu SET 
+        `UPDATE modifier_group SET 
           name = '${emp['name']}',     
-          price1 = ${emp['price1']},   
-          price2 = ${emp['price2']},  
-           price3 = ${emp['price3']},  
-           price4 = ${emp['price4']},  
-           price5 = ${emp['price5']},  
-          
-
-          menuDepartmentId = ${emp['menuDepartmentId']},  
-          menuCategoryId = ${emp['menuCategoryId']},  
-          menuClassId = ${emp['menuClassId']},  
-            
           updateDate = '${today()}'
 
         WHERE id = ${id}`,
@@ -184,7 +131,7 @@ exports.postDelete = async (req, res) => {
 
 
       const [result] = await db.query(
-        'UPDATE menu SET presence = ?, updateDate = ? WHERE id = ?',
+        'UPDATE modifier_group SET presence = ?, updateDate = ? WHERE id = ?',
         [checkbox == 0 ? 1 : 0, today(), id]
       );
 

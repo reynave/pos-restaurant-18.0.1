@@ -1,12 +1,12 @@
-const db = require('../../config/db');
-const { today, formatDateOnly } = require('../../helpers/global');
+const db = require('../../../config/db');
+const { today, formatDateOnly } = require('../../../helpers/global');
 
 exports.getAllData = async (req, res) => {
   try {
 
     const [rows] = await db.query(`
       SELECT *, 0 as 'checkbox'
-      FROM menu_category  
+      FROM menu_class  
       WHERE presence = 1
     `);
 
@@ -35,7 +35,7 @@ exports.getMasterData = async (req, res) => {
 
     const [outlet] = await db.query(`
       SELECT id, desc1
-      FROM menu_category  
+      FROM menu_class  
       WHERE presence = 1 order by desc1 ASC
     `);
 
@@ -59,7 +59,7 @@ exports.postCreate = async (req, res) => {
   try {
 
     const [result] = await db.query(
-      `INSERT INTO menu_category (presence, inputDate, desc1 ) 
+      `INSERT INTO menu_class (presence, inputDate, desc1 ) 
       VALUES (?, ?,?)`,
       [
         1,
@@ -71,8 +71,8 @@ exports.postCreate = async (req, res) => {
     res.status(201).json({
       error: false,
       inputDate: inputDate,
-      message: 'menu_category created',
-      menu_categoryId: result.insertId
+      message: 'menu_class created',
+      menu_classId: result.insertId
     });
   } catch (err) {
     console.error(err);
@@ -103,13 +103,10 @@ exports.postUpdate = async (req, res) => {
       }
 
       const [result] = await db.query(
-        `UPDATE menu_category SET 
-          desc1 = '${emp['desc1']}',    
-          mjcat = '${emp['mjcat']}',    
-          kmcolor = '${emp['kmcolor']}',    
-          srvorder = '${emp['srvorder']}',    
-          sttime = '${emp['sttime']}',    
-          endtime = '${emp['endtime']}',     
+        `UPDATE menu_class SET 
+          desc1 = '${emp['desc1']}',     
+          mjclass = '${emp['mjclass']}',    
+          kmcolor = '${emp['kmcolor']}',      
          
           updateDate = '${today()}'
 
@@ -159,7 +156,7 @@ exports.postDelete = async (req, res) => {
 
 
       const [result] = await db.query(
-        'UPDATE menu_category SET presence = ?, updateDate = ? WHERE id = ?',
+        'UPDATE menu_class SET presence = ?, updateDate = ? WHERE id = ?',
         [checkbox == 0 ? 1 : 0, today(), id]
       );
 

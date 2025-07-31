@@ -1,33 +1,54 @@
 <div class="row">
-    <div class="col-12 ">
-
-
+    <div class="col-12 "> 
         <div class="header py-2">
             <div class="row">
-                <div class="col-4">
+                <div class="col-3 align-content-center">
                     <strong>MENU ITEMS</strong>
                     <span class="mx-1" *ngIf="loading">
                         <img src="./gif/Pulse@1x-1.0s-200px-200px.gif" height="30">
                     </span>
                 </div>
-                <div class="col-8 text-end">
-                    @if(disabled==false){
-                    <button type="button" class="btn btn-sm btn-light border me-2" (click)="cancel()">Close</button>
-                    <button type="button" class="btn btn-sm btn-light border me-2" (click)="onUpdate();">Update</button>
+                <div class="col-9">
 
-                    <button type="button" class="btn btn-sm btn-dark border me-2"
-                        (click)="open(content);">Create</button>
-                    <button type="button" class="btn btn-sm btn-danger border me-2"
-                        (click)="onDelete();">Delete</button>
+                    <div class="row">
+                       
+                        <div class="col-9 text-end">
+                            @if(disabled==false){
+                            <button type="button" class="btn btn-sm btn-light border me-2"
+                                (click)="cancel()">Close</button>
+                            <button type="button" class="btn btn-sm btn-light border me-2"
+                                (click)="onUpdate();">Update</button>
 
-                    }
-                    @else {
-                    <button type="button" class="btn btn-sm btn-light border me-2"
-                        (click)="disabled= false">Editable</button>
+                            <button type="button" class="btn btn-sm btn-dark border me-2"
+                                (click)="open(content);">Create</button>
+                            <button type="button" class="btn btn-sm btn-danger border me-2"
+                                (click)="onDelete();">Delete</button>
 
-                    }
+                            }
+                            @else {
+                            <button type="button" class="btn btn-sm btn-light border me-2"
+                                (click)="disabled= false">Editable</button>
 
+                            }
+
+                        </div>
+                         <div class="col-1 text-end align-content-center">
+                            Price
+                        </div>
+                        <div class="col-2">
+                            <select class="form-control form-control-sm" [(ngModel)]="priceNumber">
+                                <option [value]="1">1</option>
+                                <option [value]="2">2</option>
+                                <option [value]="3">3</option>
+                                <option [value]="4">4</option>
+                                <option [value]="5">5</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
+
+
+
             </div>
 
         </div>
@@ -35,93 +56,135 @@
             <div class="">
 
                 <div class="table table-sm table-editable table-hover" style="width: max-content;">
-                    <thead class="sticky-top ">
-                        <tr>
+                    <table class="table table-hover" style=" min-width:80vw;">
+                        <thead class="sticky-top ">
+                            <tr>
 
-                            <th *ngIf="disabled==false">
-                                <a href="javascript:;" (click)="checkAll();">
-                                    @if(checkboxAll == 1){
-                                    <i class="bi bi-check-square"></i>
-                                    }@else {
-                                    <i class="bi bi-square"></i>
-                                    }
-                                </a>
-                            </th>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th class="text-end">price 1</th>
-                            <th class="text-end">price 2</th>
-                            <th class="text-end">price 3</th>
-                            <th class="text-end">price 4</th>
-                            <th class="text-end">price 5</th>
+                                <th *ngIf="disabled==false">
+                                    <a href="javascript:;" (click)="checkAll();">
+                                        @if(checkboxAll == 1){
+                                        <i class="bi bi-check-square"></i>
+                                        }@else {
+                                        <i class="bi bi-square"></i>
+                                        }
+                                    </a>
+                                </th>
+                                <th>#</th>
+                                <th></th>
+                                <th>Menu Set</th>
+                                <th>Name</th>
+                                <th>Look Up</th>
+                                
+                                <th class="text-end">price {{priceNumber}}</th>
 
 
-                            <th>Department</th>
-                            <th>Category</th>
-                            <th>Class</th>
+                                <th>Department</th>
+                                <th>Category</th>
+                                <th>Class</th>
+                                <th>Tax & SC </th>
+                                <th>Discount Group </th>
+                                <th>Modifier Group</th>
 
-                            <th>inputDate</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Current Qty</th>
 
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let x of items; let i = index">
 
-                            <td *ngIf="disabled==false">
-                                <a href="javascript:;" (click)=" x.checkbox == 0 ? x.checkbox = 1 : x.checkbox = 0">
-                                    <i *ngIf="x.checkbox == 0" class="bi bi-square"></i>
+                                <th>Update Date</th>
 
-                                    <i *ngIf="x.checkbox == 1" class="bi bi-check-square"></i>
-                                </a>
-                            </td>
-                            <td>{{i+1}}</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let x of items; let i = index" >
 
-                            <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.name"
-                                    (focus)="onHere(x)" [disabled]="disabled"> </td>
-                            <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.price1"
-                                    currencyMask [disabled]="disabled"> </td>
+                                <td *ngIf="disabled==false">
+                                    <a href="javascript:;" (click)=" x.checkbox == 0 ? x.checkbox = 1 : x.checkbox = 0">
+                                        <i *ngIf="x.checkbox == 0" class="bi bi-square"></i>
 
-                            <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.price2"
-                                    currencyMask [disabled]="disabled"> </td>
-                            <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.price3"
-                                    currencyMask [disabled]="disabled"> </td>
-                            <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.price4"
-                                    currencyMask [disabled]="disabled"> </td>
-                            <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.price5"
-                                    currencyMask [disabled]="disabled"> </td>
-                            <td>
-                                <select class="form-control form-control-sm" [(ngModel)]="x.menuDepartmentId"
-                                    [disabled]="disabled">
-                                    <option *ngFor="let a of selectDept" [value]="a.id">{{a.desc1}}</option>
-                                </select>
-                            </td>
+                                        <i *ngIf="x.checkbox == 1" class="bi bi-check-square"></i>
+                                    </a>
+                                </td>
+                                <td>{{i+1}}</td>
+                                <Td>
+                                    <a class="btn btn-sm text-primary" (click)="goToDetail(x,i);"><i class="bi bi-pencil-square"></i></a>
+                                </Td>
 
-                            <td>
-                                <select class="form-control form-control-sm" [(ngModel)]="x.menuCategoryId"
-                                    [disabled]="disabled">
-                                    <option *ngFor="let a of selectCategory" [value]="a.id">{{a.desc1}}</option>
-                                </select>
-                            </td>
+                                <Td>
+                                     {{x.menuSet}}
+                                </Td>
 
-                            <td>
-                                <select class="form-control form-control-sm" [(ngModel)]="x.menuClassId"
-                                    [disabled]="disabled">
-                                    <option *ngFor="let a of selectClass" [value]="a.id">{{a.desc1}}</option>
-                                </select>
-                            </td>
+                                <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.name"
+                                        (focus)="onHere(x)" [disabled]="disabled"> </td>
 
-                            <td>{{ x.inputDate | date:'medium'}} </td>
 
-                        </tr>
-                    </tbody>
+                                <td>
+                                   <a href="javascript:;" class="text-primary" [routerLink]="['/menu/lookUp']" [queryParams]="{id:x.lookupId}"  >{{x.lookup}}</a>
+                                </td>
+   
+
+                                <td><input type="text" class="form-control form-control-sm"
+                                        [(ngModel)]="x['price'+priceNumber]" currencyMask [disabled]="disabled"> </td>
+
+                                <td>
+                                    <select class="form-control form-control-sm" [(ngModel)]="x.menuDepartmentId"
+                                        [disabled]="disabled">
+                                        <option *ngFor="let a of selectDept" [value]="a.id">{{a.desc1}}</option>
+                                    </select>
+                                </td>
+
+                                <td>
+                                    <select class="form-control form-control-sm" [(ngModel)]="x.menuCategoryId"
+                                        [disabled]="disabled">
+                                        <option *ngFor="let a of selectCategory" [value]="a.id">{{a.desc1}}</option>
+                                    </select>
+                                </td>
+
+                                <td>
+                                    <select class="form-control form-control-sm" [(ngModel)]="x.menuClassId"
+                                        [disabled]="disabled">
+                                        <option *ngFor="let a of selectClass" [value]="a.id">{{a.desc1}}</option>
+                                    </select>
+                                </td>
+
+
+                                <td>
+                                    <select class="form-control form-control-sm" [(ngModel)]="x.menuTaxScId"
+                                        [disabled]="disabled">
+                                        <option *ngFor="let a of menuTaxSc" [value]="a.id">{{a.desc}}</option>
+                                    </select>
+                                </td>
+
+
+                                <td>
+                                    <select class="form-control form-control-sm" [(ngModel)]="x.discountGroupId"
+                                        [disabled]="disabled">
+                                        <option *ngFor="let a of discountGroup" [value]="a.id">{{a.name}}</option>
+                                    </select>
+                                </td>
+
+                                <td>
+                                    <select class="form-control form-control-sm" [(ngModel)]="x.modifierGroupId"
+                                        [disabled]="disabled">
+                                        <option *ngFor="let a of modifierGroup" [value]="a.id">{{a.name}}</option>
+                                    </select>
+                                </td>
+
+                                <td>{{ x.startDate }} </td>
+                                <td>{{ x.endDate }} </td>
+                                <td>{{ x.currentQty | number }} </td>
+
+                                <td>{{ x.updateDate | date:'medium'}} </td>
+
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
 
             </div>
         </div>
     </div>
 </div>
-
-
+ 
 <ng-template #content let-modal>
     <div class="modal-header">
         <strong class="modal-title" id="modal-basic-title">New Item</strong>

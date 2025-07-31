@@ -1,12 +1,12 @@
-const db = require('../../config/db');
-const { today, formatDateOnly } = require('../../helpers/global');
+const db = require('../../../config/db');
+const { today, formatDateOnly } = require('../../../helpers/global');
 
 exports.getAllData = async (req, res) => {
   try {
 
     const [rows] = await db.query(`
       SELECT *, 0 as 'checkbox'
-      FROM menu_department  
+      FROM modifier_list  
       WHERE presence = 1
     `);
 
@@ -29,29 +29,7 @@ exports.getAllData = async (req, res) => {
     res.status(500).json({ error: 'Database error' });
   }
 };
-
-exports.getMasterData = async (req, res) => {
-  try {
-
-    const [outlet] = await db.query(`
-      SELECT id, desc1
-      FROM menu_department  
-      WHERE presence = 1 order by desc1 ASC
-    `);
-
-    const data = {
-      error: false,
-      outlet: outlet,
-      get: req.query
-    }
-
-    res.json(data);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Database error' });
-  }
-};
-
+ 
 exports.postCreate = async (req, res) => {
   const model = req.body['model'];
   const inputDate = today();
@@ -59,20 +37,20 @@ exports.postCreate = async (req, res) => {
   try {
 
     const [result] = await db.query(
-      `INSERT INTO menu_department (presence, inputDate, desc1 ) 
+      `INSERT INTO modifier_list (presence, inputDate, name ) 
       VALUES (?, ?,?)`,
       [
         1,
         inputDate,
-        model['desc1']
+        model['name']
       ]
     );
 
     res.status(201).json({
       error: false,
       inputDate: inputDate,
-      message: 'menu_department created',
-      menu_departmentId: result.insertId
+      message: 'modifier_list created',
+      modifier_listId: result.insertId
     });
   } catch (err) {
     console.error(err);
@@ -103,12 +81,8 @@ exports.postUpdate = async (req, res) => {
       }
 
       const [result] = await db.query(
-        `UPDATE menu_department SET 
-          desc1 = '${emp['desc1']}',    
-          mjdept = '${emp['mjdept']}',    
-          kmcolor = '${emp['kmcolor']}',     
-          printseq = '${emp['printseq']}',    
-         
+        `UPDATE modifier_list SET 
+          name = '${emp['name']}',     
           updateDate = '${today()}'
 
         WHERE id = ${id}`,
@@ -157,7 +131,7 @@ exports.postDelete = async (req, res) => {
 
 
       const [result] = await db.query(
-        'UPDATE menu_department SET presence = ?, updateDate = ? WHERE id = ?',
+        'UPDATE modifier_list SET presence = ?, updateDate = ? WHERE id = ?',
         [checkbox == 0 ? 1 : 0, today(), id]
       );
 

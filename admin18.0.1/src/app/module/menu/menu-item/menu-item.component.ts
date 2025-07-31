@@ -6,7 +6,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgbDatepickerModule, NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxCurrencyDirective } from "ngx-currency";
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { MenuItemDetailComponent } from './menu-item-detail/menu-item-detail.component';
 
 export class Actor {
   constructor(
@@ -17,12 +18,13 @@ export class Actor {
 @Component({
   selector: 'app-menu-item',
   standalone: true,
-  imports: [HttpClientModule, CommonModule, FormsModule, NgbDropdownModule, NgbDatepickerModule, NgxCurrencyDirective],
+  imports: [HttpClientModule, CommonModule, RouterLink, FormsModule, NgxCurrencyDirective],
   templateUrl: './menu-item.component.html',
   styleUrl: './menu-item.component.css'
 })
 export class MenuItemComponent implements OnInit {
   loading: boolean = false;
+  priceNumber: number = 1;
   checkboxAll: number = 0;
   disabled: boolean = true;
   items: any = [];
@@ -31,6 +33,10 @@ export class MenuItemComponent implements OnInit {
   selectDept: any = [];
   departmentId: string = '';
   model = new Actor('', 0);
+  menuTaxSc: any = [];
+  discountGroup: any = [];
+  modifierGroup: any = [];
+  masterData: any = [];
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
@@ -57,9 +63,15 @@ export class MenuItemComponent implements OnInit {
       data => {
         console.log(data);
         this.httpGet();
+        this.masterData = data;
         this.selectCategory = data['category'];
         this.selectClass = data['class'];
         this.selectDept = data['dept'];
+
+        this.menuTaxSc = data['menuTaxSc'];
+        this.discountGroup = data['discountGroup'];
+        this.modifierGroup = data['modifierGroup'];
+
         this.modalService.dismissAll();
       },
       error => {
@@ -177,7 +189,6 @@ export class MenuItemComponent implements OnInit {
   }
 
 
-
   sendInChunks(data: any[], chunkSize: number) {
     const url = environment.api + "menu/item/update";
     let currentIndex = 0;
@@ -205,5 +216,37 @@ export class MenuItemComponent implements OnInit {
     };
 
     sendNextChunk();
+  }
+
+  goToDetail(item: any, index: number) {
+    const modalRef = this.modalService.open(MenuItemDetailComponent, { size: 'xl' });
+    modalRef.componentInstance.item = item;
+    modalRef.componentInstance.masterData = this.masterData;
+
+    modalRef.result.then(
+      (result) => {
+        if (result) {
+          console.log('Data dari child:', result);
+          this.items[index]['name'] = result['item']['name'];
+          this.items[index]['menuSet'] = result['item']['menuSet'];
+  this.items[index]['discountGroupId'] = result['item']['discountGroupId'];
+  this.items[index]['menuCategoryId'] = result['item']['menuCategoryId'];
+  this.items[index]['menuClassId'] = result['item']['menuClassId'];
+  this.items[index]['menuDepartmentId'] = result['item']['menuDepartmentId'];
+  this.items[index]['menuTaxScId'] = result['item']['menuTaxScId'];
+  this.items[index]['modifierGroupId'] = result['item']['modifierGroupId'];
+
+          this.items[index]['price1'] = result['item']['price1'];
+          this.items[index]['price2'] = result['item']['price2'];
+          this.items[index]['price3'] = result['item']['price3'];
+          this.items[index]['price4'] = result['item']['price4'];
+          this.items[index]['price5'] = result['item']['price5'];
+          
+        }
+      },
+      (reason) => {
+        console.log('Modal dismissed:', reason);
+      }
+    );
   }
 }

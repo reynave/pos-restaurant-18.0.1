@@ -63,19 +63,20 @@ body, html {
  
 
 .table-editable th{
-  background-color: #FFFDEC;
+  border-bottom:3px solid #468B97;
  letter-spacing: 0.45px;
   text-transform: uppercase;
   font-size: 0.7rem;
 }
 .table-editable input[type='text'], .table-editable input[type='email'], .table-editable select,  .table-editable input[type='number'] { 
-  border-radius: 0px;
+ 
+   font-size: 0.8rem; 
+    border-radius: 0px; 
+  background: #fafafa ;
+    border:none;
+    
   padding: 2px 5px;
   margin: 0px;
-  border:none;
-  min-height: 10px !important;
-  font-size: 0.8rem;
-  background: none !important ;
 }
 
 .table-editable input[type='number'] {
@@ -89,6 +90,7 @@ body, html {
   font-size: 0.8rem;
   margin: 0;
   padding: 0px 3px;
+  vertical-align: middle;
 }
 
 .table  thead th{
