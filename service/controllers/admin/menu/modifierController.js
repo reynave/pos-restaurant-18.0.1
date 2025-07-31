@@ -61,7 +61,6 @@ exports.getMasterData = async (req, res) => {
   }
 };
 
-
 exports.postCreate = async (req, res) => {
   const model = req.body['model'];
   const inputDate = today();
@@ -77,8 +76,7 @@ exports.postCreate = async (req, res) => {
         model['name'],
         model['name'],
         model['name'],
-        model['modifierListId'],
-        
+        model['modifierListId'], 
       ]
     );
 

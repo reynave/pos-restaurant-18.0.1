@@ -11,7 +11,7 @@ exports.getAllData = async (req, res) => {
     const [rows] = await db.query(`
      SELECT m.id, m.name, m.price1, m.price2, m.price3, m.price4, m.price5,
       m.menuDepartmentId, m.menuCategoryId, m.menuClassId , m.menuSet, m.menuSetMinQty, l.name AS 'lookup', l.id AS 'lookupId',
-      m.menuTaxScId, m.discountGroupId, m.modifierGroupId,  m.startDate, m.endDate,
+      m.menuTaxScId, m.discountGroupId, m.modifierGroupId,  m.startDate, m.endDate, m.printerId,
       m.qty - ( 
           (
           SELECT COUNT(ci.id)
@@ -61,6 +61,12 @@ exports.getMasterData = async (req, res) => {
       WHERE presence = 1 order by desc1 ASC
     `);
 
+     const [printer] = await db.query(`
+      SELECT id, name
+      FROM printer  
+      WHERE presence = 1 order by name ASC
+    `);
+
     const [itemClass] = await db.query(`
       SELECT id, desc1
       FROM menu_class  
@@ -96,6 +102,7 @@ exports.getMasterData = async (req, res) => {
       menuTaxSc: menuTaxSc,
       discountGroup: discountGroup,
       modifierGroup: modifierGroup,
+      printer : printer,
     }
 
     res.json(data);
@@ -202,6 +209,7 @@ exports.updateMenuDetail = async (req, res) => {
           price3 = ${item['price3']},  
           price4 = ${item['price4']},  
           price5 = ${item['price5']},   
+            printerId = ${item['printerId']},   
           
           startDate = '${date['startDate']}',   
           endDate = '${date['endDate']}',   
@@ -333,7 +341,8 @@ exports.postUpdate = async (req, res) => {
            price4 = ${emp['price4']},  
            price5 = ${emp['price5']},  
           
-
+   printerId = ${emp['printerId']},  
+         
           menuDepartmentId = ${emp['menuDepartmentId']},  
           menuCategoryId = ${emp['menuCategoryId']},  
           menuClassId = ${emp['menuClassId']},  

@@ -37,6 +37,7 @@ export class MenuItemComponent implements OnInit {
   discountGroup: any = [];
   modifierGroup: any = [];
   masterData: any = [];
+  selectPrinter: any = [];
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
@@ -67,6 +68,7 @@ export class MenuItemComponent implements OnInit {
         this.selectCategory = data['category'];
         this.selectClass = data['class'];
         this.selectDept = data['dept'];
+        this.selectPrinter = data['printer'];
 
         this.menuTaxSc = data['menuTaxSc'];
         this.discountGroup = data['discountGroup'];
@@ -229,19 +231,19 @@ export class MenuItemComponent implements OnInit {
           console.log('Data dari child:', result);
           this.items[index]['name'] = result['item']['name'];
           this.items[index]['menuSet'] = result['item']['menuSet'];
-  this.items[index]['discountGroupId'] = result['item']['discountGroupId'];
-  this.items[index]['menuCategoryId'] = result['item']['menuCategoryId'];
-  this.items[index]['menuClassId'] = result['item']['menuClassId'];
-  this.items[index]['menuDepartmentId'] = result['item']['menuDepartmentId'];
-  this.items[index]['menuTaxScId'] = result['item']['menuTaxScId'];
-  this.items[index]['modifierGroupId'] = result['item']['modifierGroupId'];
+          this.items[index]['discountGroupId'] = result['item']['discountGroupId'];
+          this.items[index]['menuCategoryId'] = result['item']['menuCategoryId'];
+          this.items[index]['menuClassId'] = result['item']['menuClassId'];
+          this.items[index]['menuDepartmentId'] = result['item']['menuDepartmentId'];
+          this.items[index]['menuTaxScId'] = result['item']['menuTaxScId'];
+          this.items[index]['modifierGroupId'] = result['item']['modifierGroupId'];
 
           this.items[index]['price1'] = result['item']['price1'];
           this.items[index]['price2'] = result['item']['price2'];
           this.items[index]['price3'] = result['item']['price3'];
           this.items[index]['price4'] = result['item']['price4'];
           this.items[index]['price5'] = result['item']['price5'];
-          
+
         }
       },
       (reason) => {

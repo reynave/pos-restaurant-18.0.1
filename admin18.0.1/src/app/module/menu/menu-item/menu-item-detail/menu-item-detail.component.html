@@ -158,6 +158,14 @@
                         </td>
                     </tr>
 
+                     <tr>
+                        <td>Printer</td>
+                        <td>
+                           <select class="form-control form-control-sm" [(ngModel)]="item.printerId">
+                                <option *ngFor="let x of masterData.printer" [value]="x.id">{{x.name}}</option>
+                            </select>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
 
