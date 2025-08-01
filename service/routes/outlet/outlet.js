@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const outlet = require('../../controllers/admin/outletController');  
+const outlet = require('../../controllers/admin/outlet/outletController');  
 const payment = require('../../controllers/admin/outletPaymentController');  
 const cashType = require('../../controllers/admin/outletCashTypesController');  
 const tipsPool = require('../../controllers/admin/tipsPoolController');  

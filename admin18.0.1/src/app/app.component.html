@@ -13,9 +13,8 @@
             <tree-root #treeComponent [nodes]="generalTab" [options]="options" (activate)="onEvent($event)">
               <ng-template #treeNodeTemplate let-node let-index="index">
                 <span class="file-icon" [innerHTML]="node.data.icon"></span>
-                {{ node.data.name }}
+                {{ node.data.name }} 
               </ng-template>
-
             </tree-root>
           </div>
         </ng-template>
@@ -42,7 +41,7 @@
             <tree-root #treeComponent [nodes]="menuTab" [options]="options" (activate)="onEvent($event)">
               <ng-template #treeNodeTemplate let-node let-index="index">
                 <span class="file-icon" [innerHTML]="node.data.icon"></span>
-                {{ node.data.name }}
+                {{ node.data.name }}  
               </ng-template>
 
             </tree-root>

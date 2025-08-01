@@ -29,52 +29,54 @@
       </div>
       <div class="mainContent border">
          <div class="table table-sm table-hover" style="width: max-content;">
-            <thead class="sticky-top ">
-               <tr>
+            <table class="table table-hover" style=" min-width:80vw;">
+               <thead class="sticky-top ">
+                  <tr>
 
-                  <th *ngIf="disabled==false">
-                     <a href="javascript:;" (click)="checkAll();">
-                        @if(checkboxAll == 1){
-                        <i class="bi bi-check-square"></i>
-                        }@else {
-                        <i class="bi bi-square"></i>
-                        }
+                     <th *ngIf="disabled==false">
+                        <a href="javascript:;" (click)="checkAll();">
+                           @if(checkboxAll == 1){
+                           <i class="bi bi-check-square"></i>
+                           }@else {
+                           <i class="bi bi-square"></i>
+                           }
 
-                     </a>
-                  </th>
-                  <th>#</th>
-                  <th>Name</th>
-                  <th>Descs</th>
-                  <th>Company Name</th>
-                  <th>Price No</th>
-                  <th>Printer</th>
+                        </a>
+                     </th>
+                     <th>#</th>
+                     <th>Name</th>
+                     <th>Descs</th>
+                     <th>Company Name</th>
+                     <th>Price No</th>
+                     <th>Printer</th>
 
-                  <th>inputDate</th>
-                  <th></th>
+                     <th>inputDate</th>
+                     <th></th>
 
-               </tr>
-            </thead>
-            <tbody>
-               <tr *ngFor="let x of items; let i = index">
-                  <td *ngIf="disabled==false">
-                     <a href="javascript:;" (click)=" x.checkbox == 0 ? x.checkbox = 1 : x.checkbox = 0">
-                        <i *ngIf="x.checkbox == 0" class="bi bi-square"></i>
-                        <i *ngIf="x.checkbox == 1" class="bi bi-check-square"></i>
-                     </a>
-                  </td>
-                  <td>{{i+1}}</td>
-                  <td>{{x.name }}</td>
-                  <td>{{x.descs }}</td>
-                  <td>{{x.company }}</td>
-                  <td>{{x.priceNo }}</td>
-                  <td>{{x.printer }}</td>
+                  </tr>
+               </thead>
+               <tbody>
+                  <tr *ngFor="let x of items; let i = index">
+                     <td *ngIf="disabled==false">
+                        <a href="javascript:;" (click)=" x.checkbox == 0 ? x.checkbox = 1 : x.checkbox = 0">
+                           <i *ngIf="x.checkbox == 0" class="bi bi-square"></i>
+                           <i *ngIf="x.checkbox == 1" class="bi bi-check-square"></i>
+                        </a>
+                     </td>
+                     <td>{{i+1}}</td>
+                     <td>{{x.name }}</td>
+                     <td>{{x.descs }}</td>
+                     <td>{{x.company }}</td>
+                     <td>{{x.priceNo }}</td>
+                     <td>{{x.printer }}</td>
 
-                  <td>{{ x.updateDate | date:'medium'}} </td>
-                  <td> <button type="button" (click)="openLg(detail, x);"
-                        class="btn btn-sm btn-primary py-0">Detail</button> </td>
+                     <td>{{ x.updateDate | date:'medium'}} </td>
+                     <td> <button type="button" (click)="openLg(detail, x);"
+                           class="btn btn-sm btn-primary py-0">Detail</button> </td>
 
-               </tr>
-            </tbody>
+                  </tr>
+               </tbody>
+            </table>
          </div>
       </div>
    </div>

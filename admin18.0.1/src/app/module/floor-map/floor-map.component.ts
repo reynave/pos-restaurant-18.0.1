@@ -5,10 +5,12 @@ import { environment } from '../../../environments/environment.development';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgbDatepickerModule, NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ActivatedRoute } from '@angular/router';
 export class Actor {
   constructor(
     public desc1: string,
     public value: string, 
+    
   ) { }
 }
 @Component({
@@ -25,27 +27,35 @@ export class FloorMapComponent  implements OnInit {
   items: any = [];
   outletSelect: any = []; 
   api: string = environment.api;
-
+  id : string = "";
   model = new Actor('', '');
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
     public modalService: NgbModal,
+     private activatedRoute: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
-    this.httpMaster(); 
+ 
+    this.activatedRoute.queryParams.subscribe(params => {
+      console.log('Query Params changed:', params);
+      this.id = params['outletId']
+      this.model.value =params['outletId'];
+      this.httpMaster();
+    });
   }
   httpMaster() {
     this.loading = true;
-    const url = environment.api + "outlet/payment/masterData/";
+    const url = environment.api + "outlet/select/";
     this.http.get<any>(url, {
       headers: this.configService.headers(),
+     
     }).subscribe(
       data => {
         console.log(data);
         this.loading = false;
-        this.outletSelect = data['outlet']; 
+        this.outletSelect = data['items']; 
         this.httpGet();
       },
       error => {
@@ -59,6 +69,9 @@ export class FloorMapComponent  implements OnInit {
     const url = environment.api + "floorMap/map/";
     this.http.get<any>(url, {
       headers: this.configService.headers(),
+        params: {
+        id: this.id,
+      }
     }).subscribe(
       data => {
         console.log(data);
@@ -71,6 +84,7 @@ export class FloorMapComponent  implements OnInit {
       }
     )
   }
+  
   checkAll() {
     if (this.checkboxAll == 0) {
       this.checkboxAll = 1;

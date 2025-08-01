@@ -1,13 +1,18 @@
-const db = require('../../config/db');
-const { today, formatDateOnly } = require('../../helpers/global');
+const db = require('../../../config/db');
+const fs = require('fs');
+const path = require('path');
+const { today, formatDateOnly } = require('../../../helpers/global');
+
 
 exports.getAllData = async (req, res) => {
+  const id = req.query.id == 'undefined' ? '' : req.query.id;
   try {
     const outletFloorPlandId = req.query.outletFloorPlandId
     const [rows] = await db.query(`
       SELECT *, 0 as 'checkbox'
       FROM outlet_table_map  
       WHERE presence =1  and outletFloorPlandId = ${outletFloorPlandId}
+     
     `);
 
     const formattedRows = rows.map(row => ({
@@ -31,12 +36,15 @@ exports.getAllData = async (req, res) => {
 
 
 exports.getMaster = async (req, res) => {
+  const id = req.query.id == 'undefined' ? '' : req.query.id;
   try {
 
     const [floorPlan] = await db.query(`
       SELECT *, 0 as 'checkbox'
       FROM outlet_floor_plan  
-      WHERE presence =1 order by sorting asc
+      WHERE presence =1    ${id ? 'and outletId = ' + id : ''} 
+      order by sorting asc
+    
     `);
     const [templateTableMap] = await db.query(`
       SELECT * 
@@ -53,6 +61,39 @@ exports.getMaster = async (req, res) => {
     }
 
     res.json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+};
+
+exports.getIcon = (req, res) => {
+  const imagesFolder = path.join(__dirname, '../../../public/floorMap/icon');
+  try {
+    fs.readdir(imagesFolder, (err, files) => {
+      if (err) {
+        console.error('Gagal membaca folder:', err);
+        return;
+      }
+
+      // Filter hanya file gambar (optional)
+      const imageFiles = files.filter(file =>
+        /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(file)
+      );
+
+      // Buat array JSON
+      const imageData = imageFiles.map(file => ({
+        filename: file,
+      }));
+
+
+
+      const data = {
+        items: imageData,
+      }
+
+      res.json(data);
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Database error' });
@@ -80,14 +121,14 @@ exports.postCreate = async (req, res) => {
           presence, inputDate, 
           outletFloorPlandId, tableName, 
           posY, posX , 
-          width, height, capacity
+          width, height, capacity, icon
         ) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ? )`,
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ? )`,
         [
           1, inputDate,
           model['outletFloorPlandId'], model['tableName'] + " " + (i + 1),
           10, (i + 1) * 5,
-          templateTableMap['width'], templateTableMap['height'], templateTableMap['capacity']
+          templateTableMap['width'], templateTableMap['height'], templateTableMap['capacity'], templateTableMap['icon']
         ]
       );
     }
@@ -152,6 +193,8 @@ exports.postUpdatePosXY = async (req, res) => {
       const [result] = await db.query(
         `UPDATE outlet_table_map SET 
           tableName = '${emp['tableName']}', 
+          capacity = '${emp['capacity']}', 
+         
           updateDate = '${today()}'
 
         WHERE id = ${id}`,
@@ -196,6 +239,41 @@ exports.postDelete = async (req, res) => {
       results.push({ id, status: 'not found' });
     } else {
       results.push({ id, status: 'updated' });
+    }
+
+
+    res.json({
+      message: 'Batch update completed',
+      results: results
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database update error', details: err.message, body: req.body });
+  }
+};
+
+exports.submitDetail = async (req, res) => { 
+  const item = req.body['item'];   
+  const results = [];
+
+  try {
+
+    const [result] = await db.query(
+      `UPDATE outlet_table_map SET  
+          tableName = '${item['tableName']}',
+          width = '${item['width']}',
+          height = '${item['height']}',
+          icon = '${item['icon']}',
+          capacity = '${item['capacity']}', 
+          updateDate = '${today()}'
+       WHERE id = ${item['id']}`,
+    );
+
+
+    if (result.affectedRows === 0) {
+      results.push({ status: 'not found' });
+    } else {
+      results.push({  status: 'updated' });
     }
 
 

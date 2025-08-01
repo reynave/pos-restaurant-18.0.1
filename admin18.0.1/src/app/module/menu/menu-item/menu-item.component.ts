@@ -38,6 +38,8 @@ export class MenuItemComponent implements OnInit {
   modifierGroup: any = [];
   masterData: any = [];
   selectPrinter: any = [];
+
+  search :  boolean = false;
   constructor(
     public configService: ConfigService,
     private http: HttpClient,

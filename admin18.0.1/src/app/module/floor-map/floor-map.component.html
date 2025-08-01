@@ -32,53 +32,58 @@
          <div class="">
 
             <div class="table table-sm table-editable table-hover" style="width: max-content;">
-               <thead class="sticky-top ">
-                  <tr>
+              <table class="table table-hover" style=" min-width:80vw;">
 
-                     <th *ngIf="disabled==false">
-                        <a href="javascript:;" (click)="checkAll();">
-                           @if(checkboxAll == 1){
-                           <i class="bi bi-check-square"></i>
-                           }@else {
-                           <i class="bi bi-square"></i>
-                           }
 
-                        </a>
-                     </th>
-                     <th>#</th>
+                  <thead class="sticky-top ">
+                     <tr>
 
-                     <th>Outlet</th>
-                     <th>Desc1</th>
-                     <th>Path Background </th> 
-                     <th>inputDate</th>
+                        <th *ngIf="disabled==false">
+                           <a href="javascript:;" (click)="checkAll();">
+                              @if(checkboxAll == 1){
+                              <i class="bi bi-check-square"></i>
+                              }@else {
+                              <i class="bi bi-square"></i>
+                              }
 
-                  </tr>
-               </thead>
-               <tbody>
-                  <tr *ngFor="let x of items; let i = index">
+                           </a>
+                        </th>
+                        <th>#</th>
 
-                     <td *ngIf="disabled==false">
-                        <a href="javascript:;" (click)=" x.checkbox == 0 ? x.checkbox = 1 : x.checkbox = 0">
-                           <i *ngIf="x.checkbox == 0" class="bi bi-square"></i>
+                        <th>Outlet</th>
+                        <th>Desc1</th>
+                        <th>Path Background </th>
+                        <th>inputDate</th>
 
-                           <i *ngIf="x.checkbox == 1" class="bi bi-check-square"></i>
-                        </a>
-                     </td>
-                     <td>{{i+1}}</td>
+                     </tr>
+                  </thead>
+                  <tbody>
+                     <tr *ngFor="let x of items; let i = index">
 
-                     <td>
-                        <select class="form-control form-control-sm" [(ngModel)]="x.outletId" [disabled]="disabled">
-                           <option *ngFor="let j of outletSelect" [value]="j.id">{{j.name1}}</option>
-                        </select>
-                     </td>
-                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.desc1" name="desc1"
-                           [disabled]="disabled"> </td>
+                        <td *ngIf="disabled==false">
+                           <a href="javascript:;" (click)=" x.checkbox == 0 ? x.checkbox = 1 : x.checkbox = 0">
+                              <i *ngIf="x.checkbox == 0" class="bi bi-square"></i>
 
-                     <td> <a href="{{api}}public/floorMap/{{x.id}}.png" target="_blank">[folder]<em>/public/floorMap/{{x.id}}.png</em> </a></td>
-                     <td>{{ x.inputDate | date:'medium'}} </td>
+                              <i *ngIf="x.checkbox == 1" class="bi bi-check-square"></i>
+                           </a>
+                        </td>
+                        <td>{{i+1}}</td>
 
-                  </tr>
-               </tbody>
+                        <td>
+                           <select class="form-control form-control-sm" [(ngModel)]="x.outletId" [disabled]="disabled">
+                              <option *ngFor="let j of outletSelect" [value]="j.id">{{j.name}}</option>
+                           </select>
+                        </td>
+                        <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.desc1" name="desc1"
+                              [disabled]="disabled"> </td>
+
+                        <td> <a href="{{api}}public/floorMap/floor/{{x.id}}.png"
+                              target="_blank">[folder]<em>/public/floorMap/{{x.id}}.png</em> </a></td>
+                        <td>{{ x.inputDate | date:'medium'}} </td>
+
+                     </tr>
+                  </tbody>
+               </table>
             </div>
 
          </div>
@@ -96,12 +101,12 @@
       <form (ngSubmit)="onSubmit()" #actorForm="ngForm">
          <div class="mb-2">
             <label for="desc1">Outlet ID *</label>
-            <select class="form-control form-control-sm" [(ngModel)]="model.value" [disabled]="disabled" 
-            name="outletId" required #outletId="ngModel">
-                <option *ngFor="let j of outletSelect" [value]="j.id">{{j.name1}}</option>
+            <select class="form-control form-control-sm" [(ngModel)]="model.value" [disabled]="disabled" name="outletId"
+               required #outletId="ngModel">
+               <option *ngFor="let j of outletSelect" [value]="j.id">{{j.name}}</option>
             </select>
 
-        </div>
+         </div>
 
          <div class="mb-2">
             <label for="desc1">Description*</label>

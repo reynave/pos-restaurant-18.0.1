@@ -1,55 +1,22 @@
-const db = require('../../config/db');
-const { today, formatDateOnly } = require('../../helpers/global');
+const db = require('../../../config/db');
+const { today, formatDateOnly } = require('../../../helpers/global');
 
 exports.getAllData = async (req, res) => {
+   const id = req.query.id == 'undefined' ? '' : req.query.id;
+ 
+
   try {
 
     const [rows] = await db.query(`
-      SELECT o.*, 0 as 'checkbox', p.name as 'printer'
-      FROM outlet as o 
-      join printer as p on p.id = o.printerId
-      WHERE o.presence =1
+      SELECT *, 0 as 'checkbox'
+      FROM outlet_floor_plan  
+      WHERE presence =1  ${id ? 'and outletId = ' + id : ''}
     `);
- 
+
     const formattedRows = rows.map(row => ({
       ...row,
       stdate: formatDateOnly(row.stdate),
-      enddate: formatDateOnly(row.enddate), 
-    }));
-
-    const [printer] = await db.query(`
-      SELECT *
-      FROM printer  
-      WHERE presence =1
-    `);
- 
-   
-
-
-    const data = {
-      error: false,
-      items: formattedRows,
-      printer: printer
-    }
-
-    res.json(data);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Database error' });
-  }
-};
-exports.getSelect = async (req, res) => {
-  try {
-
-    const [rows] = await db.query(`
-      SELECT  id, name1
-      FROM outlet  
-      WHERE presence =1 order by name1 ASC
-    `);
- 
-    const formattedRows = rows.map(row => ({
-      ...row,
-     
+      enddate: formatDateOnly(row.enddate),
     }));
 
 
@@ -65,30 +32,29 @@ exports.getSelect = async (req, res) => {
     res.status(500).json({ error: 'Database error' });
   }
 };
-
-
+  
 exports.postCreate = async (req, res) => {
   const model = req.body['model'];
   const inputDate = today();
 
   try {
-    
+
     const [result] = await db.query(
-      `INSERT INTO outlet (presence, inputDate,updateDate, name1 ) 
+      `INSERT INTO outlet_floor_plan (presence, inputDate, desc1, outletId ) 
       VALUES (?, ?, ?, ?)`,
       [
         1,
         inputDate,
-        inputDate,
-        model['desc1']
+        model['desc1'],
+        model['value']
       ]
     );
 
     res.status(201).json({
       error: false,
       inputDate: inputDate,
-      message: 'outlet created',
-      outletId: result.insertId
+      message: 'outlet_floor_plan created',
+      outlet_floor_planId: result.insertId
     });
   } catch (err) {
     console.error(err);
@@ -98,36 +64,35 @@ exports.postCreate = async (req, res) => {
 
 exports.postUpdate = async (req, res) => {
   // const { id, name, position, email } = req.body;
-  const emp = req.body;
-  console.log(emp);
+  const data = req.body;
+  console.log(data);
   // res.json({
   //   body: req.body, 
-  // }); 
+  // });
+
+  if (!Array.isArray(data) || data.length === 0) {
+    return res.status(400).json({ error: 'Request body should be a non-empty array' });
+  }
+
   const results = [];
 
   try {
-      const id = emp['id'];
-      const q = 
-        `UPDATE outlet SET  
-          name = '${emp['name']}',    
-          priceNo = '${emp['priceNo']}',  
-          printerId = '${emp['printerId']}',  
-          descs  = '${emp['descs']}',      
-          tel  = '${emp['tel']}',    
-          fax  = '${emp['fax']}',     
-          address  = '${emp['address']}',     
-          street  = '${emp['street']}',    
-          city  = '${emp['city']}',    
-          country  = '${emp['country']}',     
-          greeting1  = '${emp['greeting1']}',    
-          greeting2  = '${emp['greeting2']}',     
-          greeting3  = '${emp['greeting3']}',     
-          greeting4  = '${emp['greeting4']}',     
-          greeting5  = '${emp['greeting5']}',
+    for (const emp of data) {
+      const { id } = emp; 
+      if (!id) {
+        results.push({ id, status: 'failed', reason: 'Missing fields' });
+        continue;
+      }
+      console.log(emp);
+      const [result] = await db.query(
+        `UPDATE outlet_floor_plan SET 
+          desc1 = '${emp['desc1']}',   
+           outletId = '${emp['outletId']}',    
+          
           updateDate = '${today()}'
 
-        WHERE id = ${id}`;
-      const [result] = await db.query(q );
+        WHERE id = ${id}`,
+      );
 
 
       if (result.affectedRows === 0) {
@@ -135,7 +100,7 @@ exports.postUpdate = async (req, res) => {
       } else {
         results.push({ id, status: 'updated' });
       }
-     
+    }
 
     res.json({
       message: 'Batch update completed',
@@ -163,8 +128,8 @@ exports.postDelete = async (req, res) => {
 
   try {
     for (const emp of data) {
-      const { date, checkbox } = emp;
-      const id = date;
+      const { id, checkbox } = emp;
+ 
       if (!id || !checkbox) {
         results.push({ id, status: 'failed', reason: 'Missing fields' });
         continue;
@@ -172,7 +137,7 @@ exports.postDelete = async (req, res) => {
 
 
       const [result] = await db.query(
-        'UPDATE outlet SET presence = ?, updateDate = ? WHERE date = ?',
+        'UPDATE outlet_floor_plan SET presence = ?, updateDate = ? WHERE id = ?',
         [checkbox == 0 ? 1 : 0, today(), id]
       );
 

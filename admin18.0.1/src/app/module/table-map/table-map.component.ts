@@ -6,38 +6,40 @@ import interact from 'interactjs';
 import { environment } from '../../../environments/environment';
 import { ConfigService } from '../../service/config.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 export class Actor {
   constructor(
     public outletFloorPlandId: number,
     public tableName: string,
     public totalTable: number,
-    
+
     public templateTableId: string,
   ) { }
 }
 @Component({
   selector: 'app-table-map',
   standalone: true,
-  imports: [HttpClientModule, CommonModule, FormsModule,RouterModule ],
+  imports: [HttpClientModule, CommonModule, FormsModule, RouterModule],
   templateUrl: './table-map.component.html',
   styleUrl: './table-map.component.css'
 })
 export class TableMapComponent implements OnInit, AfterViewInit {
   resp: string = '';
-  path : string = environment.api+"public/floorMap/";
+  path: string = environment.api + "public/floorMap/";;
+
   loading: boolean = false;
   editable: boolean = false;
   outletFloorPlandId: number = 0;
   @ViewChildren('tableEl') tableElements!: QueryList<ElementRef>;
   items: any = [];
   floorPlan: any = [];
-  model: any = new Actor(1, "",1, '');
+  model: any = new Actor(1, "", 1, '');
+  id: string = "";
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
     public modalService: NgbModal,
-    /// private activatedRoute: ActivatedRoute,
+    private activatedRoute: ActivatedRoute,
   ) { }
   // tables = [
   //   { id: 1, name: 'Table A', x: 100, y: 50, width: 100, height: 80, icon: 'assets/table-a.png' },
@@ -49,36 +51,42 @@ export class TableMapComponent implements OnInit, AfterViewInit {
   templateTableMap: any = [];
 
   ngOnInit(): void {
-    //  this.httpGet();
-    this.httpMaster();
-
+    this.activatedRoute.queryParams.subscribe(params => {
+      console.log('Query Params changed:', params);
+      this.id = params['outletId']
+      this.model.value = params['outletId'];
+      this.httpMaster();
+    });
+    this.httpGetIcon()
   }
 
   activeFloor(x: any) {
 
-    if(this.editable){
-      if(confirm("Close unsaved editable ?")){
+    if (this.editable) {
+      if (confirm("Close unsaved editable ?")) {
         this.outletFloorPlandId = x.id;
         this.model.outletFloorPlandId = x.id;
         if (this.outletFloorPlandId !== 0) {
           this.httpGet();
         }
       }
-    }else{
+    } else {
       this.outletFloorPlandId = x.id;
       this.model.outletFloorPlandId = x.id;
       if (this.outletFloorPlandId !== 0) {
         this.httpGet();
       }
     }
-  
+
   }
   httpMaster() {
     this.loading = true;
     const url = environment.api + "tableMap/table/master";
     this.http.get<any>(url, {
       headers: this.configService.headers(),
-
+      params: {
+        id: this.id,
+      }
     }).subscribe(
       data => {
         console.log(data);
@@ -121,7 +129,7 @@ export class TableMapComponent implements OnInit, AfterViewInit {
               y: this.items[i]['posY'],
               width: this.items[i]['width'],
               height: this.items[i]['height'],
-              icon: 'assets/table-a.png'
+              icon: this.items[i]['icon'],
             },
           );
         }
@@ -131,7 +139,21 @@ export class TableMapComponent implements OnInit, AfterViewInit {
       }
     )
   }
-
+  selectIcons: any = [];
+  httpGetIcon() {
+    const url = environment.api + "tableMap/table/icon";
+    this.http.get<any>(url, {
+      headers: this.configService.headers(),
+    }).subscribe(
+      data => {
+        console.log(data);
+        this.selectIcons = data['items'];
+      },
+      error => {
+        console.log(error);
+      }
+    )
+  }
   onEditable() {
     this.editable = !this.editable;
     this.resp = '';
@@ -313,16 +335,19 @@ export class TableMapComponent implements OnInit, AfterViewInit {
 
   }
 
-
-  open(content: any) { 
+  item: any = [];
+  indexItem: number = 0;
+  open(content: any, item: any, index: number = 0) {
+    this.indexItem = index;
+    this.item = item;
     this.modalService.open(content)
   }
 
-  onSubmit(){
+  onSubmit() {
     console.log(this.model);
 
     const body = {
-      model: this.model, 
+      model: this.model,
     }
     this.http.post<any>(environment.api + "tableMap/table/create", body,
       { headers: this.configService.headers() }
@@ -338,5 +363,29 @@ export class TableMapComponent implements OnInit, AfterViewInit {
       }
     )
   }
+  onSubmitDetail() {
+    console.log(this.model);
 
+    const body = {
+      item: this.item,
+    }
+ 
+
+    this.http.post<any>(environment.api + "tableMap/table/submitDetail", body,
+      { headers: this.configService.headers() }
+    ).subscribe(
+      data => {
+        console.log(data);
+           this.items[this.indexItem]['icon'] = this.item['icon'];
+    this.items[this.indexItem]['height'] = this.item['height'];
+    this.items[this.indexItem]['width'] = this.item['width'];
+    this.items[this.indexItem]['capacity'] = this.item['capacity'];
+        this.modalService.dismissAll();
+      //  this.httpGet();
+      },
+      error => {
+        console.log(error)
+      }
+    )
+  }
 }

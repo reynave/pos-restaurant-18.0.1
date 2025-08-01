@@ -8,6 +8,8 @@ exports.getAllData = async (req, res) => {
       { name: 'Outlet Setup', href: 'outlet', icon: '<i class="bi bi-pc-display-horizontal"></i>' },
       { name: 'Floor Map', href: 'floorMap', icon: '<i class="bi bi-building"></i>', },
       { name: 'Table Map', href: 'tableMap', icon: '<i class="bi bi-map"></i>', },
+      { name: 'Template Map', href: 'tableMap/template', icon: '<i class="bi bi-bookmark-star"></i>', },
+      
     ]
     const [floorMap] = await db.query(
       ` SELECT id, name, 'floorMap' as 'href' , CONCAT('{"outletId":"',id,'"}')  as 'params'
@@ -28,16 +30,15 @@ exports.getAllData = async (req, res) => {
 
 
     const menuTab = [
-      { name: 'Department', href: 'menu/department', icon: '<i class="bi bi-journal-medical"></i>', },
-      { name: 'Category', href: 'menu/category', icon: '<i class="bi bi-journal-bookmark"></i>', },
+      { name: 'Department', href: 'menu/department', icon: '<i class="bi bi-journal-medical"></i>',children: []  },
+      { name: 'Category', href: 'menu/category', icon: '<i class="bi bi-journal-bookmark"></i>',children: []  },
       { name: 'Class', href: 'menu/class', icon: '<i class="bi bi-journal-text"></i>', },
       { name: 'Item', href: 'menu/item', icon: '<i class="bi bi-fork-knife"></i>', children: [] },
       { name: 'Item Look Up', href: 'menu/lookUp', icon: '<i class="bi bi-diagram-2-fill"></i>', },
 
- { name: 'Modifier List', href: 'modifier/list', icon: '<i class="bi bi-diagram-2"></i>', children: [] },
- { name: 'Modifier Group', href: 'modifier/group', icon: '<i class="bi bi-collection"></i>', },
- { name: 'Modifier', href: 'modifier/', icon: '<i class="bi bi-journal-text"></i>', },
-
+      { name: 'Modifier List', href: 'modifier/list', icon: '<i class="bi bi-diagram-2"></i>', children: [] },
+      { name: 'Modifier Group', href: 'modifier/group', icon: '<i class="bi bi-collection"></i>', children: [] },
+      { name: 'Modifier', href: 'modifier/', icon: '<i class="bi bi-journal-text"></i>', }, 
     ]
 
     const [department] = await db.query(
@@ -48,23 +49,37 @@ exports.getAllData = async (req, res) => {
     menuTab[0]['children'] = department;
 
 
+    const [category] = await db.query(
+      ` SELECT id, desc1 as 'name' ,  'menu/item/'  as 'href' ,  
+     CONCAT('{"departmentId":"',id,'"}')  as 'params'
+        FROM  menu_category WHERE presence = 1`,
+    );
+    menuTab[1]['children'] = category;
+ 
+
     const [modifier_list] = await db.query(
       ` SELECT id, name  ,  'modifier/'  as 'href' ,  
      CONCAT('{"modifierListId":"',id,'"}')  as 'params'
         FROM  modifier_list WHERE presence = 1`,
-    );
-    menuTab[0]['children'] = department;
- menuTab[5]['children'] = modifier_list;
+    ); 
+    menuTab[5]['children'] = modifier_list;
+
+     const [modifier_group] = await db.query(
+      ` SELECT id, name  ,  'modifier/'  as 'href' ,  
+     CONCAT('{"modifierListId":"',id,'"}')  as 'params'
+        FROM  modifier_group WHERE presence = 1`,
+    ); 
+    menuTab[6]['children'] = modifier_group;
 
     const stationTab = [
       {
         name: 'Terminal', href: 'workStation/terminal', icon: '<i class="bi bi-display"></i>',
-        
+
       },
- 
+
 
       {
-        name: 'Printer', href: 'workStation/printer', icon: '<i class="bi bi-printer"></i>', 
+        name: 'Printer', href: 'workStation/printer', icon: '<i class="bi bi-printer"></i>',
       },
     ];
 
