@@ -10,7 +10,7 @@
         <ng-template ngbNavContent>
 
           <div class="mx-3">
-            <tree-root #treeComponent [nodes]="generalTab" [options]="options" (activate)="onEvent($event)">
+            <tree-root #treeComponent [nodes]="generalTab"  (toggleExpanded)="onToggle($event)" [options]="options" (activate)="onEvent($event)">
               <ng-template #treeNodeTemplate let-node let-index="index">
                 <span class="file-icon" [innerHTML]="node.data.icon"></span>
                 {{ node.data.name }} 
@@ -38,7 +38,7 @@
         <button ngbNavLink class="px-2 py-1"><small>Menu</small></button>
         <ng-template ngbNavContent>
           <div class="mx-3">
-            <tree-root #treeComponent [nodes]="menuTab" [options]="options" (activate)="onEvent($event)">
+            <tree-root #treeComponent [nodes]="menuTab"  (toggleExpanded)="onToggle($event)"  [options]="options" (activate)="onEvent($event)">
               <ng-template #treeNodeTemplate let-node let-index="index">
                 <span class="file-icon" [innerHTML]="node.data.icon"></span>
                 {{ node.data.name }}  
@@ -52,7 +52,7 @@
         <button ngbNavLink class="px-2 py-1"><small>Outlet</small></button>
         <ng-template ngbNavContent>
           <div class="mx-3">
-            <tree-root #treeComponent [nodes]="outletTab" [options]="options" (activate)="onEvent($event)">
+            <tree-root #treeComponent [nodes]="outletTab"  (toggleExpanded)="onToggle($event)"  [options]="options" (activate)="onEvent($event)">
               <ng-template #treeNodeTemplate let-node let-index="index">
                 <span class="file-icon" [innerHTML]="node.data.icon"></span>
                 {{ node.data.name }} 

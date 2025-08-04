@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { TreeModule } from '@ali-hm/angular-tree-component';
+import { TreeComponent, TreeModule, TreeNode } from '@ali-hm/angular-tree-component';
 import { LoginComponent } from './login/login.component';
 import { ConfigService } from './service/config.service';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
@@ -17,6 +17,7 @@ import { environment } from '../environments/environment.development';
   styleUrl: './app.component.css'
 })
 export class AppComponent implements OnInit {
+  @ViewChild('treeComponent') tree!: TreeComponent;
   active = parseInt(localStorage.getItem("pos3.admin.tab") ?? '1');
   login: boolean = false;
 
@@ -32,11 +33,9 @@ export class AppComponent implements OnInit {
         { name: 'Order Level', href: 'employee/orderLevel', icon: '' },
       ]
     },
+    
     {
-      name: 'Special Hours', href: 'specialHour', icon: '<i class="bi bi-alarm"></i>',
-    },
-    {
-      name: 'Holiday List', href: 'holidayList', icon: '<i class="bi bi-calendar-week"></i>',
+      name: 'Daily Schedule', href: 'dailySchedule', icon: '<i class="bi bi-calendar-week"></i>',
     },
 
     {
@@ -139,7 +138,7 @@ export class AppComponent implements OnInit {
           console.log(data);
           this.outletTab = data['outletTab'];
           this.menuTab = data['menuTab'];
-this.stationTab = data['stationTab'];
+          this.stationTab = data['stationTab'];
 
         }
       )
@@ -162,10 +161,10 @@ this.stationTab = data['stationTab'];
     console.log('onEvent', data.node.data);
     if (data.node.data.href != '') {
       let params: any = data.node.data.params ? data.node.data.params : '';
-      if (typeof params === 'string' && params.length > 2 ) {
+      if (typeof params === 'string' && params.length > 2) {
         console.log(params)
-        params = JSON.parse(params); 
-      } 
+        params = JSON.parse(params);
+      }
 
       this.router.navigate([data.node.data.href], { queryParams: params });
     }
@@ -179,5 +178,22 @@ this.stationTab = data['stationTab'];
       }
     )
 
+  }
+
+
+  onToggle(event: { node: TreeNode }) {
+    const expandedNode = event.node;
+
+    // Jika node baru di-expand (bukan di-collapse)
+    if (expandedNode.isExpanded) {
+      const siblings = expandedNode.parent ? expandedNode.parent.children : this.tree.treeModel.roots;
+
+      siblings.forEach(node => {
+        // Tutup semua saudara kecuali node yang sedang di-expand
+        if (node !== expandedNode && node.isExpanded) {
+          node.collapse();
+        }
+      });
+    }
   }
 }

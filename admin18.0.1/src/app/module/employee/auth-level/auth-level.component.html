@@ -5,7 +5,7 @@
       <div class="header py-2">
          <div class="row">
             <div class="col-3">
-               <strong>EMPLOYEE AUTH LEVEL</strong>   
+               <strong>EMPLOYEE AUTH LEVEL</strong>
                <span class="mx-1" *ngIf="loading">
                   <img src="./gif/Pulse@1x-1.0s-200px-200px.gif" height="30">
                </span>
@@ -17,13 +17,13 @@
                <button type="button" class="btn btn-sm btn-light border me-2" (click)="onUpdate();">Update</button>
 
                <button type="button" class="btn btn-sm btn-dark border me-2" (click)="open(content);">Create</button>
-               <button type="button" class="btn btn-sm btn-danger border me-2" (click)="onDelete();">Delete</button> 
+               <button type="button" class="btn btn-sm btn-danger border me-2" (click)="onDelete();">Delete</button>
                }
                @else {
                <button type="button" class="btn btn-sm btn-light border me-2"
-                  (click)="disabled= false">Editable</button> 
-               } 
-             
+                  (click)="disabled= false">Editable</button>
+               }
+
             </div>
          </div>
 
@@ -32,43 +32,45 @@
          <div class="">
 
             <div class="table table-sm table-editable table-hover" style="width: max-content;">
-               <thead class="sticky-top ">
-                  <tr>
+               <table class="table table-sm" style="min-width: 50vw;">
+                  <thead class="sticky-top ">
+                     <tr>
 
-                     <th *ngIf="disabled==false">
-                        <a href="javascript:;" (click)="checkAll();">
-                           @if(checkboxAll == 1){
-                           <i class="bi bi-check-square"></i>
-                           }@else {
-                           <i class="bi bi-square"></i>
-                           }
+                        <th *ngIf="disabled==false">
+                           <a href="javascript:;" (click)="checkAll();">
+                              @if(checkboxAll == 1){
+                              <i class="bi bi-check-square"></i>
+                              }@else {
+                              <i class="bi bi-square"></i>
+                              }
 
-                        </a>
-                     </th>
-                     <th>#</th>
-                     <th>desc1</th>
-                     <th>inputDate</th>
+                           </a>
+                        </th>
+                        <th>#</th>
+                        <th>name</th>
+                        <th>inputDate</th>
 
-                  </tr>
-               </thead>
-               <tbody>
-                  <tr *ngFor="let x of items; let i = index">
+                     </tr>
+                  </thead>
+                  <tbody>
+                     <tr *ngFor="let x of items; let i = index">
 
-                     <td *ngIf="disabled==false">
-                        <a href="javascript:;" (click)=" x.checkbox == 0 ? x.checkbox = 1 : x.checkbox = 0">
-                           <i *ngIf="x.checkbox == 0" class="bi bi-square"></i>
+                        <td *ngIf="disabled==false">
+                           <a href="javascript:;" (click)=" x.checkbox == 0 ? x.checkbox = 1 : x.checkbox = 0">
+                              <i *ngIf="x.checkbox == 0" class="bi bi-square"></i>
 
-                           <i *ngIf="x.checkbox == 1" class="bi bi-check-square"></i>
-                        </a>
-                     </td>
-                     <td>{{i+1}}</td>
-                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.desc1"
-                           [disabled]="disabled"> </td>
+                              <i *ngIf="x.checkbox == 1" class="bi bi-check-square"></i>
+                           </a>
+                        </td>
+                        <td>{{i+1}}</td>
+                        <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.name"
+                              [disabled]="disabled"> </td>
 
-                     <td>{{ x.inputDate | date:'medium'}} </td>
+                        <td>{{ x.inputDate | date:'medium'}} </td>
 
-                  </tr>
-               </tbody>
+                     </tr>
+                  </tbody>
+               </table>
             </div>
 
          </div>

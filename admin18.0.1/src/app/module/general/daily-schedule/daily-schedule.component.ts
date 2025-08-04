@@ -17,13 +17,13 @@ export class Actor {
   ) { }
 }
 @Component({
-  selector: 'app-table-map-template',
+  selector: 'app-daily-schedule',
   standalone: true,
   imports: [HttpClientModule, CommonModule, FormsModule, NgbDropdownModule, NgbDatepickerModule],
-  templateUrl: './table-map-template.component.html',
-  styleUrl: './table-map-template.component.css'
+  templateUrl: './daily-schedule.component.html',
+  styleUrl: './daily-schedule.component.css'
 })
-export class TableMapTemplateComponent implements OnInit {
+export class DailyScheduleComponent implements OnInit {
   loading: boolean = false;
   checkboxAll: number = 0;
   disabled: boolean = true;
@@ -49,7 +49,7 @@ export class TableMapTemplateComponent implements OnInit {
 
   httpGet() {
     this.loading = true;
-    const url = environment.api + "tableMapTemplate";
+    const url = environment.api + "dailySchedule";
     this.http.get<any>(url, {
       headers: this.configService.headers(),
       params: {
@@ -90,7 +90,7 @@ export class TableMapTemplateComponent implements OnInit {
 
   onUpdate() {
     this.loading = true;
-    const url = environment.api + "tableMapTemplate/update";
+    const url = environment.api + "dailySchedule/update";
     const body = this.items;
 
     this.http.post<any>(url, body, {
@@ -109,7 +109,7 @@ export class TableMapTemplateComponent implements OnInit {
   onDelete() {
     if (confirm("Delete this checklist?")) {
       this.loading = true;
-      const url = environment.api + "tableMapTemplate/delete";
+      const url = environment.api + "dailySchedule/delete";
       const body = this.items;
       this.http.post<any>(url, body, {
         headers: this.configService.headers(),
@@ -127,7 +127,7 @@ export class TableMapTemplateComponent implements OnInit {
 
   onSubmit() {
     this.loading = true;
-    const url = environment.api + "tableMapTemplate/create";
+    const url = environment.api + "dailySchedule/create";
     const body = {
       model: this.model,
     };
@@ -172,7 +172,7 @@ export class TableMapTemplateComponent implements OnInit {
   }
 
   updateImg(filename: string) {
-    const url = environment.api + "tableMapTemplate/updateImg";
+    const url = environment.api + "dailySchedule/updateImg";
     const body = {
       filename: filename,
       item: this.item

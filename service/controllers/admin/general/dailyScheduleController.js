@@ -1,25 +1,15 @@
-const db = require('../../config/db');
-const { today, formatDateOnly } = require('../../helpers/global');
-
+const db = require('../../../config/db');
+const { today, formatDateOnly } = require('../../../helpers/global');
 
 exports.getAllData = async (req, res) => {
-  try {
-
+  try { 
     const [rows] = await db.query(`
       SELECT *, 0 as 'checkbox'
-      FROM check_disc_group  
-      WHERE presence =1
-    `);
- 
-    const formattedRows = rows.map(row => ({
-      ...row, 
-    }));
-
-
-    const data = {
-      error: false,
-      items: formattedRows,
-      get: req.query
+      FROM daily_schedule  
+      WHERE presence = 1
+    `);  
+    const data = { 
+      items: rows, 
     }
 
     res.json(data);
@@ -27,31 +17,28 @@ exports.getAllData = async (req, res) => {
     console.error(err);
     res.status(500).json({ error: 'Database error' });
   }
-};
-
+}; 
 
 exports.postCreate = async (req, res) => {
   const model = req.body['model'];
   const inputDate = today();
 
   try {
-    
+
     const [result] = await db.query(
-      `INSERT INTO check_disc_group (presence, inputDate, desc1 ) 
-      VALUES (?, ?, ?,? )`,
+      `INSERT INTO daily_schedule (presence, inputDate, name, status, days ) 
+      VALUES (?, ?,?, ? , ? )`,
       [
         1,
         inputDate,
-        model['desc1'], 
-       
+        model['name'],
+        0,
+        1
       ]
     );
 
     res.status(201).json({
-      error: false,
-      inputDate: inputDate,
-      message: 'check_disc_group created',
-      check_disc_groupId: result.insertId
+      error: false,  
     });
   } catch (err) {
     console.error(err);
@@ -75,20 +62,30 @@ exports.postUpdate = async (req, res) => {
 
   try {
     for (const emp of data) {
-      const { discgrp } = emp;
-      const id = discgrp;
+      const { id } = emp; 
       if (!id) {
         results.push({ id, status: 'failed', reason: 'Missing fields' });
         continue;
       }
 
       const [result] = await db.query(
-        `UPDATE check_disc_group SET 
-          desc1 = '${emp['desc1']}',   
-        
+        `UPDATE daily_schedule SET 
+          name = '${emp['name']}',   
+          days = '${emp['days']}',   
+          closeHour = '${emp['closeHour']}',   
+         
+          mon = '${emp['mon']}',  
+          tue = '${emp['tue']}',  
+          wed = '${emp['wed']}',  
+          thu = '${emp['thu']}',  
+          fri = '${emp['fri']}',  
+          sat = '${emp['sat']}',  
+            sun = '${emp['sun']}',  
+          status = '${emp['status']}',   
+          
           updateDate = '${today()}'
 
-        WHERE discgrp = '${id}'`,
+        WHERE id = ${id}`,
       );
 
 
@@ -125,8 +122,8 @@ exports.postDelete = async (req, res) => {
 
   try {
     for (const emp of data) {
-      const { discgrp, checkbox } = emp;
-      const id = discgrp;
+      const { id, checkbox } = emp;
+ 
       if (!id || !checkbox) {
         results.push({ id, status: 'failed', reason: 'Missing fields' });
         continue;
@@ -134,7 +131,7 @@ exports.postDelete = async (req, res) => {
 
 
       const [result] = await db.query(
-        'UPDATE check_disc_group SET presence = ?, updateDate = ? WHERE discgrp = ?',
+        'UPDATE daily_schedule SET presence = ?, updateDate = ? WHERE id = ?',
         [checkbox == 0 ? 1 : 0, today(), id]
       );
 

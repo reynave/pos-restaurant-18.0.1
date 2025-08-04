@@ -1,13 +1,13 @@
-const db = require('../../config/db');
-const { today } = require('../../helpers/global');
+const db = require('../../../config/db');
+const { today } = require('../../../helpers/global');
 
-
+ 
 exports.getAllData = async (req, res) => {
   try {
-
+  
     const [rows] = await db.query(`
       SELECT *, 0 as 'checkbox'
-      FROM employee_order_level  
+      FROM employee_auth_level  
       WHERE presence =1
     `);
 
@@ -24,7 +24,7 @@ exports.getAllData = async (req, res) => {
     res.status(500).json({ error: 'Database error' });
   }
 };
-
+ 
 
 exports.postCreate = async (req, res) => {
   const model = req.body['model'];
@@ -33,26 +33,24 @@ exports.postCreate = async (req, res) => {
 
   try {
     const [result] = await db.query(
-      `INSERT INTO employee_order_level (presence, inputDate, desc1 ) 
-      VALUES (?, ?, ? )`,
+      `INSERT INTO employee_auth_level (presence, inputDate, desc1  ) 
+      VALUES (?, ?, ?)`,
       [
         1,
         inputDate,
-        model['desc1'],
- 
-
+        model['desc1'], 
       ]
     );
 
     res.status(201).json({
       error: false,
       inputDate: inputDate,
-      message: 'employee_order_level created',
-      employee_order_levelId: result.insertId
+      message: 'employee_auth_level created',
+      employee_auth_levelId: result.insertId
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: true, note: 'Database insert error' });
+    res.status(500).json({ error : true, note: 'Database insert error' });
   }
 };
 
@@ -72,21 +70,19 @@ exports.postUpdate = async (req, res) => {
 
   try {
     for (const emp of data) {
-      const { ordlevel } = emp;
-      const id = ordlevel;
+      const { authlevel } = emp;
+      const id = authlevel;
       if (!id) {
         results.push({ id, status: 'failed', reason: 'Missing fields' });
         continue;
-      }
-
+      } 
+ 
       const [result] = await db.query(
-        `UPDATE employee_order_level SET 
-          desc1 = '${emp['desc1']}',   
-         
-          
+        `UPDATE employee_auth_level SET 
+          desc1 = '${emp['desc1']}',  
           updateDate = '${today()}'
 
-        WHERE ordlevel = ${id}`,
+        WHERE authlevel = ${id}`,
       );
 
 
@@ -123,8 +119,8 @@ exports.postDelete = async (req, res) => {
 
   try {
     for (const emp of data) {
-      const { ordlevel, checkbox } = emp;
-      const id = ordlevel;
+      const { authlevel, checkbox } = emp;
+      const id = authlevel;
       if (!id || !checkbox) {
         results.push({ id, status: 'failed', reason: 'Missing fields' });
         continue;
@@ -132,7 +128,7 @@ exports.postDelete = async (req, res) => {
 
 
       const [result] = await db.query(
-        'UPDATE employee_order_level SET presence = ?, updateDate = ? WHERE ordlevel = ?',
+        'UPDATE employee_auth_level SET presence = ?, updateDate = ? WHERE authlevel = ?',
         [checkbox == 0 ? 1 : 0, today(), id]
       );
 

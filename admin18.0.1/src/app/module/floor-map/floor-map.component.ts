@@ -9,8 +9,9 @@ import { ActivatedRoute } from '@angular/router';
 export class Actor {
   constructor(
     public desc1: string,
-    public value: string, 
-    
+    public value: string,
+    public image: string,
+
   ) { }
 }
 @Component({
@@ -20,42 +21,44 @@ export class Actor {
   templateUrl: './floor-map.component.html',
   styleUrl: './floor-map.component.css'
 })
-export class FloorMapComponent  implements OnInit {
+export class FloorMapComponent implements OnInit {
   loading: boolean = false;
   checkboxAll: number = 0;
   disabled: boolean = true;
   items: any = [];
-  outletSelect: any = []; 
+  outletSelect: any = [];
   api: string = environment.api;
-  id : string = "";
-  model = new Actor('', '');
+  id: string = "";
+  model = new Actor('', '','');
+  path: string = environment.api + "public/floorMap/floor/";
+
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
     public modalService: NgbModal,
-     private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
- 
     this.activatedRoute.queryParams.subscribe(params => {
       console.log('Query Params changed:', params);
       this.id = params['outletId']
-      this.model.value =params['outletId'];
+      this.model.value = params['outletId'];
       this.httpMaster();
     });
   }
+
   httpMaster() {
     this.loading = true;
     const url = environment.api + "outlet/select/";
     this.http.get<any>(url, {
       headers: this.configService.headers(),
-     
+
     }).subscribe(
       data => {
         console.log(data);
         this.loading = false;
-        this.outletSelect = data['items']; 
+        this.outletSelect = data['items'];
         this.httpGet();
       },
       error => {
@@ -69,7 +72,7 @@ export class FloorMapComponent  implements OnInit {
     const url = environment.api + "floorMap/map/";
     this.http.get<any>(url, {
       headers: this.configService.headers(),
-        params: {
+      params: {
         id: this.id,
       }
     }).subscribe(
@@ -84,7 +87,7 @@ export class FloorMapComponent  implements OnInit {
       }
     )
   }
-  
+
   checkAll() {
     if (this.checkboxAll == 0) {
       this.checkboxAll = 1;
@@ -99,15 +102,17 @@ export class FloorMapComponent  implements OnInit {
       }
     }
   }
+
   cancel() {
     this.disabled = true;
     this.httpGet();
   }
+
   onUpdate() {
     this.loading = true;
     const url = environment.api + "floorMap/map/update";
     const body = this.items;
-   
+
     this.http.post<any>(url, body, {
       headers: this.configService.headers(),
     }).subscribe(
@@ -122,7 +127,7 @@ export class FloorMapComponent  implements OnInit {
   }
 
   onDelete() {
-    if (confirm("Delete this checklist?")) { 
+    if (confirm("Delete this checklist?")) {
       this.loading = true;
       const url = environment.api + "floorMap/map/delete";
       const body = this.items;
@@ -152,7 +157,7 @@ export class FloorMapComponent  implements OnInit {
       data => {
         console.log(data);
         if (data['error'] == false) {
-          this.model = new Actor('','');
+          this.model = new Actor('', this.model.value,'');
           this.httpGet();
         } else {
           alert("INSERT ERROR");
@@ -164,9 +169,47 @@ export class FloorMapComponent  implements OnInit {
       }
     )
   }
+  item: any = {}
+  open(content: any, item: any = [], size: string = 'md') {
+    this.item = item;
+    this.modalService.open(content, { size: size });
+    this.httpGetImg();
 
-  open(content: any) {
-    this.modalService.open(content);
+  }
+  selectImg: any = [];
+  httpGetImg() {
+    const url = environment.api + "floorMap/map/getIcon";
+    this.http.get<any>(url, {
+      headers: this.configService.headers(),
+    }).subscribe(
+      data => {
+        console.log(data);
+        this.selectImg = data['items'];
+      },
+      error => {
+        console.log(error);
+      }
+    )
+  }
+
+  updateImg(filename: string) {
+    const url = environment.api + "floorMap/map/updateImg";
+    const body = {
+      filename: filename,
+      item: this.item
+    }
+    this.http.post<any>(url, body, {
+      headers: this.configService.headers(),
+    }).subscribe(
+      data => {
+        console.log(data);
+        this.modalService.dismissAll()
+        this.httpGet();
+      },
+      error => {
+        console.log(error);
+      }
+    )
   }
 
 }

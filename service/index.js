@@ -26,6 +26,10 @@ const global = require('./routes/global/global');
 const outlet = require('./routes/outlet/outlet');
 const floorMap = require('./routes/outlet/floorMap');
 const menu = require('./routes/menu/menu'); 
+const tableMapTemplate = require('./routes/outlet/tableMapTemplate');
+const dailySchedule = require('./routes/general/dailySchedule');
+
+
 
 const loginPos = require('./routes/terminal/loginPos');
 const terminalMap = require('./routes/terminal/tableMap');
@@ -91,6 +95,8 @@ app.use(process.env.PREFIX + 'tableMap', tableMap);
 app.use(process.env.PREFIX + 'outlet', outlet);
 app.use(process.env.PREFIX + 'floorMap', floorMap);
 app.use(process.env.PREFIX + 'menu', menu); 
+app.use(process.env.PREFIX + 'tableMapTemplate', tableMapTemplate); 
+app.use(process.env.PREFIX + 'dailySchedule', dailySchedule); 
 
 
 // TERMINAL SERVICE HERE

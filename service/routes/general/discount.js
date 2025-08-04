@@ -1,16 +1,24 @@
 const express = require('express');
 const router = express.Router();
-const discGroup = require('./../../controllers/admin/discGroupController');
-const discType = require('./../../controllers/admin/discTypeController');
+ 
+const discountType = require('./../../controllers/admin/general/discController');
+const discountLevel = require('./../../controllers/admin/general/discountLevelController');
+const discountGroup = require('./../../controllers/admin/general/discountGroupController');
 
-router.get('/discGroup', discGroup.getAllData);
-router.post('/discGroup/update', discGroup.postUpdate);
-router.post('/discGroup/create', discGroup.postCreate);
-router.post('/discGroup/delete', discGroup.postDelete);
 
-router.get('/discType', discType.getAllData);
-router.post('/discType/update', discType.postUpdate);
-router.post('/discType/create', discType.postCreate);
-router.post('/discType/delete', discType.postDelete);
+router.get('/type', discountType.getAllData);
+router.post('/type/update', discountType.postUpdate);
+router.post('/type/create', discountType.postCreate);
+router.post('/type/delete', discountType.postDelete);
+
+router.get('/group', discountGroup.getAllData);
+router.post('/group/update', discountGroup.postUpdate);
+router.post('/group/create', discountGroup.postCreate);
+router.post('/group/delete', discountGroup.postDelete);
+
+router.get('/level', discountLevel.getAllData);
+router.post('/level/update', discountLevel.postUpdate);
+router.post('/level/create', discountLevel.postCreate);
+router.post('/level/delete', discountLevel.postDelete);
 
 module.exports = router;

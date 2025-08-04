@@ -99,8 +99,7 @@ exports.getIcon = (req, res) => {
     res.status(500).json({ error: 'Database error' });
   }
 };
-
-
+ 
 exports.postCreate = async (req, res) => {
   const model = req.body['model'];
   const inputDate = today();

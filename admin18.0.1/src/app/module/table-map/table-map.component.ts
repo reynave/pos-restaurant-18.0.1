@@ -24,17 +24,23 @@ export class Actor {
   styleUrl: './table-map.component.css'
 })
 export class TableMapComponent implements OnInit, AfterViewInit {
+  @ViewChildren('tableEl') tableElements!: QueryList<ElementRef>;
   resp: string = '';
   path: string = environment.api + "public/floorMap/";;
 
   loading: boolean = false;
   editable: boolean = false;
   outletFloorPlandId: number = 0;
-  @ViewChildren('tableEl') tableElements!: QueryList<ElementRef>;
+
   items: any = [];
   floorPlan: any = [];
   model: any = new Actor(1, "", 1, '');
   id: string = "";
+
+  selectIcons: any = [];
+  item: any = [];
+  indexItem: number = 0;
+
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
@@ -139,7 +145,7 @@ export class TableMapComponent implements OnInit, AfterViewInit {
       }
     )
   }
-  selectIcons: any = [];
+
   httpGetIcon() {
     const url = environment.api + "tableMap/table/icon";
     this.http.get<any>(url, {
@@ -335,8 +341,6 @@ export class TableMapComponent implements OnInit, AfterViewInit {
 
   }
 
-  item: any = [];
-  indexItem: number = 0;
   open(content: any, item: any, index: number = 0) {
     this.indexItem = index;
     this.item = item;
@@ -363,25 +367,23 @@ export class TableMapComponent implements OnInit, AfterViewInit {
       }
     )
   }
+
   onSubmitDetail() {
     console.log(this.model);
-
     const body = {
       item: this.item,
     }
- 
-
     this.http.post<any>(environment.api + "tableMap/table/submitDetail", body,
       { headers: this.configService.headers() }
     ).subscribe(
       data => {
         console.log(data);
-           this.items[this.indexItem]['icon'] = this.item['icon'];
-    this.items[this.indexItem]['height'] = this.item['height'];
-    this.items[this.indexItem]['width'] = this.item['width'];
-    this.items[this.indexItem]['capacity'] = this.item['capacity'];
+        this.items[this.indexItem]['icon'] = this.item['icon'];
+        this.items[this.indexItem]['height'] = this.item['height'];
+        this.items[this.indexItem]['width'] = this.item['width'];
+        this.items[this.indexItem]['capacity'] = this.item['capacity'];
         this.modalService.dismissAll();
-      //  this.httpGet();
+        //  this.httpGet();
       },
       error => {
         console.log(error)

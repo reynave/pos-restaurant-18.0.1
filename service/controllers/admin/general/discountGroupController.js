@@ -1,31 +1,20 @@
 const db = require('../../../config/db');
-const fs = require('fs');
-const path = require('path');
 const { today, formatDateOnly } = require('../../../helpers/global');
 
+
 exports.getAllData = async (req, res) => {
-  const id = req.query.id == 'undefined' ? '' : req.query.id;
-
-
   try {
 
     const [rows] = await db.query(`
       SELECT *, 0 as 'checkbox'
-      FROM outlet_floor_plan  
-      WHERE presence =1  ${id ? 'and outletId = ' + id : ''}
+      FROM discount_group  
+      WHERE presence =1
     `);
-
-    const formattedRows = rows.map(row => ({
-      ...row,
-      stdate: formatDateOnly(row.stdate),
-      enddate: formatDateOnly(row.enddate),
-    }));
-
-
+ 
+  
     const data = {
       error: false,
-      items: formattedRows,
-      get: req.query
+      items: rows, 
     }
 
     res.json(data);
@@ -35,28 +24,29 @@ exports.getAllData = async (req, res) => {
   }
 };
 
+
 exports.postCreate = async (req, res) => {
   const model = req.body['model'];
   const inputDate = today();
 
-  try { 
+  try {
+    
     const [result] = await db.query(
-      `INSERT INTO outlet_floor_plan (presence, inputDate, desc1, outletId,  image ) 
-      VALUES (?, ?, ?, ?, ? )`,
+      `INSERT INTO check_disc_group (presence, inputDate, desc1 ) 
+      VALUES (?, ?, ?,? )`,
       [
         1,
         inputDate,
-        model['desc1'],
-        model['value'],
-        model['image'], 
+        model['desc1'], 
+       
       ]
     );
 
     res.status(201).json({
       error: false,
       inputDate: inputDate,
-      message: 'outlet_floor_plan created',
-      outlet_floor_planId: result.insertId
+      message: 'check_disc_group created',
+      check_disc_groupId: result.insertId
     });
   } catch (err) {
     console.error(err);
@@ -80,20 +70,20 @@ exports.postUpdate = async (req, res) => {
 
   try {
     for (const emp of data) {
-      const { id } = emp;
+      const { discgrp } = emp;
+      const id = discgrp;
       if (!id) {
         results.push({ id, status: 'failed', reason: 'Missing fields' });
         continue;
       }
-      console.log(emp);
+
       const [result] = await db.query(
-        `UPDATE outlet_floor_plan SET 
+        `UPDATE check_disc_group SET 
           desc1 = '${emp['desc1']}',   
-           outletId = '${emp['outletId']}',    
-          
+        
           updateDate = '${today()}'
 
-        WHERE id = ${id}`,
+        WHERE discgrp = '${id}'`,
       );
 
 
@@ -130,8 +120,8 @@ exports.postDelete = async (req, res) => {
 
   try {
     for (const emp of data) {
-      const { id, checkbox } = emp;
-
+      const { discgrp, checkbox } = emp;
+      const id = discgrp;
       if (!id || !checkbox) {
         results.push({ id, status: 'failed', reason: 'Missing fields' });
         continue;
@@ -139,7 +129,7 @@ exports.postDelete = async (req, res) => {
 
 
       const [result] = await db.query(
-        'UPDATE outlet_floor_plan SET presence = ?, updateDate = ? WHERE id = ?',
+        'UPDATE check_disc_group SET presence = ?, updateDate = ? WHERE discgrp = ?',
         [checkbox == 0 ? 1 : 0, today(), id]
       );
 
@@ -155,71 +145,6 @@ exports.postDelete = async (req, res) => {
     res.json({
       message: 'Batch update completed',
       results: results
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Database update error', details: err.message });
-  }
-};
-
-exports.getIcon = (req, res) => {
-  const imagesFolder = path.join(__dirname, '../../../public/floorMap/floor');
-  try {
-    fs.readdir(imagesFolder, (err, files) => {
-      if (err) {
-        console.error('Gagal membaca folder:', err);
-        return;
-      }
-
-      // Filter hanya file gambar (optional)
-      const imageFiles = files.filter(file =>
-        /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(file)
-      );
-
-      // Buat array JSON
-      const imageData = imageFiles.map(file => ({
-        filename: file,
-      }));
-
-
-
-      const data = {
-        items: imageData,
-      }
-
-      res.json(data);
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Database error' });
-  }
-};
-
-exports.updateImg = async (req, res) => {
-  // const { id, name, position, email } = req.body;
-  const filename = req.body['filename'];
-  const item = req.body['item'];
-
-
-  const results = [];
-
-  try {
-
-
-    const [result] = await db.query(
-      'UPDATE outlet_floor_plan SET image = ?, updateDate = ? WHERE id = ?',
-      [ filename , today(), item.id]
-    );
-
-    if (result.affectedRows === 0) {
-      results.push({   status: 'not found' });
-    } else {
-      results.push({   status: 'updated' });
-    } 
-
-    res.json({
-      message: 'Batch update completed',
-      results: req.body
     });
   } catch (err) {
     console.error(err);

@@ -1,5 +1,5 @@
-const db = require('../../config/db');
-const { today } = require('./../../helpers/global');
+const db = require('../../../config/db');
+const { today } = require('../../../helpers/global');
 
 exports.getSelect = async (req, res) => {
   try {

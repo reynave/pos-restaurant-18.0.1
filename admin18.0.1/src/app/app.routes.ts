@@ -59,6 +59,8 @@ import { TerminalComponent } from './module/workstation/terminal/terminal.compon
 import { ModifierListComponent } from './module/menu/modifier-list/modifier-list.component';
 import { ModifierGroupComponent } from './module/menu/modifier-group/modifier-group.component';
 import { ModifierComponent } from './module/menu/modifier/modifier.component';
+import { TableMapTemplateComponent } from './module/table-map/table-map-template/table-map-template.component';
+import { DailyScheduleComponent } from './module/general/daily-schedule/daily-schedule.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -68,7 +70,10 @@ export const routes: Routes = [
     { path: 'employee/dept', component: DeptEmployeeComponent },
     { path: 'employee/orderLevel', component: OrderLevelEmployeeComponent },
 
+    { path: 'dailySchedule', component: DailyScheduleComponent },
 
+
+    
     { path: 'specialHour', component: SpecialHoursComponent },
     { path: 'holidayList', component: HolidayListComponent },
 
@@ -116,8 +121,7 @@ export const routes: Routes = [
     { path: 'workStation/pantryStation', component: PantryStationComponent },
     { path: 'workStation/printQueue', component: PantryStationQueueComponent },
     { path: 'workStation/stationTaxRun', component: StationTaxRunComponent },
-    { path: 'workStation/printer', component: PrinterComponent },
-
+    { path: 'workStation/printer', component: PrinterComponent }, 
     { path: 'workStation/terminal', component: TerminalComponent },
 
 
@@ -141,14 +145,16 @@ export const routes: Routes = [
     { path: 'menu/class', component: MenuClassComponent },
     { path: 'menu/lookUp', component: MenuLookupComponent },
 
-{ path: 'modifier/list', component: ModifierListComponent },
-{ path: 'modifier/group', component: ModifierGroupComponent },
-{ path: 'modifier', component: ModifierComponent },
+    { path: 'modifier/list', component: ModifierListComponent },
+    { path: 'modifier/group', component: ModifierGroupComponent },
+    { path: 'modifier', component: ModifierComponent },
 
 
 
 
     { path: 'tableMap', component: TableMapComponent },
+    { path: 'tableMap/template', component: TableMapTemplateComponent },
+
     { path: 'floorMap', component: FloorMapComponent },
 
 

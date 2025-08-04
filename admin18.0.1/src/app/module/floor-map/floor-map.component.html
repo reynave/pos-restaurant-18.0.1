@@ -32,7 +32,7 @@
          <div class="">
 
             <div class="table table-sm table-editable table-hover" style="width: max-content;">
-              <table class="table table-hover" style=" min-width:80vw;">
+               <table class="table table-hover" style=" min-width:80vw;">
 
 
                   <thead class="sticky-top ">
@@ -45,15 +45,14 @@
                               }@else {
                               <i class="bi bi-square"></i>
                               }
-
                            </a>
                         </th>
                         <th>#</th>
 
                         <th>Outlet</th>
                         <th>Desc1</th>
-                        <th>Path Background </th>
-                        <th>inputDate</th>
+                        <th class="text-center">Background </th>
+                        <th>Input Date</th>
 
                      </tr>
                   </thead>
@@ -77,8 +76,18 @@
                         <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.desc1" name="desc1"
                               [disabled]="disabled"> </td>
 
-                        <td> <a href="{{api}}public/floorMap/floor/{{x.id}}.png"
-                              target="_blank">[folder]<em>/public/floorMap/{{x.id}}.png</em> </a></td>
+                        <td class="text-center">
+                           @if(disabled){
+                           <a href="{{path+x.image}}" target="_blank">
+                              <img [src]="path+x.image" width="80">
+                           </a>
+                           }
+                           @else {
+                           <button type="button" (click)="open(contentFloorImg, x, 'lg')">
+                              <img [src]="path+x.image" width="80">
+                           </button>
+                           }
+                        </td>
                         <td>{{ x.inputDate | date:'medium'}} </td>
 
                      </tr>
@@ -117,10 +126,45 @@
             </small>
          </div>
 
+
+         <div class="row g-2 mb-2">
+
+            <div class="col-3 mb-3" *ngFor="let x of selectImg">
+               <a href="javascript:;" (click)="model.image = x.filename ">
+                  <div class="p-1 border " [class]="{'bg-secondary': x.filename == model.image }">
+                     <img [src]="path+x.filename" width="100%">
+                  </div>
+               </a>
+            </div>
+
+         </div>
+
+
          <div class="d-grid">
             <button type="submit" class="btn btn-sm btn-dark" [disabled]="!actorForm.form.valid">Save</button>
          </div>
       </form>
    </div>
 
+</ng-template>
+
+
+<ng-template #contentFloorImg let-modal>
+   <div class="modal-header">
+      <strong class="modal-title" id="modal-basic-title">Floor Map Image</strong>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+   </div>
+   <div class="modal-body">
+      <div class="row g-2">
+
+         <div class="col-3 mb-3" *ngFor="let x of selectImg">
+            <a href="javascript:;" (click)="updateImg(x.filename)">
+               <div class="p-1 border " [class]="{'bg-secondary': x.filename == item.image }">
+                  <img [src]="path+x.filename" width="100%">
+               </div>
+            </a>
+         </div>
+
+      </div>
+   </div>
 </ng-template>
