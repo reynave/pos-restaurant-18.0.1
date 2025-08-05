@@ -1,15 +1,16 @@
 const express = require('express');
 const router = express.Router();
  
-const discountType = require('./../../controllers/admin/general/discController');
+const discount = require('./../../controllers/admin/general/discountController');
 const discountLevel = require('./../../controllers/admin/general/discountLevelController');
 const discountGroup = require('./../../controllers/admin/general/discountGroupController');
+const outlet = require('./../../controllers/admin/general/discountOutletController');
 
 
-router.get('/type', discountType.getAllData);
-router.post('/type/update', discountType.postUpdate);
-router.post('/type/create', discountType.postCreate);
-router.post('/type/delete', discountType.postDelete);
+router.get('/', discount.getAllData);
+router.post('/update', discount.postUpdate);
+router.post('/create', discount.postCreate);
+router.post('/delete', discount.postDelete);
 
 router.get('/group', discountGroup.getAllData);
 router.post('/group/update', discountGroup.postUpdate);
@@ -18,7 +19,8 @@ router.post('/group/delete', discountGroup.postDelete);
 
 router.get('/level', discountLevel.getAllData);
 router.post('/level/update', discountLevel.postUpdate);
-router.post('/level/create', discountLevel.postCreate);
-router.post('/level/delete', discountLevel.postDelete);
+ 
+router.get('/outlet', outlet.getAllData);
+router.post('/outlet/update', outlet.postUpdate);
 
 module.exports = router;

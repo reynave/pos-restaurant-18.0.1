@@ -32,8 +32,8 @@ exports.postCreate = async (req, res) => {
   try {
     
     const [result] = await db.query(
-      `INSERT INTO check_disc_group (presence, inputDate, desc1 ) 
-      VALUES (?, ?, ?,? )`,
+      `INSERT INTO discount_group (presence, inputDate, name ) 
+      VALUES (?, ?, ? )`,
       [
         1,
         inputDate,
@@ -45,8 +45,8 @@ exports.postCreate = async (req, res) => {
     res.status(201).json({
       error: false,
       inputDate: inputDate,
-      message: 'check_disc_group created',
-      check_disc_groupId: result.insertId
+      message: 'discount_group created',
+      discount_groupId: result.insertId
     });
   } catch (err) {
     console.error(err);
@@ -70,20 +70,19 @@ exports.postUpdate = async (req, res) => {
 
   try {
     for (const emp of data) {
-      const { discgrp } = emp;
-      const id = discgrp;
+      const { id } = emp; 
       if (!id) {
         results.push({ id, status: 'failed', reason: 'Missing fields' });
         continue;
       }
 
       const [result] = await db.query(
-        `UPDATE check_disc_group SET 
-          desc1 = '${emp['desc1']}',   
+        `UPDATE discount_group SET 
+          name = '${emp['name']}',   
         
           updateDate = '${today()}'
 
-        WHERE discgrp = '${id}'`,
+        WHERE id = '${id}'`,
       );
 
 
@@ -120,8 +119,7 @@ exports.postDelete = async (req, res) => {
 
   try {
     for (const emp of data) {
-      const { discgrp, checkbox } = emp;
-      const id = discgrp;
+      const { id, checkbox } = emp; 
       if (!id || !checkbox) {
         results.push({ id, status: 'failed', reason: 'Missing fields' });
         continue;
@@ -129,7 +127,7 @@ exports.postDelete = async (req, res) => {
 
 
       const [result] = await db.query(
-        'UPDATE check_disc_group SET presence = ?, updateDate = ? WHERE discgrp = ?',
+        'UPDATE discount_group SET presence = ?, updateDate = ? WHERE id = ?',
         [checkbox == 0 ? 1 : 0, today(), id]
       );
 

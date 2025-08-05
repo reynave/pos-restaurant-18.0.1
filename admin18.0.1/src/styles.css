@@ -140,3 +140,7 @@ body, html {
       background-color: #00f;
     }
   } */
+
+  .tr-disable td{
+    opacity: 0.5;
+}

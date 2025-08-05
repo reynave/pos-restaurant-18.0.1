@@ -1,0 +1,285 @@
+<div class="row">
+    <div class="col-12 ">
+
+        <div class="header py-2">
+            <div class="row">
+                <div class="col-4">
+                    <strong>DAILY SCHEDULE</strong>
+                    <span class="mx-1" *ngIf="loading">
+                        <img src="./gif/Pulse@1x-1.0s-200px-200px.gif" height="30">
+                    </span>
+                </div>
+                <div class="col-8 text-end">
+                    @if(disabled==false){
+                    <button type="button" class="btn btn-sm btn-light border me-2" (click)="cancel()">Close</button>
+                    <button type="button" class="btn btn-sm btn-light border me-2" (click)="onUpdate();">Update</button>
+
+                    <button type="button" class="btn btn-sm btn-dark border me-2"
+                        (click)="open(content);">Create</button>
+                    <button type="button" class="btn btn-sm btn-danger border me-2"
+                        (click)="onDelete();">Delete</button>
+
+                    }
+                    @else {
+                    <button type="button" class="btn btn-sm btn-light border me-2"
+                        (click)="disabled= false">Editable</button>
+
+                    }
+
+                </div>
+            </div>
+
+        </div>
+        <div class="mainContent border">
+            <div class="">
+
+                <div class="table table-sm table-editable table-hover" style="width: max-content;">
+                    <table class="table table-hover" style=" min-width:80vw;">
+
+
+                        <thead class="sticky-top ">
+                            <tr>
+
+                                <th *ngIf="disabled==false">
+                                    <a href="javascript:;" (click)="checkAll();">
+                                        @if(checkboxAll == 1){
+                                        <i class="bi bi-check-square"></i>
+                                        }@else {
+                                        <i class="bi bi-square"></i>
+                                        }
+                                    </a>
+                                </th>
+                                <th>#</th>
+
+                                <th>Name</th>
+                                <th width="80">% Rate</th>
+                                <th>Discount Group </th>
+
+                                <th class="text-center" colspan="2">All Level</th>
+                                <th class="text-center" colspan="2">All Outlet</th>
+
+                                <th class="text-center">Status</th>
+
+                                <th>Update Date</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let x of items; let i = index" [class]="{'tr-disable':x.status == 0}">
+
+                                <td *ngIf="disabled==false">
+                                    <a href="javascript:;" (click)=" x.checkbox == 0 ? x.checkbox = 1 : x.checkbox = 0">
+                                        <i *ngIf="x.checkbox == 0" class="bi bi-square"></i>
+                                        <i *ngIf="x.checkbox == 1" class="bi bi-check-square"></i>
+                                    </a>
+                                </td>
+                                <td>{{i+1}}</td>
+
+
+                                <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.name"
+                                        name="name" [disabled]="disabled"> </td>
+
+                                <td><input type="number" class="form-control form-control-sm" [(ngModel)]="x.discRate"
+                                        name="discRate" [disabled]="disabled"> </td>
+
+
+                                <td>
+                                    <select class="form-control form-control-sm" [(ngModel)]="x.discountGroupId"
+                                        name="discountGroupId" [disabled]="disabled">
+                                        <option [value]="a.id" *ngFor="let a of selectGroup">{{a.name}}</option>
+                                    </select>
+                                </td>
+
+
+                                <td class="text-end">
+                                    @if(!disabled){
+                                    <a href="javascript:;" (click)="x.allLevel == 1 ? x.allLevel = 0 : x.allLevel = 1">
+                                        <i *ngIf="x.allLevel == 1" class="bi bi-check-square"></i>
+                                        <i *ngIf="x.allLevel != 1" class="bi bi-square"></i>
+                                    </a>
+                                    }
+                                    @else {
+                                    <i *ngIf="x.allLevel == 1" class="bi bi-check-lg"></i>
+                                    }
+                                </td>
+
+                                <td class="text-center">
+                                    <button type="button" (click)="openSelectLevel(modalSelectLevel, x, i)"
+                                        [hidden]="x.allLevel == 1"
+                                        class="btn btn-sm py-0 btn-secondary"> {{x.totalDiscountLevel}} Selected</button>
+                                    <span class="badge text-bg-success"  [hidden]="x.allLevel == 0">All Access</span>
+                                </td>
+
+
+                                <td class="text-end">
+                                    @if(!disabled){
+                                    <a href="javascript:;"
+                                        (click)="x.allOutlet == 1 ? x.allOutlet = 0 : x.allOutlet = 1">
+                                        <i *ngIf="x.allOutlet == 1" class="bi bi-check-square"></i>
+                                        <i *ngIf="x.allOutlet != 1" class="bi bi-square"></i>
+                                    </a>
+                                    }
+                                    @else {
+                                    <i *ngIf="x.allOutlet == 1" class="bi bi-check-lg"></i>
+                                    }
+                                </td>
+
+                                <td class="text-center">
+                                    <button type="button" [hidden]="x.allOutlet == 1" (click)="openSelectOutlet(modalSelectOutlet, x, i)"
+                                        class="btn btn-sm py-0 btn-secondary"> {{x.totalOutlet}} Selected</button>
+
+                                    <span class="badge text-bg-success"  [hidden]="x.allOutlet == 0">All Access</span>
+                                </td>
+
+                                <td class="text-center">
+                                    @if(!disabled){
+                                    <a href="javascript:;" (click)="x.status == 1 ? x.status = 0 : x.status = 1">
+                                        <i *ngIf="x.status == 1" class="bi bi-check-square"></i>
+                                        <i *ngIf="x.status != 1" class="bi bi-square"></i>
+                                    </a>
+                                    }
+                                    @else {
+                                    <i *ngIf="x.status == 1" class="bi bi-check-lg"></i>
+                                    }
+                                </td>
+
+                                <td>{{ x.updateDate | date:'medium'}} </td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <strong class="modal-title" id="modal-basic-title">Add Discount</strong>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <form (ngSubmit)="onSubmit()" #actorForm="ngForm">
+
+
+            <div class="mb-2">
+                <label for="name">Name *</label>
+                <input id="name" class="form-control form-control-sm" name="name" [(ngModel)]="model.name" required
+                    #name="ngModel" />
+                <small [hidden]="name.valid || name.pristine" class="text-danger">
+                    *Name is required
+                </small>
+            </div>
+
+            <div class="mb-2">
+                <label for="name">% Rate *</label>
+                <input type="number" id="discRate" class="form-control form-control-sm" name="discRate"
+                    [(ngModel)]="model.discRate" required #discRate="ngModel" />
+                <small [hidden]="discRate.valid || discRate.pristine" class="text-danger">
+                    *discRate is required
+                </small>
+            </div>
+
+            <div class="mb-2">
+                <label for="name">Discount Group *</label>
+
+                <select class="form-control form-control-sm" [(ngModel)]="model.discountGroupId" name="discountGroupId"
+                    [disabled]="disabled" required #discountGroupId="ngModel">
+                    <option [value]="a.id" *ngFor="let a of selectGroup">{{a.name}}</option>
+                </select>
+                <small [hidden]="discountGroupId.valid || discountGroupId.pristine" class="text-danger">
+                    *discountGroupId is required
+                </small>
+            </div>
+
+            <div class="d-grid">
+                <button type="submit" class="btn  btn-dark" [disabled]="!actorForm.form.valid">Save</button>
+            </div>
+        </form>
+    </div>
+
+</ng-template>
+
+<ng-template #modalSelectLevel let-modal>
+    <div class="modal-header">
+        <strong class="modal-title" id="modal-basic-title">Select Level Access</strong>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <form (ngSubmit)="updateAuthLevel()" #actorForm="ngForm">
+
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th class="text-center" width="50px" (click)="fnCheckboxAll() ">
+                            <i *ngIf="checkboxAll == 0 " class="bi bi-square"></i>
+                            <i *ngIf="checkboxAll == 1" class="bi bi-check-square-fill"></i>
+                        </th>
+                        <th>Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let x of selectAuthLevel" (click)="x.checkbox == 0 ? x.checkbox = 1 : x.checkbox = 0 ">
+                        <td class="text-center">
+                            <i *ngIf="x.checkbox == 0 " class="bi bi-square"></i>
+                            <i *ngIf="x.checkbox == 1" class="bi bi-check-square-fill"></i>
+                        </td>
+                        <td>{{x.name}}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+
+
+            <div class="d-grid">
+                <button type="submit" class="btn  btn-dark" [disabled]="!actorForm.form.valid">Save</button>
+            </div>
+        </form>
+    </div>
+
+</ng-template>
+
+
+<ng-template #modalSelectOutlet let-modal>
+    <div class="modal-header">
+        <strong class="modal-title" id="modal-basic-title">Select Outlet</strong>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <form (ngSubmit)="updateDiscountOutlet()" #actorForm="ngForm">
+
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th class="text-center" width="50px" (click)="fnCheckboxAll() ">
+                            <i *ngIf="checkboxAll == 0 " class="bi bi-square"></i>
+                            <i *ngIf="checkboxAll == 1" class="bi bi-check-square-fill"></i>
+                        </th>
+                        <th>Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let x of selectOutlet" (click)="x.checkbox == 0 ? x.checkbox = 1 : x.checkbox = 0 ">
+                        <td class="text-center">
+                            <i *ngIf="x.checkbox == 0 " class="bi bi-square"></i>
+                            <i *ngIf="x.checkbox == 1" class="bi bi-check-square-fill"></i>
+                        </td>
+                        <td>{{x.name}}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+
+
+            <div class="d-grid">
+                <button type="submit" class="btn  btn-dark" [disabled]="!actorForm.form.valid">Save</button>
+            </div>
+        </form>
+    </div>
+
+</ng-template>

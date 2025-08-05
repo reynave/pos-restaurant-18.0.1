@@ -9,7 +9,7 @@ exports.getAllData = async (req, res) => {
       { name: 'Floor Map', href: 'floorMap', icon: '<i class="bi bi-building"></i>', },
       { name: 'Table Map', href: 'tableMap', icon: '<i class="bi bi-map"></i>', },
       { name: 'Template Map', href: 'tableMap/template', icon: '<i class="bi bi-bookmark-star"></i>', },
-      
+
     ]
     const [floorMap] = await db.query(
       ` SELECT id, name, 'floorMap' as 'href' , CONCAT('{"outletId":"',id,'"}')  as 'params'
@@ -30,15 +30,15 @@ exports.getAllData = async (req, res) => {
 
 
     const menuTab = [
-      { name: 'Department', href: 'menu/department', icon: '<i class="bi bi-journal-medical"></i>',children: []  },
-      { name: 'Category', href: 'menu/category', icon: '<i class="bi bi-journal-bookmark"></i>',children: []  },
+      { name: 'Department', href: 'menu/department', icon: '<i class="bi bi-journal-medical"></i>', children: [] },
+      { name: 'Category', href: 'menu/category', icon: '<i class="bi bi-journal-bookmark"></i>', children: [] },
       { name: 'Class', href: 'menu/class', icon: '<i class="bi bi-journal-text"></i>', },
       { name: 'Item', href: 'menu/item', icon: '<i class="bi bi-fork-knife"></i>', children: [] },
       { name: 'Item Look Up', href: 'menu/lookUp', icon: '<i class="bi bi-diagram-2-fill"></i>', },
 
       { name: 'Modifier List', href: 'modifier/list', icon: '<i class="bi bi-diagram-2"></i>', children: [] },
       { name: 'Modifier Group', href: 'modifier/group', icon: '<i class="bi bi-collection"></i>', children: [] },
-      { name: 'Modifier', href: 'modifier/', icon: '<i class="bi bi-journal-text"></i>', }, 
+      { name: 'Modifier', href: 'modifier/', icon: '<i class="bi bi-journal-text"></i>', },
     ]
 
     const [department] = await db.query(
@@ -55,20 +55,20 @@ exports.getAllData = async (req, res) => {
         FROM  menu_category WHERE presence = 1`,
     );
     menuTab[1]['children'] = category;
- 
+
 
     const [modifier_list] = await db.query(
       ` SELECT id, name  ,  'modifier/'  as 'href' ,  
      CONCAT('{"modifierListId":"',id,'"}')  as 'params'
         FROM  modifier_list WHERE presence = 1`,
-    ); 
+    );
     menuTab[5]['children'] = modifier_list;
 
-     const [modifier_group] = await db.query(
+    const [modifier_group] = await db.query(
       ` SELECT id, name  ,  'modifier/'  as 'href' ,  
      CONCAT('{"modifierListId":"',id,'"}')  as 'params'
         FROM  modifier_group WHERE presence = 1`,
-    ); 
+    );
     menuTab[6]['children'] = modifier_group;
 
     const stationTab = [
@@ -83,10 +83,113 @@ exports.getAllData = async (req, res) => {
       },
     ];
 
+    const generalTab = [
+      {
+        name: 'Employees', href: 'employee', icon: '<i class="bi bi-person-vcard"></i> ',
+        children: [
+          { name: 'All Employees', href: 'employee', icon: '' },
+          { name: 'Auth Level', href: 'employee/authLevel', icon: '' },
+          { name: 'Departement', href: 'employee/dept', icon: '' },
+          { name: 'Order Level', href: 'employee/orderLevel', icon: '' },
+        ]
+      },
+
+      {
+        name: 'Daily Schedule', href: 'dailySchedule', icon: '<i class="bi bi-calendar-week"></i>',
+      },
+
+      {
+        name: 'Discount', href: 'discount', icon: '<i class="bi bi-percent"></i>',
+        children: [
+          { name: 'Discount Group', href: 'discount/discGroup', icon: '<i class="bi bi-journals"></i>', children: [] },
+          { name: 'Discount Level', href: 'discount/discLevel', icon: '<i class="bi bi-diagram-2-fill"></i>' },
+        ]
+      },
+
+      {
+        name: 'Payment', href: 'payment', icon: '<i class="bi bi-currency-dollar"></i>',
+        children: [
+          { name: 'Payment Type', href: 'payment/paymentType', icon: '' }, //check_payment_type
+          { name: 'Payment Group', href: 'payment/paymentGroup', icon: '' }, //check_payment_group
+          { name: 'Foreign Currency', href: 'payment/foreignCurrency', icon: '' },
+          { name: 'Cash Type', href: 'payment/cashType', icon: '' },
+          { name: 'Tax', href: 'payment/taxType', icon: '' },
+          { name: 'Service Charge (SC)', href: 'payment/serviceCharge', icon: '' },
+          { name: 'Pay In and Out', href: '', icon: '' },
+          { name: 'Member Deposit', href: '', icon: '' },
+          { name: 'IC Card Add Value', href: 'payment/icCard', icon: '' },
+          { name: 'WP Deposit Add Value', href: 'payment/wbDeposit', icon: '' },
+          { name: 'WP Svc Card Add Value', href: 'payment/wpSvcCard', icon: '' },
+        ]
+      },
+
+      {
+        name: 'Kitchen', href: 'template', icon: '<i class="bi bi-fire"></i>',
+        children: [
+          { name: 'Kitchen Slip', href: 'template', params: { idCategory: '100' }, icon: '' },
+          { name: 'Kitchen Message', href: 'template', params: { idCategory: '200' }, icon: '' },
+          { name: 'Kitchen Monitor', href: 'template', params: { idCategory: '300' }, icon: '' },
+        ]
+      },
+
+
+      {
+        name: 'Other', href: '', icon: '<i class="bi bi-folder"></i>',
+        children: [
+          { name: 'Void Code', href: 'other/voidCode', icon: '' },
+          { name: 'Pantry Message', href: 'other/pantryMessage', icon: '' },
+          { name: 'Function Authority', href: 'other/functionAuthority', icon: '' },
+          { name: 'Function List', href: 'other/functionList', icon: '' },
+          { name: 'Function Short Cuts', href: 'other/functionShortCuts', icon: '' },
+        ]
+      },
+
+      {
+        name: 'Membership', href: 'member/profile', icon: '<i class="bi bi-postcard-heart"></i>',
+        children: [
+          { name: 'Member Profiles', href: 'member/profile', icon: '' },
+          { name: 'Member Classes', href: 'member/classes', icon: '' },
+          { name: 'Member Period', href: 'member/period', icon: '' },
+          { name: 'Member Account', href: 'member/account', icon: '' },
+          { name: 'Member Account Holder', href: 'member/accountHolder', icon: '' },
+          { name: 'Cost Centre', href: 'member/costCentre', icon: '' },
+
+        ]
+      },
+
+      {
+        name: 'Complaint', href: 'complaint/type', icon: '<i class="bi bi-people"></i>',
+        children: [
+          { name: 'Complaint Type', href: 'complaint/type', icon: '' },
+          { name: 'Complaint Category', href: 'complaint/category', icon: '' },
+        ]
+      },
+
+      {
+        name: 'Customer', href: 'customer/info', icon: '<i class="bi bi-people"></i>',
+        children: [
+          { name: 'Customer Info', href: 'customer/info', icon: '' },
+          { name: 'Customer Group', href: 'customer/grp', icon: '' },
+
+        ]
+      },
+    ];
+
+
+      const [discount_group] = await db.query(
+      ` SELECT id, name  ,  'discount/'  as 'href' ,  
+     CONCAT('{"discountGroupId":"',id,'"}')  as 'params'
+        FROM  discount_group WHERE presence = 1`,
+    );;
+
+    generalTab[2]['children'][0]['children'] = discount_group;
+
 
     const data = {
       error: false,
+      generalTab: generalTab,
       menuTab: menuTab,
+
       outletTab: outletTab,
       stationTab: stationTab,
 

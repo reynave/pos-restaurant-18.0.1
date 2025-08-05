@@ -1,24 +1,36 @@
 const db = require('../../../config/db');
-const { today, formatDateOnly } = require('../../../helpers/global');
+const { today } = require('../../../helpers/global');
 
 
 exports.getAllData = async (req, res) => {
+  const discountGroupId = req.query.discountGroupId == 'undefined' ? '' : req.query.discountGroupId;
+
   try {
 
-    const [rows] = await db.query(`
-      SELECT *, 0 as 'checkbox'
-      FROM check_disc_type  
-      WHERE presence =1
+    const [items] = await db.query(`
+      SELECT d.*, 0 as 'checkbox',
+      
+(
+  SELECT COUNT(ci.id)
+    FROM discount_level ci
+    WHERE ci.discountId = d.id
+) AS 'totalDiscountLevel',
+
+(
+  SELECT COUNT(ci.id)
+    FROM outlet_discount ci
+    JOIN outlet AS o ON o.id = ci.outletId
+    WHERE ci.discountId = d.id
+) AS 'totalOutlet'
+
+      FROM discount AS d
+      WHERE d.presence =1   ${discountGroupId ? 'and d.discountGroupId = ' + discountGroupId : ''}
     `);
- 
-    const formattedRows = rows.map(row => ({
-      ...row, 
-    }));
 
 
     const data = {
       error: false,
-      items: formattedRows,
+      items: items,
       get: req.query
     }
 
@@ -35,24 +47,25 @@ exports.postCreate = async (req, res) => {
   const inputDate = today();
 
   try {
-    
+
     const [result] = await db.query(
-      `INSERT INTO check_disc_type (presence, inputDate, desc1, discid ) 
-      VALUES (?, ?, ?,? )`,
-      [
-        1,
-        inputDate,
-        model['desc1'],
-        model['discid'],
-       
-      ]
+      `INSERT INTO discount (
+          presence, inputDate, name, 
+          allLevel, allOutlet,  
+          status, discountGroupId, discRate  ) 
+      VALUES (
+        1, '${inputDate}', '${model['name']}', 
+        ${model['allLevel']} ,${model['allLevel']} , 
+        1,  ${model['discountGroupId']}, ${model['discRate']} 
+      )`
+
     );
 
     res.status(201).json({
       error: false,
       inputDate: inputDate,
-      message: 'check_disc_type created',
-      check_disc_typeId: result.insertId
+      message: 'discount created',
+      discountId: result.insertId
     });
   } catch (err) {
     console.error(err);
@@ -76,20 +89,25 @@ exports.postUpdate = async (req, res) => {
 
   try {
     for (const emp of data) {
-      const { discid } = emp;
-      const id = discid;
+      const { id } = emp;
       if (!id) {
         results.push({ id, status: 'failed', reason: 'Missing fields' });
         continue;
       }
 
       const [result] = await db.query(
-        `UPDATE check_disc_type SET 
-          desc1 = '${emp['desc1']}',   
+        `UPDATE discount SET 
+          allLevel = '${emp['allLevel']}',
+          allOutlet = '${emp['allOutlet']}',
+               
+          discountGroupId = '${emp['discountGroupId']}',   
+          name = '${emp['name']}',   
+          discRate = '${emp['discRate']}',   
+          status = '${emp['status']}',   
         
           updateDate = '${today()}'
 
-        WHERE discid = ${id}`,
+        WHERE id = ${id}`,
       );
 
 
@@ -126,8 +144,8 @@ exports.postDelete = async (req, res) => {
 
   try {
     for (const emp of data) {
-      const { discid, checkbox } = emp;
-      const id = discid;
+      const { id, checkbox } = emp;
+
       if (!id || !checkbox) {
         results.push({ id, status: 'failed', reason: 'Missing fields' });
         continue;
@@ -135,7 +153,7 @@ exports.postDelete = async (req, res) => {
 
 
       const [result] = await db.query(
-        'UPDATE check_disc_type SET presence = ?, updateDate = ? WHERE discid = ?',
+        'UPDATE discount SET presence = ?, updateDate = ? WHERE id = ?',
         [checkbox == 0 ? 1 : 0, today(), id]
       );
 

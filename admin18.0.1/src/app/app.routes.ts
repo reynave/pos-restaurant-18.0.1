@@ -13,8 +13,8 @@ import { PaymentGroupComponent } from './module/payment/payment-group/payment-gr
 import { CashTypeComponent } from './module/payment/cash-type/cash-type.component';
 import { TaxTypeComponent } from './module/payment/tax-type/tax-type.component';
 import { PaymentServiceChargeComponent } from './module/payment/payment-service-charge/payment-service-charge.component';
-import { DiscGroupComponent } from './module/discount/disc-group/disc-group.component';
-import { DiscTypeComponent } from './module/discount/disc-type/disc-type.component';
+import { DiscGroupComponent } from './module/general/discount/disc-group/disc-group.component';
+import { DiscTypeComponent } from './module/general/discount/disc-type/disc-type.component';
 import { ForeignCurrencyTypeComponent } from './module/payment/foreign-currency-type/foreign-currency-type.component';
 import { WpDepositComponent } from './module/payment/wp-deposit/wp-deposit.component';
 import { WpSvcCardComponent } from './module/payment/wp-svc-card/wp-svc-card.component';
@@ -61,6 +61,7 @@ import { ModifierGroupComponent } from './module/menu/modifier-group/modifier-gr
 import { ModifierComponent } from './module/menu/modifier/modifier.component';
 import { TableMapTemplateComponent } from './module/table-map/table-map-template/table-map-template.component';
 import { DailyScheduleComponent } from './module/general/daily-schedule/daily-schedule.component';
+import { DiscountComponent } from './module/general/discount/discount.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -88,9 +89,9 @@ export const routes: Routes = [
     { path: 'payment/wbDeposit', component: WpDepositComponent },
     { path: 'payment/icCard', component: IcCardComponent },
 
-
     { path: 'discount/discGroup', component: DiscGroupComponent },
-    { path: 'discount/discType', component: DiscTypeComponent },
+    { path: 'discount/discGroup', component: DiscGroupComponent },
+    { path: 'discount', component: DiscountComponent },
 
 
     { path: 'other/voidCode', component: VoidCodeComponent },
