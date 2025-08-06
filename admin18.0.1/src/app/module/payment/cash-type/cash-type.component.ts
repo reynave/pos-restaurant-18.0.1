@@ -5,6 +5,7 @@ import { environment } from '../../../../environments/environment.development';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgbDatepickerModule, NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgxCurrencyDirective } from 'ngx-currency';
 export class Actor {
   constructor(
     public desc1: string,
@@ -14,7 +15,7 @@ export class Actor {
 @Component({
   selector: 'app-cash-type',
   standalone: true,
-   imports: [HttpClientModule, CommonModule, FormsModule, NgbDropdownModule, NgbDatepickerModule],
+   imports: [HttpClientModule, CommonModule, FormsModule, NgbDropdownModule, NgbDatepickerModule, NgxCurrencyDirective],
   templateUrl: './cash-type.component.html',
   styleUrl: './cash-type.component.css'
 })
@@ -29,6 +30,7 @@ export class CashTypeComponent implements OnInit {
 
 
   model = new Actor('', 0);
+optionMask:  any= { prefix: '', thousands: '.', decimal: ',', precision : 0 };
   constructor(
     public configService: ConfigService,
     private http: HttpClient,

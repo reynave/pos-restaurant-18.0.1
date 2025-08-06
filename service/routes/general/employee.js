@@ -10,6 +10,7 @@ router.get('/select', employee.getSelect);
 router.post('/update', employee.postUpdate);
 router.post('/create', employee.postCreate);
 router.post('/delete', employee.postDelete);
+router.post('/changePassword', employee.changePassword);
 
 // employee_auth_level
 router.get('/authLevel/', employeeAuthLevel.getAllData); 

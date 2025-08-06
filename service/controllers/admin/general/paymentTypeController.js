@@ -1,13 +1,14 @@
-const db = require('../../config/db');
-const { today, formatDateOnly } = require('../../helpers/global');
+const db = require('../../../config/db');
+const { today, formatDateOnly } = require('../../../helpers/global');
 
 exports.getAllData = async (req, res) => {
+   const paymentGroupId = req.query.paymentGroupId == 'undefined' ? '' : req.query.paymentGroupId;
   try {
 
     const [rows] = await db.query(`
       SELECT *, 0 as 'checkbox'
       FROM check_payment_type  
-      WHERE presence =1
+      WHERE presence =1   ${paymentGroupId ? 'and paymentGroupId = ' + paymentGroupId : ''}
     `);
 
     const formattedRows = rows.map(row => ({

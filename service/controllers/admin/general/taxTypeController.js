@@ -1,25 +1,17 @@
-const db = require('../../config/db');
-const { today, formatDateOnly } = require('../../helpers/global');
-
+const db = require('../../../config/db');
+const { today, formatDateOnly } = require('../../../helpers/global');
 
 exports.getAllData = async (req, res) => {
   try {
 
     const [rows] = await db.query(`
       SELECT *, 0 as 'checkbox'
-      FROM foreign_currency_type  
+      FROM menu_tax_sc  
       WHERE presence =1
     `);
- 
-    const formattedRows = rows.map(row => ({
-      ...row, 
-    }));
-
 
     const data = {
-      error: false,
-      items: formattedRows,
-      get: req.query
+      items: rows,
     }
 
     res.json(data);
@@ -35,22 +27,22 @@ exports.postCreate = async (req, res) => {
   const inputDate = today();
 
   try {
-    
+
     const [result] = await db.query(
-      `INSERT INTO foreign_currency_type (presence, inputDate, desc1 ) 
+      `INSERT INTO menu_tax_sc (presence, inputDate, name ) 
       VALUES (?, ?, ?)`,
       [
         1,
         inputDate,
-        model['desc1'], 
+        model['desc1']
       ]
     );
 
     res.status(201).json({
       error: false,
       inputDate: inputDate,
-      message: 'foreign_currency_type created',
-      foreign_currency_typeId: result.insertId
+      message: 'menu_tax_sc created',
+      menu_tax_scId: result.insertId
     });
   } catch (err) {
     console.error(err);
@@ -74,22 +66,28 @@ exports.postUpdate = async (req, res) => {
 
   try {
     for (const emp of data) {
-      const { fcyid } = emp;
-      const id = fcyid;
+      const { id } = emp; 
       if (!id) {
         results.push({ id, status: 'failed', reason: 'Missing fields' });
         continue;
       }
 
       const [result] = await db.query(
-        `UPDATE foreign_currency_type SET 
-          desc1 = '${emp['desc1']}',   
-          ratefcy = '${emp['ratefcy']}',   
-         chgbakfcy = '${emp['chgbakfcy']}',    
-        
+        `UPDATE menu_tax_sc SET 
+          name = '${emp['name']}',   
+
+          taxRate = '${emp['taxtaxRaterate']}', 
+          taxNote = '${emp['taxNote']}', 
+          taxStatus = '${emp['taxStatus']}', 
+
+          scRate = '${emp['scRate']}', 
+          scNote = '${emp['scNote']}', 
+          scStatus = '${emp['scStatus']}', 
+
+          
           updateDate = '${today()}'
 
-        WHERE fcyid = '${id}'`,
+        WHERE id = ${id}`,
       );
 
 
@@ -126,8 +124,8 @@ exports.postDelete = async (req, res) => {
 
   try {
     for (const emp of data) {
-      const { fcyid, checkbox } = emp;
-      const id = fcyid;
+      const { id, checkbox } = emp;
+ 
       if (!id || !checkbox) {
         results.push({ id, status: 'failed', reason: 'Missing fields' });
         continue;
@@ -135,7 +133,7 @@ exports.postDelete = async (req, res) => {
 
 
       const [result] = await db.query(
-        'UPDATE foreign_currency_type SET presence = ?, updateDate = ? WHERE fcyid = ?',
+        'UPDATE menu_tax_sc SET presence = ?, updateDate = ? WHERE id = ?',
         [checkbox == 0 ? 1 : 0, today(), id]
       );
 

@@ -5,10 +5,10 @@
       <div class="header py-2">
          <div class="row">
             <div class="col-3">
-              <strong>EMPLOYEE</strong>  <span class="btn btn-sm me-2"> </span>
+               <strong>EMPLOYEE</strong> <span class="btn btn-sm me-2"> </span>
             </div>
             <div class="col-9 text-end">
-               <small class="mx-1" >Search (CTRL + F)</small>
+
                @if(disabled==false){
                <button type="button" class="btn btn-sm btn-light border me-2" (click)="cancel()">Close</button>
                <button type="button" class="btn btn-sm btn-light border me-2" (click)="onUpdate();">Update</button>
@@ -22,7 +22,7 @@
                   (click)="disabled= false">Editable</button>
 
 
-               <div ngbDropdown class="d-inline-block " container="body">
+               <!-- <div ngbDropdown class="d-inline-block " container="body">
                   <button type="button" class="btn btn-sm btn-light border me-2" id="dropdownBasic1" ngbDropdownToggle>
                      Filter
                   </button>
@@ -60,11 +60,11 @@
 
                      <button ngbDropdownItem (click)="httpGet();">Filter</button>
                   </div>
-               </div>
+               </div> -->
 
 
                }
-              
+
                <span class="mx-1" *ngIf="loading">
                   <img src="./gif/Pulse@1x-1.0s-200px-200px.gif" height="30">
                </span>
@@ -75,7 +75,8 @@
       <div class="mainContent border">
          <div class="">
 
-            <div class="table table-sm table-editable table-hover" style="width: max-content;">
+            <table class="table table-sm table-editable table-hover" style="width: max-content;">
+
                <thead class="sticky-top ">
                   <tr>
 
@@ -90,24 +91,17 @@
                         </a>
                      </th>
                      <th>#</th>
-                     <th>ID</th>
+                     <th>Auth level</th>
                      <th>Name</th>
-                     <th>login</th>
-                     <th>tel</th>
-                     <th>addr1</th>
-                     <th>addr2</th>
-                     <th>birthday</th>
-                     <th>dob</th>
-                     <th>sex</th>
-                     <th>socialid</th>
-                     <th>email</th>
-                     <th>empdept</th>
-                     <th>authlevel</th>
-                     <th>ordlevel</th>
-                     <th>disclevel</th>
-                     <th>actdate</th>
-                     <th>card</th>
-                     <th>emptype</th>
+                     <th>Username</th>
+                     <th *ngIf="!disabled">Password</th>
+                     <th>Email</th>
+                     <th>Phone</th>
+
+                     <th>Address</th>
+                     <th>Birthday</th>
+                     <th>Sex</th>
+
 
                   </tr>
                </thead>
@@ -122,26 +116,33 @@
                         </a>
                      </td>
                      <td>{{i+1}}</td>
-                     <td>{{x.id}}</td>
-                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.name1"
-                           [disabled]="disabled">
+                     <td><select class="form-control form-control-sm" [(ngModel)]="x.authlevelId" [disabled]="disabled">
+                           <option [value]="a.id" *ngFor="let a of selectAuthLevel">{{a.name}}</option>
+                        </select>
                      </td>
 
-                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.login"
-                           [disabled]="disabled">
+
+                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.name"
+                           [disabled]="disabled"> </td>
+
+                     <td>
+                        <div class="p-1 font-monospace">{{x.username}} </div>
                      </td>
+                     <td *ngIf="!disabled">
+                        <button class="btn btn-sm btn-secondary py-1" (click)="modalChangePassword(contentChangePassword, x)">Change Password</button>
+                     </td>
+
+
+
+                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.email"
+                           [disabled]="disabled"> </td>
                      <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.tel"
-                           [disabled]="disabled">
-                     </td>
-                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.addr1"
-                           [disabled]="disabled">
-                     </td>
-                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.addr2"
-                           [disabled]="disabled">
-                     </td>
-                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.birthday"
+                           [disabled]="disabled"> </td>
+
+
+                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.address"
                            [disabled]="disabled"></td>
-                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.dob"
+                     <td><input type="date" class="form-control form-control-sm" [(ngModel)]="x.birthday"
                            [disabled]="disabled">
                      </td>
                      <td>
@@ -151,42 +152,14 @@
                         </select>
 
                      </td>
-                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.socialid"
-                           [disabled]="disabled"></td>
-                     <td><input type="email" class="form-control form-control-sm" [(ngModel)]="x.email"
-                           [disabled]="disabled">
-                     </td>
-                     <td>
-                        <select class="form-control form-control-sm" [(ngModel)]="x.empdept" [disabled]="disabled">
-                           <option *ngFor="let a of selectDept" [value]="a.empdept">{{a.desc1}}</option>
-                        </select>
-                     </td>
-                     <td>
-                        <select class="form-control form-control-sm" [(ngModel)]="x.autdlevel" [disabled]="disabled">
-                           <option *ngFor="let a of selectAuthLevel" [value]="a.autdlevel">{{a.desc1}}</option>
-                        </select>
-                     </td>
-                     <td>
-                        <select class="form-control form-control-sm" [(ngModel)]="x.ordlevel" [disabled]="disabled">
-                           <option *ngFor="let a of selectOrdLevel" [value]="a.ordlevel">{{a.desc1}}</option>
-                        </select>
-                     </td>
-                     <td><input type="number" class="form-control form-control-sm" [(ngModel)]="x.disclevel"
-                           [disabled]="disabled"></td>
 
-                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.actdate"
-                           [disabled]="disabled">
-                     </td>
-                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.card"
-                           [disabled]="disabled">
-                     </td>
-                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.emptype"
-                           [disabled]="disabled">
-                     </td>
+
+
 
                   </tr>
                </tbody>
-            </div>
+
+            </table>
 
          </div>
       </div>
@@ -196,73 +169,122 @@
 
 <ng-template #content let-modal>
    <div class="modal-header">
-      <strong class="modal-title" id="modal-basic-title">New Employee</strong>
+      <strong class="modal-title" id="modal-basic-title">Add Employee</strong>
       <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
    </div>
    <div class="modal-body">
       <form (ngSubmit)="onSubmit()" #actorForm="ngForm">
-         <div class="mb-2">
+         <div class="mb-3">
             <label for="name">Name*</label>
-            <input id="name" class="form-control form-control-sm" name="name" [(ngModel)]="model.name1" required
+            <input id="name" class="form-control form-control-sm" name="name" [(ngModel)]="model.name" required
                #name="ngModel" />
             <small [hidden]="name.valid || name.pristine" class="text-danger">
                *Name is required
             </small>
          </div>
 
-         <div class="mb-2">
-            <label for="name">login*</label>
-            <input id="login" class="form-control form-control-sm" name="login" [(ngModel)]="model.login" required
-               #login="ngModel" />
-            <small [hidden]="login.valid || login.pristine" class="text-danger">
-               *login is required
+         <div class="mb-3">
+            <label for="name">Username *</label>
+            <input id="login" class="form-control form-control-sm" name="username" [(ngModel)]="model.username" required
+               #username="ngModel" />
+            <small [hidden]="username.valid || username.pristine" class="text-danger">
+               *username is required
             </small>
          </div>
-         <div class="mb-2">
-            <label for="passwd">password*</label>
-            <input id="login" class="form-control form-control-sm" name="passwd" [(ngModel)]="model.passwd" required
-               #passwd="ngModel" />
+         <div class="mb-3">
+            <label for="passwd">Password*</label>
+            <input type="password" id="passwd" class="form-control form-control-sm" name="passwd"
+               [(ngModel)]="model.passwd" required #passwd="ngModel" />
             <small [hidden]="passwd.valid || passwd.pristine" class="text-danger">
                *password is required
             </small>
          </div>
 
-
-         <div class="mb-2">
-            <label for="empdept">Employee Dept*</label>
-            <select id="empdept" class="form-control form-control-sm" name="empdept" [(ngModel)]="model.empdept">
-               <option *ngFor="let x of selectDept" [value]="x.empdept">{{x.desc1}}</option>
-            </select>
+         <div class="mb-3">
+            <label for="passwd2">Password Confirm*</label>
+            <input type="password" id="passwd2" class="form-control form-control-sm" name="passwd2"
+               [(ngModel)]="model.passwd2" required #passwd2="ngModel" />
+            <small [hidden]="passwd2.valid || passwd2.pristine" class="text-danger">
+               *Password Confirm is required
+            </small>
          </div>
 
-         <div class="mb-2">
+
+
+         <div class="mb-3">
             <label for="authlevel">Auth Level*</label>
-            <select id="authlevel" class="form-control form-control-sm" name="authlevel" [(ngModel)]="model.authlevel">
-               <option *ngFor="let x of selectAuthLevel" [value]="x.authlevel">{{x.desc1}}</option>
+            <select id="authlevel" class="form-control form-control-sm" name="authlevel" [(ngModel)]="model.authlevelId"
+               required>
+               <option *ngFor="let x of selectAuthLevel" [value]="x.id">{{x.name}}</option>
             </select>
+            <small [hidden]="passwd2.valid || passwd2.pristine" class="text-danger">
+               *Auth Level is required
+            </small>
          </div>
 
-         <div class="mb-2">
-            <label for="ordlevel">Order Level*</label>
-            <select id="ordlevel" class="form-control form-control-sm" name="ordlevel" [(ngModel)]="model.ordlevel">
-               <option *ngFor="let x of selectOrdLevel" [value]="x.ordlevel">{{x.desc1}}</option>
-            </select>
+         <div class="alert alert-danger" *ngIf="warning != '' ">
+            {{warning}}
          </div>
 
+         <div class="alert alert-warning" *ngIf="(model.passwd != model.passwd2)">
+            Password didnt match
+         </div>
+         <div class="d-grid">
 
-         <div class="mb-4">
-            <label for="dateOfBirth">Date of birth</label>
-            <div class="input-group">
-               <input id="dateOfBirth" class="form-control form-control-sm" placeholder="yyyy-mm-dd" name="dp"
-                  [(ngModel)]="model.birthday" ngbDatepicker #dp="ngbDatepicker"
-                  [maxDate]="{ year: 2009, month: 12, day: 31 }" />
-               <button class="btn btn-sm btn-light bi bi-calendar3 border" (click)="dp.toggle()" type="button"></button>
+            <button type="submit" class="btn btn-dark"
+               [disabled]="!actorForm.form.valid || (model.passwd != model.passwd2) ">Save</button>
+         </div>
+      </form>
+   </div>
+
+</ng-template>
+
+
+<ng-template #contentChangePassword let-modal>
+   <div class="modal-header">
+      <strong class="modal-title" id="modal-basic-title">Change Password</strong>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+   </div>
+   <div class="modal-body">
+      <form (ngSubmit)="onSubmitChangePassword()" #actorForm="ngForm">
+       
+
+         <div class="mb-3">
+            <label for="name">Username</label>
+            <div  class="form-control form-control-sm">
+               {{item.username}}
             </div>
          </div>
+         <div class="mb-3">
+            <label for="passwd">Password*</label>
+            <input type="password" id="passwd" class="form-control form-control-sm" name="passwd"
+               [(ngModel)]="changePassword.passwd" required #passwd="ngModel" />
+            <small [hidden]="passwd.valid || passwd.pristine" class="text-danger">
+               *password is required
+            </small>
+         </div>
+
+         <div class="mb-3">
+            <label for="passwd2">Password Confirm*</label>
+            <input type="password" id="passwd2" class="form-control form-control-sm" name="passwd2"
+               [(ngModel)]="changePassword.passwd2" required #passwd2="ngModel" />
+            <small [hidden]="passwd2.valid || passwd2.pristine" class="text-danger">
+               *Password Confirm is required
+            </small>
+         </div>
 
 
-         <div class="d-grid">
-            <button type="submit" class="btn btn-sm btn-dark" [disabled]="!actorForm.form.valid">Save</button>
+         <div class="alert alert-danger" *ngIf="warning != '' ">
+            {{warning}}
+         </div>
+
+         <div class="alert alert-warning" *ngIf="(model.passwd != model.passwd2)">
+            Password didnt match
+         </div>
+
+         <div class="d-grid"> 
+            <button type="submit" class="btn btn-dark"
+               [disabled]="!actorForm.form.valid || (model.passwd != model.passwd2) ">Save</button>
          </div>
       </form>
    </div>

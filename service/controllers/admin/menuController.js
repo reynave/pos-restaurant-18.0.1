@@ -32,7 +32,7 @@ exports.getAllData = async (req, res) => {
     const menuTab = [
       { name: 'Department', href: 'menu/department', icon: '<i class="bi bi-journal-medical"></i>', children: [] },
       { name: 'Category', href: 'menu/category', icon: '<i class="bi bi-journal-bookmark"></i>', children: [] },
-      { name: 'Class', href: 'menu/class', icon: '<i class="bi bi-journal-text"></i>', },
+   //   { name: 'Class', href: 'menu/class', icon: '<i class="bi bi-journal-text"></i>', },
       { name: 'Item', href: 'menu/item', icon: '<i class="bi bi-fork-knife"></i>', children: [] },
       { name: 'Item Look Up', href: 'menu/lookUp', icon: '<i class="bi bi-diagram-2-fill"></i>', },
 
@@ -62,14 +62,14 @@ exports.getAllData = async (req, res) => {
      CONCAT('{"modifierListId":"',id,'"}')  as 'params'
         FROM  modifier_list WHERE presence = 1`,
     );
-    menuTab[5]['children'] = modifier_list;
+    menuTab[4]['children'] = modifier_list;
 
     const [modifier_group] = await db.query(
       ` SELECT id, name  ,  'modifier/'  as 'href' ,  
      CONCAT('{"modifierListId":"',id,'"}')  as 'params'
         FROM  modifier_group WHERE presence = 1`,
     );
-    menuTab[6]['children'] = modifier_group;
+    menuTab[5]['children'] = modifier_group;
 
     const stationTab = [
       {
@@ -87,10 +87,7 @@ exports.getAllData = async (req, res) => {
       {
         name: 'Employees', href: 'employee', icon: '<i class="bi bi-person-vcard"></i> ',
         children: [
-          { name: 'All Employees', href: 'employee', icon: '' },
-          { name: 'Auth Level', href: 'employee/authLevel', icon: '' },
-          { name: 'Departement', href: 'employee/dept', icon: '' },
-          { name: 'Order Level', href: 'employee/orderLevel', icon: '' },
+          { name: 'Auth Level', href: 'employee/authLevel', icon: '<i class="bi bi-key"></i>', children: [] },
         ]
       },
 
@@ -102,24 +99,18 @@ exports.getAllData = async (req, res) => {
         name: 'Discount', href: 'discount', icon: '<i class="bi bi-percent"></i>',
         children: [
           { name: 'Discount Group', href: 'discount/discGroup', icon: '<i class="bi bi-journals"></i>', children: [] },
-          { name: 'Discount Level', href: 'discount/discLevel', icon: '<i class="bi bi-diagram-2-fill"></i>' },
+          //   { name: 'Discount Level', href: 'discount/discLevel', icon: '<i class="bi bi-diagram-2-fill"></i>' },
         ]
       },
 
       {
-        name: 'Payment', href: 'payment', icon: '<i class="bi bi-currency-dollar"></i>',
+        name: 'Payment', href: '', icon: '<i class="bi bi-cash-coin"></i>',
         children: [
-          { name: 'Payment Type', href: 'payment/paymentType', icon: '' }, //check_payment_type
-          { name: 'Payment Group', href: 'payment/paymentGroup', icon: '' }, //check_payment_group
-          { name: 'Foreign Currency', href: 'payment/foreignCurrency', icon: '' },
-          { name: 'Cash Type', href: 'payment/cashType', icon: '' },
-          { name: 'Tax', href: 'payment/taxType', icon: '' },
-          { name: 'Service Charge (SC)', href: 'payment/serviceCharge', icon: '' },
-          { name: 'Pay In and Out', href: '', icon: '' },
-          { name: 'Member Deposit', href: '', icon: '' },
-          { name: 'IC Card Add Value', href: 'payment/icCard', icon: '' },
-          { name: 'WP Deposit Add Value', href: 'payment/wbDeposit', icon: '' },
-          { name: 'WP Svc Card Add Value', href: 'payment/wpSvcCard', icon: '' },
+          { name: 'Payment Group', href: 'payment/paymentGroup', icon: '<i class="bi bi-collection"></i>', children: [] }, //check_payment_group
+          { name: 'Payment Type', href: 'payment/paymentType', icon: '<i class="bi bi-credit-card"></i>' }, //check_payment_type
+          { name: 'Currency', href: 'payment/foreignCurrency', icon: '<i class="bi bi-currency-exchange"></i>' },
+          { name: 'Cash Type', href: 'payment/cashType', icon: '<i class="bi bi-cash-stack"></i>' },
+          { name: 'Tax & Service Charge', href: 'payment/taxType', icon: '<i class="bi bi-bank"></i>' },
         ]
       },
 
@@ -144,39 +135,18 @@ exports.getAllData = async (req, res) => {
         ]
       },
 
-      {
-        name: 'Membership', href: 'member/profile', icon: '<i class="bi bi-postcard-heart"></i>',
-        children: [
-          { name: 'Member Profiles', href: 'member/profile', icon: '' },
-          { name: 'Member Classes', href: 'member/classes', icon: '' },
-          { name: 'Member Period', href: 'member/period', icon: '' },
-          { name: 'Member Account', href: 'member/account', icon: '' },
-          { name: 'Member Account Holder', href: 'member/accountHolder', icon: '' },
-          { name: 'Cost Centre', href: 'member/costCentre', icon: '' },
-
-        ]
-      },
 
       {
-        name: 'Complaint', href: 'complaint/type', icon: '<i class="bi bi-people"></i>',
+        name: 'workStation', href: '', icon: '<i class="bi bi-hdd-rack"></i>',
         children: [
-          { name: 'Complaint Type', href: 'complaint/type', icon: '' },
-          { name: 'Complaint Category', href: 'complaint/category', icon: '' },
-        ]
-      },
-
-      {
-        name: 'Customer', href: 'customer/info', icon: '<i class="bi bi-people"></i>',
-        children: [
-          { name: 'Customer Info', href: 'customer/info', icon: '' },
-          { name: 'Customer Group', href: 'customer/grp', icon: '' },
-
+          { name: 'Terminal', href: 'workStation/terminal', icon: '<i class="bi bi-pc-display-horizontal"></i>' },
+          { name: 'Printer', href: 'workStation/printer', icon: '<i class="bi bi-printer"></i>' },
         ]
       },
     ];
 
 
-      const [discount_group] = await db.query(
+    const [discount_group] = await db.query(
       ` SELECT id, name  ,  'discount/'  as 'href' ,  
      CONCAT('{"discountGroupId":"',id,'"}')  as 'params'
         FROM  discount_group WHERE presence = 1`,
@@ -184,6 +154,21 @@ exports.getAllData = async (req, res) => {
 
     generalTab[2]['children'][0]['children'] = discount_group;
 
+    const [authLevel] = await db.query(
+      ` SELECT id, name  ,  'employee/'  as 'href' ,  
+        CONCAT('{"authlevelId":"',id,'"}')  as 'params'
+        FROM  employee_auth_level WHERE presence = 1`,
+    );;
+
+    generalTab[0]['children'][0]['children'] = authLevel;
+
+    const [paymentGroup] = await db.query(
+      ` SELECT id, name  ,  'payment/paymentType/'  as 'href' ,  
+        CONCAT('{"paymentGroupId":"',id,'"}')  as 'params'
+        FROM  check_payment_group WHERE presence = 1`,
+    );;
+
+    generalTab[3]['children'][0]['children'] = paymentGroup;
 
     const data = {
       error: false,

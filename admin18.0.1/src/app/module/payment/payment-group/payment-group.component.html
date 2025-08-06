@@ -32,7 +32,7 @@
        <div class="mainContent border">
           <div class="">
  
-             <div class="table table-sm table-editable table-hover" style="width: max-content;">
+             <table class="table table-sm table-editable table-hover" style="width: max-content;">
                 <thead class="sticky-top ">
                    <tr>
  
@@ -47,7 +47,7 @@
                          </a>
                       </th>
                       <th>#</th>  
-                      <th>desc1</th> 
+                      <th>Name</th> 
                       <th>inputDate</th>
  
                    </tr>
@@ -63,12 +63,12 @@
                          </a>
                       </td>
                       <td>{{i+1}}</td> 
-                      <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.desc1"   [disabled]="disabled"> </td>  
+                      <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.name"   [disabled]="disabled"> </td>  
                       <td>{{ x.inputDate | date:'medium'}} </td>
  
                    </tr>
                 </tbody>
-             </div>
+             </table>
  
           </div>
        </div>

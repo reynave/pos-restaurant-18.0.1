@@ -5,18 +5,25 @@ import { environment } from '../../../environments/environment.development';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgbDatepickerModule, NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ActivatedRoute } from '@angular/router';
 export class Actor {
   constructor(
-    public login: string,
+    public username: string,
     public passwd: string,
-    public name1: string,
-    public birthday: any,
-    public empdept: string,
-    public authlevel: string,
-    public ordlevel: string,
-    public disclevel: string,
+    public passwd2: string,
+
+    public name: string,
+    public authlevelId: string,
 
 
+  ) { }
+}
+
+export class Hero {
+  constructor( 
+    public id: string,
+    public passwd: string,
+    public passwd2: string, 
   ) { }
 }
 @Component({
@@ -39,15 +46,21 @@ export class EmployeeComponent implements OnInit {
   filterAuthLevel: string = '';
   filterOrdLevel: string = '';
 
-  model = new Actor('', '', '', '', '', '', '', '');
+  model = new Actor('', '', '', '', '');
+  changePassword  = new Hero('', '','');
+authlevelId : string = '';
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
     public modalService: NgbModal,
+    private activatedRoute : ActivatedRoute
   ) { }
 
-  ngOnInit(): void {
-    this.httpSelect();
+  ngOnInit(): void { 
+    this.activatedRoute.queryParams.subscribe(params => { 
+      this.authlevelId = params['authlevelId']
+       this.httpSelect();
+    });
   }
 
   httpSelect() {
@@ -59,9 +72,7 @@ export class EmployeeComponent implements OnInit {
     }).subscribe(
       data => {
         console.log(data);
-        this.selectDept = data['dept'];
         this.selectAuthLevel = data['auth_level'];
-        this.selectOrdLevel = data['order_level'];
 
         this.httpGet();
       },
@@ -70,18 +81,17 @@ export class EmployeeComponent implements OnInit {
       }
     )
   }
+
   httpGet() {
     this.loading = true;
     const url = environment.api + "employee";
-    const params = {
-      filterDept: this.filterDept,
-      filterAuthLevel: this.filterAuthLevel,
-      filterOrdLevel: this.filterOrdLevel,
-    }
+  
     console.log(url);
     this.http.get<any>(url, {
       headers: this.configService.headers(),
-      params: params
+      params: {
+        authlevelId : this.authlevelId
+      }
     }).subscribe(
       data => {
         console.log(data);
@@ -93,6 +103,7 @@ export class EmployeeComponent implements OnInit {
       }
     )
   }
+
   checkAll() {
     if (this.checkboxAll == 0) {
       this.checkboxAll = 1;
@@ -107,10 +118,12 @@ export class EmployeeComponent implements OnInit {
       }
     }
   }
+
   cancel() {
     this.disabled = true;
     this.httpGet();
   }
+
   onUpdate() {
     this.loading = true;
     const url = environment.api + "employee/update";
@@ -147,6 +160,7 @@ export class EmployeeComponent implements OnInit {
     }
   }
 
+  warning: string = "";
   onSubmit() {
     this.loading = true;
     const url = environment.api + "employee/create";
@@ -158,16 +172,14 @@ export class EmployeeComponent implements OnInit {
     }).subscribe(
       data => {
         console.log(data);
-        if (data['error'] == false) {
-          this.model = new Actor('', '', '', '', '', '', '', '');
-          this.httpGet();
-        } else {
-          alert("INSERT ERROR");
-        }
+        this.warning = '';
+        this.httpGet();
+        this.modalService.dismissAll();
 
       },
       error => {
         console.log(error);
+        this.warning = error['error']['note'];
       }
     )
   }
@@ -175,5 +187,40 @@ export class EmployeeComponent implements OnInit {
   open(content: any) {
     this.modalService.open(content);
   }
+
+  item : any ={};
+  modalChangePassword(content: any, item : any ) {
+    this.item = item;
+    this.changePassword.id = item.id;
+    this.changePassword.passwd = '';
+    this.changePassword.passwd2 = ''; 
+    this.modalService.open(content, { size: 'sm' });
+  }
+
+
+  onSubmitChangePassword(){
+    this.loading = true;
+    const url = environment.api + "employee/changePassword";
+    const body = {
+      model: this.changePassword,
+    };
+    this.http.post<any>(url, body, {
+      headers: this.configService.headers(),
+    }).subscribe(
+      data => {
+        console.log(data);
+        this.warning = '';
+        this.httpGet();
+        this.modalService.dismissAll();
+
+      },
+      error => {
+        console.log(error);
+        this.warning = error['error']['note'];
+      }
+    )
+  }
+
+
 
 }

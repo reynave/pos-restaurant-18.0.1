@@ -82,3 +82,11 @@ ALTER TABLE `outlet_check_disc`
 
 
 RENAME TABLE `outlet_check_disc` TO `outlet_discount`;
+
+
+ALTER TABLE `employee`
+	CHANGE COLUMN `addr1` `address` TEXT NULL COLLATE 'utf8mb4_general_ci' AFTER `contact`,
+	DROP COLUMN `addr2`;
+
+ALTER TABLE `check_payment_type`
+	DROP COLUMN `payid`;

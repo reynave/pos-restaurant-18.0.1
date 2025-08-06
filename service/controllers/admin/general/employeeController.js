@@ -1,17 +1,16 @@
 const db = require('../../../config/db');
-const { today } = require('../../../helpers/global');
-
+const { today, formatDateOnly } = require('../../../helpers/global');
+const bcrypt = require('bcryptjs');
 exports.getSelect = async (req, res) => {
   try {
     const [auth_level] = await db.query('SELECT * FROM employee_auth_level');
-    const [dept] = await db.query('SELECT * FROM employee_dept');
-    const [order_level] = await db.query('SELECT * FROM employee_order_level');
+    // const [dept] = await db.query('SELECT * FROM employee_dept');
+    //  const [order_level] = await db.query('SELECT * FROM employee_order_level');
 
     const data = {
       error: false,
       auth_level: auth_level,
-      dept: dept,
-      order_level: order_level,
+
     }
 
     res.json(data);
@@ -24,28 +23,23 @@ exports.getSelect = async (req, res) => {
 exports.getAllData = async (req, res) => {
   try {
 
-    const filterAuthLevel = req.query.filterAuthLevel != '' ? " AND e.authlevel = " + req.query.filterAuthLevel : '';
-    const filterDept = req.query.filterDept != '' ? " AND e.empdept = " + req.query.filterDept : '';
-    const filterOrdLevel = req.query.filterOrdLevel != '' ? " AND e.ordlevel = " + req.query.filterOrdLevel : '';
+    const authlevelId = req.query.authlevelId == 'undefined' ? '' : req.query.authlevelId;
+ // const filterDept = req.query.filterDept != '' ? " AND e.empdept = " + req.query.filterDept : '';
+    // const filterOrdLevel = req.query.filterOrdLevel != '' ? " AND e.ordlevel = " + req.query.filterOrdLevel : '';
 
+    const q = `SELECT *, 0 as checkbox
+    FROM employee
+    WHERE presence =1    ${authlevelId ? 'and authlevelId = ' + authlevelId : ''}
+    `;
+    const [rows] = await db.query(q);
 
-    const [rows] = await db.query(`SELECT e.*, 0 as 'checkbox' , 
-      a.desc1 AS 'authlevelDesc', 
-      d.desc1 AS 'empdeptDesc',
-      o.desc1 AS 'ordlevelDesc'
-    FROM employee AS e 
-    LEFT JOIN employee_auth_level AS a ON e.authlevel = a.authlevel
-    LEFT JOIN employee_dept AS d ON d.empdept = e.empdept 
-    LEFT JOIN employee_order_level AS o ON o.ordlevel = e.ordlevel
-    WHERE e.presence =1 ${filterAuthLevel} ${filterDept} ${filterOrdLevel}
-    
-    `);
-
+    const items = rows.map(row => ({
+      ...row,
+      birthday: formatDateOnly(row.birthday),
+    }));
 
     const data = {
-      error: false,
-      items: rows,
-      get: req.query
+      items: items
     }
 
     res.json(data);
@@ -81,36 +75,35 @@ exports.postCreate = async (req, res) => {
   const inputDate = today();
 
 
+  const results = [];
   try {
+
+  const saltRounds = 4;
+    const salt = await bcrypt.genSalt(saltRounds);
+    const hash = await bcrypt.hash(model['passwd'], salt);
+
     const [result] = await db.query(
-      `INSERT INTO employee (presence, inputDate, login, passwd, name1,empdept, ordlevel, authlevel,disclevel,birthday  ) 
-      VALUES (?, ?, ?,  ?, ?, ?, ?, ?, ?,?)`,
-      [
-        1,
-        inputDate,
-        model['login'],
-        model['passwd'],
-        model['name1'],
-
-        model['empdept'],
-        model['ordlevel'],
-        model['authlevel'],
-        model['disclevel'],
-
-        model['birthday']['year'] + "-" + model['birthday']['month'] + "-" + model['birthday']['day'],
-
-      ]
+      `INSERT INTO employee (
+        presence, inputDate, username, 
+        hash, name,  authlevelId  ) 
+      VALUES (
+        1, '${inputDate}', '${model['username'].replace(/\s+/g, '')}', 
+        '${hash}', '${model['name']}', '${model['authlevelId']}'
+      )`,
     );
+    if (result.affectedRows === 0) {
+      results.push({ status: 'ERROR' });
+    } else {
+      results.push({ status: 'INSERT INTO employee' });
+    }
 
     res.status(201).json({
-      error: false,
-      inputDate: inputDate,
       message: 'Employee created',
-      employeeId: result.insertId
+      results: results,
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error : true, note: 'Database insert error' });
+    res.status(500).json({ error: true, note: 'Duplicate Username* and Database insert error' });
   }
 };
 
@@ -130,7 +123,7 @@ exports.postUpdate = async (req, res) => {
 
   try {
     for (const emp of data) {
-      const { id, first1, last1 } = emp;
+      const { id } = emp;
 
       if (!id) {
         results.push({ id, status: 'failed', reason: 'Missing fields' });
@@ -144,28 +137,16 @@ exports.postUpdate = async (req, res) => {
 
       const [result] = await db.query(
         `UPDATE employee SET 
-          first1 = '${emp['first1']}', 
-          last1 = '${emp['last1']} ',
-          name1 = '${emp['name1']} ',
+          authlevelId = '${emp['authlevelId']}', 
+          name = '${emp['name']} ', 
           tel = '${emp['tel']} ',
           sex = '${emp['sex']} ',
           
-          contact = '${emp['contact']} ',
-          addr1 = '${emp['addr1']} ',
-          addr2 = '${emp['addr2']} ',
-          birthday = '${emp['birthday']} ',
-          dob = '${emp['dob']} ',
-          sex = '${emp['sex']} ',
-          socialid = '${emp['socialid']} ',
-          email = '${emp['email']} ',
-          empdept = '${emp['empdept']} ',
-          authlevel = '${emp['authlevel']} ',
-          ordlevel = '${emp['ordlevel']} ',
-          disclevel = '${emp['disclevel']} ',
-          actdate = '${emp['actdate']} ',
-          card = '${emp['card']} ',
-          emptype = '${emp['emptype']} '
-          
+          address = '${emp['address']} ',
+          birthday = '${emp['birthday']} ', 
+          sex = '${emp['sex']} ', 
+          email = '${emp['email']} ',     
+          updateDate = '${today()}'
 
         WHERE id = ${id}`,
       );
@@ -224,6 +205,46 @@ exports.postDelete = async (req, res) => {
       } else {
         results.push({ id, status: 'updated' });
       }
+    }
+
+    res.json({
+      message: 'Batch update completed',
+      results: results
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database update error', details: err.message });
+  }
+};
+
+
+exports.changePassword = async (req, res) => {
+  // const { id, name, position, email } = req.body;
+  const data = req.body['model'];
+
+  const results = [];
+
+  try {
+    const { id, passwd } = data;
+    console.log(data);
+
+      const saltRounds = 4;
+    const salt = await bcrypt.genSalt(saltRounds);
+    const hash = await bcrypt.hash(passwd, salt);
+
+
+
+    const [result] = await db.query(
+      `UPDATE employee SET  
+          hash = '${hash}',     
+          updateDate = '${today()}' 
+        WHERE id = ${id}`,
+    );
+
+    if (result.affectedRows === 0) {
+      results.push({ id, status: 'not found' });
+    } else {
+      results.push({ id, status: 'updated' });
     }
 
     res.json({

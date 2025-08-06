@@ -32,7 +32,7 @@
       <div class="mainContent border">
          <div class="">
 
-            <div class="table table-sm table-editable table-hover" style="width: max-content;">
+            <table class="table table-sm table-editable table-hover" style="width: 100%">
                <thead class="sticky-top ">
                   <tr>
 
@@ -47,33 +47,13 @@
                         </a>
                      </th>
                      <th>#</th>
-                     <th>payid</th>
-                     <th>desc1</th>
 
-                     <th>fcyid</th>
-                     <th>havetips</th>
-                     <th>tipsaltr</th>
-                     <th>payclass</th>
-                     <th>paymeth</th>
-                     <th>maxlimit</th>
-                     <th>nonsales</th>
-                     <th>opendrw</th>
-                     <th>prefix</th>
-                     <th>paysign</th>
-                     <th>prtvoid</th>
-                     <th>reftype</th>
-                     <th>haveccac</th>
-                     <th>isguitype</th>
-                     <th>extpath</th>
-                     <th>discid</th>
-                     <th>paygrpid</th>
-                     <th>disctype</th>
-                     <th>drwmulti</th> 
+                     <th>Name</th>
+                     <th>Payment Group</th>
 
-
-
-
-                     <th>inputDate</th>
+                     <th>Auto Match</th>
+                     <th>open Drawer</th>
+                     <th>update Date</th>
 
                   </tr>
                </thead>
@@ -89,52 +69,53 @@
                      </td>
                      <td>{{i+1}}</td>
 
-                     <td>{{x.payid}}</td>
-                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.desc1"
+                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.name"
                            [disabled]="disabled"> </td>
-                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.fcyid"
-                           [disabled]="disabled"> </td>
-                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.havetips"
-                           [disabled]="disabled"> </td>
-                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.tipsaltr"
-                           [disabled]="disabled"> </td>
-                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.payclass"
-                           [disabled]="disabled"> </td>
-                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.paymeth"
-                           [disabled]="disabled"> </td>
-                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.maxlimit"
-                           [disabled]="disabled"> </td>
-                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.nonsales"
-                           [disabled]="disabled"> </td>
-                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.opendrw"
-                           [disabled]="disabled"> </td>
-                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.prefix"
-                           [disabled]="disabled"> </td>
-                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.paysign"
-                           [disabled]="disabled"> </td>
-                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.prtvoid"
-                           [disabled]="disabled"> </td>
-                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.reftype"
-                           [disabled]="disabled"> </td>
-                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.haveccac"
-                           [disabled]="disabled"> </td>
-                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.isguitype"
-                           [disabled]="disabled"> </td>
-                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.extpath"
-                           [disabled]="disabled"> </td>
-                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.discid"
-                           [disabled]="disabled"> </td>
-                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.paygrpid"
-                           [disabled]="disabled"> </td>
-                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.disctype"
-                           [disabled]="disabled"> </td>
-                     <td><input type="text" class="form-control form-control-sm" [(ngModel)]="x.drwmulti"
-                           [disabled]="disabled"> </td>
-                     <td>{{ x.inputDate | date:'medium'}} </td>
+                     <td>
+                        <select class="form-control form-control-sm" [(ngModel)]="x.paymentGroupId"
+                           [disabled]="disabled">
+                           <option [value]="a.id" *ngFor="let a of paymentGroup">{{a.name}}</option>
+                        </select>
+
+                       <td class="text-center"> 
+
+                        @if(disabled){
+                        @if(x.autoMatchAmount == 1){
+                        <i class="bi bi-check-lg"></i>
+                        }
+                        }
+                        @else {
+                        <div (click)="x.autoMatchAmount == 0 ? x.autoMatchAmount = 1 : x.autoMatchAmount = 0">
+                           <i *ngIf="x.autoMatchAmount == 1" class="bi bi-check-square-fill"></i>
+                           <i *ngIf="x.autoMatchAmount == 0" class="bi bi-square"></i>
+                        </div>
+                        }
+
+
+                     </td>
+                     <td class="text-center"> 
+
+                        @if(disabled){
+                           @if(x.openDrawer == 1){
+                              <i class="bi bi-check-lg"></i>
+                           }
+                        }
+                        @else {
+                        <div (click)="x.openDrawer == 0 ? x.openDrawer = 1 : x.openDrawer = 0">
+                           <i *ngIf="x.openDrawer == 1" class="bi bi-check-square-fill"></i>
+                           <i *ngIf="x.openDrawer == 0" class="bi bi-square"></i>
+                        </div>
+                        }
+
+
+                     </td>
+
+
+                     <td>{{ x.updateDate | date:'medium'}} </td>
 
                   </tr>
                </tbody>
-            </div>
+            </table>
 
          </div>
       </div>

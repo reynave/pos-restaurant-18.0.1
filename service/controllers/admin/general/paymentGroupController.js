@@ -1,12 +1,12 @@
-const db = require('../../config/db');
-const { today, formatDateOnly } = require('../../helpers/global');
+const db = require('../../../config/db');
+const { today, formatDateOnly } = require('../../../helpers/global');
 
 exports.getAllData = async (req, res) => {
   try {
 
     const [rows] = await db.query(`
       SELECT *, 0 as 'checkbox'
-      FROM check_cash_type  
+      FROM check_payment_group  
       WHERE presence =1
     `);
 
@@ -38,21 +38,20 @@ exports.postCreate = async (req, res) => {
   try {
 
     const [result] = await db.query(
-      `INSERT INTO check_cash_type (presence, inputDate, desc1, value ) 
-      VALUES (?, ?, ?, ?)`,
+      `INSERT INTO check_payment_group (presence, inputDate, desc1 ) 
+      VALUES (?, ?, ?)`,
       [
         1,
         inputDate,
-        model['desc1'],
-        model['value']
+        model['desc1']
       ]
     );
 
     res.status(201).json({
       error: false,
       inputDate: inputDate,
-      message: 'check_cash_type created',
-      check_cash_typeId: result.insertId
+      message: 'check_payment_group created',
+      check_payment_groupId: result.insertId
     });
   } catch (err) {
     console.error(err);
@@ -76,21 +75,19 @@ exports.postUpdate = async (req, res) => {
 
   try {
     for (const emp of data) {
-      const { cashid } = emp;
-      const id = cashid;
+      const { paygrpid } = emp;
+      const id = paygrpid;
       if (!id) {
         results.push({ id, status: 'failed', reason: 'Missing fields' });
         continue;
       }
 
       const [result] = await db.query(
-        `UPDATE check_cash_type SET 
-          desc1 = '${emp['desc1']}',   
-          value = '${emp['value']}',    
-          
+        `UPDATE check_payment_group SET 
+          desc1 = '${emp['desc1']}',    
           updateDate = '${today()}'
 
-        WHERE cashid = ${id}`,
+        WHERE paygrpid = ${id}`,
       );
 
 
@@ -127,9 +124,9 @@ exports.postDelete = async (req, res) => {
 
   try {
     for (const emp of data) {
-      const { cashid, checkbox } = emp;
+      const { paygrpid, checkbox } = emp; 
 
-      const id = cashid;
+      const id = paygrpid;
       if (!id || !checkbox) {
         results.push({ id, status: 'failed', reason: 'Missing fields' });
         continue;
@@ -137,7 +134,7 @@ exports.postDelete = async (req, res) => {
 
 
       const [result] = await db.query(
-        'UPDATE check_cash_type SET presence = ?, updateDate = ? WHERE cashid = ?',
+        'UPDATE check_payment_group SET presence = ?, updateDate = ? WHERE paygrpid = ?',
         [checkbox == 0 ? 1 : 0, today(), id]
       );
 

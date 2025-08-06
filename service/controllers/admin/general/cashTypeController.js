@@ -1,12 +1,12 @@
-const db = require('../../config/db');
-const { today, formatDateOnly } = require('../../helpers/global');
+const db = require('../../../config/db');
+const { today, formatDateOnly } = require('../../../helpers/global');
 
 exports.getAllData = async (req, res) => {
   try {
 
     const [rows] = await db.query(`
       SELECT *, 0 as 'checkbox'
-      FROM check_tax_type  
+      FROM check_cash_type  
       WHERE presence =1
     `);
 
@@ -38,20 +38,21 @@ exports.postCreate = async (req, res) => {
   try {
 
     const [result] = await db.query(
-      `INSERT INTO check_tax_type (presence, inputDate, desc1 ) 
-      VALUES (?, ?, ?)`,
+      `INSERT INTO check_cash_type (presence, inputDate, name, value ) 
+      VALUES (?, ?, ?, ?)`,
       [
         1,
         inputDate,
-        model['desc1']
+        model['desc1'],
+        model['value']
       ]
     );
 
     res.status(201).json({
       error: false,
       inputDate: inputDate,
-      message: 'check_tax_type created',
-      check_tax_typeId: result.insertId
+      message: 'check_cash_type created',
+      check_cash_typeId: result.insertId
     });
   } catch (err) {
     console.error(err);
@@ -75,42 +76,20 @@ exports.postUpdate = async (req, res) => {
 
   try {
     for (const emp of data) {
-      const { taxid } = emp;
-      const id = taxid;
+      const { id } = emp; 
       if (!id) {
         results.push({ id, status: 'failed', reason: 'Missing fields' });
         continue;
       }
 
       const [result] = await db.query(
-        `UPDATE check_tax_type SET 
-          desc1 = '${emp['desc1']}',   
-          taxrate = '${emp['taxrate']}', 
-
-          tier1 = '${emp['tier1']}',    
-          tier2 = '${emp['tier2']}',    
-          tier3 = '${emp['tier3']}',    
-          tier4 = '${emp['tier4']}',    
-          
-          taxrate1 = '${emp['taxrate1']}',    
-          taxrate2 = '${emp['taxrate2']}',    
-          taxrate3 = '${emp['taxrate3']}',    
-          taxrate4 = '${emp['taxrate4']}',    
-
-
-          ontax1 = '${emp['ontax1']}', 
-          ontax2 = '${emp['ontax2']}', 
-          ontax3 = '${emp['ontax3']}', 
-          ontax4 = '${emp['ontax4']}',  
-
-          onsc1 = '${emp['onsc1']}',    
-          onsc2 = '${emp['onsc2']}',    
-          onsc3 = '${emp['onsc3']}',    
-             
+        `UPDATE check_cash_type SET 
+          name = '${emp['name']}',   
+          value = '${emp['value']}',    
           
           updateDate = '${today()}'
 
-        WHERE taxid = ${id}`,
+        WHERE id = ${id}`,
       );
 
 
@@ -147,9 +126,8 @@ exports.postDelete = async (req, res) => {
 
   try {
     for (const emp of data) {
-      const { taxid, checkbox } = emp;
-
-      const id = taxid;
+      const { id, checkbox } = emp;
+ 
       if (!id || !checkbox) {
         results.push({ id, status: 'failed', reason: 'Missing fields' });
         continue;
@@ -157,7 +135,7 @@ exports.postDelete = async (req, res) => {
 
 
       const [result] = await db.query(
-        'UPDATE check_tax_type SET presence = ?, updateDate = ? WHERE taxid = ?',
+        'UPDATE check_cash_type SET presence = ?, updateDate = ? WHERE id = ?',
         [checkbox == 0 ? 1 : 0, today(), id]
       );
 
