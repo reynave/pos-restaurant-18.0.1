@@ -72,8 +72,8 @@ exports.getMenuItem = async (req, res) => {
 
     const [discountGroup] = await db.query(`
        SELECT t.* , g.name AS 'discountGroup'
-      FROM outlet_check_disc AS d
-       JOIN check_disc_type AS t ON t.id = d.checkDiscTypeId 
+      FROM outlet_discount AS d
+       JOIN discount AS t ON t.id = d.discountId 
        LEFT JOIN discount_group AS g ON g.id = t.discountGroupId
       WHERE d.presence = 1 and d.outletId = ${outletId}
     `);
@@ -204,14 +204,14 @@ exports.cart = async (req, res) => {
 
  
 
-        -- check_disc_type
+        -- discount
         SELECT 
           COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price, 1 as 'modifier'
           FROM ( 
             SELECT r.modifierId,   r.price, r.applyDiscount, d.name AS 'descl'
               FROM cart_item  AS i
               JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
-              JOIN check_disc_type AS d ON d.id = r.applyDiscount
+              JOIN discount AS d ON d.id = r.applyDiscount
             WHERE i.menuId = ${row['menuId']} 
                 AND i.cartId = '${cartId}' AND i.void = 0 AND i.presence = 1  
                 AND i.sendOrder = '' AND r.sendOrder = ''
@@ -400,7 +400,7 @@ exports.cartOrdered = async (req, res) => {
         FROM ( SELECT r.modifierId,   r.price, r.applyDiscount, d.name AS 'descl'
           FROM cart_item  AS i
             JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
-           JOIN check_disc_type AS d ON d.id = r.applyDiscount
+           JOIN discount AS d ON d.id = r.applyDiscount
           WHERE i.menuId = ${row['menuId']} 
           AND i.cartId = '${cartId}' AND i.void = 0 AND i.presence = 1  
            AND i.sendOrder != ''  
@@ -1388,7 +1388,7 @@ exports.cartDetail = async (req, res) => {
          c.priceIncluded, 
         0 as 'checkBox'
         FROM cart_item_modifier AS c
-         JOIN check_disc_type AS m ON m.id = c.applyDiscount
+         JOIN discount AS m ON m.id = c.applyDiscount
         where c.cartItemId =  ${row.id}
         and c.presence = 1 and c.void = 0  and c.modifierId = 0 
 

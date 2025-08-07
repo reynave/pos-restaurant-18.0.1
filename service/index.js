@@ -9,27 +9,8 @@ const io = require('socket.io')(http, {
 });
  
 
-const db = require('./config/db'); // koneksi pool dari mysql2
-const employeeRoutes = require('./routes/general/employee');
-const specialHour = require('./routes/general/specialHour');
-const holidayList = require('./routes/general/holidayList');
-const payment = require('./routes/general/payment');
-const discount = require('./routes/general/discount');
-const other = require('./routes/general/other');
-const member = require('./routes/general/member');
-const complaint = require('./routes/general/complaint');
-const customer = require('./routes/general/customer');
-const template = require('./routes/general/template');
-const workStation = require('./routes/station/workStation');
-const tableMap = require('./routes/outlet/tableMap');
-const global = require('./routes/global/global');
-const outlet = require('./routes/outlet/outlet');
-const floorMap = require('./routes/outlet/floorMap');
-const menu = require('./routes/menu/menu'); 
-const tableMapTemplate = require('./routes/outlet/tableMapTemplate');
-const dailySchedule = require('./routes/general/dailySchedule');
-
-
+const db = require('./config/db'); // koneksi pool dari mysql2 
+ 
 
 const loginPos = require('./routes/terminal/loginPos');
 const terminalMap = require('./routes/terminal/tableMap');
@@ -76,27 +57,24 @@ app.get(process.env.PREFIX + 'checkdb', async (req, res) => {
         });
     }
 });
-app.use(process.env.PREFIX + 'public', express.static('public'));
-app.use(process.env.PREFIX + 'global', global);
 
-// ADMIN SERVICE HERE
-app.use(process.env.PREFIX + 'specialHour', specialHour);
-app.use(process.env.PREFIX + 'holidayList', holidayList);
-app.use(process.env.PREFIX + 'employee', employeeRoutes);
-app.use(process.env.PREFIX + 'payment', payment);
-app.use(process.env.PREFIX + 'discount', discount);
-app.use(process.env.PREFIX + 'other', other);
-app.use(process.env.PREFIX + 'member', member);
-app.use(process.env.PREFIX + 'complaint', complaint);
-app.use(process.env.PREFIX + 'customer', customer);
-app.use(process.env.PREFIX + 'template', template);
-app.use(process.env.PREFIX + 'workStation', workStation);
-app.use(process.env.PREFIX + 'tableMap', tableMap);
-app.use(process.env.PREFIX + 'outlet', outlet);
-app.use(process.env.PREFIX + 'floorMap', floorMap);
-app.use(process.env.PREFIX + 'menu', menu); 
-app.use(process.env.PREFIX + 'tableMapTemplate', tableMapTemplate); 
-app.use(process.env.PREFIX + 'dailySchedule', dailySchedule); 
+app.use(process.env.PREFIX + 'public', express.static('public'));
+// ADMIN SERVICE HERE  
+app.use(process.env.PREFIX + 'global', require('./routes/global/global')); //MENU
+app.use(process.env.PREFIX + 'employee', require('./routes/general/employee'));
+app.use(process.env.PREFIX + 'payment', require('./routes/general/payment'));
+app.use(process.env.PREFIX + 'discount', require('./routes/general/discount'));
+app.use(process.env.PREFIX + 'other', require('./routes/general/other'));   
+app.use(process.env.PREFIX + 'workStation', require('./routes/station/workStation'));
+app.use(process.env.PREFIX + 'tableMap',  require('./routes/outlet/tableMap'));
+app.use(process.env.PREFIX + 'outlet', require('./routes/outlet/outlet'));
+app.use(process.env.PREFIX + 'floorMap', require('./routes/outlet/floorMap'));
+app.use(process.env.PREFIX + 'menu', require('./routes/menu/menu')); 
+app.use(process.env.PREFIX + 'tableMapTemplate', require('./routes/outlet/tableMapTemplate')); 
+app.use(process.env.PREFIX + 'dailySchedule', require('./routes/general/dailySchedule')); 
+app.use(process.env.PREFIX + 'dailyClose', require('./routes/report/dailyClose')); 
+app.use(process.env.PREFIX + 'userLogin', require('./routes/report/userLogin')); 
+app.use(process.env.PREFIX + 'transaction', require('./routes/report/transaction')); 
 
 
 // TERMINAL SERVICE HERE

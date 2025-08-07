@@ -62,103 +62,103 @@ import { ModifierComponent } from './module/menu/modifier/modifier.component';
 import { TableMapTemplateComponent } from './module/table-map/table-map-template/table-map-template.component';
 import { DailyScheduleComponent } from './module/general/daily-schedule/daily-schedule.component';
 import { DiscountComponent } from './module/general/discount/discount.component';
+import { DailyReportComponent } from './module/report/daily-report/daily-report.component';
+import { TransactionComponent } from './module/report/transaction/transaction.component';
+import { UserLoginReportComponent } from './module/report/user-login-report/user-login-report.component';
+import { TransactionDetailComponent } from './module/report/transaction/transaction-detail/transaction-detail.component';
 
 export const routes: Routes = [
-    { path: '', component: HomeComponent },
-    { path: 'home', component: HomeComponent },
-    { path: 'employee', component: EmployeeComponent },
-    { path: 'employee/authLevel', component: AuthLevelComponent },
-    { path: 'employee/dept', component: DeptEmployeeComponent },
-    { path: 'employee/orderLevel', component: OrderLevelEmployeeComponent },
+  { path: '', component: HomeComponent },
+  { path: 'home', component: HomeComponent },
+  { path: 'employee', component: EmployeeComponent },
+  { path: 'employee/authLevel', component: AuthLevelComponent },
+  { path: 'employee/dept', component: DeptEmployeeComponent },
+  { path: 'employee/orderLevel', component: OrderLevelEmployeeComponent },
 
-    { path: 'dailySchedule', component: DailyScheduleComponent },
+  { path: 'dailySchedule', component: DailyScheduleComponent },
 
+  { path: 'specialHour', component: SpecialHoursComponent },
+  { path: 'holidayList', component: HolidayListComponent },
 
-    
-    { path: 'specialHour', component: SpecialHoursComponent },
-    { path: 'holidayList', component: HolidayListComponent },
+  { path: 'payment/paymentType', component: PaymentTypeComponent },
+  { path: 'payment/paymentGroup', component: PaymentGroupComponent },
 
-    { path: 'payment/paymentType', component: PaymentTypeComponent },
-    { path: 'payment/paymentGroup', component: PaymentGroupComponent },
+  { path: 'payment/cashType', component: CashTypeComponent },
+  { path: 'payment/taxType', component: TaxTypeComponent },
+  { path: 'payment/serviceCharge', component: PaymentServiceChargeComponent },
+  { path: 'payment/foreignCurrency', component: ForeignCurrencyTypeComponent },
+  { path: 'payment/wpSvcCard', component: WpSvcCardComponent },
+  { path: 'payment/wbDeposit', component: WpDepositComponent },
+  { path: 'payment/icCard', component: IcCardComponent },
 
-    { path: 'payment/cashType', component: CashTypeComponent },
-    { path: 'payment/taxType', component: TaxTypeComponent },
-    { path: 'payment/serviceCharge', component: PaymentServiceChargeComponent },
-    { path: 'payment/foreignCurrency', component: ForeignCurrencyTypeComponent },
-    { path: 'payment/wpSvcCard', component: WpSvcCardComponent },
-    { path: 'payment/wbDeposit', component: WpDepositComponent },
-    { path: 'payment/icCard', component: IcCardComponent },
+  { path: 'discount/discGroup', component: DiscGroupComponent },
+  { path: 'discount/discGroup', component: DiscGroupComponent },
+  { path: 'discount', component: DiscountComponent },
 
-    { path: 'discount/discGroup', component: DiscGroupComponent },
-    { path: 'discount/discGroup', component: DiscGroupComponent },
-    { path: 'discount', component: DiscountComponent },
+  { path: 'other/voidCode', component: VoidCodeComponent },
+  { path: 'other/pantryMessage', component: PantryMessageComponent },
+  { path: 'other/functionAuthority', component: FunctionAuthorityComponent },
+  { path: 'other/functionList', component: FunctionListComponent },
+  { path: 'other/functionShortCuts', component: FunctionShortCutsComponent },
 
+  { path: 'member/profile', component: MemberProfileComponent },
+  { path: 'member/classes', component: MemberClassesComponent },
+  { path: 'member/period', component: MemberPeriodComponent },
+  { path: 'member/account', component: MemberAccountComponent },
+  { path: 'member/accountHolder', component: MemberAccountHolderComponent },
+  { path: 'member/costCentre', component: CostCentreComponent },
 
-    { path: 'other/voidCode', component: VoidCodeComponent },
-    { path: 'other/pantryMessage', component: PantryMessageComponent },
-    { path: 'other/functionAuthority', component: FunctionAuthorityComponent },
-    { path: 'other/functionList', component: FunctionListComponent },
-    { path: 'other/functionShortCuts', component: FunctionShortCutsComponent },
+  { path: 'complaint/category', component: ComplaintCategoryComponent },
+  { path: 'complaint/type', component: ComplaintTypeComponent },
 
+  { path: 'customer/info', component: CustomerInfoComponent },
+  { path: 'customer/grp', component: CustomerGrpComponent },
 
-    { path: 'member/profile', component: MemberProfileComponent },
-    { path: 'member/classes', component: MemberClassesComponent },
-    { path: 'member/period', component: MemberPeriodComponent },
-    { path: 'member/account', component: MemberAccountComponent },
-    { path: 'member/accountHolder', component: MemberAccountHolderComponent },
-    { path: 'member/costCentre', component: CostCentreComponent },
+  { path: 'template', component: TemplatesComponent },
+  { path: 'template/detail', component: TemplateDetailComponent },
+  // { path: 'template/kitchenMessage', component: TemplatesComponent },
+  // { path: 'template/kitchenMonitor', component: TemplatesComponent },
+  // { path: 'template/kitchenSlip', component: TemplatesComponent },
+  { path: 'workStation/pantryStation', component: PantryStationComponent },
+  { path: 'workStation/printQueue', component: PantryStationQueueComponent },
+  { path: 'workStation/stationTaxRun', component: StationTaxRunComponent },
+  { path: 'workStation/printer', component: PrinterComponent },
+  { path: 'workStation/terminal', component: TerminalComponent },
 
-    { path: 'complaint/category', component: ComplaintCategoryComponent },
-    { path: 'complaint/type', component: ComplaintTypeComponent },
+  { path: 'outlet', component: OutletComponent },
+  { path: 'outlet/payment', component: OutletPaymentComponent },
+  { path: 'outlet/cashType', component: OutletCashTypeComponent },
+  { path: 'outlet/discount', component: OutletDiscountComponent },
+  { path: 'outlet/specialHour', component: OutletSpecialHourComponent },
+  { path: 'outlet/tipsPool', component: OutletTipsPoolComponent },
+  { path: 'outlet/mixAndMatch', component: OutletMixAndMatchComponent },
+  { path: 'outlet/bonusRules', component: OutletBonusRulesComponent },
 
-    { path: 'customer/info', component: CustomerInfoComponent },
-    { path: 'customer/grp', component: CustomerGrpComponent },
+  { path: 'outlet/funcAuthority', component: OutletFuncAuthorityComponent },
+  { path: 'outlet/orderLevel', component: OutletBonusRulesComponent },
+  { path: 'outlet/specialHour', component: OutletSpecialHourComponent },
 
-    { path: 'template', component: TemplatesComponent },
-    { path: 'template/detail', component: TemplateDetailComponent },
-    // { path: 'template/kitchenMessage', component: TemplatesComponent },
-    // { path: 'template/kitchenMonitor', component: TemplatesComponent },
-    // { path: 'template/kitchenSlip', component: TemplatesComponent },
-    { path: 'workStation/pantryStation', component: PantryStationComponent },
-    { path: 'workStation/printQueue', component: PantryStationQueueComponent },
-    { path: 'workStation/stationTaxRun', component: StationTaxRunComponent },
-    { path: 'workStation/printer', component: PrinterComponent }, 
-    { path: 'workStation/terminal', component: TerminalComponent },
+  { path: 'menu/item', component: MenuItemComponent },
+  { path: 'menu/department', component: MenuDeptComponent },
+  { path: 'menu/category', component: MenuCategoryComponent },
+  { path: 'menu/class', component: MenuClassComponent },
+  { path: 'menu/lookUp', component: MenuLookupComponent },
 
+  { path: 'modifier/list', component: ModifierListComponent },
+  { path: 'modifier/group', component: ModifierGroupComponent },
+  { path: 'modifier', component: ModifierComponent },
 
+  { path: 'report/dailyClose', component: DailyReportComponent },
+  // { path: 'report/adjustmentItems', component:  },
+  { path: 'report/transaction', component: TransactionComponent },
+  { path: 'report/transaction/detail', component: TransactionDetailComponent },
 
-    { path: 'outlet', component: OutletComponent },
-    { path: 'outlet/payment', component: OutletPaymentComponent },
-    { path: 'outlet/cashType', component: OutletCashTypeComponent },
-    { path: 'outlet/discount', component: OutletDiscountComponent },
-    { path: 'outlet/specialHour', component: OutletSpecialHourComponent },
-    { path: 'outlet/tipsPool', component: OutletTipsPoolComponent },
-    { path: 'outlet/mixAndMatch', component: OutletMixAndMatchComponent },
-    { path: 'outlet/bonusRules', component: OutletBonusRulesComponent },
+  { path: 'report/userLogin', component: UserLoginReportComponent },
 
-    { path: 'outlet/funcAuthority', component: OutletFuncAuthorityComponent },
-    { path: 'outlet/orderLevel', component: OutletBonusRulesComponent },
-    { path: 'outlet/specialHour', component: OutletSpecialHourComponent },
+  { path: 'tableMap', component: TableMapComponent },
+  { path: 'tableMap/template', component: TableMapTemplateComponent },
 
-    { path: 'menu/item', component: MenuItemComponent },
-    { path: 'menu/department', component: MenuDeptComponent },
-    { path: 'menu/category', component: MenuCategoryComponent },
-    { path: 'menu/class', component: MenuClassComponent },
-    { path: 'menu/lookUp', component: MenuLookupComponent },
+  { path: 'floorMap', component: FloorMapComponent },
 
-    { path: 'modifier/list', component: ModifierListComponent },
-    { path: 'modifier/group', component: ModifierGroupComponent },
-    { path: 'modifier', component: ModifierComponent },
-
-
-
-
-    { path: 'tableMap', component: TableMapComponent },
-    { path: 'tableMap/template', component: TableMapTemplateComponent },
-
-    { path: 'floorMap', component: FloorMapComponent },
-
-
-
-    { path: '**', component: PageNotFoundComponent },
+  { path: '**', component: PageNotFoundComponent },
 ];

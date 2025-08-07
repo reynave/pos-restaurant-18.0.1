@@ -1,0 +1,82 @@
+<div class="row">
+   <div class="col-12 ">
+
+
+      <div class="header py-2">
+         <div class="row">
+            <div class="col-12">
+               <strong>DAILY CLOSED</strong>
+               <span class="mx-1" *ngIf="loading">
+                  <img src="./gif/Pulse@1x-1.0s-200px-200px.gif" height="30">
+               </span>
+            </div>
+
+         </div>
+
+      </div>
+      <div class="mainContent border">
+         <div class="">
+
+            <table class="table table-sm table-report table-hover" style="min-width: 150vw">
+               <thead class="sticky-top ">
+                  <tr>
+                     <th>#</th>
+                     <th>id</th>
+                     <th>daily Schedule</th>
+                     <th>start Date</th>
+                     <th>close Date</th>
+                     <th class="text-end">start Balance</th>
+                     <th class="text-end">close Balance</th>
+                     <th class="text-end">total Tables</th>
+                     <th class="text-end">total Cover</th>
+                     <th class="text-end">total Bill</th>
+                     <th class="text-end">total Item</th>
+                     <th class="text-end">total Void</th>
+                     <th class="text-end">total TA</th>
+                     <th class="text-end">Discount</th>
+                     <th class="text-end">SC</th>
+                     <th class="text-end">SC Included</th>
+                     <th class="text-end">Tax</th>
+                     <th class="text-end">Tax Included</th>
+                     <th class="text-end">subTotal</th>
+                     <th class="text-end">Grand Total</th>
+                     <th>input By</th>
+                     <th>update By</th> 
+
+                  </tr>
+               </thead>
+               <tbody>
+                  <tr *ngFor="let x of items; let i = index">
+
+                     <td>{{i+1}}</td>
+                     <td>{{x.id}}</td>
+                     <td>{{x.dailySchedule}}</td>
+                     <td >{{x.startDate}}</td>
+                     <td>{{x.closeDate}}</td>
+                     <td  class="text-end">{{x.startBalance | number}}</td>
+                     <td class="text-end">{{x.closeBalance | number}}</td>
+                     <td class="text-end">{{x.totalTables}}</td>
+                     <td class="text-end">{{x.totalCover}}</td>
+                     <td class="text-end">{{x.totalBill}}</td>
+                     <td class="text-end">{{x.totalItem}}</td>
+                     <td class="text-end">{{x.totalVoid}}</td>
+                     <td class="text-end">{{x.totalTA}}</td>
+                     <td class="text-end">{{x.discount}}</td>
+                     <td class="text-end">{{x.sc}}</td>
+                     <td class="text-end">{{x.scIncluded}}</td>
+                     <td class="text-end">{{x.tax}}</td>
+                     <td class="text-end">{{x.taxIncluded}}</td>
+                     <td class="text-end">{{x.subTotal}}</td>
+                     <td class="text-end">{{x.grandTotal}}</td>
+                     <td>{{x.inputBy}}</td>
+                     <td>{{x.updateBy}}</td>
+ 
+
+                  </tr>
+               </tbody>
+            </table>
+
+         </div>
+      </div>
+   </div>
+</div>

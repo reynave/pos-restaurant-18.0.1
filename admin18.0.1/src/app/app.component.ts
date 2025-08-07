@@ -24,7 +24,7 @@ export class AppComponent implements OnInit {
   title = 'admin18.0.1';
 
   generalTab: any =  []
-  stationTab: any = [];
+  reportTab: any = [];
   outletTab: any = [];
   menuTab: any = [];
 
@@ -50,7 +50,7 @@ export class AppComponent implements OnInit {
 
           this.outletTab = data['outletTab'];
           this.menuTab = data['menuTab'];
-          this.stationTab = data['stationTab'];
+          this.reportTab = data['reportTab'];
 
         }
       )

@@ -90,3 +90,16 @@ ALTER TABLE `employee`
 
 ALTER TABLE `check_payment_type`
 	DROP COLUMN `payid`;
+
+
+ALTER TABLE `daily_check`
+	CHANGE COLUMN `totalTables` `totalTables` SMALLINT NOT NULL DEFAULT 0 AFTER `closeBalance`,
+	CHANGE COLUMN `totalCover` `totalCover` SMALLINT NOT NULL DEFAULT 0 AFTER `totalTables`,
+	CHANGE COLUMN `totalBill` `totalBill` SMALLINT NOT NULL DEFAULT 0 AFTER `totalCover`,
+	CHANGE COLUMN `totalItem` `totalItem` SMALLINT NOT NULL DEFAULT 0 AFTER `totalBill`,
+	ADD COLUMN `totalVoid` SMALLINT NOT NULL DEFAULT 0 AFTER `totalItem`;
+ALTER TABLE `daily_check`
+	ADD COLUMN `totalTA` SMALLINT(6) NOT NULL DEFAULT '0' AFTER `totalVoid`;
+ALTER TABLE `daily_check`
+	ADD COLUMN `scIncluded` INT(11) NOT NULL DEFAULT '0' AFTER `sc`,
+	ADD COLUMN `taxIncluded` INT(11) NOT NULL DEFAULT '0' AFTER `tax`;

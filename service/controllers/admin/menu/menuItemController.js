@@ -3,8 +3,7 @@ const { today, formatDateOnly } = require('../../../helpers/global');
 
 exports.getAllData = async (req, res) => {
 
-  const menuDepartmentId = req.query.departmentId == 'undefined' ? '' : req.query.departmentId;
-  console.log(menuDepartmentId)
+  const menuDepartmentId = req.query.departmentId == 'undefined' ? '' : req.query.departmentId; 
 
   try {
 

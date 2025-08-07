@@ -32,7 +32,7 @@ exports.getAllData = async (req, res) => {
     const menuTab = [
       { name: 'Department', href: 'menu/department', icon: '<i class="bi bi-journal-medical"></i>', children: [] },
       { name: 'Category', href: 'menu/category', icon: '<i class="bi bi-journal-bookmark"></i>', children: [] },
-   //   { name: 'Class', href: 'menu/class', icon: '<i class="bi bi-journal-text"></i>', },
+      //   { name: 'Class', href: 'menu/class', icon: '<i class="bi bi-journal-text"></i>', },
       { name: 'Item', href: 'menu/item', icon: '<i class="bi bi-fork-knife"></i>', children: [] },
       { name: 'Item Look Up', href: 'menu/lookUp', icon: '<i class="bi bi-diagram-2-fill"></i>', },
 
@@ -71,16 +71,20 @@ exports.getAllData = async (req, res) => {
     );
     menuTab[5]['children'] = modifier_group;
 
-    const stationTab = [
+    const reportTab = [
       {
-        name: 'Terminal', href: 'workStation/terminal', icon: '<i class="bi bi-display"></i>',
-
+        name: 'Daily Close', href: 'report/dailyClose', icon: '<i class="bi bi-calendar-date"></i>',
+      },
+      {
+        name: 'Transaction', href: 'report/transaction', icon: '<i class="bi bi-list-ol"></i>', children: [] 
       },
 
-
       {
-        name: 'Printer', href: 'workStation/printer', icon: '<i class="bi bi-printer"></i>',
+        name: 'User Login', href: 'report/userLogin', icon: '<i class="bi bi-person-exclamation"></i>',
       },
+      {
+        name: 'Adjustment Items', href: 'report/adjustmentItems', icon: '<i class="bi bi-box-seam"></i>',
+      }, 
     ];
 
     const generalTab = [
@@ -170,13 +174,23 @@ exports.getAllData = async (req, res) => {
 
     generalTab[3]['children'][0]['children'] = paymentGroup;
 
+
+ const [outlet] = await db.query(
+      ` SELECT id, name  ,  'report/transaction/'  as 'href' ,  
+        CONCAT('{"outletId":"',id,'"}')  as 'params'
+        FROM  outlet WHERE presence = 1`,
+    );;
+
+    reportTab[1]['children'] = outlet;
+
+    
     const data = {
       error: false,
       generalTab: generalTab,
       menuTab: menuTab,
 
       outletTab: outletTab,
-      stationTab: stationTab,
+      reportTab: reportTab,
 
     }
 

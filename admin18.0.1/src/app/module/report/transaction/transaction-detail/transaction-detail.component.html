@@ -1,0 +1,70 @@
+<div class="row">
+    <div class="col-12 ">
+
+
+        <div class="header py-2">
+            <div class="row">
+                <div class="col-1 d-grid">
+                    <button (click)="back()" class="btn btn-sm btn-light border">BACK</button>
+                </div>
+                <div class="col-5 align-self-center">
+                    <strong>TRANSACTION {{id}}</strong>
+                    <span class="mx-1" *ngIf="loading">
+                        <img src="./gif/Pulse@1x-1.0s-200px-200px.gif" height="30">
+                    </span>
+                </div>
+                <div class="col-6 text-end">
+                    <button class="btn btn-sm btn-light border" (click)="showModifier == false ? showModifier = true : showModifier = false;"> Show Modifier</button>
+                </div>
+            </div>
+
+        </div>
+        <div>
+           <pre>
+             {{header | json}}
+           </pre>
+        </div>
+        <div class=" border">
+             
+
+                <table class="table table-sm table-report table-hover" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th width="30px">#</th>
+                            <th width="50px"> </th>
+                            <th>Name Item</th>
+                            <th>category</th>
+                            <th>department</th>
+                            <th class="text-end">Price</th>
+                            <th>void</th>
+                        </tr>
+                    </thead>
+                    <tbody *ngFor="let x of items; let i = index" [class]="{'tr-danger' :  x.void == 1 }">
+                        <tr>
+                            <td>{{x.no}}</td>
+                            <td></td>
+                            <td>{{x.name}}</td>
+                            <td>{{x.category }}</td>
+                            <td>{{x.department }}</td>
+                            <td class="text-end">{{x.price | number}}</td>
+                            <td><span *ngIf="x.void == 1" class="badge text-bg-danger">VOID</span></td>
+                        </tr>
+                        @if(showModifier){
+                        <tr *ngFor="let j of x.modifier; let n = index" [class]="{'tr-danger' :  x.void == 1 }">
+                            <td></td>
+                            <td> {{x.no}}.{{n+1}}</td>
+                            <td>{{j.name}}</td>
+                            <td> </td>
+                            <td> </td>
+                            <td class="text-end">{{j.price | number}}</td>
+                            <td> 
+                                <span *ngIf="j.void == 1" class="badge text-bg-danger">VOID</span>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+ 
+        </div>
+    </div>
+</div>

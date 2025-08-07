@@ -113,7 +113,20 @@ exports.detail = async (req, res) => {
       items.push(row);
 
       const q2 = `
-        -- modifier
+  --  CUSTOM NOTES   
+        SELECT    
+          c.cartItemId as 'id',  c.id 'cartItemModifierId' , c.sendOrder,   c.void, 
+         c.note AS 'name', c.price,
+          0 AS 'applyDiscount', 0 AS 'rate', c.inputDate
+        FROM cart_item_modifier AS c 
+        WHERE c.cartItemId = ${row['id']}  AND c.presence = 1  AND c.note != ''
+
+
+        UNION
+
+
+
+        -- MODIFIER
         SELECT  
           c.cartItemId as 'id',  c.id 'cartItemModifierId' , c.sendOrder,   c.void, 
           m.descl AS 'name', c.price,
@@ -128,7 +141,7 @@ exports.detail = async (req, res) => {
           c.cartItemId as 'id',  c.id 'cartItemModifierId' , c.sendOrder,c.void, 
           d.name , c.price, c.applyDiscount , 0 AS 'rate' , c.inputDate
         FROM cart_item_modifier AS c
-          JOIN check_disc_type AS d ON d.id = c.applyDiscount
+          JOIN discount AS d ON d.id = c.applyDiscount
         WHERE c.cartItemId =  ${row['id']}  AND c.presence = 1  
 
         UNION
@@ -151,9 +164,10 @@ exports.detail = async (req, res) => {
           WHERE c.cartItemId =  ${row['id']} AND c.presence = 1   AND c.taxStatus != 0;
 
        `;
-      const [cartItem] = await db.query(q2);
+      const [cartItemModifier] = await db.query(q2);
 
-      cartItem.forEach(element => {
+
+      cartItemModifier.forEach(element => { 
          items.push(element);
       });
      
