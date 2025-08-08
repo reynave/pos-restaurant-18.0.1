@@ -1,3 +1,8 @@
 .tr-danger td{
-    color: #c00;
+     
+}
+
+.tr-bold td{
+    font-weight: bold;
+    background: #f4f4f4;
 }
