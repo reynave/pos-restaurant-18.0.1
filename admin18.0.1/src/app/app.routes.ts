@@ -13,8 +13,7 @@ import { PaymentGroupComponent } from './module/payment/payment-group/payment-gr
 import { CashTypeComponent } from './module/payment/cash-type/cash-type.component';
 import { TaxTypeComponent } from './module/payment/tax-type/tax-type.component';
 import { PaymentServiceChargeComponent } from './module/payment/payment-service-charge/payment-service-charge.component';
-import { DiscGroupComponent } from './module/general/discount/disc-group/disc-group.component';
-import { DiscTypeComponent } from './module/general/discount/disc-type/disc-type.component';
+import { DiscGroupComponent } from './module/general/discount/disc-group/disc-group.component'; 
 import { ForeignCurrencyTypeComponent } from './module/payment/foreign-currency-type/foreign-currency-type.component';
 import { WpDepositComponent } from './module/payment/wp-deposit/wp-deposit.component';
 import { WpSvcCardComponent } from './module/payment/wp-svc-card/wp-svc-card.component';

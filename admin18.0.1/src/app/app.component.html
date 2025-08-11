@@ -1,8 +1,8 @@
-@if(login == true){ 
+@if(login == true){
 
 <div class="wrapper">
   <nav class="sidebar px-1">
- 
+
 
     <ul ngbNav #nav="ngbNav" [(activeId)]="active" (click)="saveActive(active)" class="nav-tabs">
       <li [ngbNavItem]="1">
@@ -10,10 +10,11 @@
         <ng-template ngbNavContent>
 
           <div class="mx-3">
-            <tree-root #treeComponent [nodes]="generalTab"  (toggleExpanded)="onToggle($event)" [options]="options" (activate)="onEvent($event)">
+            <tree-root #treeComponent [nodes]="generalTab" (toggleExpanded)="onToggle($event)" [options]="options"
+              (activate)="onEvent($event)">
               <ng-template #treeNodeTemplate let-node let-index="index">
                 <span class="file-icon" [innerHTML]="node.data.icon"></span>
-                {{ node.data.name }} 
+                {{ node.data.name }}
               </ng-template>
             </tree-root>
           </div>
@@ -38,10 +39,11 @@
         <button ngbNavLink class="px-2 py-1"><small>Menu</small></button>
         <ng-template ngbNavContent>
           <div class="mx-3">
-            <tree-root #treeComponent [nodes]="menuTab"  (toggleExpanded)="onToggle($event)"  [options]="options" (activate)="onEvent($event)">
+            <tree-root #treeComponent [nodes]="menuTab" (toggleExpanded)="onToggle($event)" [options]="options"
+              (activate)="onEvent($event)">
               <ng-template #treeNodeTemplate let-node let-index="index">
                 <span class="file-icon" [innerHTML]="node.data.icon"></span>
-                {{ node.data.name }}  
+                {{ node.data.name }}
               </ng-template>
 
             </tree-root>
@@ -52,11 +54,12 @@
         <button ngbNavLink class="px-2 py-1"><small>Outlet</small></button>
         <ng-template ngbNavContent>
           <div class="mx-3">
-            <tree-root #treeComponent [nodes]="outletTab"  (toggleExpanded)="onToggle($event)"  [options]="options" (activate)="onEvent($event)">
+            <tree-root #treeComponent [nodes]="outletTab" (toggleExpanded)="onToggle($event)" [options]="options"
+              (activate)="onEvent($event)">
               <ng-template #treeNodeTemplate let-node let-index="index">
                 <span class="file-icon" [innerHTML]="node.data.icon"></span>
-                {{ node.data.name }} 
-              </ng-template> 
+                {{ node.data.name }}
+              </ng-template>
             </tree-root>
           </div>
         </ng-template>
@@ -65,18 +68,21 @@
 
     <div [ngbNavOutlet]="nav" class="mt-2"></div>
 
-    <!-- <div class="d-grid">
+   <div class="d-grid">
       <button class="btn btn-sm btn-light border" (click)="onLogout()" type="button">Logout</button>
-    </div> -->
-
+    </div>
+    <div class="text-center mt-3">
+      <small>
+        Patch : {{version}}
+      </small>
+    </div>
   </nav>
 
   <main class="content">
-
     <router-outlet />
   </main>
 </div>
- 
+
 
 }
 @else {

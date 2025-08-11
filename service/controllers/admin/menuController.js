@@ -82,9 +82,9 @@ exports.getAllData = async (req, res) => {
       {
         name: 'User Login', href: 'report/userLogin', icon: '<i class="bi bi-person-exclamation"></i>',
       },
-      {
-        name: 'Adjustment Items', href: 'report/adjustmentItems', icon: '<i class="bi bi-box-seam"></i>',
-      }, 
+      // {
+      //   name: 'Adjustment Items', href: 'report/adjustmentItems', icon: '<i class="bi bi-box-seam"></i>',
+      // }, 
     ];
 
     const generalTab = [
@@ -118,26 +118,26 @@ exports.getAllData = async (req, res) => {
         ]
       },
 
-      {
-        name: 'Kitchen', href: 'template', icon: '<i class="bi bi-fire"></i>',
-        children: [
-          { name: 'Kitchen Slip', href: 'template', params: { idCategory: '100' }, icon: '' },
-          { name: 'Kitchen Message', href: 'template', params: { idCategory: '200' }, icon: '' },
-          { name: 'Kitchen Monitor', href: 'template', params: { idCategory: '300' }, icon: '' },
-        ]
-      },
+      // {
+      //   name: 'Kitchen', href: 'template', icon: '<i class="bi bi-fire"></i>',
+      //   children: [
+      //     { name: 'Kitchen Slip', href: 'template', params: { idCategory: '100' }, icon: '' },
+      //     { name: 'Kitchen Message', href: 'template', params: { idCategory: '200' }, icon: '' },
+      //     { name: 'Kitchen Monitor', href: 'template', params: { idCategory: '300' }, icon: '' },
+      //   ]
+      // },
 
 
-      {
-        name: 'Other', href: '', icon: '<i class="bi bi-folder"></i>',
-        children: [
-          { name: 'Void Code', href: 'other/voidCode', icon: '' },
-          { name: 'Pantry Message', href: 'other/pantryMessage', icon: '' },
-          { name: 'Function Authority', href: 'other/functionAuthority', icon: '' },
-          { name: 'Function List', href: 'other/functionList', icon: '' },
-          { name: 'Function Short Cuts', href: 'other/functionShortCuts', icon: '' },
-        ]
-      },
+      // {
+      //   name: 'Other', href: '', icon: '<i class="bi bi-folder"></i>',
+      //   children: [
+      //     { name: 'Void Code', href: 'other/voidCode', icon: '' },
+      //     { name: 'Pantry Message', href: 'other/pantryMessage', icon: '' },
+      //     { name: 'Function Authority', href: 'other/functionAuthority', icon: '' },
+      //     { name: 'Function List', href: 'other/functionList', icon: '' },
+      //     { name: 'Function Short Cuts', href: 'other/functionShortCuts', icon: '' },
+      //   ]
+      // },
 
 
       {

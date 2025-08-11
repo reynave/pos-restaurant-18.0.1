@@ -4,7 +4,11 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { environment } from '../../../environments/environment.development';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NgbDatepickerModule, NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import {
+  NgbDatepickerModule,
+  NgbDropdownModule,
+  NgbModal,
+} from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute } from '@angular/router';
 export class Actor {
   constructor(
@@ -13,25 +17,29 @@ export class Actor {
     public passwd2: string,
 
     public name: string,
-    public authlevelId: string,
-
-
-  ) { }
+    public authlevelId: string
+  ) {}
 }
 
 export class Hero {
-  constructor( 
+  constructor(
     public id: string,
     public passwd: string,
-    public passwd2: string, 
-  ) { }
+    public passwd2: string
+  ) {}
 }
 @Component({
   selector: 'app-employee',
   standalone: true,
-  imports: [HttpClientModule, CommonModule, FormsModule, NgbDropdownModule, NgbDatepickerModule],
+  imports: [
+    HttpClientModule,
+    CommonModule,
+    FormsModule,
+    NgbDropdownModule,
+    NgbDatepickerModule,
+  ],
   templateUrl: './employee.component.html',
-  styleUrl: './employee.component.css'
+  styleUrl: './employee.component.css',
 })
 export class EmployeeComponent implements OnInit {
   loading: boolean = false;
@@ -47,61 +55,65 @@ export class EmployeeComponent implements OnInit {
   filterOrdLevel: string = '';
 
   model = new Actor('', '', '', '', '');
-  changePassword  = new Hero('', '','');
-authlevelId : string = '';
+  changePassword = new Hero('', '', '');
+  authlevelId: string = '';
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
     public modalService: NgbModal,
-    private activatedRoute : ActivatedRoute
-  ) { }
+    private activatedRoute: ActivatedRoute
+  ) {}
 
-  ngOnInit(): void { 
-    this.activatedRoute.queryParams.subscribe(params => { 
-      this.authlevelId = params['authlevelId']
-       this.httpSelect();
+  ngOnInit(): void {
+    this.activatedRoute.queryParams.subscribe((params) => {
+      this.authlevelId = params['authlevelId'];
+      this.httpSelect();
     });
   }
 
   httpSelect() {
     this.loading = true;
-    const url = environment.api + "employee/select";
+    const url = environment.api + 'employee/select';
     console.log(url);
-    this.http.get<any>(url, {
-      headers: this.configService.headers(),
-    }).subscribe(
-      data => {
-        console.log(data);
-        this.selectAuthLevel = data['auth_level'];
+    this.http
+      .get<any>(url, {
+        headers: this.configService.headers(),
+      })
+      .subscribe(
+        (data) => {
+          console.log(data);
+          this.selectAuthLevel = data['auth_level'];
 
-        this.httpGet();
-      },
-      error => {
-        console.log(error);
-      }
-    )
+          this.httpGet();
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
   }
 
   httpGet() {
     this.loading = true;
-    const url = environment.api + "employee";
-  
+    const url = environment.api + 'employee';
+
     console.log(url);
-    this.http.get<any>(url, {
-      headers: this.configService.headers(),
-      params: {
-        authlevelId : this.authlevelId
-      }
-    }).subscribe(
-      data => {
-        console.log(data);
-        this.loading = false;
-        this.items = data['items'];
-      },
-      error => {
-        console.log(error);
-      }
-    )
+    this.http
+      .get<any>(url, {
+        headers: this.configService.headers(),
+        params: {
+          authlevelId: this.authlevelId,
+        },
+      })
+      .subscribe(
+        (data) => {
+          console.log(data);
+          this.loading = false;
+          this.items = data['items'];
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
   }
 
   checkAll() {
@@ -110,8 +122,7 @@ authlevelId : string = '';
       for (let i = 0; i < this.items.length; i++) {
         this.items[i]['checkbox'] = 1;
       }
-    }
-    else if (this.checkboxAll == 1) {
+    } else if (this.checkboxAll == 1) {
       this.checkboxAll = 0;
       for (let i = 0; i < this.items.length; i++) {
         this.items[i]['checkbox'] = 0;
@@ -126,101 +137,103 @@ authlevelId : string = '';
 
   onUpdate() {
     this.loading = true;
-    const url = environment.api + "employee/update";
+    const url = environment.api + 'employee/update';
     const body = this.items;
-    this.http.post<any>(url, body, {
-      headers: this.configService.headers(),
-    }).subscribe(
-      data => {
-        console.log(data);
-        this.loading = false;
-      },
-      error => {
-        console.log(error);
-      }
-    )
+    this.http
+      .post<any>(url, body, {
+        headers: this.configService.headers(),
+      })
+      .subscribe(
+        (data) => {
+          console.log(data);
+          this.loading = false;
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
   }
 
   onDelete() {
-    if (confirm("Delete this checklist?")) {
+    if (confirm('Delete this checklist?')) {
       this.loading = true;
-      const url = environment.api + "employee/delete";
+      const url = environment.api + 'employee/delete';
       const body = this.items;
-      this.http.post<any>(url, body, {
-        headers: this.configService.headers(),
-      }).subscribe(
-        data => {
-          console.log(data);
-          this.httpGet();
-        },
-        error => {
-          console.log(error);
-        }
-      )
+      this.http
+        .post<any>(url, body, {
+          headers: this.configService.headers(),
+        })
+        .subscribe(
+          (data) => {
+            console.log(data);
+            this.httpGet();
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
     }
   }
 
-  warning: string = "";
+  warning: string = '';
   onSubmit() {
     this.loading = true;
-    const url = environment.api + "employee/create";
+    const url = environment.api + 'employee/create';
     const body = {
       model: this.model,
     };
-    this.http.post<any>(url, body, {
-      headers: this.configService.headers(),
-    }).subscribe(
-      data => {
-        console.log(data);
-        this.warning = '';
-        this.httpGet();
-        this.modalService.dismissAll();
-
-      },
-      error => {
-        console.log(error);
-        this.warning = error['error']['note'];
-      }
-    )
+    this.http
+      .post<any>(url, body, {
+        headers: this.configService.headers(),
+      })
+      .subscribe(
+        (data) => {
+          console.log(data);
+          this.warning = '';
+          this.httpGet();
+          this.modalService.dismissAll();
+        },
+        (error) => {
+          console.log(error);
+          this.warning = error['error']['note'];
+        }
+      );
   }
 
   open(content: any) {
     this.modalService.open(content);
   }
 
-  item : any ={};
-  modalChangePassword(content: any, item : any ) {
+  item: any = {};
+  modalChangePassword(content: any, item: any) {
     this.item = item;
     this.changePassword.id = item.id;
     this.changePassword.passwd = '';
-    this.changePassword.passwd2 = ''; 
+    this.changePassword.passwd2 = '';
     this.modalService.open(content, { size: 'sm' });
   }
 
-
-  onSubmitChangePassword(){
+  onSubmitChangePassword() {
     this.loading = true;
-    const url = environment.api + "employee/changePassword";
+    const url = environment.api + 'employee/changePassword';
     const body = {
       model: this.changePassword,
     };
-    this.http.post<any>(url, body, {
-      headers: this.configService.headers(),
-    }).subscribe(
-      data => {
-        console.log(data);
-        this.warning = '';
-        this.httpGet();
-        this.modalService.dismissAll();
-
-      },
-      error => {
-        console.log(error);
-        this.warning = error['error']['note'];
-      }
-    )
+    this.http
+      .post<any>(url, body, {
+        headers: this.configService.headers(),
+      })
+      .subscribe(
+        (data) => {
+          console.log(data);
+          this.warning = '';
+          this.httpGet();
+          this.modalService.dismissAll();
+        },
+        (error) => {
+          console.log(error);
+          this.warning = error['error']['note'];
+        }
+      );
   }
-
-
-
 }

@@ -30,6 +30,7 @@ export class AppComponent implements OnInit {
 
 
   options: any = {};
+version: string = environment.ver;
   constructor(
     private router: Router,
     private config: ConfigService,

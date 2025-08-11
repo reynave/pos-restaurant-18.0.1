@@ -61,6 +61,9 @@ app.get(process.env.PREFIX + 'checkdb', async (req, res) => {
 app.use(process.env.PREFIX + 'public', express.static('public'));
 // ADMIN SERVICE HERE  
 app.use(process.env.PREFIX + 'global', require('./routes/global/global')); //MENU
+app.use(process.env.PREFIX + 'login', require('./routes/admin/loginAdmin')); //ADMIN
+app.use(process.env.PREFIX + 'global', require('./routes/global/global')); //MENU
+
 app.use(process.env.PREFIX + 'employee', require('./routes/general/employee'));
 app.use(process.env.PREFIX + 'payment', require('./routes/general/payment'));
 app.use(process.env.PREFIX + 'discount', require('./routes/general/discount'));

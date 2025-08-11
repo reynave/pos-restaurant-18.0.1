@@ -90,9 +90,10 @@ exports.detailGroup = async (req, res) => {
           WHERE i.menuId =  '${row['menuId']}'   AND i.cartId =   '${id}'
           AND c.presence = 1  AND c.note != '' AND c.sendOrder != ''
         ) AS t1
-        GROUP BY t1.menuSetMenuId, t1.void
+        GROUP BY t1.menuSetMenuId, t1.void, t1.name
         ORDER BY t1.name ASC  
        `;
+    
       const [a1] = await db.query(q1);
 
       const q2 = `
@@ -109,7 +110,7 @@ exports.detailGroup = async (req, res) => {
             WHERE i.menuId = '${row['menuId']}'   AND i.cartId =   '${id}'
             AND c.presence = 1  AND c.sendOrder != ''
           ) AS t1
-        GROUP BY t1.id, t1.void
+        GROUP BY t1.id, t1.void, t1.name
         ORDER BY t1.name ASC 
        `;
       const [a2] = await db.query(q2);
@@ -128,7 +129,7 @@ exports.detailGroup = async (req, res) => {
         WHERE i.menuId = '${row['menuId']}'   AND i.cartId =   '${id}'
           AND c.presence = 1  AND c.sendOrder != ''
         ) AS t1
-        GROUP BY t1.id, t1.void
+        GROUP BY t1.id, t1.void, t1.name
         ORDER BY t1.name ASC 
        `;
       const [a3] = await db.query(q3);
@@ -147,7 +148,7 @@ exports.detailGroup = async (req, res) => {
           WHERE i.menuId = '${row['menuId']}'   AND i.cartId =   '${id}'
           AND c.presence = 1  AND c.sendOrder != ''  AND c.scStatus != 0   
         ) AS t1
-        GROUP BY t1.id, t1.void
+        GROUP BY t1.id, t1.void, t1.name
         ORDER BY t1.name ASC 
        `;
       const [a4] = await db.query(q4);
@@ -167,7 +168,7 @@ exports.detailGroup = async (req, res) => {
                  WHERE i.menuId = '${row['menuId']}'   AND i.cartId =   '${id}'
           AND c.presence = 1  AND c.sendOrder != ''  AND c.taxStatus != 0
         ) AS t1
-        GROUP BY t1.id, t1.void
+        GROUP BY t1.id, t1.void, t1.name
         ORDER BY t1.name ASC 
        `;
       const [a5] = await db.query(q5);
