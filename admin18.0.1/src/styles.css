@@ -1,7 +1,33 @@
 * {
-  font-family: "Open Sans", sans-serif;
+  font-family: "Noto Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings:
+    "wdth" 100;
 }
 
+.gabarito {
+  font-family: "Gabarito", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.noto-sans {
+  font-family: "Noto Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings:
+    "wdth" 100;
+}
+strong{
+    font-family: "Gabarito", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-style: normal;
+}
 
 div,
 p,
@@ -66,7 +92,12 @@ html {
 
 
 
-
+.table tr td{
+    font-size: 0.8rem; 
+  min-height: auto !important;
+  padding: 3px 5px !important;
+  margin: 0px;
+}
 
 .table-editable th {
   border-bottom: 3px solid #468B97;
@@ -84,8 +115,8 @@ html {
   border-radius: 0px;
   background: #fafafa;
   border: none;
-
-  padding: 2px 5px;
+  min-height: auto !important;
+  padding: 3px 5px !important;
   margin: 0px;
 }
 
@@ -104,10 +135,15 @@ html {
 }
 
 .table thead th {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: #495057;
+  color: #333;
+
+  font-family: "Gabarito", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
 }
 
 
@@ -156,14 +192,14 @@ html {
   opacity: 0.5;
 }
 
-.table-report tr th{
+.table-report tr th {
   border-bottom: 3px solid #0C356A;
 }
 
-.table-report tr td{
+.table-report tr td {
   font-size: 0.8rem;
 }
 
-.table-report a{
+.table-report a {
   color: #0174BE;
 }

@@ -15,13 +15,13 @@
 
         </div>
         <div class="mainContent border">
-            <div class="">
 
-                <table class="table table-sm table-report table-hover" style="width: 100%;">
+            <div style="width: max-content;">
+                <table class="table table-hover" style=" min-width:80vw;">
                     <thead class="sticky-top ">
                         <tr>
                             <th>#</th>
-                            <th>Bill</th> 
+                            <th>Bill</th>
                             <th>outlet</th>
                             <th>Date</th>
                             <th>start Date</th>
@@ -43,7 +43,8 @@
                             <td>
                                 <a href="javascript:;" [routerLink]="['/report/transaction/detail']"
                                     [queryParams]="{id:x.id}">
-                                    <span class="badge text-bg-{{x.void == 1 ? 'danger':'success'}}">{{x.id}} </span>
+                                    <span class="badge text-bg-{{x.void == 1 ? 'danger':'success'}}">{{x.id}}
+                                    </span>
                                 </a>
                             </td>
 
@@ -61,7 +62,7 @@
                             <td class="text-end">{{x.grandTotal | number}}</td>
                             <td>
                                 @if(x.void == 1){
-                                    <span class="badge text-bg-danger">VOID </span>
+                                <span class="badge text-bg-danger">VOID </span>
                                 }
 
                             </td>

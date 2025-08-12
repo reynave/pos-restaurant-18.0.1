@@ -16,7 +16,7 @@ export class Actor {
     public name: string,
     public discRate: number,
     public discountGroupId: string,
-    public allAccess: number
+    public allAccess: string
   ) {}
 }
 @Component({
@@ -41,7 +41,7 @@ export class DiscountComponent implements OnInit {
   outletSelect: any = [];
   api: string = environment.api;
   id: string = '';
-  model = new Actor('', 0, '', 1);
+  model = new Actor('', 0, '', 'a');
   path: string = environment.api + 'public/floorMap/icon/';
   selectGroup: any = [];
   selectAuthLevel: any = [];
@@ -59,7 +59,7 @@ export class DiscountComponent implements OnInit {
     this.activatedRoute.queryParams.subscribe((params) => {
       this.id = params['discountGroupId'];
       this.httpDiscountGroup();
-      this.model.discountGroupId = this.id;
+      this.model.discountGroupId = this.id ? this.id : 'a';
     });
   }
 

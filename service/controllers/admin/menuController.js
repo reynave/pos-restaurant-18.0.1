@@ -119,7 +119,7 @@ exports.getAllData = async (req, res) => {
       },
 
       {
-        name: 'workStation', href: '', icon: '<i class="bi bi-hdd-rack"></i>',
+        name: 'workStation', href: '', icon: '<i class="bi bi-pc-display"></i>',
         children: [
           { name: 'Terminal', href: 'workStation/terminal', icon: '<i class="bi bi-pc-display-horizontal"></i>' },
           { name: 'Printer', href: 'workStation/printer', icon: '<i class="bi bi-printer"></i>' },

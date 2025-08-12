@@ -51,12 +51,13 @@ exports.postCreate = async (req, res) => {
     const [result] = await db.query(
       `INSERT INTO discount (
           presence, inputDate, name, 
-          allLevel, allOutlet,  allDiscountGroup,
-          status, discountGroupId, discRate  ) 
+          allDiscountGroup,
+          status, discountGroupId
+        ) 
       VALUES (
         1, '${inputDate}', '${model['name']}', 
-        ${model['allLevel']} , ${model['allLevel']} ,  ${model['allDiscountGroup']}, 
-        1,  ${model['discountGroupId']}, ${model['discRate']} 
+        ${model['discountGroupId'] == 'a' ? 1 : 0}, 
+        1,  '${model['discountGroupId'] != 'a' ? model['discountGroupId'] : ''}'
       )`
 
     );
