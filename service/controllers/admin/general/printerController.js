@@ -1,30 +1,68 @@
 const db = require('../../../config/db');
-const { today } = require('../../../helpers/global');
+const { today, formatDateOnly } = require('../../../helpers/global');
+const { printToPrinter } = require('../../../helpers/printer');
+
+
+exports.testPrintingIP = async (req, res) => {
+  const printerIp = '10.51.122.20'; // ganti dengan IP printer kamu
+  const printerPort = 9100;
+  const cut = "\x1B\x69"; // ESC i = cut paper
+  const date = new Date();
+  const message = '\n\n\n Hello Printer  \n' + date + ' \n\n\n\n' + cut;
+
+  // Panggil dan tangani promise dari printToPrinter
+  try {
+    const result = await printToPrinter(message, printerIp, printerPort);
+    res.json({
+      success: true,
+      message: result
+    });
+  } catch (err) {
+    console.error('Printer error:', err);
+    res.status(500).json({
+      success: false,
+      error: 'Printer connection or print failed',
+      detail: err.message
+    });
+  }
+};
+
+
+exports.testPrinting = async (req, res) => {
+  const printerIp = req.body['item']['ipAddress'];  
+  const printerPort = req.body['item']['port'];  
+  const cut = "\x1B\x69"; // ESC i = cut paper
+  const date = new Date();
+  const message = req.body['message']  + cut;
+
+  // Panggil dan tangani promise dari printToPrinter
+  try {
+    const result = await printToPrinter(message, printerIp, printerPort);
+    res.json({
+      success: true,
+      message: result
+    });
+  } catch (err) {
+    console.error('Printer error:', err);
+    res.status(500).json({
+      success: false,
+      error: 'Printer connection or print failed',
+      message: err.message
+    });
+  }
+};
 
 
 exports.getAllData = async (req, res) => {
-  const discountGroupId = req.query.discountGroupId == 'undefined' ? '' : req.query.discountGroupId;
+
+    const printerGroupId = req.query.printerGroupId == 'undefined' ? '' : req.query.printerGroupId; 
 
   try {
 
     const [items] = await db.query(`
-      SELECT d.*, 0 as 'checkbox',
-      
-(
-  SELECT COUNT(ci.id)
-    FROM discount_level ci
-    WHERE ci.discountId = d.id
-) AS 'totalDiscountLevel',
-
-(
-  SELECT COUNT(ci.id)
-    FROM outlet_discount ci
-    JOIN outlet AS o ON o.id = ci.outletId
-    WHERE ci.discountId = d.id
-) AS 'totalOutlet'
-
-      FROM discount AS d
-      WHERE d.presence =1   ${discountGroupId ? 'and d.discountGroupId = ' + discountGroupId : ''}
+      SELECT *, 0 as 'checkbox'
+      FROM printer  
+      WHERE presence = 1  ${printerGroupId ? 'and printerGroupId = ' + printerGroupId : ''}
     `);
 
 
@@ -49,23 +87,17 @@ exports.postCreate = async (req, res) => {
   try {
 
     const [result] = await db.query(
-      `INSERT INTO discount (
-          presence, inputDate, name, 
-          allLevel, allOutlet,  allDiscountGroup,
-          status, discountGroupId, discRate  ) 
+      `INSERT INTO printer (presence, inputDate,   printerTypeCon, name, ipAddress, port, printerGroupId ) 
       VALUES (
-        1, '${inputDate}', '${model['name']}', 
-        ${model['allLevel']} , ${model['allLevel']} ,  ${model['allDiscountGroup']}, 
-        1,  ${model['discountGroupId']}, ${model['discRate']} 
-      )`
-
+        1, '${inputDate}','${model['printerTypeCon']}','${model['name']}',
+        '${model['ip']}','${model['port']}','${model['printerGroupId']}')`
     );
 
     res.status(201).json({
       error: false,
       inputDate: inputDate,
-      message: 'discount created',
-      discountId: result.insertId
+      message: 'printer created',
+      printerId: result.insertId
     });
   } catch (err) {
     console.error(err);
@@ -96,21 +128,12 @@ exports.postUpdate = async (req, res) => {
       }
 
       const [result] = await db.query(
-        `UPDATE discount SET 
-          allLevel = '${emp['allLevel']}',
-          allOutlet = '${emp['allOutlet']}',
-          allDiscountGroup = '${emp['allDiscountGroup']}',  
-          discountGroupId = '${emp['discountGroupId']}',   
-          maxDiscount = '${emp['maxDiscount']}',
+        `UPDATE printer SET 
+          printerTypeCon = '${emp['printerTypeCon']}',   
           name = '${emp['name']}',   
-          discRate = '${emp['discRate']}',   
-          status = '${emp['status']}',   
-
-          postDiscountSC = '${emp['postDiscountSC']}',   
-          postDiscountTax = '${emp['postDiscountTax']}',   
-          remark = '${emp['remark']}',   
-        
-        
+          ipAddress = '${emp['ipAddress']}',   
+          port = '${emp['port']}',    
+          printerGroupId = '${emp['printerGroupId']}',
           updateDate = '${today()}'
 
         WHERE id = ${id}`,
@@ -159,7 +182,7 @@ exports.postDelete = async (req, res) => {
 
 
       const [result] = await db.query(
-        'UPDATE discount SET presence = ?, updateDate = ? WHERE id = ?',
+        'UPDATE printer SET presence = ?, updateDate = ? WHERE id = ?',
         [checkbox == 0 ? 1 : 0, today(), id]
       );
 

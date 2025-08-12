@@ -76,7 +76,7 @@ exports.getAllData = async (req, res) => {
         name: 'Daily Close', href: 'report/dailyClose', icon: '<i class="bi bi-calendar-date"></i>',
       },
       {
-        name: 'Transaction', href: 'report/transaction', icon: '<i class="bi bi-list-ol"></i>', children: [] 
+        name: 'Transaction', href: 'report/transaction', icon: '<i class="bi bi-list-ol"></i>', children: []
       },
 
       {
@@ -118,36 +118,29 @@ exports.getAllData = async (req, res) => {
         ]
       },
 
-      // {
-      //   name: 'Kitchen', href: 'template', icon: '<i class="bi bi-fire"></i>',
-      //   children: [
-      //     { name: 'Kitchen Slip', href: 'template', params: { idCategory: '100' }, icon: '' },
-      //     { name: 'Kitchen Message', href: 'template', params: { idCategory: '200' }, icon: '' },
-      //     { name: 'Kitchen Monitor', href: 'template', params: { idCategory: '300' }, icon: '' },
-      //   ]
-      // },
-
-
-      // {
-      //   name: 'Other', href: '', icon: '<i class="bi bi-folder"></i>',
-      //   children: [
-      //     { name: 'Void Code', href: 'other/voidCode', icon: '' },
-      //     { name: 'Pantry Message', href: 'other/pantryMessage', icon: '' },
-      //     { name: 'Function Authority', href: 'other/functionAuthority', icon: '' },
-      //     { name: 'Function List', href: 'other/functionList', icon: '' },
-      //     { name: 'Function Short Cuts', href: 'other/functionShortCuts', icon: '' },
-      //   ]
-      // },
-
-
       {
         name: 'workStation', href: '', icon: '<i class="bi bi-hdd-rack"></i>',
         children: [
           { name: 'Terminal', href: 'workStation/terminal', icon: '<i class="bi bi-pc-display-horizontal"></i>' },
           { name: 'Printer', href: 'workStation/printer', icon: '<i class="bi bi-printer"></i>' },
+          {
+            name: 'Printer Group', href: 'workStation/printerGroup', icon: '<i class="bi bi-collection"></i>',
+            children: []
+          },
+
         ]
       },
     ];
+    const [printerGroup] = await db.query(
+      ` SELECT id, name  ,  'workStation/printer/'  as 'href' ,  
+     CONCAT('{"printerGroupId":"',id,'"}')  as 'params'
+        FROM  printer_group WHERE presence = 1`,
+    );;
+
+
+    generalTab[4]['children'][2]['children'] = printerGroup;
+
+
 
 
     const [discount_group] = await db.query(
@@ -175,7 +168,7 @@ exports.getAllData = async (req, res) => {
     generalTab[3]['children'][0]['children'] = paymentGroup;
 
 
- const [outlet] = await db.query(
+    const [outlet] = await db.query(
       ` SELECT id, name  ,  'report/transaction/'  as 'href' ,  
         CONCAT('{"outletId":"',id,'"}')  as 'params'
         FROM  outlet WHERE presence = 1`,
@@ -183,7 +176,7 @@ exports.getAllData = async (req, res) => {
 
     reportTab[1]['children'] = outlet;
 
-    
+
     const data = {
       error: false,
       generalTab: generalTab,

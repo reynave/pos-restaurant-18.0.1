@@ -68,7 +68,8 @@ app.use(process.env.PREFIX + 'employee', require('./routes/general/employee'));
 app.use(process.env.PREFIX + 'payment', require('./routes/general/payment'));
 app.use(process.env.PREFIX + 'discount', require('./routes/general/discount'));
 app.use(process.env.PREFIX + 'other', require('./routes/general/other'));   
-app.use(process.env.PREFIX + 'workStation', require('./routes/station/workStation'));
+app.use(process.env.PREFIX + 'workStation', require('./routes/general/workStation'));
+
 app.use(process.env.PREFIX + 'tableMap',  require('./routes/outlet/tableMap'));
 app.use(process.env.PREFIX + 'outlet', require('./routes/outlet/outlet'));
 app.use(process.env.PREFIX + 'floorMap', require('./routes/outlet/floorMap'));

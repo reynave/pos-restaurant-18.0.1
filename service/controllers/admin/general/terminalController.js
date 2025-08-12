@@ -1,5 +1,5 @@
-const db = require('../../config/db');
-const { today, formatDateOnly } = require('../../helpers/global');
+const db = require('../../../config/db');
+const { today, formatDateOnly } = require('../../../helpers/global');
 const fs = require('fs').promises;
 const path = require('path');
 const jwt = require('jsonwebtoken');

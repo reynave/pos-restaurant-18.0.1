@@ -53,7 +53,9 @@
                         </a>
                      </th>
                      <th>#</th>
-                     <th>Printer Type</th>
+                     <th >Type</th>
+                     <th width="120px">Group</th>
+
                      <th>Name</th>
                      <th>IP Address</th>
                      <th class="text-end">Port</th>
@@ -73,10 +75,14 @@
                      </td>
                      <td>{{i+1}}</td>
                      <td>
-                        <select class="form-control form-control-sm" [(ngModel)]="x.printerTypeCon">
+                        <select class="form-control form-control-sm" [(ngModel)]="x.printerTypeCon" [disabled]="disabled">
                            <option value="ip">ip</option>
-                           <option [value]="item" *ngFor="let item of com">{{item}}</option>
-
+                           <option [value]="item" *ngFor="let item of com">{{item}}</option> 
+                        </select>
+                     <td>
+                        <select class="form-control form-control-sm" [(ngModel)]="x.printerGroupId" [disabled]="disabled">
+                         
+                           <option [value]="item.id" *ngFor="let item of printerGroup">{{item.name}}</option> 
                         </select>
                      </td>
 
@@ -88,8 +94,8 @@
                            [disabled]="disabled"> </td>
 
 
-                     <td> <a href="javascript:;" class="btn btn-sm btn-primary" 
-                        (click)="item = x; open(modalTestPrinting)">Test  Print</a> </td>
+                     <td> <a href="javascript:;" class="btn btn-sm btn-primary"
+                           (click)="item = x; open(modalTestPrinting)">Test Print</a> </td>
 
                   </tr>
                </tbody>
@@ -187,7 +193,7 @@
             <textarea class="form-control" [(ngModel)]="note" rows="5"></textarea>
          </div>
          <div class="d-grid">
-            <button class="btn btn-dark" [disabled]="printLoading" (click)="testPrint()">Test Print</button> 
+            <button class="btn btn-dark" [disabled]="printLoading" (click)="testPrint()">Test Print</button>
          </div>
 
          <div class="alert alert-warning mt-3" *ngIf="printerRest != '' ">

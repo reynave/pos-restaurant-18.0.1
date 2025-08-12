@@ -1,64 +1,14 @@
-const db = require('../../config/db');
-const { today, formatDateOnly } = require('../../helpers/global');
-const { printToPrinter } = require('../../helpers/printer');
-
-
-exports.testPrintingIP = async (req, res) => {
-  const printerIp = '10.51.122.20'; // ganti dengan IP printer kamu
-  const printerPort = 9100;
-  const cut = "\x1B\x69"; // ESC i = cut paper
-  const date = new Date();
-  const message = '\n\n\n Hello Printer  \n' + date + ' \n\n\n\n' + cut;
-
-  // Panggil dan tangani promise dari printToPrinter
-  try {
-    const result = await printToPrinter(message, printerIp, printerPort);
-    res.json({
-      success: true,
-      message: result
-    });
-  } catch (err) {
-    console.error('Printer error:', err);
-    res.status(500).json({
-      success: false,
-      error: 'Printer connection or print failed',
-      detail: err.message
-    });
-  }
-};
-
-
-exports.testPrinting = async (req, res) => {
-  const printerIp = req.body['item']['ipAddress'];  
-  const printerPort = req.body['item']['port'];  
-  const cut = "\x1B\x69"; // ESC i = cut paper
-  const date = new Date();
-  const message = req.body['message']  + cut;
-
-  // Panggil dan tangani promise dari printToPrinter
-  try {
-    const result = await printToPrinter(message, printerIp, printerPort);
-    res.json({
-      success: true,
-      message: result
-    });
-  } catch (err) {
-    console.error('Printer error:', err);
-    res.status(500).json({
-      success: false,
-      error: 'Printer connection or print failed',
-      message: err.message
-    });
-  }
-};
-
+const db = require('../../../config/db');
+const { today, formatDateOnly } = require('../../../helpers/global');
+const { printToPrinter } = require('../../../helpers/printer');
+ 
 
 exports.getAllData = async (req, res) => {
   try {
 
     const [items] = await db.query(`
       SELECT *, 0 as 'checkbox'
-      FROM printer  
+      FROM printer_group  
       WHERE presence = 1
     `);
 
@@ -84,16 +34,8 @@ exports.postCreate = async (req, res) => {
   try {
 
     const [result] = await db.query(
-      `INSERT INTO printer (presence, inputDate,   printerTypeCon, name, ipAddress, port ) 
-      VALUES (?,   ?,?, ?, ?,? )`,
-      [
-        1,
-        inputDate,
-        model['printerTypeCon'],
-        model['name'],
-        model['ip'],
-        model['port'],
-      ]
+      `INSERT INTO printer_group (presence, inputDate,  name) 
+      VALUES (1,   '${inputDate}', '${model['name']}' )`
     );
 
     res.status(201).json({
@@ -131,12 +73,8 @@ exports.postUpdate = async (req, res) => {
       }
 
       const [result] = await db.query(
-        `UPDATE printer SET 
-          printerTypeCon = '${emp['printerTypeCon']}',   
+        `UPDATE printer_group SET 
           name = '${emp['name']}',   
-          ipAddress = '${emp['ipAddress']}',   
-          port = '${emp['port']}',    
-          
           updateDate = '${today()}'
 
         WHERE id = ${id}`,
@@ -185,7 +123,7 @@ exports.postDelete = async (req, res) => {
 
 
       const [result] = await db.query(
-        'UPDATE printer SET presence = ?, updateDate = ? WHERE id = ?',
+        'UPDATE printer_group SET presence = ?, updateDate = ? WHERE id = ?',
         [checkbox == 0 ? 1 : 0, today(), id]
       );
 

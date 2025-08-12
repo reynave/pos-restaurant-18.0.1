@@ -65,6 +65,7 @@ import { DailyReportComponent } from './module/report/daily-report/daily-report.
 import { TransactionComponent } from './module/report/transaction/transaction.component';
 import { UserLoginReportComponent } from './module/report/user-login-report/user-login-report.component';
 import { TransactionDetailComponent } from './module/report/transaction/transaction-detail/transaction-detail.component';
+import { PrinterGroupComponent } from './module/workstation/printer-group/printer-group.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -122,6 +123,8 @@ export const routes: Routes = [
   { path: 'workStation/printQueue', component: PantryStationQueueComponent },
   { path: 'workStation/stationTaxRun', component: StationTaxRunComponent },
   { path: 'workStation/printer', component: PrinterComponent },
+  { path: 'workStation/printerGroup', component: PrinterGroupComponent },
+  
   { path: 'workStation/terminal', component: TerminalComponent },
 
   { path: 'outlet', component: OutletComponent },
