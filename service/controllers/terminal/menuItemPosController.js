@@ -634,7 +634,7 @@ exports.addToCart = async (req, res) => {
       WHERE 
         s.menuId = ${menu['id']}  
       `;
-     
+
       const [result6] = await db.query(q6);
       for (const row of result6) {
         let q3 =
@@ -751,7 +751,7 @@ exports.updateQty = async (req, res) => {
       FROM menu AS m 
       WHERE m.presence = 1 AND id = ${item['menuId']}
     `;
-  
+
     const [row3] = await db.query(q1);
 
     qtyMenu = row3[0]['adjustItemsId'] == '' ? 99999999 : parseInt(row3[0]['qty']);
@@ -789,7 +789,7 @@ exports.updateQty = async (req, res) => {
             where presence = 1 and void = 0  and cartItemId = ${row[0]['id']}  
             and sendOrder = ''
             `;
-       
+
           const [taxRow] = await db.query(tt);
 
           for (const rec of taxRow) {
@@ -811,7 +811,7 @@ exports.updateQty = async (req, res) => {
                 ${rec['applyDiscount']}, '${rec['sendOrder']}', ${rec['menuSetMenuId']}, '${rec['note']}',
                 '${rec['menuSetAdjustItemsId']}'
               )`;
-         
+
 
             if (rec['menuSetAdjustItemsId']) {
               const b1 = `
@@ -1719,7 +1719,7 @@ exports.printQueue = async (req, res) => {
   const results = [];
   const sendOrder = req.query.sendOrder;
   try {
-    const q1 = `SELECT c.cartId, c.sendOrder,  c.menuId , c.id AS 'cartItemId',    m.descs,   m.printerId,  
+    const q1 = `SELECT c.cartId, c.sendOrder,  c.menuId , c.id AS 'cartItemId',    m.descs,   m.printerGroupId,  
         b.tableName, '' as modifier, 1 as qty, a.dailyCheckId
       FROM cart_item AS c
       JOIN cart AS a ON c.cartId = a.id
@@ -1763,25 +1763,33 @@ exports.printQueue = async (req, res) => {
 
     for (const row of items) {
 
-      const q11 = `INSERT INTO print_queue (
-            dailyCheckId, cartId,  so,
-            message,  printerId, status, 
-            inputDate, updateDate 
-          ) 
+
+      const x1 = `SELECT * FROM printer WHERE printerGroupId = ${row['printerGroupId']} AND presence = 1`;
+      const [printerList] = await db.query(x1);
+
+      for (const rexv of printerList) { 
+
+          const q11 = `
+            INSERT INTO print_queue (
+                dailyCheckId, cartId,  so,
+                message,  printerId, status, 
+                inputDate, updateDate 
+            ) 
           VALUES (
             '${result[0]['dailyCheckId']}', '${row['cartId']}', '${row['sendOrder']}',
-            '${JSON.stringify(row)}',  '${row['printerId']}',  0,
+            '${JSON.stringify(row)}',  '${rexv['id']}',  0,
             '${today()}', '${today()}'
           )`;
 
-   
+          const [rest] = await db.query(q11);
+          if (rest.affectedRows === 0) {
+            results.push({ status: 'not found' });
+          } else {
+            results.push({ status: 'print_queue updated' });
+          }
 
-      const [rest] = await db.query(q11);
-      if (rest.affectedRows === 0) {
-        results.push({ status: 'not found' });
-      } else {
-        results.push({ status: 'print_queue updated' });
       }
+
 
     }
 
@@ -1927,7 +1935,7 @@ exports.exitWithoutOrder = async (req, res) => {
         results.push({ cartId, status: 'cart_item updated', });
       }
 
-      
+
       const a5 = `
       UPDATE cart_item_modifier SET
         void = 1
@@ -1952,7 +1960,7 @@ exports.exitWithoutOrder = async (req, res) => {
       } else {
         results.push({ cartId, status: 'cart updated', });
       }
- 
+
       const a2 = `
         DELETE FROM cart_item  
         WHERE cartId = '${cartId}' `;
@@ -1964,7 +1972,7 @@ exports.exitWithoutOrder = async (req, res) => {
         results.push({ cartId, status: 'cart updated', });
       }
 
-       const a3 = `
+      const a3 = `
         DELETE FROM cart_item_modifier  
         WHERE cartId = '${cartId}' `;
       const [resulta3] = await db.query(a3);
@@ -2181,7 +2189,7 @@ exports.transferTable = async (req, res) => {
     // Detail Item
     for (const emp of itemsTransfer) {
       const { menuId, price, total } = emp;
-    
+
       if (!menuId) {
         results.push({ menuId, status: 'failed', reason: 'menuId Missing fields' });
         continue;
@@ -2191,11 +2199,11 @@ exports.transferTable = async (req, res) => {
         WHERE cartId = '${cart['id']}' AND menuId = ${menuId} AND price = ${price} 
         ORDER BY id desc 
         LIMIT ${total}`;
- 
+
       const [cartDb] = await db.query(l1);
 
       for (const emp2 of cartDb) {
-     
+
         const { id } = emp2;
         const q0 = `
           UPDATE cart_item SET 
@@ -2203,7 +2211,7 @@ exports.transferTable = async (req, res) => {
             subgroup = 1, 
             updateDate = '${today()}'
           WHERE id = ${id}`;
-       
+
         const [result] = await db.query(q0);
         if (result.affectedRows === 0) {
           results.push({ id, status: 'not found' });
@@ -2283,7 +2291,7 @@ exports.transferLog = async (req, res) => {
     const transferInData = [];
     for (let i = 0; i < transferIn.length; i++) {
       const targetId = transferIn[i]['menu'];
-     
+
       const index = transferInData.findIndex((item) => item.menu === targetId);
       if (index == -1) {
         const temp = {
@@ -2302,7 +2310,7 @@ exports.transferLog = async (req, res) => {
     const transferOutData = [];
     for (let i = 0; i < transferOut.length; i++) {
       const targetId = transferOut[i]['menu'];
-   
+
       const index = transferOutData.findIndex((item) => item.menu === targetId);
       if (index == -1) {
         const temp = {
@@ -2714,7 +2722,7 @@ exports.addCustomNotesDetail = async (req, res) => {
   const inputDate = today();
   const results = [];
   try {
- 
+
     for (const row of items) {
       const q3 =
         `INSERT INTO cart_item_modifier (

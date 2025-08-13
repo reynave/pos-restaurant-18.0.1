@@ -38,6 +38,7 @@ export class MenuItemComponent implements OnInit {
   modifierGroup: any = [];
   masterData: any = [];
   selectPrinter: any = [];
+  selectPrinterGroup: any = [];
 
   search :  boolean = false;
   constructor(
@@ -70,7 +71,8 @@ export class MenuItemComponent implements OnInit {
         this.selectCategory = data['category'];
         this.selectClass = data['class'];
         this.selectDept = data['dept'];
-        this.selectPrinter = data['printer'];
+    //    this.selectPrinter = data['printer'];
+        this.selectPrinterGroup = data['printerGroup'];
 
         this.menuTaxSc = data['menuTaxSc'];
         this.discountGroup = data['discountGroup'];

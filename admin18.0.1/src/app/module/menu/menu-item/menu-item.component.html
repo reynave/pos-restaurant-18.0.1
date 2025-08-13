@@ -88,7 +88,7 @@
                                 <th>Tax & SC </th>
                                 <th>Discount Group </th>
                                 <th>Modifier Group</th>
-                                <th>Printer</th>
+                                <th>Printer Group</th>
 
                                 <th>Start Date</th>
                                 <th>End Date</th>
@@ -177,10 +177,10 @@
                                 </td>
 
                                 <td>
-
-                                    <select class="form-control form-control-sm" [(ngModel)]="x.printerId"
+                                   
+                                    <select class="form-control form-control-sm" [(ngModel)]="x.printerGroupId"
                                         [disabled]="disabled">
-                                        <option *ngFor="let a of selectPrinter" [value]="a.id">{{a.name}}</option>
+                                        <option *ngFor="let a of selectPrinterGroup" [value]="a.id"> {{a.name}}</option>
                                     </select>
 
                                 </td>
