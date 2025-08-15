@@ -24,7 +24,7 @@ exports.getAllData = async (req, res) => {
 ) AS 'totalOutlet'
 
       FROM discount AS d
-      WHERE d.presence =1   ${discountGroupId ? 'and d.discountGroupId = ' + discountGroupId : ''}
+      WHERE d.presence =1    ${discountGroupId ? ' and allDiscountGroup = 1  or d.discountGroupId = ' + discountGroupId : ''}
     `);
 
 
