@@ -1,4 +1,5 @@
 const db = require('../../config/db');
+const packageJson = require('./../../package.json');
 const { today, formatDateOnly } = require('../../helpers/global');
 
 exports.getAllData = async (req, res) => {
@@ -184,7 +185,7 @@ exports.getAllData = async (req, res) => {
 
       outletTab: outletTab,
       reportTab: reportTab,
-
+      patch : packageJson.version
     }
 
     res.json(data);

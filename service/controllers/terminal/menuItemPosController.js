@@ -1176,7 +1176,10 @@ exports.addDiscountGroup = async (req, res) => {
 
         for (const cartItem of cartItems) {
 
-          if (discountGroup['discountGroupId'] == discountGroupId) {
+          if ((discountGroup['discountGroupId'] == discountGroupId) || discountGroup['allDiscountGroup'] == 1) {
+
+
+
             const t1 = `
           SELECT SUM(t1.totalAmount)  AS 'totalAmount' 
           FROM (
@@ -1200,31 +1203,50 @@ exports.addDiscountGroup = async (req, res) => {
             const totalAmount = parseInt(queryT1[0]['totalAmount']);
 
             if (parseInt(discountGroup['discAmount']) > 0) {
-              discAmount = parseInt(discountGroup['discAmount']) * -1;
-              if (totalAmount + discAmount <= 0) {
-                discAmount = totalAmount * -1;
+              discAmount = 0;
+              // discAmount = parseInt(discountGroup['discAmount']) * -1;
+              // if (totalAmount + discAmount <= 0) {
+              //   discAmount = totalAmount * -1;
+              // }
+                const q = `
+                  INSERT INTO cart_item_modifier (
+                    presence, inputDate, updateDate, void,
+                    cartId, cartItemId, modifierId,
+                    applyDiscount, price
+                  )
+                  VALUES (
+                    1, '${today()}', '${today()}',  0,
+                    '${cartId}',  ${cartItem['id']}, 0,
+                    ${discountGroup['id']}, ${discAmount}
+                )`;
+              const [result] = await db.query(q);
+              if (result.affectedRows === 0) {
+                results.push({ status: 'not found', query: q, });
+              } else {
+                results.push({ status: 'discRate updated', query: q, });
               }
             } else {
-              discAmount = (totalAmount * (parseFloat(discountGroup['discRate']) / 100)) * -1;
+              discAmount = (totalAmount * (parseFloat(discountGroup['discRate']) / 100)) * -1; 
+              const q = `
+                  INSERT INTO cart_item_modifier (
+                    presence, inputDate, updateDate, void,
+                    cartId, cartItemId, modifierId,
+                    applyDiscount, price
+                  )
+                  VALUES (
+                    1, '${today()}', '${today()}',  0,
+                    '${cartId}',  ${cartItem['id']}, 0,
+                    ${discountGroup['id']}, ${discAmount}
+                )`;
+              const [result] = await db.query(q);
+              if (result.affectedRows === 0) {
+                results.push({ status: 'not found', query: q, });
+              } else {
+                results.push({ status: 'discRate updated', query: q, });
+              }
             }
 
 
-            const q = `INSERT INTO cart_item_modifier (
-                presence, inputDate, updateDate, void,
-                cartId, cartItemId, modifierId,
-                applyDiscount, price
-              )
-              VALUES (
-                1, '${today()}', '${today()}',  0,
-                '${cartId}',  ${cartItem['id']}, 0,
-                ${discountGroup['id']}, ${discAmount}
-            )`;
-            const [result] = await db.query(q);
-            if (result.affectedRows === 0) {
-              results.push({ status: 'not found', query: q, });
-            } else {
-              results.push({ status: 'updated', query: q, });
-            }
             // const  taxScUpdateRest  = await taxScUpdate(cartItem['id'], totalAmount); 
             const taxScUpdateRest = await taxScUpdate(cartItem['id']);
           } else {
@@ -1243,8 +1265,8 @@ exports.addDiscountGroup = async (req, res) => {
       }
 
       if (checkBox == 1) {
-        if (discountGroup['discountGroupId'] == discountGroupId) {
 
+        if ((discountGroup['discountGroupId'] == discountGroupId) || discountGroup['allDiscountGroup'] == 1) {
           const q2 = `
             SELECT id FROM cart_item 
             WHERE  cartId = '${cartId}' AND presence = 1 AND void = 0
@@ -1767,9 +1789,9 @@ exports.printQueue = async (req, res) => {
       const x1 = `SELECT * FROM printer WHERE printerGroupId = ${row['printerGroupId']} AND presence = 1`;
       const [printerList] = await db.query(x1);
 
-      for (const rexv of printerList) { 
+      for (const rexv of printerList) {
 
-          const q11 = `
+        const q11 = `
             INSERT INTO print_queue (
                 dailyCheckId, cartId,  so,
                 message,  printerId, status, 
@@ -1781,12 +1803,12 @@ exports.printQueue = async (req, res) => {
             '${today()}', '${today()}'
           )`;
 
-          const [rest] = await db.query(q11);
-          if (rest.affectedRows === 0) {
-            results.push({ status: 'not found' });
-          } else {
-            results.push({ status: 'print_queue updated' });
-          }
+        const [rest] = await db.query(q11);
+        if (rest.affectedRows === 0) {
+          results.push({ status: 'not found' });
+        } else {
+          results.push({ status: 'print_queue updated' });
+        }
 
       }
 

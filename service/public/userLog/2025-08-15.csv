@@ -1,0 +1,109 @@
+time,outletId,workStationId,userId,bill,action,url,method,server
+14:29:07,Imperial Kitchen(15),0005,sa (76),,click setting,http://localhost:4850/#/tables
+14:29:14,Imperial Kitchen(15),0005,sa (76),250813000301,Go to Menu,http://localhost:4850/#/tables
+14:29:16,Imperial Kitchen(15),0005,sa (76),250813000301,Click PAYMENT,http://localhost:4850/#/menu?id=250813000301
+14:29:16,Imperial Kitchen(15),0005,sa (76),250813000301,Update to payment,http://localhost:4850/#/tables
+14:29:19,Imperial Kitchen(15),0005,sa (76),250813000301,Add Payment BCA CREDIT ,http://localhost:4850/#/payment?id=250813000301
+14:29:20,Imperial Kitchen(15),0005,sa (76),250813000301,Submit Payment,http://localhost:4850/#/payment?id=250813000301
+14:29:21,Imperial Kitchen(15),0005,sa (76),250813000301,Finish Payment And Print Closed Bill,http://localhost:4850/#/payment?id=250813000301
+14:29:21,Imperial Kitchen(15),0005,sa (76),250813000301,CLOSE PAYMENT,http://localhost:4850/#/payment?id=250813000301
+14:29:29,Imperial Kitchen(15),0005,sa (76),,Sign Off,http://localhost:4850/#/tables
+14:29:39,Imperial Kitchen(15),0005,sa (76),,WARNING Daily Close ?,http://localhost:4850/#/tables
+14:29:40,Imperial Kitchen(15),0005,sa (76),,Daily Close -> YES,http://localhost:4850/#/tables
+14:29:45,Imperial Kitchen(15),0005,sa (76),,Sign Off,http://localhost:4850/#/daily/start
+14:30:12,Imperial Kitchen(15),0005,sa (76),,New Order Imperial Kitchen(15) Cover : 4, Table : TA1(15),http://localhost:4850/#/tables
+14:30:12,Imperial Kitchen(15),0005,sa (76),250815000302,Go to Menu,http://localhost:4850/#/tables
+14:30:15,Imperial Kitchen(15),0005,sa (76),250815000302,Menu Lookup 0,http://localhost:4850/#/menu?id=250815000302
+14:30:16,Imperial Kitchen(15),0005,sa (76),250815000302,Menu Lookup 1,http://localhost:4850/#/menu?id=250815000302
+14:30:18,Imperial Kitchen(15),0005,sa (76),250815000302,Menu Lookup 4,http://localhost:4850/#/menu?id=250815000302
+14:30:20,Imperial Kitchen(15),0005,sa (76),250815000302,Add Menu NS GRG SAPI PDS(29) @46900.00,http://localhost:4850/#/menu?id=250815000302
+14:30:23,Imperial Kitchen(15),0005,sa (76),250815000302,Add Menu SUP KPTG ASPRGS(54) @37900.00,http://localhost:4850/#/menu?id=250815000302
+14:30:23,Imperial Kitchen(15),0005,sa (76),250815000302,Add Menu LMP KLT TH UDG DD(71) @15000.00,http://localhost:4850/#/menu?id=250815000302
+14:30:24,Imperial Kitchen(15),0005,sa (76),250815000302,Add Menu MANTAO KKS DD(75) @15000.00,http://localhost:4850/#/menu?id=250815000302
+14:30:25,Imperial Kitchen(15),0005,sa (76),250815000302,Add Menu SUP WAN TON(55) @41900.00,http://localhost:4850/#/menu?id=250815000302
+14:30:25,Imperial Kitchen(15),0005,sa (76),250815000302,Add Menu KW KUAH SAPI(33) @55900.00,http://localhost:4850/#/menu?id=250815000302
+14:30:30,Imperial Kitchen(15),0005,sa (76),250815000302,Add Menu NS GRG SAPI PDS(29) @46900.00,http://localhost:4850/#/menu?id=250815000302
+14:30:33,Imperial Kitchen(15),0005,sa (76),250815000302,Menu Lookup 1,http://localhost:4850/#/menu?id=250815000302
+14:30:35,Imperial Kitchen(15),0005,sa (76),250815000302,Void item ,http://localhost:4850/#/menu?id=250815000302
+14:30:36,Imperial Kitchen(15),0005,sa (76),250815000302,Menu Lookup 3,http://localhost:4850/#/menu?id=250815000302
+14:30:37,Imperial Kitchen(15),0005,sa (76),250815000302,Add Menu MANGGO KYOTO(24) @30000.00,http://localhost:4850/#/menu?id=250815000302
+14:30:38,Imperial Kitchen(15),0005,sa (76),250815000302,Add Menu MANGGO KYOTO(24) @30000.00,http://localhost:4850/#/menu?id=250815000302
+14:30:38,Imperial Kitchen(15),0005,sa (76),250815000302,Add Menu MANGGO KYOTO(24) @30000.00,http://localhost:4850/#/menu?id=250815000302
+14:30:39,Imperial Kitchen(15),0005,sa (76),250815000302,Add Menu PASSION CCNT DELIGHT(25) @20000.00,http://localhost:4850/#/menu?id=250815000302
+14:30:39,Imperial Kitchen(15),0005,sa (76),250815000302,Add Menu PASSION CCNT DELIGHT(25) @20000.00,http://localhost:4850/#/menu?id=250815000302
+14:30:40,Imperial Kitchen(15),0005,sa (76),250815000302,Add Menu STRAWBERRY MOJITO(26) @10000.00,http://localhost:4850/#/menu?id=250815000302
+14:30:42,Imperial Kitchen(15),0005,sa (76),250815000302,Menu Lookup 0,http://localhost:4850/#/menu?id=250815000302
+14:32:23,Imperial Kitchen(15),0005,sa (76),250815000302,Apply Discount Group 10% Disc All (1) @10.00%,http://localhost:4850/#/menu?id=250815000302
+14:32:34,Imperial Kitchen(15),0005,sa (76),250815000302,Apply Discount Group 10% Disc All (1) @10.00%,http://localhost:4850/#/menu?id=250815000302
+14:32:37,Imperial Kitchen(15),0005,sa (76),250815000302,Apply Discount Group 10% Disc All (1) @10.00%,http://localhost:4850/#/menu?id=250815000302
+14:35:24,Imperial Kitchen(15),0005,sa (76),250815000302,Apply Discount Group 10% Disc All (1) @10.00%,http://localhost:4850/#/menu?id=250815000302
+14:36:13,Imperial Kitchen(15),0005,sa (76),250815000302,Apply Discount Group 15% Disc all (2) @15.00%,http://localhost:4850/#/menu?id=250815000302
+14:36:17,Imperial Kitchen(15),0005,sa (76),250815000302,Go to Menu,http://localhost:4850/#/tables
+14:36:20,Imperial Kitchen(15),0005,sa (76),250815000302,Send Order,http://localhost:4850/#/menu?id=250815000302
+14:36:20,Imperial Kitchen(15),0005,sa (76),250815000302,printQueue,http://localhost:4850/#/menu?id=250815000302
+14:36:21,Imperial Kitchen(15),0005,sa (76),250815000302,Go to Menu,http://localhost:4850/#/tables
+14:36:24,Imperial Kitchen(15),0005,sa (76),250815000302,Click BILL,http://localhost:4850/#/menu?id=250815000302
+14:36:34,Imperial Kitchen(15),0005,sa (76),250815000302,Click BILL,http://localhost:4850/#/menu?id=250815000302
+15:20:52,Imperial Kitchen(15),0005,sa (76),250815000302,Click BILL,http://localhost:4850/#/menu?id=250815000302
+15:21:28,Imperial Kitchen(15),0005,sa (76),250815000302,Click BILL,http://localhost:4850/#/menu?id=250815000302
+15:38:34,Imperial Kitchen(15),0005,sa (76),250815000302,Click BILL,http://localhost:4850/#/menu?id=250815000302
+15:52:42,Imperial Kitchen(15),0005,sa (76),250815000302,Click BILL,http://localhost:4850/#/menu?id=250815000302
+15:54:54,Imperial Kitchen(15),0005,sa (76),250815000302,Click BILL,http://localhost:4850/#/menu?id=250815000302
+15:55:05,Imperial Kitchen(15),0005,sa (76),250815000302,Click BILL,http://localhost:4850/#/menu?id=250815000302
+15:56:26,Imperial Kitchen(15),0005,sa (76),250815000302,Click BILL,http://localhost:4850/#/menu?id=250815000302
+15:57:44,Imperial Kitchen(15),0005,sa (76),250815000302,Click BILL,http://localhost:4850/#/menu?id=250815000302
+15:57:53,Imperial Kitchen(15),0005,sa (76),250815000302,Click BILL,http://localhost:4850/#/menu?id=250815000302
+15:58:12,Imperial Kitchen(15),0005,sa (76),250815000302,Click BILL,http://localhost:4850/#/menu?id=250815000302
+15:58:30,Imperial Kitchen(15),0005,sa (76),250815000302,Click BILL,http://localhost:4850/#/menu?id=250815000302
+15:58:49,Imperial Kitchen(15),0005,sa (76),250815000302,Click BILL,http://localhost:4850/#/menu?id=250815000302
+15:59:14,Imperial Kitchen(15),0005,sa (76),250815000302,Click BILL,http://localhost:4850/#/menu?id=250815000302
+16:18:56,Imperial Kitchen(15),0005,sa (76),250815000302,Click BILL,http://localhost:4850/#/menu?id=250815000302
+16:19:05,Imperial Kitchen(15),0005,sa (76),250815000302,Click BILL,http://localhost:4850/#/menu?id=250815000302
+16:56:12,Imperial Kitchen(15),0005,sa (76),250815000302,Apply Discount Group DISC MAX 100 (18) @0.00%,http://localhost:4850/#/menu?id=250815000302
+16:57:09,Imperial Kitchen(15),0005,sa (76),250815000302,Apply Discount Group DISC MAX 100 (18) @0.00%,http://localhost:4850/#/menu?id=250815000302
+16:57:27,Imperial Kitchen(15),0005,sa (76),250815000302,Apply Discount Group DISC MAX 100 (18) @0.00%,http://localhost:4850/#/menu?id=250815000302
+16:57:48,Imperial Kitchen(15),0005,sa (76),250815000302,Apply Discount Group 27% Disc all (21) @27.00%,http://localhost:4850/#/menu?id=250815000302
+16:57:54,Imperial Kitchen(15),0005,sa (76),250815000302,Apply Discount Group 10% Disc All (1) @10.00%,http://localhost:4850/#/menu?id=250815000302
+16:58:00,Imperial Kitchen(15),0005,sa (76),250815000302,Apply Discount Group DISC MAX 100 (18) @0.00%,http://localhost:4850/#/menu?id=250815000302
+16:58:17,Imperial Kitchen(15),0005,sa (76),250815000302,Apply Discount Group DISC MAX 100 (18) @0.00%,http://localhost:4850/#/menu?id=250815000302
+16:58:56,Imperial Kitchen(15),0005,sa (76),250815000302,Apply Discount Group DISC MAX 100 (18) @0.00%,http://localhost:4850/#/menu?id=250815000302
+16:59:09,Imperial Kitchen(15),0005,sa (76),250815000302,Apply Discount Group DISC MAX 100 (18) @0.00%,http://localhost:4850/#/menu?id=250815000302
+17:00:54,Imperial Kitchen(15),0005,sa (76),250815000302,Apply Discount Group DISC MAX 100 (18) @0.00%,http://localhost:4850/#/menu?id=250815000302
+17:02:18,Imperial Kitchen(15),0005,sa (76),250815000302,Click PAYMENT,http://localhost:4850/#/menu?id=250815000302
+17:02:19,Imperial Kitchen(15),0005,sa (76),250815000302,Update to payment,http://localhost:4850/#/tables
+17:02:22,Imperial Kitchen(15),0005,sa (76),250815000302,Add Payment BCA FLAZZ ,http://localhost:4850/#/payment?id=250815000302
+17:02:23,Imperial Kitchen(15),0005,sa (76),250815000302,Submit Payment,http://localhost:4850/#/payment?id=250815000302
+17:02:23,Imperial Kitchen(15),0005,sa (76),250815000302,Finish Payment And Print Closed Bill,http://localhost:4850/#/payment?id=250815000302
+17:02:23,Imperial Kitchen(15),0005,sa (76),250815000302,CLOSE PAYMENT,http://localhost:4850/#/payment?id=250815000302
+17:02:28,Imperial Kitchen(15),0005,sa (76),,New Order Imperial Kitchen(15) Cover : 4, Table : TA2(4),http://localhost:4850/#/tables
+17:02:28,Imperial Kitchen(15),0005,sa (76),250815000303,Go to Menu,http://localhost:4850/#/tables
+17:02:33,Imperial Kitchen(15),0005,sa (76),250815000303,Menu Lookup 0,http://localhost:4850/#/menu?id=250815000303
+17:02:34,Imperial Kitchen(15),0005,sa (76),250815000303,Menu Lookup 1,http://localhost:4850/#/menu?id=250815000303
+17:02:34,Imperial Kitchen(15),0005,sa (76),250815000303,Menu Lookup 3,http://localhost:4850/#/menu?id=250815000303
+17:02:35,Imperial Kitchen(15),0005,sa (76),250815000303,Add Menu MANGGO KYOTO(24) @30000.00,http://localhost:4850/#/menu?id=250815000303
+17:02:35,Imperial Kitchen(15),0005,sa (76),250815000303,Add Menu PASSION CCNT DELIGHT(25) @20000.00,http://localhost:4850/#/menu?id=250815000303
+17:02:35,Imperial Kitchen(15),0005,sa (76),250815000303,Add Menu STRAWBERRY MOJITO(26) @10000.00,http://localhost:4850/#/menu?id=250815000303
+17:02:36,Imperial Kitchen(15),0005,sa (76),250815000303,Add Menu MANGGO KYOTO(24) @30000.00,http://localhost:4850/#/menu?id=250815000303
+17:02:36,Imperial Kitchen(15),0005,sa (76),250815000303,Add Menu PASSION CCNT DELIGHT(25) @20000.00,http://localhost:4850/#/menu?id=250815000303
+17:02:37,Imperial Kitchen(15),0005,sa (76),250815000303,Menu Lookup 0,http://localhost:4850/#/menu?id=250815000303
+17:02:43,Imperial Kitchen(15),0005,sa (76),250815000303,Apply Discount Group DISC MAX 100 (18) @0.00%,http://localhost:4850/#/menu?id=250815000303
+17:15:05,Imperial Kitchen(15),0005,sa (76),250815000303,menu/modifier MANGGO KYOTO menuId : 24, price : 30000,http://localhost:4850/#/menu?id=250815000303
+17:17:57,Imperial Kitchen(15),0005,sa (76),250815000303,menu/modifier MANGGO KYOTO menuId : 24, price : 30000,http://localhost:4850/#/menu?id=250815000303
+17:18:02,Imperial Kitchen(15),0005,sa (76),250815000303,Remove Modifier item detail,http://localhost:4850/#/menu/modifier?id=250815000303&menuId=24&price=30000
+17:18:06,Imperial Kitchen(15),0005,sa (76),250815000303,menu/modifier PASSION CCNT DELIGHT menuId : 25, price : 20000,http://localhost:4850/#/menu?id=250815000303
+17:18:10,Imperial Kitchen(15),0005,sa (76),250815000303,Remove Modifier item detail,http://localhost:4850/#/menu/modifier?id=250815000303&menuId=25&price=20000
+17:18:15,Imperial Kitchen(15),0005,sa (76),250815000303,menu/modifier STRAWBERRY MOJITO menuId : 26, price : 10000,http://localhost:4850/#/menu?id=250815000303
+17:18:17,Imperial Kitchen(15),0005,sa (76),250815000303,Remove Modifier item detail,http://localhost:4850/#/menu/modifier?id=250815000303&menuId=26&price=10000
+17:19:26,Imperial Kitchen(15),0005,sa (76),250815000303,Go to Menu,http://localhost:4850/#/tables
+17:19:28,Imperial Kitchen(15),0005,sa (76),250815000303,Click BILL,http://localhost:4850/#/menu?id=250815000303
+17:33:13,Imperial Kitchen(15),0005,sa (76),250815000303,Apply Discount Group DISC MAX 100 (18) @0.00%,http://localhost:4850/#/menu?id=250815000303
+17:55:52,Imperial Kitchen(15),0005,sa (76),250815000303,Apply Discount Group DISC MAX 200 (19) @0.00%,http://localhost:4850/#/menu?id=250815000303
+17:56:15,Imperial Kitchen(15),0005,sa (76),250815000303,Apply Discount Group DISC MAX 200 (19) @0.00%,http://localhost:4850/#/menu?id=250815000303
+17:56:33,Imperial Kitchen(15),0005,sa (76),250815000303,Apply Discount Group DISC MAX 200 (19) @0.00%,http://localhost:4850/#/menu?id=250815000303
+18:04:08,Imperial Kitchen(15),0005,sa (76),250815000303,Apply Discount Group 10% Disc All (1) @10.00%,http://localhost:4850/#/menu?id=250815000303
+18:07:36,Imperial Kitchen(15),0005,sa (76),250815000303,Go to Menu,http://localhost:4850/#/tables
+18:07:39,Imperial Kitchen(15),0005,sa (76),250815000303,Click BILL,http://localhost:4850/#/menu?id=250815000303
+18:26:53,Imperial Kitchen(15),0005,sa (76),250815000303,Send Order,http://localhost:4850/#/menu?id=250815000303
+18:26:53,Imperial Kitchen(15),0005,sa (76),250815000303,printQueue,http://localhost:4850/#/menu?id=250815000303
+18:26:55,Imperial Kitchen(15),0005,sa (76),250815000303,Go to Menu,http://localhost:4850/#/tables
+18:26:58,Imperial Kitchen(15),0005,sa (76),250815000303,Click BILL,http://localhost:4850/#/menu?id=250815000303

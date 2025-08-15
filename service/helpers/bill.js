@@ -106,17 +106,17 @@ async function cart(cartId = '', subgroup = 0) {
     });
 
     formattedRows.forEach(element => {
-        subTotal += parseInt(element['totalAmount']);
+        //  subTotal += parseInt(element['totalAmount']);
         totalItem += element['total'];
         itemTotal += parseInt(element['totalAmount']);
         element['modifier'].forEach(element => {
-            subTotal += parseInt(element['price']);
+            //   subTotal += parseInt(element['price']);
             if (parseInt(element['price']) > 0) {
                 itemTotal += parseInt(element['price']);
             }
         });
     });
-    grandTotal = grandTotal + subTotal;
+    grandTotal = 0;
     taxSc.forEach(element => {
         grandTotal += parseInt(element['totalAmount']);
     });
@@ -135,16 +135,63 @@ async function cart(cartId = '', subgroup = 0) {
         tips += element['tips'];
     });
 
-
-    const [discountGroup] = await db.query(`
-       SELECT d.name,
-            m.applyDiscount, COUNT(m.applyDiscount) AS 'qty', 
-        SUM(m.price) AS 'amount'
+    const ds = ` SELECT  d.name,
+            m.applyDiscount, count(m.id) AS 'qty', SUM(i.price ) AS 'subTotal', 0 as 'maxDiscount',  
+           GREATEST(SUM(i.price )  - d.discAmount, SUM(i.price  )   ) * -1 AS 'amount', d.discAmount, 0 as 'def'
         FROM cart_item_modifier AS m 
+        LEFT JOIN cart_item AS i ON i.id = m.cartItemId
         LEFT JOIN discount AS d ON d.id = m.applyDiscount
         WHERE m.applyDiscount != 0 AND m.cartId = '${cartId}'
-        GROUP BY m.applyDiscount
+        AND m.presence = 1 AND m.void = 0  AND d.discAmount > 0
+        GROUP BY  m.applyDiscount, d.discAmount `;
+    const [discountAmount] = await db.query(ds)
+
+
+
+
+    let [discountGroup] = await db.query(`  
+        
+        SELECT a.* FROM (
+
+ 			SELECT d.name,
+                m.applyDiscount, COUNT(m.applyDiscount) AS 'qty',   d.maxDiscount,
+            SUM(m.price) AS 'amount' ,  0 as  discAmount , d.maxDiscount+SUM(m.price) AS 'def'
+            FROM cart_item_modifier AS m 
+            LEFT JOIN discount AS d ON d.id = m.applyDiscount
+            WHERE m.applyDiscount != 0 AND m.cartId = '${cartId}' AND m.presence = 1 AND m.void =0
+            GROUP BY m.applyDiscount,   d.maxDiscount
+            
+            ) AS a 
+        WHERE a.amount < 0
+
     `);
+    let fixDiscountGroup = 0;
+
+    discountGroup = [...discountGroup, ...discountAmount];
+
+
+
+    discountGroup.forEach(row => {
+        if (row['maxDiscount'] > 0) {
+            row['amount'] = row['maxDiscount'] * -1;
+            row['name'] = row['name'] + '(Max: ' + Number(row['maxDiscount']).toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(/\./g, ',') + ')';
+        }
+    });
+
+    for (const d of discountGroup) {
+        fixDiscountGroup += parseInt(d['def']);
+    }
+
+
+    subTotal = itemTotal;
+    discountGroup.forEach(element => {
+        subTotal += parseInt(element['amount']);
+    });
+
+    grandTotal = subTotal;
+    taxSc.forEach(element => {
+        grandTotal += parseInt(element['totalAmount']);
+    });
 
 
 
@@ -152,11 +199,15 @@ async function cart(cartId = '', subgroup = 0) {
 
     return {
         cart: formattedRows,
-        taxSc: taxSc,
+
         itemTotal: itemTotal,
-        subTotal: subTotal,
+        fixDiscountGroup: fixDiscountGroup,
         discountGroup: discountGroup,
+        discountAmount: discountAmount,
+        subTotal: subTotal,
+        taxSc: taxSc,
         grandTotal: grandTotal,
+
         totalItem: totalItem,
         cartPayment: cartPayment,
         unpaid: grandTotal - paid < 0 ? 0 : (grandTotal - paid),
