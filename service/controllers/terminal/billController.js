@@ -2,10 +2,13 @@ const db = require('../../config/db');
 const net = require('net');
 const { today, formatDateTime, formatCurrency, formatLine, centerText } = require('../../helpers/global');
 const { cart } = require('../../helpers/bill');
+const Handlebars = require("handlebars");
 
+require("../../helpers/handlebarsFunction")(Handlebars);
+
+const fs = require("fs");
 const ejs = require('ejs');
 const path = require('path');
-const { group } = require('console');
 
 exports.getData = async (req, res) => {
 
@@ -79,13 +82,86 @@ exports.getData = async (req, res) => {
   }
 };
 
-exports.printing = async (req, res) => {
+exports.printing2 = async (req, res) => {
   const templatePath = path.join(__dirname, '../../public/template/bill.ejs');
   const api = req.query.api == 'true' ? true : false;
  
+  try {
+  
+    const cartId = req.query.id;
+    const subgroup = !req.query.subgroup ? 1 : req.query.subgroup;
 
+    const data = await cart(cartId, subgroup);
+
+
+    const [transaction] = await db.query(`
+     SELECT 
+         c.id   , c.id as 'bill', c.void,  c.dailyCheckId, c.cover, c.outletId,
+        o.name AS 'outlet', c.startDate, c.endDate , 
+        c.close,   t.tableName, t.tableNameExt, 'UAT PERSON' as 'servedBy' 
+      FROM cart AS c
+      JOIN outlet AS o ON o.id = c.outletId
+      JOIN outlet_table_map AS t ON t.id = c.outletTableMapId
+      WHERE c.presence = 1 AND  c.id = '${cartId}'
+    `);
+
+    const formattedRows = transaction.map(row => ({
+      ...row,
+      bill: row.id + (subgroup > 1 ? ('.' + subgroup) : ''),
+
+      startDate: formatDateTime(row.startDate),
+      endDate: row.close == 0 ? '' : formatDateTime(row.endDate),
+    }));
+
+    const [outlet] = await db.query(`
+     SELECT  * 
+      FROM outlet  
+      WHERE id = '${formattedRows[0]['outletId']}'
+    `);
+
+    if (api == true) {
+      res.json({
+        data: data,
+        transaction: formattedRows[0],
+        company: outlet[0],
+        subgroup: subgroup,
+        function: [
+          { 'formatCurrency(value, symbol=null)': `return string` },
+          { 'formatLine(leftText, rightText, lineLength = 50)': `return string` },
+          { 'centerText(str, lineLength = 50)': `return string` },
+        ]
+      });
+    } else {
+
+
+      const html = await ejs.renderFile(templatePath, {
+        data: data,
+        transaction: formattedRows[0],
+        company: outlet[0],
+        formatCurrency,
+        formatLine,
+        centerText
+      });
+      res.setHeader('Content-Type', 'application/json');
+      res.send(html);
+    }
+
+  } catch (err) {
+    console.error('Render error:', err);
+    res.status(500).send('Gagal render HTML');
+  }
+};
+
+
+
+exports.printing = async (req, res) => {
+
+  const api = req.query.api == 'true' ? true : false;
 
   try {
+
+    const templateSource = fs.readFileSync("public/template/bill.hbs", "utf8");
+    const template = Handlebars.compile(templateSource);
 
 
 
@@ -108,7 +184,7 @@ exports.printing = async (req, res) => {
 
     const formattedRows = transaction.map(row => ({
       ...row,
-      bill : row.id + ( subgroup > 1 ? ( '.'+subgroup): ''),
+      bill: row.id + (subgroup > 1 ? ('.' + subgroup) : ''),
 
       startDate: formatDateTime(row.startDate),
       endDate: row.close == 0 ? '' : formatDateTime(row.endDate),
@@ -125,7 +201,7 @@ exports.printing = async (req, res) => {
         data: data,
         transaction: formattedRows[0],
         company: outlet[0],
-        subgroup :subgroup,
+        subgroup: subgroup,
         function: [
           { 'formatCurrency(value, symbol=null)': `return string` },
           { 'formatLine(leftText, rightText, lineLength = 50)': `return string` },
@@ -133,20 +209,47 @@ exports.printing = async (req, res) => {
         ]
       });
     } else {
-
-
-      const html = await ejs.renderFile(templatePath, {
+      const jsonData = {
         data: data,
         transaction: formattedRows[0],
         company: outlet[0],
         formatCurrency,
         formatLine,
         centerText
-      });
+      };
+      const result = template(jsonData);
       res.setHeader('Content-Type', 'application/json');
-      res.send(html);
+      res.send(result);
     }
 
+  } catch (err) {
+    console.error('Render error:', err);
+    res.status(500).send('Gagal render HTML');
+  }
+};
+
+
+
+exports.testHbs = async (req, res) => {
+
+  try {
+    const templateSource = fs.readFileSync("public/template/bill.hbs", "utf8");
+
+    const template = Handlebars.compile(templateSource);
+
+    const data = {
+      items: [
+        { nama: "Nasi Goreng", qty: 1, harga: 25000, total: 25000 },
+        { nama: "Es Teh Manis", qty: 2, harga: 5000, total: 10000 },
+        { nama: "Ayam Bakar", qty: 1, harga: 30000, total: 30000 }
+      ],
+      grandTotal: 65000
+    };
+
+    const result = template(data);
+    console.log(result);
+    res.setHeader('Content-Type', 'application/json');
+    res.send(result);
   } catch (err) {
     console.error('Render error:', err);
     res.status(500).send('Gagal render HTML');

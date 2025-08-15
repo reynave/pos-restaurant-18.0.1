@@ -1,23 +1,40 @@
 /* You can add global styles to this file, and also import other style files */
 * {
     font-family: "Open Sans", sans-serif;
+
 }
 
 html,
 body {
     min-height: 100%;
     margin: 0;
-   
-}
- 
 
-body { 
-    margin: 0 auto;   
+}
+
+strong {
+    font-family: "Gabarito", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-style: normal;
+}
+
+small,
+.badge {
+    font-family: "Noto Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    font-variation-settings:
+        "wdth" 100;
+}
+
+body {
+    margin: 0 auto;
     max-width: var(--body-width);
 }
 
-.body-with-header{
- padding-top: 4rem;
+.body-with-header {
+    padding-top: 4rem;
 }
 
 div,
@@ -34,6 +51,7 @@ label {
     max-width: var(--wrapper-sm-width);
     margin: 0 auto;
 }
+
 .wrapper-md {
     max-width: var(--wrapper-md-width);
     margin: 0 auto;
@@ -52,24 +70,32 @@ label {
 }
 
 .map {
-    margin:  0 auto;
-    width: 100%; 
+    margin: 0 auto;
+    width: 100%;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
 }
-.btn{
+
+.btn {
     border-radius: 0px;
+     font-family: "Gabarito", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
 }
+
 .menu {
     max-width: 300px;
 }
-.content-table{ 
+
+.content-table {
     max-height: 80vh;
     overflow-y: auto;
 }
-.content-table table thead  th{
-    background-color: var(--bg-color-primary-10)  ;
+
+.content-table table thead th {
+    background-color: var(--bg-color-primary-10);
 }
 
 
@@ -83,6 +109,9 @@ label {
 .table thead th {
     font-size: var(--font-size);
     text-transform: uppercase;
+      font-family: "Gabarito", sans-serif;
+  font-weight: 600; 
+  font-size: 0.9rem;
 }
 
 .table .bg-light td {
@@ -91,7 +120,7 @@ label {
 }
 
 .table td {
-    cursor: pointer;
+    cursor: pointer; 
 }
 
 .tr-active td {
@@ -108,55 +137,58 @@ label {
 .table-bill span {
     font-family: var(--bs-font-monospace) !important;
 }
-.navbar{
-  padding: 0.3rem 10px !important;
+
+.navbar {
+    padding: 0.3rem 10px !important;
 }
 
-.top-header{
+.top-header {
     z-index: 99;
     position: fixed;
     top: 0px;
     left: 0px;
     width: 100%;
 }
- 
-.header-text{
+
+.header-text {
     font-size: 1.1rem;
     padding: 5px;
 }
 
-small{
+small {
     font-size: 0.8rem;
 }
 
- 
+
 button:disabled,
-button[disabled]{
-  border: none; 
+button[disabled] {
+    border: none;
 }
 
-.table-30{
+.table-30 {
     background-color: var(--bg-color-danger) !important;
 }
 
 
-.table-10{
+.table-10 {
     background-color: var(--bg-color-primary-50) !important;
 }
 
-.table-12{
+.table-12 {
     background-color: var(--bg-color-primary-40) !important;
 }
- .table-18{
+
+.table-18 {
     background-color: var(--bg-color-primary-30) !important;
 }
-.table-name{
+
+.table-name {
     text-shadow: 2px 2px 2px #f4f4f4;
-    color:#333;
-   
+    color: #333;
+
 }
 
-.table-pos-label{
+.table-pos-label {
     position: absolute;
     bottom: -1.2rem;
     left: 0px;
@@ -164,35 +196,35 @@ button[disabled]{
     text-align: center;
 }
 
-.table > :not(caption) > * > * {
+.table> :not(caption)>*>* {
     background: none;
 }
 
 
 /* for component  tables.component.html */
-.table-map{
+.table-map {
     position: relative;
     width: 100%;
     height: var(--map-height);
-   background-color: var(--bg-color-primary-1);
+    background-color: var(--bg-color-primary-1);
     overflow-y: auto;
 }
 
-.table-map .floorPlan{
-   position: absolute; 
+.table-map .floorPlan {
+    position: absolute;
 }
 
- .table-map .floorPlan .items{
-   
-    cursor: pointer; 
+.table-map .floorPlan .items {
+
+    cursor: pointer;
 }
 
-.table-sm td{
+.table-sm td {
     font-size: 0.9rem;
 }
 
 
 
-.table-cart td{
+.table-cart td {
     padding: 5px 10px;
 }

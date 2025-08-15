@@ -1,0 +1,52 @@
+{{center company.name 50}}
+{{center company.company 50}}
+{{center company.address 50}}
+{{center company.street 50}}
+{{center company.city 50}}
+{{center company.country 50}}
+{{center (concat "Telp :" company.tel) 50}}
+
+{{formatLine "BILL" transaction.bill 50}}
+{{formatLine "START DATE" transaction.startDate 50}}
+{{formatLine "END DATE" transaction.endDate 50}}
+{{formatLine "TABLE" transaction.tableName 50}}
+{{formatLine "COVER" (formatCurrency transaction.cover) 50}}
+
+{{#each data.cart}}
+{{formatLine (concat this.total "X " this.name) (formatCurrency this.totalAmount) 50}}
+    {{#if this.modifier}}
+        {{#each this.modifier}}
+            {{#unless (eq this.type "APPLY_DISCOUNT")}}
+{{formatLine (concat "   + " this.descl) (formatCurrency this.price) 50}}
+            {{/unless}}
+        {{/each}}
+    {{/if}}
+{{/each}}
+
+{{formatLine "          ITEM TOTAL" (formatCurrency data.itemTotal) 50}}
+
+{{#if data.discountGroup}}
+    {{#each data.discountGroup}}
+{{formatLine (concat "          " this.name) (formatCurrency this.amount) 50}}
+    {{/each}}
+{{/if}}
+
+{{formatLine "          SUB TOTAL" (formatCurrency data.subTotal) 50}}
+
+{{#each data.taxSc}}
+{{formatLine (concat "                            " this.name) (formatCurrency this.totalAmount) 50}}
+{{/each}}
+
+{{formatLine "                        GRAND TOTAL" (formatCurrency data.grandTotal) 50}}
+
+{{#if (eq transaction.close 1)}}
+--------------------------------------------------
+    {{#each data.cartPayment}}
+{{formatLine (concat "                    " this.name) (formatCurrency this.paid) 50}}
+    {{/each}}
+{{formatLine "                    CHANGE " (concat "(" (formatCurrency data.change) ")") 50}}
+{{/if}}
+
+{{#if (eq transaction.close 1)}}
+{{center "[ CLOSED BILL ]" 50}}
+{{/if}}

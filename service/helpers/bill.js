@@ -137,7 +137,7 @@ async function cart(cartId = '', subgroup = 0) {
 
     const ds = ` SELECT  d.name,
             m.applyDiscount, count(m.id) AS 'qty', SUM(i.price ) AS 'subTotal', 0 as 'maxDiscount',  
-           GREATEST(SUM(i.price )  - d.discAmount, SUM(i.price  )   ) * -1 AS 'amount', d.discAmount, 0 as 'def'
+           (SUM(i.price )  - d.discAmount)  * -1 as 'amount', d.discAmount, 0 as 'def'
         FROM cart_item_modifier AS m 
         LEFT JOIN cart_item AS i ON i.id = m.cartItemId
         LEFT JOIN discount AS d ON d.id = m.applyDiscount
@@ -146,7 +146,11 @@ async function cart(cartId = '', subgroup = 0) {
         GROUP BY  m.applyDiscount, d.discAmount `;
     const [discountAmount] = await db.query(ds)
 
-
+    discountAmount.forEach(el => {
+        if(el['amount'] > 0){
+            el['amount'] =  el['amount'] -  el['discAmount'];
+        }
+    });
 
 
     let [discountGroup] = await db.query(`  
