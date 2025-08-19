@@ -1,12 +1,53 @@
 const db = require('../../config/db');
 const { today, convertCustomDateTime, formatDateTime, parseTimeString, addTime } = require('../../helpers/global');
 const { autoNumber } = require('../../helpers/autoNumber');
-const { taxScUpdate } = require('../../helpers/bill');
+const { taxScUpdate, scUpdate, taxUpdate } = require('../../helpers/bill');
 
 exports.getMenuItem = async (req, res) => {
   let i = 1;
+  let employeeAuthLevelId = 0;
   try {
-    const header = JSON.parse(req.headers['x-terminal']);
+    let header;  
+    let decodedToken = {}; 
+let token   = req.headers.authorization;
+
+if (token && token.startsWith('Bearer ')) {
+  token = token.split(' ')[1];
+} 
+
+// Decode JWT payload safely
+if (token) {
+  try {
+    // JWT format: header.payload.signature
+    const parts = token.split('.');
+    if (parts.length === 3) {
+      const payload = parts[1];
+      // Add padding if necessary
+      const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+      const padded = base64 + '='.repeat((4 - base64.length % 4) % 4);
+      const decodedStr = Buffer.from(padded, 'base64').toString('utf-8');
+      decodedToken = JSON.parse(decodedStr);
+      console.log('Decoded Authorization:', decodedToken);
+    } else {
+      decodedToken = {};
+    }
+  } catch (e) {
+    console.error('Failed to decode authorization header:', e.message);
+    decodedToken = {};
+  }
+}
+         employeeAuthLevelId = decodedToken['employeeAuthLevelId'] || 0;
+
+    try {
+      header = JSON.parse(req.headers['x-terminal']);
+      console.log(header);
+      const [terminal] = await db.query(`SELECT priceNo FROM terminal WHERE terminalId = ${header['terminalId']}`);
+      if (terminal[0]['priceNo'] != 0) {
+        i = terminal[0]['priceNo'];
+      }
+    } catch (e) {
+      i = 1;
+    }
 
     const menuLookupId = req.query.menuLookupId;
     const outletId = req.query.outletId;
@@ -16,10 +57,7 @@ exports.getMenuItem = async (req, res) => {
       i = outlet[0]['priceNo'];
     }
 
-    const [terminal] = await db.query(`SELECT priceNo FROM terminal WHERE terminalId = ${header['terminalId']}`);
-    if (terminal[0]['priceNo'] != 0) {
-      i = terminal[0]['priceNo'];
-    }
+
 
 
     const q = `
@@ -70,18 +108,94 @@ exports.getMenuItem = async (req, res) => {
       }
     });
 
-    const [discountGroup] = await db.query(`
-       SELECT t.* , g.name AS 'discountGroup'
-      FROM outlet_discount AS d
-       JOIN discount AS t ON t.id = d.discountId 
-       LEFT JOIN discount_group AS g ON g.id = t.discountGroupId
-      WHERE d.presence = 1 and d.outletId = ${outletId}
-    `);
+    const levelDiscount = 'l.employeeAuthLevelId = ' + employeeAuthLevelId;
+    // DISCOUNT GROUP
+    const q0 = `SELECT id, name , '' as discount 
+    FROM discount_group 
+    WHERE presence = 1 ORDER BY name ASC`;
+    const [discountGroup] = await db.query(q0);
+
+    for (const row of discountGroup) {
+      const q1 = `
+        SELECT d.* 
+          FROM discount AS d
+          left JOIN discount_group AS g ON g.id  = d.discountGroupId
+          WHERE 
+            d.presence = 1 AND d.allLevel = 1 AND 
+            d.allDiscountGroup = 0 AND d.discountGroupId = ${row['id']} 
+      `;
+      const [discount] = await db.query(q1);
+
+      const q9 = `
+        SELECT d.* 
+          FROM discount AS d
+          left JOIN discount_group AS g ON g.id  = d.discountGroupId
+          WHERE 
+            d.presence = 1 AND d.allLevel = 0 AND 
+            d.allDiscountGroup = 0 AND d.discountGroupId = ${row['id']} 
+      `;
+      // const [discountMyLevel] = await db.query(q9);
+
+
+
+      const q51 = `
+        SELECT t1.* , t2.* 
+        FROM (
+          SELECT d.id, COUNT(d.id) 'totalLevel'
+          FROM discount AS d
+          LEFT JOIN discount_group AS g ON g.id  = d.discountGroupId
+          jOIN discount_level AS l ON l.discountId = d.id
+          WHERE d.presence = 1 AND d.allDiscountGroup = 0 AND d.allLevel = 0 AND d.discountGroupId = ${row['id']}   
+          AND (${levelDiscount})
+        GROUP BY d.id
+        ) AS t1 
+        JOIN discount AS t2 ON t2.id = t1.id
+      `;
+      const [discountMyLevel] = await db.query(q51);
+
+
+
+      row.discount = [...discount, ...discountMyLevel];
+    }
+
+    // ALL DISCOUNT GROUP
+    const q3 = `SELECT 0 as 'id', 'all Group' as 'name' , '' as discount `;
+    const [discountGroupAll] = await db.query(q3);
+
+    for (const row of discountGroupAll) {
+      const q5 = `
+        SELECT d.* , 'AllLevel' as 'totalLevel'
+          FROM discount AS d
+          left JOIN discount_group AS g ON g.id  = d.discountGroupId
+        WHERE d.presence = 1 AND d.allDiscountGroup = 1 and d.allLevel = 1
+      `;
+      const [discount] = await db.query(q5);
+
+
+      const q51 = `
+        SELECT t1.* , t2.* 
+        FROM (
+          SELECT d.id, COUNT(d.id) 'totalLevel'
+          FROM discount AS d
+          LEFT JOIN discount_group AS g ON g.id  = d.discountGroupId
+          jOIN discount_level AS l ON l.discountId = d.id
+          WHERE d.presence = 1 AND d.allDiscountGroup = 1 AND d.allLevel = 0  
+          AND (${levelDiscount})
+        GROUP BY d.id
+        ) AS t1 
+        JOIN discount AS t2 ON t2.id = t1.id
+      `;
+      const [discountMyLevel] = await db.query(q51);
+
+
+      row.discount = [...discount, ...discountMyLevel];
+    }
+
 
     res.json({
-      error: false,
+      priceNo: i,
       items: items,
-      discountGroup: discountGroup,
+      discountGroup: [...discountGroupAll, ...discountGroup],
       get: req.query
     });
 
@@ -1208,7 +1322,7 @@ exports.addDiscountGroup = async (req, res) => {
               // if (totalAmount + discAmount <= 0) {
               //   discAmount = totalAmount * -1;
               // }
-                const q = `
+              const q = `
                   INSERT INTO cart_item_modifier (
                     presence, inputDate, updateDate, void,
                     cartId, cartItemId, modifierId,
@@ -1226,7 +1340,7 @@ exports.addDiscountGroup = async (req, res) => {
                 results.push({ status: 'discRate updated', query: q, });
               }
             } else {
-              discAmount = (totalAmount * (parseFloat(discountGroup['discRate']) / 100)) * -1; 
+              discAmount = (totalAmount * (parseFloat(discountGroup['discRate']) / 100)) * -1;
               const q = `
                   INSERT INTO cart_item_modifier (
                     presence, inputDate, updateDate, void,
@@ -1248,7 +1362,15 @@ exports.addDiscountGroup = async (req, res) => {
 
 
             // const  taxScUpdateRest  = await taxScUpdate(cartItem['id'], totalAmount); 
-            const taxScUpdateRest = await taxScUpdate(cartItem['id']);
+           
+            if(discountGroup['postDiscountSC'] == 1){
+                const taxScUpdateRest = await scUpdate(cartItem['id']);
+            }
+            
+            if(discountGroup['postDiscountTax'] == 1){
+                const taxScUpdateRest = await taxUpdate(cartItem['id']);
+            }
+      
           } else {
             results.push({ status: `ERROR ${discountGroup['discountGroup']} was not match menu ${name}` });
           }

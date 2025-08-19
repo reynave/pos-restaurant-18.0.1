@@ -25,7 +25,7 @@
                     </div>
                     <div class="col-2 text-end">
 
-                        <button type="button" class="btn btn-success" (click)="openEnd(content)"> Menu</button>
+                        <button type="button" class="btn btn-success" (click)="openEnd(content)"><i class="bi bi-list"></i> Menu</button>
                     </div>
                 </div>
             </div>
@@ -37,7 +37,7 @@
 
 <ng-template #content let-offcanvas>
 	<div class="offcanvas-header">
-		<strong class="offcanvas-title">Menu</strong>
+		<strong class="offcanvas-title"><i class="bi bi-list"></i> Menu</strong>
 		<button type="button" class="btn-close" aria-label="Close" (click)="offcanvas.dismiss('Cross click')"></button>
 	</div>
 	<div class="offcanvas-body">

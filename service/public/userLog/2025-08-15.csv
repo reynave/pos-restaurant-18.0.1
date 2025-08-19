@@ -157,3 +157,7 @@ time,outletId,workStationId,userId,bill,action,url,method,server
 19:42:19,Imperial Kitchen(15),0005,sa (76),250815000304,Go to Menu,http://localhost:4850/#/tables
 19:42:21,Imperial Kitchen(15),0005,sa (76),250815000304,Send Order,http://localhost:4850/#/menu?id=250815000304
 19:42:21,Imperial Kitchen(15),0005,sa (76),250815000304,printQueue,http://localhost:4850/#/menu?id=250815000304
+19:51:44,Imperial Kitchen(15),0005,sa (76),250815000304,Go to Menu,http://localhost:4850/#/tables
+19:51:45,Imperial Kitchen(15),0005,sa (76),250815000304,Click BILL,http://localhost:4850/#/menu?id=250815000304
+19:59:27,Imperial Kitchen(15),0005,sa (76),250815000304,Click BILL,http://localhost:4850/#/menu?id=250815000304
+20:00:04,Imperial Kitchen(15),0005,sa (76),250815000304,Click BILL,http://localhost:4850/#/menu?id=250815000304

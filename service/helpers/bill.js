@@ -147,8 +147,8 @@ async function cart(cartId = '', subgroup = 0) {
     const [discountAmount] = await db.query(ds)
 
     discountAmount.forEach(el => {
-        if(el['amount'] > 0){
-            el['amount'] =  el['amount'] -  el['discAmount'];
+        if (el['amount'] > 0) {
+            el['amount'] = el['amount'] - el['discAmount'];
         }
     });
 
@@ -492,6 +492,198 @@ async function taxScUpdate(cartItem = 0) {
 }
 
 
+async function scUpdate(cartItem = 0) {
+    let scAmount = 0;
+    let taxAmount = 0;
+
+    const q2 = `
+        --  q2
+        SELECT IFNULL(SUM(price),0) AS 'total' 
+        FROM cart_item_modifier
+        WHERE cartItemId = ${cartItem}
+        AND presence =1 AND void = 0 and menuTaxScId = 0
+    `;
+    const [totalAmountModifier] = await db.query(q2);
+
+
+    const m1 = `
+        -- m1
+        SELECT price + ${parseInt(totalAmountModifier[0]['total'])} as 'price' 
+        FROM cart_item 
+        WHERE id = ${cartItem} AND presence =1 AND void = 0 
+    `;
+
+    const [itemPriceDb] = await db.query(m1);
+    let itemPrice = itemPriceDb[0]['price'];
+
+    const results = [];
+    const scQ =
+        `SELECT id, scRate
+              FROM cart_item_modifier
+              WHERE cartItemId = ${cartItem}
+              AND presence =1 AND void = 0   and scStatus = 1
+            `;
+    const [scRow] = await db.query(scQ);
+
+    const taxQ =
+        `SELECT id, taxRate
+              FROM cart_item_modifier
+              WHERE cartItemId = ${cartItem}
+              AND presence =1 AND void = 0   and taxStatus = 1
+            `;
+    const [taxRow] = await db.query(taxQ);
+
+    if (scRow.length > 0) {
+        scAmount = itemPrice * (parseFloat(scRow[0]['scRate']) / 100);
+    }
+    if (taxRow.length > 0) {
+
+
+        const m3 = ` 
+            SELECT price  
+            FROM cart_item 
+            WHERE id = ${cartItem} AND presence =1 AND void = 0 
+        `;
+
+        const [orgPrice] = await db.query(m3);
+
+
+        taxAmount = (orgPrice[0]['price'] + scAmount) * (parseFloat(taxRow[0]['taxRate']) / 100);
+    }
+
+    const a = `
+    SELECT c.id, c.menuId, m.name, m.menuTaxScId, t.taxStatus, t.scStatus
+        FROM cart_item  AS c
+        JOIN menu AS m ON m.id = c.menuId
+        JOIN menu_tax_sc AS t ON t.id = m.menuTaxScId
+    WHERE c.id = ${cartItem} `;
+    const [menu] = await db.query(a);
+
+    // UPDATE SC
+    if (scAmount != 0 && menu[0]['scStatus'] == 1) {
+        const q2 = `UPDATE cart_item_modifier
+                  SET
+                    price = ${scAmount}, 
+                    updateDate = '${today()}'
+                WHERE id = ${scRow[0]['id']}`;
+        const [result2] = await db.query(q2);
+        if (result2.affectedRows === 0) {
+            results.push({ status: 'not found' });
+        } else {
+            results.push({ status: 'SC cart_item_modifier Update' });
+        }
+
+    }
+
+
+
+    return {
+        error: false,
+        scAmount: scAmount,
+        taxAmount: taxAmount
+    };
+}
+
+
+async function taxUpdate(cartItem = 0) {
+    let scAmount = 0;
+    let taxAmount = 0;
+
+    const q2 = `
+        --  q2
+        SELECT IFNULL(SUM(price),0) AS 'total' 
+        FROM cart_item_modifier
+        WHERE cartItemId = ${cartItem}
+        AND presence =1 AND void = 0 and menuTaxScId = 0
+    `;
+    const [totalAmountModifier] = await db.query(q2);
+
+
+    const m1 = `
+        -- m1
+        SELECT price + ${parseInt(totalAmountModifier[0]['total'])} as 'price' 
+        FROM cart_item 
+        WHERE id = ${cartItem} AND presence =1 AND void = 0 
+    `;
+
+    const [itemPriceDb] = await db.query(m1);
+    let itemPrice = itemPriceDb[0]['price'];
+
+    const results = [];
+    const addFee =
+        `SELECT SUM(t.price) AS 'price' FROM (
+            SELECT id, scRate, price, applyDiscount
+                    FROM cart_item_modifier
+                WHERE cartItemId = ${cartItem}
+                    AND presence =1 AND void = 0   and scStatus = 1 
+                    
+                UNION 
+
+                SELECT id, scRate, price, applyDiscount
+                    FROM cart_item_modifier
+                WHERE cartItemId = ${cartItem}
+                    AND presence =1 AND void = 0   AND applyDiscount !=0 
+            ) AS t 
+        `; 
+    const [scRow] = await db.query(addFee);
+
+    const taxQ =
+        `SELECT id, taxRate
+              FROM cart_item_modifier
+              WHERE cartItemId = ${cartItem}
+              AND presence =1 AND void = 0   and taxStatus = 1
+            `;
+    const [taxRow] = await db.query(taxQ);
+
+    if (scRow.length > 0) {
+        scAmount = (parseFloat(scRow[0]['price']) || 0);
+    }
+    if (taxRow.length > 0) {
+
+
+        const m3 = ` 
+            SELECT price  
+            FROM cart_item 
+            WHERE id = ${cartItem} AND presence =1 AND void = 0 
+        `;
+
+        const [orgPrice] = await db.query(m3);
+
+
+        taxAmount = (orgPrice[0]['price'] + scAmount) * (parseFloat(taxRow[0]['taxRate']) / 100);
+    }
+
+    const a = `
+    SELECT c.id, c.menuId, m.name, m.menuTaxScId, t.taxStatus, t.scStatus
+        FROM cart_item  AS c
+        JOIN menu AS m ON m.id = c.menuId
+        JOIN menu_tax_sc AS t ON t.id = m.menuTaxScId
+    WHERE c.id = ${cartItem} `;
+    const [menu] = await db.query(a);
+
+
+    // UPDATE TAX
+    if (taxAmount != 0 && menu[0]['taxStatus'] == 1) {
+        const q2 = `UPDATE cart_item_modifier
+                  SET
+                    price = ${taxAmount}, 
+                    updateDate = '${today()}'
+                WHERE id = ${taxRow[0]['id']}`;
+        const [result2] = await db.query(q2);
+        if (result2.affectedRows === 0) {
+            results.push({ status: 'not found' });
+        } else {
+            results.push({ status: 'SC cart_item_modifier Update' });
+        }
+    }
+
+    return {
+        error: false,
+        taxAmount: taxAmount
+    };
+}
+
+
 module.exports = {
-    cart, taxScUpdate, cartHistory
+    cart, taxScUpdate, cartHistory, taxUpdate, scUpdate
 };

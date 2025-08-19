@@ -62,8 +62,8 @@
                         <th class="text-center" colspan="2">All Outlet</th>
 
 
-                        <th class="text-center">Discount Tax</th>
                         <th class="text-center">Discount SC</th>
+                        <th class="text-center">Discount TAX</th>
                         <th class="text-center">Remak</th>
 
                         <th class="text-center">Status</th>
@@ -169,11 +169,12 @@
 
                         <td>
                            @if(!disabled){
-                           <select class="form-control form-control-sm" name="postDiscountSC"
-                              [(ngModel)]="x.postDiscountSC" [disabled]="disabled">
-                              <option [value]="0">Pre Discount</option>
-                              <option [value]="1">Post Discount</option>
-                           </select>
+                              <select class="form-control form-control-sm" name="postDiscountSC"
+                                [(ngModel)]="x.postDiscountSC" [disabled]="disabled"
+                                [ngClass]="{'text-success': x.postDiscountSC == 1}">
+                                <option [value]="0">Pre Discount</option>
+                                <option [value]="1">Post Discount</option>
+                              </select>
                            }
                            @else {
                            <span *ngIf="x.postDiscountSC == 0" class="badge text-bg-secondary">Pre Discount SC</span>
@@ -184,7 +185,7 @@
                         <td>
                            @if(!disabled){
                            <select class="form-control form-control-sm" name="postDiscountTax"
-                              [(ngModel)]="x.postDiscountTax" [disabled]="disabled">
+                              [(ngModel)]="x.postDiscountTax" [disabled]="disabled" [ngClass]="{'text-success': x.postDiscountTax == 1}">
                               <option [value]="0">Pre Discount</option>
                               <option [value]="1">Post Discount</option>
                            </select>

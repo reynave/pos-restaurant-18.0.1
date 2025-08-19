@@ -83,6 +83,7 @@ exports.postUpdate = async (req, res) => {
           scRate = '${emp['scRate']}', 
           scNote = '${emp['scNote']}', 
           scStatus = '${emp['scStatus']}', 
+ scTaxIncluded = '${emp['scTaxIncluded']}', 
 
           
           updateDate = '${today()}'

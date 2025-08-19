@@ -60,7 +60,7 @@ exports.getDailyStart = async (req, res) => {
                 c.name, c.days, c.closeHour
             FROM daily_check as d 
             LEFT JOIN daily_schedule as c on c.id = d.dailyScheduleId
-            WHERE  d.id = '${id}' and d.presence = 1 and d.closed = 0
+            WHERE  d.id = '${id}' and d.presence = 1  
         `);
         res.json({
             error: false,

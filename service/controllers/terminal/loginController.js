@@ -79,7 +79,7 @@ exports.signin = async (req, res) => {
             authlevel: employee[0]['authlevel'],
             void: employee[0]['void'],
             dailyAccess: employee[0]['dailyAccess'],
-            discountLevelId: employee[0]['discountLevelId'],
+            employeeAuthLevelId: employee[0]['authlevelId'],
             status: employee[0]['status'],
             lastLogin: today(),
         }
