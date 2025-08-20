@@ -56,7 +56,13 @@
                         x {{x.total | number}}
                      </td>
 
-                     <td class="text-end font-monospace">{{(x.totalAmount < 0 ? 0 : x.totalAmount )| number}}</td>
+                     <td class="text-end ">
+                        <strong *ngIf="!checkBoxAllModifier" class="font-monospace"> {{(x.totalAmount < 0 ? 0 :
+                              x.totalAmount )| number}}</strong>
+                              <span *ngIf="checkBoxAllModifier" class="font-monospace"> {{(x.price * x.total )|
+                                 number}}</span>
+
+                     </td>
                      <td>
                         <a [routerLink]="['/menu/modifier']" class="btn btn-warning"
                            (click)="logService.logAction('menu/modifier SO '+x.name+' menuId : '+x.menuId+', price : '+x.price, id)"
@@ -67,7 +73,7 @@
 
                   @if(checkBoxAllModifier && x.modifier.length > 0){
                   <tr [class]="{'bg-light':x.sendOrder !== ''}" *ngFor="let a of x.modifier; let i = index">
-                     <td></td>
+                     <td> </td>
                      <td>
                         {{ a.descl}}
                         <small class="font-monospace" *ngIf="a.price > 0">&#64;{{a.price | number}}</small>
@@ -75,6 +81,27 @@
                      <td class="text-center"><span class="font-monospace"> x {{ a.total}}</span></td>
                      <td class="text-end"> <span class="font-monospace">{{a.totalAmount |number}}</span></td>
                      <td></td>
+                  </tr>
+
+
+                  <tr>
+                     <td>
+                     </td>
+
+                     <td>
+
+                     </td>
+
+                     <td class="font-monospace text-center">
+
+                     </td>
+
+                     <td class="text-end "><strong class="font-monospace">{{(x.totalAmount < 0 ? 0 : x.totalAmount )|
+                              number}}</strong>
+                     </td>
+                     <td>
+
+                     </td>
                   </tr>
                   }
 
@@ -102,7 +129,13 @@
                         </button>
                      </td>
 
-                     <td class="text-end font-monospace">{{(x.totalAmount < 0 ? 0 : x.totalAmount )| number}}</td>
+
+                     <td class="text-end ">
+                        <strong *ngIf="!checkBoxAllModifier" class="font-monospace"> {{(x.totalAmount < 0 ? 0 :
+                              x.totalAmount )| number}}</strong>
+                              <span *ngIf="checkBoxAllModifier" class="font-monospace"> {{(x.price * x.total )|
+                                 number}}</span>
+                     </td>
 
                      <td>
                         <a [routerLink]="['/menu/modifier']" class="btn btn-success "
@@ -118,10 +151,33 @@
                      <td>
                         {{ a.descl}}
                         <small *ngIf="a.price > 0" class="font-monospace">&#64;{{a.price | number}}</small>
+                        <div>
+                           <small>{{a.remark}}</small>
+                        </div>
                      </td>
                      <td class="text-center"><span class="font-monospace"> x {{ a.total}}</span></td>
                      <td class="text-end"> <span class="font-monospace">{{a.totalAmount |number}}</span></td>
                      <td></td>
+                  </tr>
+
+                  <tr>
+                     <td>
+                     </td>
+
+                     <td>
+
+                     </td>
+
+                     <td class="font-monospace text-center">
+
+                     </td>
+
+                     <td class="text-end "><strong class="font-monospace">{{(x.totalAmount < 0 ? 0 : x.totalAmount )|
+                              number}}</strong>
+                     </td>
+                     <td>
+
+                     </td>
                   </tr>
                   }
 
@@ -349,14 +405,17 @@
 
             @if(showApplyDiscount == true){
             <!-- ITEM DISCOUNT -->
-            
+
             <div class="row g-1" *ngFor="let x of discountGroup">
                @if(x.discount.length > 0){
                <div class="col-12">
                   <strong class="text-uppercase">{{x.name}}</strong>
                </div>
                <div class="col-3 mb-1 d-grid" *ngFor="let a of x.discount">
-                  <a href="javascript:;" [class]="cssMenu" (click)="addDiscountGroup(a)">{{a.name}}</a>
+
+                  <a href="javascript:;" *ngIf="a.remark == 0" [class]="cssMenu" (click)="addDiscountGroup(a)">{{a.name}}</a> 
+                  <a href="javascript:;" *ngIf="a.remark == 1" [class]="cssMenu"  (click)="addDiscountGroupWithRemark(contentRemark,a)">{{a.name}}</a>
+
                </div>
 
 
@@ -640,6 +699,25 @@
    <div class="modal-body">
       <div class="d-grid">
          <button type="button" (click)="onSubmitMenuSet()" class="btn btn-lg btn-primary">SUBMIT</button>
+      </div>
+
+   </div>
+</ng-template>
+
+
+<ng-template #contentRemark let-modal>
+   <div class="modal-header">
+      <strong>Discount Remark</strong>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+   </div>
+
+   <div class="modal-body"> 
+      <label>Note*</label>
+      <input type="text" class="form-control form-control-lg" [(ngModel)]="remark" name="remark" placeholder="Add Remark" #remarkInput autofocus>
+   </div>
+   <div class="modal-body">
+      <div class="d-grid">
+         <button type="button" (click)="addDiscountGroup(this.discountGroupSelect)" [disabled]="remark == '' " class="btn btn-lg btn-dark">SUBMIT</button>
       </div>
 
    </div>

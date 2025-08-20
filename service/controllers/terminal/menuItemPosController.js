@@ -7,40 +7,40 @@ exports.getMenuItem = async (req, res) => {
   let i = 1;
   let employeeAuthLevelId = 0;
   try {
-    let header;  
-    let decodedToken = {}; 
-let token   = req.headers.authorization;
+    let header;
+    let decodedToken = {};
+    let token = req.headers.authorization;
 
-if (token && token.startsWith('Bearer ')) {
-  token = token.split(' ')[1];
-} 
-
-// Decode JWT payload safely
-if (token) {
-  try {
-    // JWT format: header.payload.signature
-    const parts = token.split('.');
-    if (parts.length === 3) {
-      const payload = parts[1];
-      // Add padding if necessary
-      const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
-      const padded = base64 + '='.repeat((4 - base64.length % 4) % 4);
-      const decodedStr = Buffer.from(padded, 'base64').toString('utf-8');
-      decodedToken = JSON.parse(decodedStr);
-      console.log('Decoded Authorization:', decodedToken);
-    } else {
-      decodedToken = {};
+    if (token && token.startsWith('Bearer ')) {
+      token = token.split(' ')[1];
     }
-  } catch (e) {
-    console.error('Failed to decode authorization header:', e.message);
-    decodedToken = {};
-  }
-}
-         employeeAuthLevelId = decodedToken['employeeAuthLevelId'] || 0;
+
+    // Decode JWT payload safely
+    if (token) {
+      try {
+        // JWT format: header.payload.signature
+        const parts = token.split('.');
+        if (parts.length === 3) {
+          const payload = parts[1];
+          // Add padding if necessary
+          const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+          const padded = base64 + '='.repeat((4 - base64.length % 4) % 4);
+          const decodedStr = Buffer.from(padded, 'base64').toString('utf-8');
+          decodedToken = JSON.parse(decodedStr);
+         // console.log('Decoded Authorization:', decodedToken);
+        } else {
+          decodedToken = {};
+        }
+      } catch (e) {
+        console.error('Failed to decode authorization header:', e.message);
+        decodedToken = {};
+      }
+    }
+    employeeAuthLevelId = decodedToken['employeeAuthLevelId'] || 0;
 
     try {
       header = JSON.parse(req.headers['x-terminal']);
-      console.log(header);
+   //   console.log(header);
       const [terminal] = await db.query(`SELECT priceNo FROM terminal WHERE terminalId = ${header['terminalId']}`);
       if (terminal[0]['priceNo'] != 0) {
         i = terminal[0]['priceNo'];
@@ -65,7 +65,7 @@ if (token) {
         SELECT 
           m.id, m.name, m.price${i} as 'price' , m.adjustItemsId, m.qty, m.menuSet, m.menuSetMinQty,
           m.menuDepartmentId, m.menuCategoryId, m.menuTaxScId,
-          t.desc, t.taxRate, t.taxNote, t.taxStatus,
+          t.desc, t.taxRate, t.taxNote, t.taxStatus, t.scTaxIncluded,
             CASE 
               WHEN t.taxStatus = 2 THEN m.price${i} - (m.price${i} / (1+ (t.taxRate/100) ))
               WHEN t.taxStatus = 1 THEN m.price${i}*(t.taxRate/100)
@@ -94,7 +94,8 @@ if (token) {
               ) AS usedQty
         FROM menu AS m
         LEFT JOIN menu_tax_sc AS t ON t.id = m.menuTaxScId
-        WHERE m.presence = 1 and m.menuLookupId = ${menuLookupId} and m.menuLookupId != 0 and 
+        WHERE 
+          m.presence = 1 and m.menuLookupId = ${menuLookupId} and m.menuLookupId != 0 and 
           m.startDate < NOW() AND m.endDate > NOW()
     `;
 
@@ -287,7 +288,7 @@ exports.cart = async (req, res) => {
       const s = `
   
         --  CUSTOM NOTES
-          SELECT COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price, 1 as 'modifier'
+          SELECT COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price, 1 as 'modifier', '' as remark
           FROM (
             SELECT r.menuTaxScId AS 'modifierId', r.note AS descl, r.price
             FROM cart_item  AS i
@@ -302,9 +303,9 @@ exports.cart = async (req, res) => {
 
 
         -- MODIFIER
-       SELECT COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price, 1 as 'modifier'
+       SELECT COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price, 1 as 'modifier', t1.remark   
         FROM (
-          SELECT r.modifierId, m.descl, r.price
+          SELECT r.modifierId, m.descl, r.price , r.remark
             FROM cart_item  AS i 
             RIGHT JOIN cart_item_modifier AS r ON r.cartItemId = i.id
             JOIN modifier AS m ON m.id = r.modifierId 
@@ -313,16 +314,16 @@ exports.cart = async (req, res) => {
             AND i.sendOrder = ''  
             AND r.presence = 1 AND i.void = 0   
         ) AS t1
-        GROUP BY t1.descl, t1.price
+        GROUP BY t1.descl, t1.price, t1.remark   
         UNION
 
  
 
         -- discount
         SELECT 
-          COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price, 1 as 'modifier'
+          COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price, 1 as 'modifier', t1.remark
           FROM ( 
-            SELECT r.modifierId,   r.price, r.applyDiscount, d.name AS 'descl'
+            SELECT r.modifierId,   r.price, r.applyDiscount, d.name AS 'descl' , r.remark
               FROM cart_item  AS i
               JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
               JOIN discount AS d ON d.id = r.applyDiscount
@@ -331,16 +332,16 @@ exports.cart = async (req, res) => {
                 AND i.sendOrder = '' AND r.sendOrder = ''
                 AND r.presence = 1 AND i.void = 0 
           ) AS t1
-        GROUP BY t1.descl, t1.price    
+        GROUP BY t1.descl, t1.price , t1.remark   
 
 
         UNION
 
       --  SC
          SELECT
-          COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price, 0 as 'modifier'
+          COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price, 0 as 'modifier', t1.remark
           FROM (
-            SELECT r.menuTaxScId AS 'modifierId', t.scNote AS descl, r.price, r.scRate
+            SELECT r.menuTaxScId AS 'modifierId', t.scNote AS descl, r.price, r.scRate, r.remark
               FROM cart_item  AS i
               RIGHT JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
               JOIN menu_tax_sc AS t ON t.id = r.menuTaxScId
@@ -349,16 +350,16 @@ exports.cart = async (req, res) => {
                 AND i.sendOrder = '' AND r.sendOrder = ''
                 AND r.presence = 1 AND i.void = 0 AND r.scRate != 0
           ) AS t1
-          GROUP BY t1.descl, t1.price
+          GROUP BY t1.descl, t1.price, t1.remark
 
         UNION 
 
 
       --  TAX
          SELECT
-          COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price, 0 as 'modifier'
+          COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price, 0 as 'modifier', t1.remark
           FROM (
-            SELECT r.menuTaxScId AS 'modifierId', t.taxNote AS descl, r.price, r.taxRate
+            SELECT r.menuTaxScId AS 'modifierId', t.taxNote AS descl, r.price, r.taxRate, r.remark
               FROM cart_item  AS i
               RIGHT JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
               JOIN menu_tax_sc AS t ON t.id = r.menuTaxScId
@@ -367,7 +368,7 @@ exports.cart = async (req, res) => {
                 AND i.sendOrder = '' AND r.sendOrder = ''
                 AND r.presence = 1 AND i.void = 0 AND r.taxRate != 0
           ) AS t1
-          GROUP BY t1.descl, t1.price
+          GROUP BY t1.descl, t1.price, t1.remark
 
         
       `;
@@ -648,7 +649,7 @@ exports.addToCart = async (req, res) => {
 
 
     let scAmount = menu['price'] * (menu['scRate'] / 100);
-    let taxAmount = (parseInt(menu['price']) + scAmount) * (menu['taxRate'] / 100);
+
 
 
     if (menu['scStatus'] == 1) {
@@ -692,6 +693,22 @@ exports.addToCart = async (req, res) => {
         results.push({ cartId, status: 'SC cart_item_modifier insert' });
       }
     }
+
+    let scTaxIncd = 0;
+    // SC TAX INCLUDED
+    if (menu['scTaxIncluded'] == 1) {
+
+      scTaxIncd = scAmount * (menu['taxRate'] / 100);
+
+    }
+
+
+    // if (menu['scTaxIncluded'] == 0) {
+    //   taxAmount = (parseInt(menu['price'])) * (menu['taxRate'] / 100);
+    // }
+
+    let taxAmount = ((parseInt(menu['price']) + scAmount) * (menu['taxRate'] / 100)) + scTaxIncd;
+
 
     if (menu['taxStatus'] == 1) {
       let q3 =
@@ -914,7 +931,7 @@ exports.updateQty = async (req, res) => {
                 modifierId, price, priceIncluded, 
                 taxRate, taxStatus, 
                 scRate, scStatus, 
-                applyDiscount, sendOrder, menuSetMenuId, note, menuSetAdjustItemsId
+                applyDiscount, sendOrder, menuSetMenuId, note, menuSetAdjustItemsId, remark, scTaxInclude
               )
               VALUES (
                 1, '${today()}', '${today()}',
@@ -923,7 +940,7 @@ exports.updateQty = async (req, res) => {
                 ${rec['taxRate']}, ${rec['taxStatus']},
                 ${rec['scRate']}, ${rec['scStatus']} ,
                 ${rec['applyDiscount']}, '${rec['sendOrder']}', ${rec['menuSetMenuId']}, '${rec['note']}',
-                '${rec['menuSetAdjustItemsId']}'
+                '${rec['menuSetAdjustItemsId']}', '${rec['remark']}', ${rec['scTaxInclude']}
               )`;
 
 
@@ -1264,6 +1281,7 @@ exports.addToItemModifier = async (req, res) => {
 exports.addDiscountGroup = async (req, res) => {
   const cart = req.body['cart'];
   const cartOrdered = req.body['cartOrdered'];
+ const remark = req.body['remark'];
 
   const discountGroup = req.body['discountGroup'];
   const cartId = req.body['cartId'];
@@ -1326,12 +1344,12 @@ exports.addDiscountGroup = async (req, res) => {
                   INSERT INTO cart_item_modifier (
                     presence, inputDate, updateDate, void,
                     cartId, cartItemId, modifierId,
-                    applyDiscount, price
+                    applyDiscount, price, remark
                   )
                   VALUES (
                     1, '${today()}', '${today()}',  0,
                     '${cartId}',  ${cartItem['id']}, 0,
-                    ${discountGroup['id']}, ${discAmount}
+                    ${discountGroup['id']}, ${discAmount}, '${remark}'
                 )`;
               const [result] = await db.query(q);
               if (result.affectedRows === 0) {
@@ -1345,12 +1363,12 @@ exports.addDiscountGroup = async (req, res) => {
                   INSERT INTO cart_item_modifier (
                     presence, inputDate, updateDate, void,
                     cartId, cartItemId, modifierId,
-                    applyDiscount, price
+                    applyDiscount, price, remark
                   )
                   VALUES (
                     1, '${today()}', '${today()}',  0,
                     '${cartId}',  ${cartItem['id']}, 0,
-                    ${discountGroup['id']}, ${discAmount}
+                    ${discountGroup['id']}, ${discAmount}, '${remark}'
                 )`;
               const [result] = await db.query(q);
               if (result.affectedRows === 0) {
@@ -1362,15 +1380,15 @@ exports.addDiscountGroup = async (req, res) => {
 
 
             // const  taxScUpdateRest  = await taxScUpdate(cartItem['id'], totalAmount); 
-           
-            if(discountGroup['postDiscountSC'] == 1){
-                const taxScUpdateRest = await scUpdate(cartItem['id']);
+
+            if (discountGroup['postDiscountSC'] == 1) {
+              const taxScUpdateRest = await scUpdate(cartItem['id']);
             }
-            
-            if(discountGroup['postDiscountTax'] == 1){
-                const taxScUpdateRest = await taxUpdate(cartItem['id']);
+
+            if (discountGroup['postDiscountTax'] == 1) {
+              const taxScUpdateRest = await taxUpdate(cartItem['id']);
             }
-      
+
           } else {
             results.push({ status: `ERROR ${discountGroup['discountGroup']} was not match menu ${name}` });
           }
@@ -1435,12 +1453,12 @@ exports.addDiscountGroup = async (req, res) => {
               `INSERT INTO cart_item_modifier (
                 presence, inputDate, updateDate, void,
                 cartId, cartItemId, modifierId,
-                applyDiscount, price
+                applyDiscount, price, remark
               )
               VALUES (
                 1, '${today()}', '${today()}',  0,
                 '${cartId}',  ${cartItem['id']}, 0,
-                ${discountGroup['id']}, ${discAmount}
+                ${discountGroup['id']}, ${discAmount}, '${remark}'
             )`;
 
             const [result] = await db.query(q);
@@ -1454,7 +1472,15 @@ exports.addDiscountGroup = async (req, res) => {
             // const  taxScUpdateRest  = await taxScUpdate(cartItem['id'], totalAmount);
 
 
-            const taxScUpdateRest = await taxScUpdate(cartItem['id']);
+            //const taxScUpdateRest = await taxScUpdate(cartItem['id']);
+
+            if (discountGroup['postDiscountSC'] == 1) {
+              const taxScUpdateRest = await scUpdate(cartItem['id']);
+            }
+
+            if (discountGroup['postDiscountTax'] == 1) {
+              const taxScUpdateRest = await taxUpdate(cartItem['id']);
+            }
 
             // } else {
             //   results.push({ status: 'cannot double' });

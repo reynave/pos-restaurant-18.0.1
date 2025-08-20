@@ -76,7 +76,7 @@ exports.postUpdate = async (req, res) => {
         `UPDATE menu_tax_sc SET 
           name = '${emp['name']}',   
 
-          taxRate = '${emp['taxtaxRaterate']}', 
+          taxRate = '${emp['taxRate']}', 
           taxNote = '${emp['taxNote']}', 
           taxStatus = '${emp['taxStatus']}', 
 

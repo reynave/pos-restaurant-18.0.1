@@ -1,4 +1,11 @@
-import { Component, ElementRef, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  Renderer2,
+  ViewChild,
+} from '@angular/core';
 import { ConfigService } from '../../service/config.service';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { environment } from '../../../environments/environment.development';
@@ -6,35 +13,44 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { HeaderMenuComponent } from "../../header/header-menu/header-menu.component";
+import { HeaderMenuComponent } from '../../header/header-menu/header-menu.component';
 import { BillComponent } from '../bill/bill.component';
-import { KeyNumberComponent } from "../../keypad/key-number/key-number.component";
+import { KeyNumberComponent } from '../../keypad/key-number/key-number.component';
 import { TransferLogComponent } from './transfer-log/transfer-log.component';
 import { UserLoggerService } from '../../service/user-logger.service';
 import { MergerLogComponent } from './merger-log/merger-log.component';
 export class Actor {
-  constructor(
-    public newQty: number,
-    public note: string,
-  ) { }
+  constructor(public newQty: number, public note: string) {}
 }
 @Component({
   selector: 'app-menu',
   standalone: true,
-  imports: [HttpClientModule, CommonModule, FormsModule, NgbDropdownModule, RouterModule, HeaderMenuComponent, KeyNumberComponent],
+  imports: [
+    HttpClientModule,
+    CommonModule,
+    FormsModule,
+    NgbDropdownModule,
+    RouterModule,
+    HeaderMenuComponent,
+    KeyNumberComponent,
+  ],
   templateUrl: './menu.component.html',
-  styleUrl: './menu.component.css'
+  styleUrl: './menu.component.css',
 })
 export class MenuComponent implements OnInit, OnDestroy {
   @ViewChild('myInput') myInputRef!: ElementRef<HTMLInputElement>;
-
+// ...existing code...
+@ViewChild('remarkInput') remarkInputRef!: ElementRef<HTMLInputElement>;
+// ...existing code...
   loading: boolean = false;
   current: number = 0;
   checkboxAll: number = 0;
   disabled: boolean = true;
-  items: any = [{
-    menu: []
-  }];
+  items: any = [
+    {
+      menu: [],
+    },
+  ];
   modifiers: any = [];
   item: any = [];
   cart: any = [];
@@ -53,7 +69,8 @@ export class MenuComponent implements OnInit, OnDestroy {
 
   cssClass: string = 'btn btn-sm py-3 btn-outi mb-2 rounded shadow-sm';
   cssMenu: string = 'btn btn-sm py-3 bg-white  me-1 lh-1  rounded shadow-sm';
-  cssMenuDisable: string = 'btn btn-sm py-3 btn-light me-1 lh-1  rounded shadow-sm';
+  cssMenuDisable: string =
+    'btn btn-sm py-3 btn-light me-1 lh-1  rounded shadow-sm';
 
   showHeader: boolean = true;
 
@@ -83,7 +100,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     private activeRouter: ActivatedRoute,
     private renderer: Renderer2,
     public logService: UserLoggerService
-  ) { }
+  ) {}
   ngOnDestroy(): void {
     this.renderer.setStyle(document.body, 'background-color', '#fff');
   }
@@ -91,12 +108,11 @@ export class MenuComponent implements OnInit, OnDestroy {
   fnCheckBoxAll() {
     if (this.checkBoxAll == false) {
       this.checkBoxAll = true;
-      this.isChecked = true
+      this.isChecked = true;
     } else {
       this.checkBoxAll = false;
-      this.isChecked = false
+      this.isChecked = false;
     }
-
 
     this.cartOrdered.forEach((el: any) => {
       el['checkBox'] = this.checkBoxAll;
@@ -108,17 +124,20 @@ export class MenuComponent implements OnInit, OnDestroy {
 
   fnShowModifierDetail(index: number) {
     this.modifierDetail = this.modifiers[index];
-
   }
 
   ngOnInit() {
-    this.renderer.setStyle(document.body, 'background-color', 'var(--bg-color-primary-1)');
+    this.renderer.setStyle(
+      document.body,
+      'background-color',
+      'var(--bg-color-primary-1)'
+    );
 
-    this.id = this.activeRouter.snapshot.queryParams['id'],
+    (this.id = this.activeRouter.snapshot.queryParams['id']),
       this.modalService.dismissAll();
     if (this.id == undefined) {
-      alert("ERROR, ngOnInit() id == undefined ");
-      this.router.navigate(['tables'])
+      alert('ERROR, ngOnInit() id == undefined ');
+      this.router.navigate(['tables']);
     } else {
       this.httpMenu();
       this.httpCart();
@@ -127,60 +146,62 @@ export class MenuComponent implements OnInit, OnDestroy {
       this.httpTables();
       this.httpDailyStart();
     }
-
   }
 
   lock: boolean = true;
   httpDailyStart() {
     let id = this.configService.getDailyCheck();
-    const url = environment.api + "daily/getDailyStart";
-    this.http.get<any>(url, {
-      headers: this.configService.headers(),
-      params: {
-        id: id,
-      }
-    }).subscribe(
-      data => {
-        this.loading = false;
+    const url = environment.api + 'daily/getDailyStart';
+    this.http
+      .get<any>(url, {
+        headers: this.configService.headers(),
+        params: {
+          id: id,
+        },
+      })
+      .subscribe(
+        (data) => {
+          this.loading = false;
 
-        if (data['item']['closeDateWarning'] > 0) {
-          this.lock = false;
+          if (data['item']['closeDateWarning'] > 0) {
+            this.lock = false;
+          }
+        },
+        (error) => {
+          console.log(error);
         }
-      },
-      error => {
-        console.log(error);
-      }
-    )
+      );
   }
 
   httpMenuLookUp(id: number) {
-    this.logService.logAction('Menu Lookup ' + id, this.id)
+    this.logService.logAction('Menu Lookup ' + id, this.id);
     this.loading = true;
-    const url = environment.api + "menuItemPos/menuLookUp";
-    this.http.get<any>(url, {
-      headers: this.configService.headers(),
-      params: {
-        parentId: id,
-      }
-    }).subscribe(
-      data => {
-        console.log(data);
-        this.menuLookUpParent = data['parent']
-        this.menuLookUp = data['results'];
-        if (data['parent'].length) {
-          this.menuLookupId = data['parent'][0]['id'];
-        }
+    const url = environment.api + 'menuItemPos/menuLookUp';
+    this.http
+      .get<any>(url, {
+        headers: this.configService.headers(),
+        params: {
+          parentId: id,
+        },
+      })
+      .subscribe(
+        (data) => {
+          console.log(data);
+          this.menuLookUpParent = data['parent'];
+          this.menuLookUp = data['results'];
+          if (data['parent'].length) {
+            this.menuLookupId = data['parent'][0]['id'];
+          }
 
-        this.httpMenu();
-      },
-      error => {
-        console.log(error);
-      }
-    )
+          this.httpMenu();
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
   }
 
   btnFinish() {
-
     this.showHeader = true;
     this.showMenu = false;
     this.showModifier = false;
@@ -189,7 +210,6 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
   backMenu(menuLookUpParent: any = []) {
-
     if (menuLookUpParent.length <= 0) {
       this.showHeader = true;
       this.showMenu = false;
@@ -202,85 +222,91 @@ export class MenuComponent implements OnInit, OnDestroy {
 
   httpMenu() {
     this.loading = true;
-    const url = environment.api + "menuItemPos";
-    this.http.get<any>(url, {
-      headers: this.configService.headers(),
-      params: {
-        menuLookupId: this.menuLookupId,
-        outletId: this.configService.getConfigJson()['outlet']['id']
-      }
-    }).subscribe(
-      data => {
-        this.loading = false;
-        this.items = data['items'];
-        this.discountGroup = data['discountGroup'];
-
-      },
-      error => {
-        console.log(error);
-      }
-    )
+    const url = environment.api + 'menuItemPos';
+    this.http
+      .get<any>(url, {
+        headers: this.configService.headers(),
+        params: {
+          menuLookupId: this.menuLookupId,
+          outletId: this.configService.getConfigJson()['outlet']['id'],
+        },
+      })
+      .subscribe(
+        (data) => {
+          this.loading = false;
+          this.items = data['items'];
+          this.discountGroup = data['discountGroup'];
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
   }
 
   httpGetModifier() {
     this.loading = true;
-    const url = environment.api + "menuItemPos/getModifier";
-    this.http.get<any>(url, {
-      headers: this.configService.headers(),
-      params: {
-        outletId: this.configService.getConfigJson()['outlet']['id']
-      }
-    }).subscribe(
-      data => {
-        this.loading = false;
-        this.modifiers = data['items'];
-
-      },
-      error => {
-        console.log(error);
-      }
-    )
+    const url = environment.api + 'menuItemPos/getModifier';
+    this.http
+      .get<any>(url, {
+        headers: this.configService.headers(),
+        params: {
+          outletId: this.configService.getConfigJson()['outlet']['id'],
+        },
+      })
+      .subscribe(
+        (data) => {
+          this.loading = false;
+          this.modifiers = data['items'];
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
   }
 
   httpCart() {
     this.loading = true;
-    const url = environment.api + "menuItemPos/cart";
-    this.http.get<any>(url, {
-      headers: this.configService.headers(),
-      params: {
-        id: this.activeRouter.snapshot.queryParams['id'],
-      }
-    }).subscribe(
-      data => {
-        this.cart = data['items'];
-        this.totalCard = data['totalItem'];
-        this.totalAmount = data['totalAmount']
-        this.table = data['table'][0];
-      },
-      error => {
-        console.log(error);
-      }
-    )
+    const url = environment.api + 'menuItemPos/cart';
+    this.http
+      .get<any>(url, {
+        headers: this.configService.headers(),
+        params: {
+          id: this.activeRouter.snapshot.queryParams['id'],
+        },
+      })
+      .subscribe(
+        (data) => {
+          this.cart = data['items'];
+          this.totalCard = data['totalItem'];
+          this.totalAmount = data['totalAmount'];
+          this.table = data['table'][0];
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
   }
 
   httpCartOrdered() {
     this.loading = true;
-    const url = environment.api + "menuItemPos/cartOrdered";
-    this.http.get<any>(url, {
-      headers: this.configService.headers(),
-      params: {
-        id: this.activeRouter.snapshot.queryParams['id'],
-      }
-    }).subscribe(
-      data => {
-        this.totalCardOrder = data['totalItem'];
-        this.cartOrdered = data['items'];
-        this.totalAmountOrdered = data['totalAmount'];
-      },
-      error => {
-        console.log(error);
-      }
-    )
+    const url = environment.api + 'menuItemPos/cartOrdered';
+    this.http
+      .get<any>(url, {
+        headers: this.configService.headers(),
+        params: {
+          id: this.activeRouter.snapshot.queryParams['id'],
+        },
+      })
+      .subscribe(
+        (data) => {
+          this.totalCardOrder = data['totalItem'];
+          this.cartOrdered = data['items'];
+          this.totalAmountOrdered = data['totalAmount'];
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
   }
 
   fullReload() {
@@ -297,69 +323,77 @@ export class MenuComponent implements OnInit, OnDestroy {
     this.httpCartOrdered();
   }
 
-  menuSet : any = [];
-  onSubmitMenuSet(){
+  menuSet: any = [];
+  onSubmitMenuSet() {
     console.log(this.item, this.menuSet);
 
-
-    const menuSetMinQty = this.item['menuSetMinQty']; 
+    const menuSetMinQty = this.item['menuSetMinQty'];
     let total = 0;
 
     this.menuSet.forEach((row: any) => {
       total += row['select'];
     });
 
-    if(total >= menuSetMinQty){
-       const body = {
+    if (total >= menuSetMinQty) {
+      const body = {
         id: this.activeRouter.snapshot.queryParams['id'],
         menuSet: this.menuSet,
-        menu : this.item
-      }
+        menu: this.item,
+      };
       console.log(body);
-      this.http.post<any>(environment.api + "menuItemPos/addToCart", body, {
-        headers: this.configService.headers(),
-      }).subscribe(
-        data => {
-          this.logService.logAction('Add MenuSet', this.id)
-          this.reload();
-          this.modalService.dismissAll();
-        },
-        error => {
-          console.log(error);
-          this.logService.logAction('ERROR Add MenuSet ' , this.id)
-        }
-      )
-    }else{
-      alert(menuSetMinQty+" menu required!");
+      this.http
+        .post<any>(environment.api + 'menuItemPos/addToCart', body, {
+          headers: this.configService.headers(),
+        })
+        .subscribe(
+          (data) => {
+            this.logService.logAction('Add MenuSet', this.id);
+            this.reload();
+            this.modalService.dismissAll();
+          },
+          (error) => {
+            console.log(error);
+            this.logService.logAction('ERROR Add MenuSet ', this.id);
+          }
+        );
+    } else {
+      alert(menuSetMinQty + ' menu required!');
     }
     console.log(total);
-
   }
-  open(content: any, x: any, i: number, size: string = 'sm', name: string = '') {
+  open(
+    content: any,
+    x: any,
+    i: number,
+    size: string = 'sm',
+    name: string = ''
+  ) {
     this.item = x;
-    this.modalService.open(content, { size: size }); 
+    this.modalService.open(content, { size: size });
     if (name == 'SELECT') {
-      this.http.get<any>(environment.api + "menuItemPos/selectMenuSet", {
-        headers: this.configService.headers(),
-        params : {
-          itemId : x.id,
-          menuSetMinQty : x.menuSetMinQty, 
-        }
-      }).subscribe(
-        data => { 
-          console.log(data); 
-          this.menuSet = data['menuSet']
-        },
-        error => {
-          console.log(error); 
-        }
-      )
+      this.http
+        .get<any>(environment.api + 'menuItemPos/selectMenuSet', {
+          headers: this.configService.headers(),
+          params: {
+            itemId: x.id,
+            menuSetMinQty: x.menuSetMinQty,
+          },
+        })
+        .subscribe(
+          (data) => {
+            console.log(data);
+            this.menuSet = data['menuSet'];
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
     }
   }
 
   modal(content: any, size: string = 'sm') {
     if (this.isChecked == false) {
-      alert("Please check item first!");
+      alert('Please check item first!');
     } else {
       const modalRef = this.modalService.open(content, { size: size });
       // Tunggu sampai modal selesai terbuka (after animation)
@@ -367,7 +401,10 @@ export class MenuComponent implements OnInit, OnDestroy {
         const inputElement = this.myInputRef?.nativeElement;
         if (inputElement) {
           inputElement.focus();
-          inputElement.setSelectionRange(inputElement.value.length, inputElement.value.length);
+          inputElement.setSelectionRange(
+            inputElement.value.length,
+            inputElement.value.length
+          );
         }
       }, 300);
     }
@@ -380,7 +417,7 @@ export class MenuComponent implements OnInit, OnDestroy {
       if (row['checkBox']) {
         items.push({
           menuId: row['menuId'],
-          price: row['price']
+          price: row['price'],
         });
       }
     });
@@ -389,28 +426,35 @@ export class MenuComponent implements OnInit, OnDestroy {
       model: this.model,
       items: items,
       cartId: this.activeRouter.snapshot.queryParams['id'],
-    }
-    console.log(body)
-    this.http.post<any>(environment.api + "menuItemPos/addCustomNotes", body, {
-      headers: this.configService.headers(),
-    }).subscribe(
-      data => {
-        this.logService.logAction('Modifier Custom  Notes :' + this.model.note, this.id);
-        console.log(data);
-        this.modalService.dismissAll();
-        this.model.newQty = 1;
-        this.model.note = '';
-        this.reload();
-      },
-      error => {
-        console.log(error);
-        this.logService.logAction('ERROR Add Qty ' + qty + ' ' + this.item['name'], this.id)
-      }
-    )
+    };
+    console.log(body);
+    this.http
+      .post<any>(environment.api + 'menuItemPos/addCustomNotes', body, {
+        headers: this.configService.headers(),
+      })
+      .subscribe(
+        (data) => {
+          this.logService.logAction(
+            'Modifier Custom  Notes :' + this.model.note,
+            this.id
+          );
+          console.log(data);
+          this.modalService.dismissAll();
+          this.model.newQty = 1;
+          this.model.note = '';
+          this.reload();
+        },
+        (error) => {
+          console.log(error);
+          this.logService.logAction(
+            'ERROR Add Qty ' + qty + ' ' + this.item['name'],
+            this.id
+          );
+        }
+      );
   }
 
   openSm(content: any) {
-
     this.modalService.open(content, { size: 'sm' });
   }
 
@@ -429,19 +473,37 @@ export class MenuComponent implements OnInit, OnDestroy {
       const body = {
         id: this.activeRouter.snapshot.queryParams['id'],
         menu: menu,
-      }
-      this.http.post<any>(environment.api + "menuItemPos/addToCart", body, {
-        headers: this.configService.headers(),
-      }).subscribe(
-        data => {
-          this.logService.logAction('Add Menu ' + menu['name'] + '(' + menu['id'] + ') @' + menu['price'], this.id)
-          this.reload();
-        },
-        error => {
-          console.log(error);
-          this.logService.logAction('ERROR Add Menu ' + menu['name'] + '(' + menu['id'] + ') @' + menu['price'], this.id)
-        }
-      )
+      };
+      this.http
+        .post<any>(environment.api + 'menuItemPos/addToCart', body, {
+          headers: this.configService.headers(),
+        })
+        .subscribe(
+          (data) => {
+            this.logService.logAction(
+              'Add Menu ' +
+                menu['name'] +
+                '(' +
+                menu['id'] +
+                ') @' +
+                menu['price'],
+              this.id
+            );
+            this.reload();
+          },
+          (error) => {
+            console.log(error);
+            this.logService.logAction(
+              'ERROR Add Menu ' +
+                menu['name'] +
+                '(' +
+                menu['id'] +
+                ') @' +
+                menu['price'],
+              this.id
+            );
+          }
+        );
     }
   }
 
@@ -451,28 +513,39 @@ export class MenuComponent implements OnInit, OnDestroy {
       model: this.model,
       item: this.item,
       cartId: this.activeRouter.snapshot.queryParams['id'],
-    }
+    };
 
-    this.http.post<any>(environment.api + "menuItemPos/updateQty", body, {
-      headers: this.configService.headers(),
-    }).subscribe(
-      data => {
-        console.log(data);
-        this.modalService.dismissAll();
-        this.model.newQty = 1;
-        this.reload();
-        if (data['warning']) {
-          this.logService.logAction('WARNING Add Qty ' + qty + ' ' + this.item['name'], this.id)
-          alert(data['warning']);
-        } else {
-          this.logService.logAction('Add Qty ' + qty + ' ' + this.item['name'], this.id)
+    this.http
+      .post<any>(environment.api + 'menuItemPos/updateQty', body, {
+        headers: this.configService.headers(),
+      })
+      .subscribe(
+        (data) => {
+          console.log(data);
+          this.modalService.dismissAll();
+          this.model.newQty = 1;
+          this.reload();
+          if (data['warning']) {
+            this.logService.logAction(
+              'WARNING Add Qty ' + qty + ' ' + this.item['name'],
+              this.id
+            );
+            alert(data['warning']);
+          } else {
+            this.logService.logAction(
+              'Add Qty ' + qty + ' ' + this.item['name'],
+              this.id
+            );
+          }
+        },
+        (error) => {
+          console.log(error);
+          this.logService.logAction(
+            'ERROR Add Qty ' + qty + ' ' + this.item['name'],
+            this.id
+          );
         }
-      },
-      error => {
-        console.log(error);
-        this.logService.logAction('ERROR Add Qty ' + qty + ' ' + this.item['name'], this.id)
-      }
-    )
+      );
   }
 
   updateCover() {
@@ -480,26 +553,29 @@ export class MenuComponent implements OnInit, OnDestroy {
     const body = {
       model: this.model,
       cartId: this.activeRouter.snapshot.queryParams['id'],
-    }
+    };
 
-    this.http.post<any>(environment.api + "menuItemPos/updateCover", body, {
-      headers: this.configService.headers(),
-    }).subscribe(
-      data => {
-        console.log(data);
-        this.table['cover'] = this.model.newQty;
-        this.modalService.dismissAll();
-      },
-      error => {
-        alert("ERROR");
-        console.log(error);
-      }
-    )
+    this.http
+      .post<any>(environment.api + 'menuItemPos/updateCover', body, {
+        headers: this.configService.headers(),
+      })
+      .subscribe(
+        (data) => {
+          console.log(data);
+          this.table['cover'] = this.model.newQty;
+          this.modalService.dismissAll();
+        },
+        (error) => {
+          alert('ERROR');
+          console.log(error);
+        }
+      );
   }
 
   fnChecked(index: number) {
-
-    this.cart[index].checkBox == 0 ? this.cart[index].checkBox = 1 : this.cart[index].checkBox = 0;
+    this.cart[index].checkBox == 0
+      ? (this.cart[index].checkBox = 1)
+      : (this.cart[index].checkBox = 0);
 
     let isVoid = 0;
     for (let i = 0; i < this.cart.length; i++) {
@@ -516,8 +592,9 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
   fnCheckedOrdered(index: number) {
-
-    this.cartOrdered[index].checkBox == 0 ? this.cartOrdered[index].checkBox = 1 : this.cartOrdered[index].checkBox = 0;
+    this.cartOrdered[index].checkBox == 0
+      ? (this.cartOrdered[index].checkBox = 1)
+      : (this.cartOrdered[index].checkBox = 0);
 
     let isVoid = 0;
     for (let i = 0; i < this.cartOrdered.length; i++) {
@@ -534,102 +611,149 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
   onVoid() {
-
     if (this.isChecked == false) {
-      alert("Please check item first!");
+      alert('Please check item first!');
     } else {
-      if (confirm("Are you sure  void this select items ?")) {
-        console.log(this.cart)
-        this.logService.logAction('Void item ', this.id)
+      if (confirm('Are you sure  void this select items ?')) {
+        console.log(this.cart);
+        this.logService.logAction('Void item ', this.id);
         this.loading = true;
         const body = {
           cart: this.cart,
           cartId: this.id,
-        }
-        const url = environment.api + "menuItemPos/voidItem";
-        this.http.post<any>(url, body, {
-          headers: this.configService.headers(),
-        }).subscribe(
-          data => {
-            console.log(data);
+        };
+        const url = environment.api + 'menuItemPos/voidItem';
+        this.http
+          .post<any>(url, body, {
+            headers: this.configService.headers(),
+          })
+          .subscribe(
+            (data) => {
+              console.log(data);
 
-            this.reload();
-          },
-          error => {
-            console.log(error);
-            this.logService.logAction('ERROR Void item ', this.id)
-          }
-        )
+              this.reload();
+            },
+            (error) => {
+              console.log(error);
+              this.logService.logAction('ERROR Void item ', this.id);
+            }
+          );
       }
     }
   }
 
   fnCustomNotes() {
     if (this.isChecked == false) {
-      alert("Please check item first!");
+      alert('Please check item first!');
     } else {
-
     }
   }
-
+  remark : string = '';
   results: any = [];
   addToItemModifier(a: any) {
     if (this.isChecked == false) {
-      alert("Please check item first!");
+      alert('Please check item first!');
     } else {
       this.loading = true;
       const body = {
         cart: this.cart,
         cartId: this.id,
         modifiers: a,
-      }
+      };
       console.log(body);
-      const url = environment.api + "menuItemPos/addToItemModifier";
-      this.http.post<any>(url, body, {
-        headers: this.configService.headers(),
-      }).subscribe(
-        data => {
-          console.log(data);
-          this.logService.logAction('Add Modifier ' + a['descs'] + '(' + a['id'] + ') @' + a['price'], this.id)
-          this.reload();
-          this.results = data['results']
-        },
-        error => {
-          console.log(error);
-          this.logService.logAction('ERROR Add Modifier ' + a['descs'] + '(' + a['id'] + ') @' + a['price'], this.id)
-        }
-      )
+      const url = environment.api + 'menuItemPos/addToItemModifier';
+      this.http
+        .post<any>(url, body, {
+          headers: this.configService.headers(),
+        })
+        .subscribe(
+          (data) => {
+            console.log(data);
+            this.logService.logAction(
+              'Add Modifier ' + a['descs'] + '(' + a['id'] + ') @' + a['price'],
+              this.id
+            );
+            this.reload();
+            this.results = data['results'];
+          },
+          (error) => {
+            console.log(error);
+            this.logService.logAction(
+              'ERROR Add Modifier ' +
+                a['descs'] +
+                '(' +
+                a['id'] +
+                ') @' +
+                a['price'],
+              this.id
+            );
+          }
+        );
     }
   }
+  discountGroupSelect : any = {}
+ addDiscountGroupWithRemark(content: any, a: any) {
+  if (this.isChecked == false) {
+    alert('Please check item first!');
+  } else {
+    this.discountGroupSelect = a
+    const modalRef = this.modalService.open(content, { size: 'md' });
+    setTimeout(() => {
+      this.remarkInputRef?.nativeElement.focus();
+    }, 300);
+  }
+}
 
   addDiscountGroup(a: any) {
     if (this.isChecked == false) {
-      alert("Please check item first!");
+      alert('Please check item first!');
     } else {
       this.loading = true;
       const body = {
         cart: this.cart,
         cartOrdered: this.cartOrdered,
-
+        remark : this.remark,
         cartId: this.id,
         discountGroup: a,
-      }
+      };
       console.log(body);
-      const url = environment.api + "menuItemPos/addDiscountGroup";
-      this.http.post<any>(url, body, {
-        headers: this.configService.headers(),
-      }).subscribe(
-        data => {
-          console.log(data);
-          this.reload();
-          this.results = data['results']
-          this.logService.logAction('Apply Discount Group ' + a['name'] + '(' + a['id'] + ') @' + a['discRate'] + '%', this.id)
-        },
-        error => {
-          console.log(error);
-          this.logService.logAction('ERROR Apply Discount Group ' + a['name'] + '(' + a['id'] + ') @' + a['discRate'] + '%', this.id)
-        }
-      )
+      const url = environment.api + 'menuItemPos/addDiscountGroup';
+      this.http
+        .post<any>(url, body, {
+          headers: this.configService.headers(),
+        })
+        .subscribe(
+          (data) => {
+            this.remark = ''; 
+            this.modalService.dismissAll();
+            console.log(data);
+            this.reload();
+            this.results = data['results'];
+            this.logService.logAction(
+              'Apply Discount Group ' +
+                a['name'] +
+                '(' +
+                a['id'] +
+                ') @' +
+                a['discRate'] +
+                '%',
+              this.id
+            );
+          },
+          (error) => {
+            console.log(error);
+            this.logService.logAction(
+              'ERROR Apply Discount Group ' +
+                a['name'] +
+                '(' +
+                a['id'] +
+                ') @' +
+                a['discRate'] +
+                '%',
+              this.id
+            );
+          }
+        );
     }
   }
 
@@ -637,96 +761,102 @@ export class MenuComponent implements OnInit, OnDestroy {
     this.loading = true;
     const body = {
       cartId: this.id,
-    }
-    const url = environment.api + "menuItemPos/sendOrder";
-    this.http.post<any>(url, body, {
-      headers: this.configService.headers(),
-    }).subscribe(
-      data => {
-        console.log(data);
-        this.logService.logAction('Send Order', this.id);
-        this.printQueue(data['sendOrder'])
-      },
-      error => {
-        console.log(error);
-        this.logService.logAction('ERROR Send Order', this.id)
-      }
-    )
+    };
+    const url = environment.api + 'menuItemPos/sendOrder';
+    this.http
+      .post<any>(url, body, {
+        headers: this.configService.headers(),
+      })
+      .subscribe(
+        (data) => {
+          console.log(data);
+          this.logService.logAction('Send Order', this.id);
+          this.printQueue(data['sendOrder']);
+        },
+        (error) => {
+          console.log(error);
+          this.logService.logAction('ERROR Send Order', this.id);
+        }
+      );
   }
 
   printQueue(sendOrder: string = '') {
-    const url = environment.api + "menuItemPos/printQueue";
-    this.http.get<any>(url, {
-      headers: this.configService.headers(),
-      params: {
-        sendOrder: sendOrder
-      }
-    }).subscribe(
-      data => {
-        console.log(data);
-        this.reload();
-        history.back();
-        this.logService.logAction('printQueue', this.id);
-
-      },
-      error => {
-        console.log(error);
-        this.logService.logAction('ERROR printQueue', this.id)
-      }
-    )
+    const url = environment.api + 'menuItemPos/printQueue';
+    this.http
+      .get<any>(url, {
+        headers: this.configService.headers(),
+        params: {
+          sendOrder: sendOrder,
+        },
+      })
+      .subscribe(
+        (data) => {
+          console.log(data);
+          this.reload();
+          history.back();
+          this.logService.logAction('printQueue', this.id);
+        },
+        (error) => {
+          console.log(error);
+          this.logService.logAction('ERROR printQueue', this.id);
+        }
+      );
   }
 
-
   exitWithoutOrder() {
-    if (confirm("Are you sure exit without order?")) {
+    if (confirm('Are you sure exit without order?')) {
       const body = {
         cartId: this.id,
-      }
-      const url = environment.api + "menuItemPos/exitWithoutOrder";
-      this.http.post<any>(url, body, {
-        headers: this.configService.headers(),
-      }).subscribe(
-        data => {
-          this.logService.logAction('Exit Without Order', this.id)
-          console.log(data);
-          this.router.navigate(['tables']);
-        },
-        error => {
-          console.log(error);
-          this.logService.logAction('ERROR Exit Without Order', this.id)
-        }
-      )
+      };
+      const url = environment.api + 'menuItemPos/exitWithoutOrder';
+      this.http
+        .post<any>(url, body, {
+          headers: this.configService.headers(),
+        })
+        .subscribe(
+          (data) => {
+            this.logService.logAction('Exit Without Order', this.id);
+            console.log(data);
+            this.router.navigate(['tables']);
+          },
+          (error) => {
+            console.log(error);
+            this.logService.logAction('ERROR Exit Without Order', this.id);
+          }
+        );
     }
   }
 
   payment() {
-    this.logService.logAction('Click PAYMENT', this.id)
+    this.logService.logAction('Click PAYMENT', this.id);
     this.loading = true;
     const body = {
       id: this.id,
-    }
-    console.log(body)
-    this.http.post<any>(environment.api + "payment/submit", body, {
-      headers: this.configService.headers(),
-    }).subscribe(
-      data => {
-        console.log(data);
+    };
+    console.log(body);
+    this.http
+      .post<any>(environment.api + 'payment/submit', body, {
+        headers: this.configService.headers(),
+      })
+      .subscribe(
+        (data) => {
+          console.log(data);
 
-        history.back();
-        setTimeout(() => {
-          this.router.navigate(['payment'], { queryParams: { id: this.id } });
-          this.logService.logAction('Update to payment', this.id)
-        }, 500);
-      },
-      error => {
-        console.log(error);
-        this.logService.logAction('ERROR Update to payment', this.id)
-      }
-    )
+          history.back();
+          setTimeout(() => {
+            this.router.navigate(['payment'], { queryParams: { id: this.id } });
+            this.logService.logAction('Update to payment', this.id);
+          }, 500);
+        },
+        (error) => {
+          console.log(error);
+          this.logService.logAction('ERROR Update to payment', this.id);
+        }
+      );
   }
 
   printToKitchen() {
-    window.open(environment.api + "printQueue?cartId=" + this.id);
+    window.open(environment.api + 'printQueue?cartId=' + this.id);
     // this.http.get<any>(environment.api+"printing/tableChecker",{
     //   params : {
     //     id : this.id
@@ -742,7 +872,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
   printTableChecker() {
-    window.open(environment.api + "printing/tableChecker?id=" + this.id);
+    window.open(environment.api + 'printing/tableChecker?id=' + this.id);
     // this.http.get<any>(environment.api+"printing/tableChecker",{
     //   params : {
     //     id : this.id
@@ -758,8 +888,6 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
   handleData(data: string) {
-
-
     let newQty = this.model.newQty.toString();
     if (data == 'b') {
       newQty = newQty.slice(0, -1);
@@ -767,142 +895,157 @@ export class MenuComponent implements OnInit, OnDestroy {
       newQty = newQty + data;
     }
     this.model.newQty = parseInt(newQty || '0'); // fallback kalau cover kosong
-
   }
 
   transferItems() {
-    this.logService.logAction('menu/transferItems', this.id)
-    this.router.navigate(['menu/transferItems'], { queryParams: { id: this.id } }).then(
-      () => { this.modalService.dismissAll() }
-    )
+    this.logService.logAction('menu/transferItems', this.id);
+    this.router
+      .navigate(['menu/transferItems'], { queryParams: { id: this.id } })
+      .then(() => {
+        this.modalService.dismissAll();
+      });
   }
 
   transferItemsGroup() {
-    this.logService.logAction('menu/transferItemsGroup', this.id)
-    this.router.navigate(['menu/transferItemsGroup'], { queryParams: { id: this.id } }).then(
-      () => { this.modalService.dismissAll() }
-    )
+    this.logService.logAction('menu/transferItemsGroup', this.id);
+    this.router
+      .navigate(['menu/transferItemsGroup'], { queryParams: { id: this.id } })
+      .then(() => {
+        this.modalService.dismissAll();
+      });
   }
 
   transferLog() {
-    this.logService.logAction('Popup transfer Log', this.id)
-    const modalRef = this.modalService.open(TransferLogComponent, { size: 'lg' });
+    this.logService.logAction('Popup transfer Log', this.id);
+    const modalRef = this.modalService.open(TransferLogComponent, {
+      size: 'lg',
+    });
     modalRef.componentInstance.cartId = this.id;
   }
   mergerLog() {
-    this.logService.logAction('Popup transfer Log', this.id)
+    this.logService.logAction('Popup transfer Log', this.id);
     const modalRef = this.modalService.open(MergerLogComponent, { size: 'lg' });
     modalRef.componentInstance.cartId = this.id;
   }
 
   takeOut() {
     if (this.isChecked == false) {
-      alert("Please check item first!");
+      alert('Please check item first!');
     } else {
       let cart: any[] = [];
       this.cart.forEach((el: any) => {
         if (el['checkBox'] == 1) {
-          cart.push(el)
+          cart.push(el);
         }
-
       });
 
       let cartOrdered: any[] = [];
       this.cartOrdered.forEach((el: any) => {
         if (el['checkBox'] == 1) {
-          cartOrdered.push(el)
+          cartOrdered.push(el);
         }
-
       });
 
-      console.log(this.cart)
+      console.log(this.cart);
 
       this.loading = true;
       const body = {
         cart: cart,
         cartOrdered: cartOrdered,
         cartId: this.id,
-      }
-      const url = environment.api + "menuItemPos/takeOut";
-      this.http.post<any>(url, body, {
-        headers: this.configService.headers(),
-      }).subscribe(
-        data => {
-          this.logService.logAction('Item TA ' + cart.length, this.id)
-          console.log(data);
-          this.reload();
-        },
-        error => {
-          console.log(error);
-          this.logService.logAction('ERROR Item TA' + cart.length, this.id)
-        }
-      )
+      };
+      const url = environment.api + 'menuItemPos/takeOut';
+      this.http
+        .post<any>(url, body, {
+          headers: this.configService.headers(),
+        })
+        .subscribe(
+          (data) => {
+            this.logService.logAction('Item TA ' + cart.length, this.id);
+            console.log(data);
+            this.reload();
+          },
+          (error) => {
+            console.log(error);
+            this.logService.logAction('ERROR Item TA' + cart.length, this.id);
+          }
+        );
     }
   }
-
 
   httpTables() {
     this.modalService.dismissAll();
     this.loading = true;
-    const url = environment.api + "tableMap";
-    this.http.get<any>(url, {
-      headers: this.configService.headers(),
-      params: {
-        outletId: this.configService.getConfigJson()['outlet']['id'],
-      }
-    }).subscribe(
-      data => {
-        this.loading = false;
-        console.log('httpTables', data);
-        this.tablesMaps = data['items'];
-      },
-      error => {
-        console.log(error);
-      }
-    )
+    const url = environment.api + 'tableMap';
+    this.http
+      .get<any>(url, {
+        headers: this.configService.headers(),
+        params: {
+          outletId: this.configService.getConfigJson()['outlet']['id'],
+        },
+      })
+      .subscribe(
+        (data) => {
+          this.loading = false;
+          console.log('httpTables', data);
+          this.tablesMaps = data['items'];
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
   }
 
   openTables(content: any) {
     this.modalService.open(content, { size: 'xl' });
   }
   onMap(index: number) {
-    localStorage.setItem("pos3.onMap", index.toString());
+    localStorage.setItem('pos3.onMap', index.toString());
     this.current = index;
   }
-
 
   mergerCheck(x: any) {
     console.log(x);
 
     if (x.cardId != '' && x.cardId != this.table['id']) {
-      this.logService.logAction("Merge table with " + x.tableName + " ?", this.id)
-      if (confirm("Merge table with " + x.tableName + " ?")) {
+      this.logService.logAction(
+        'Merge table with ' + x.tableName + ' ?',
+        this.id
+      );
+      if (confirm('Merge table with ' + x.tableName + ' ?')) {
         this.loading = true;
         const body = {
           cartId: this.id,
           table: this.table,
           newTable: x,
           dailyCheckId: this.configService.getDailyCheck(),
-        }
+        };
         console.log(body);
-        const url = environment.api + "menuItemPos/mergerCheck";
-        this.http.post<any>(url, body, {
-          headers: this.configService.headers(),
-        }).subscribe(
-          data => {
-            console.log(data);
-            history.back();
-            this.logService.logAction("Merge to table :" + x.tableName, this.id)
-          },
-          error => {
-            console.log(error);
-            this.logService.logAction("ERROR Merge to table :" + x.tableName, this.id)
-          }
-        )
+        const url = environment.api + 'menuItemPos/mergerCheck';
+        this.http
+          .post<any>(url, body, {
+            headers: this.configService.headers(),
+          })
+          .subscribe(
+            (data) => {
+              console.log(data);
+              history.back();
+              this.logService.logAction(
+                'Merge to table :' + x.tableName,
+                this.id
+              );
+            },
+            (error) => {
+              console.log(error);
+              this.logService.logAction(
+                'ERROR Merge to table :' + x.tableName,
+                this.id
+              );
+            }
+          );
       }
     } else {
-      alert("Please select active table");
-
+      alert('Please select active table');
     }
   }
 }

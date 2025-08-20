@@ -176,7 +176,7 @@ async function cart(cartId = '', subgroup = 0) {
 
 
     discountGroup.forEach(row => {
-        if (row['maxDiscount'] > 0) {
+        if (row['maxDiscount'] > 0 && (row['amount']*-1) > row['maxDiscount']) {
             row['amount'] = row['maxDiscount'] * -1;
             row['name'] = row['name'] + '(Max: ' + Number(row['maxDiscount']).toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(/\./g, ',') + ')';
         }
@@ -598,6 +598,15 @@ async function taxUpdate(cartItem = 0) {
     `;
     const [totalAmountModifier] = await db.query(q2);
 
+    const t1 = `
+    SELECT c.menuId , m.menuTaxScId, t.scTaxIncluded
+        FROM cart_item AS c
+        JOIN menu AS m ON m.id = c.menuId
+        JOIN menu_tax_sc AS t ON t.id = m.menuTaxScId
+        WHERE c.id = ${cartItem};
+    `;
+    const [menuQuery] = await db.query(q2);
+    const scTaxIncluded = menuQuery[0]['scTaxIncluded'];
 
     const m1 = `
         -- m1
@@ -608,6 +617,11 @@ async function taxUpdate(cartItem = 0) {
 
     const [itemPriceDb] = await db.query(m1);
     let itemPrice = itemPriceDb[0]['price'];
+
+    let addQuery = '';
+    if( scTaxIncluded == 1) {
+         
+    }
 
     const results = [];
     const addFee =
@@ -624,7 +638,7 @@ async function taxUpdate(cartItem = 0) {
                 WHERE cartItemId = ${cartItem}
                     AND presence =1 AND void = 0   AND applyDiscount !=0 
             ) AS t 
-        `; 
+        `;
     const [scRow] = await db.query(addFee);
 
     const taxQ =
