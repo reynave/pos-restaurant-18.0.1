@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>POS Restaurant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400..900&amp;family=Noto+Sans:ital,wght@0,100..900;1,100..900&amp;display=swap"
+        rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+        <div class="container-fluid">
+
+            <!-- Left menu -->
+            <ul class="navbar-nav flex-row me-3">
+                <li class="nav-item me-2">
+                    <a class="nav-link btn btn-primary px-3 d-flex align-items-center" href="#">
+                        <i class="bi bi-arrow-left "></i> Sign Out
+                    </a>
+                </li>
+
+            </ul>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+                <ul class="navbar-nav align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link px-3 active" href="#"><i class="bi bi-gear"></i> Setting</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3" href="#"><i class="bi bi-printer"></i> Print Queue</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3" href="#"><i class="bi bi-pencil-square"></i> Adjust Item</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3" href="#"><i class="bi bi-bar-chart"></i> Report</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3" href="#"><i class="bi bi-cash-stack"></i> Cash Balance</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3" href="#"><i class="bi bi-person-lines-fill"></i> User Log</a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Right menu -->
+            <ul class="navbar-nav flex-row ms-3">
+                <li class="nav-item me-2">
+                    <a class="nav-link" href="#"><i class="bi bi-question-circle"></i></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link btn btn-primary px-3 d-flex align-items-center" href="#">
+                        <i class="bi bi-person-circle"></i> John Doe
+                    </a>
+
+                </li>
+            </ul>
+
+        </div>
+    </nav>
+    <div class="container mt-3">
+
+        <div class="row">
+            <!-- Left -->
+            <div class="col-9">
+                <div class="order-panel order-panel-fixHeight-table  mb-3">
+                   map
+
+
+                </div>
+ 
+
+
+                <div class="row g-1">
+                    <div class="col-6 d-grid">
+                        <button class="btn btn-primary "><i class="bi bi-check-circle"></i> Show Detail</button>
+                    </div>
+                    <div class="col-3 d-grid">
+                        <button class="btn btn-primary  "> Cover</button>
+                    </div>
+                    <div class="col-3 d-grid">
+                        <button class="btn btn-danger  "> Void</button>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- Right -->
+            <div class="col-3">
+                <!-- Tabs -->
+                <ul class="nav nav-pills mb-2">
+                    <li class="nav-item"><a class="nav-link" href="#">Send Order</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Guest Check</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Kitchen</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Bill</a></li>
+
+                </ul>
+                
+
+                <!-- Tabs -->
+                <div class="row g-2 mb-2">
+                    <div class="col-3 d-grid ">
+                        <button class="btn btn-light py-3">Void Item</button>
+                    </div>
+                    
+                </div>
+
+                
+            </div>
+
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
