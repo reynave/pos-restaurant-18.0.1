@@ -1,5 +1,5 @@
 :root {
-  --body-width: 1234px;
+      --body-width: 1234px;
 
   --map-width: 800px;
   --map-height: 500px;
@@ -7,23 +7,15 @@
   --wrapper-sm-width: 400px;
   --wrapper-md-width: 500px;
 
-  --bg-color-danger: #dc3545;
-  --bg-color-primary-1: #f0f1ec;
-  --bg-color-primary-3: #e2e3df;
-
-  --bg-color-primary-10: #f0f5f4;
-
-  --bg-color-primary-30: #CDE8E5;
-
-
-  --bg-color-primary-40: #FFDC7F;
-  --bg-color-primary-50: #41B3A2;
-
-  --bg-color-primary-100: #086b68;
-
+  
+    --color-bg: #f3f6fb;
+    --color-card-shadow: rgba(0, 0, 0, 0.07);
+    --color-card-shadow-hover: rgba(0, 0, 0, 0.12);
+    --color-order-panel-bg: #fff;
+    --color-order-panel-shadow: rgba(0, 0, 0, 0.1);
+    --color-primary: #3a4a5d;
+    --color-accent: #1976d2;
+    --color-text: #3a4a5d;
+    --color-white: #ffffff;
 }
 
-.bg-success {
-  background-color: var(--bg-color-primary-100) !important;
-  color: #fff;
-}

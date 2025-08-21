@@ -1,143 +1,230 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm mb-3">
+   <div class="container-fluid">
+
+      <!-- Left menu -->
+      <ul class="navbar-nav flex-row me-3">
+         <li class="nav-item me-2">
+
+            @if(path == 'tables' || path == '' ){
+           
+               <img src="./img/logo.png" height="30">
+             
+            }
+            @else {
+            <a class="nav-link btn btn-primary px-3 d-flex align-items-center" (click)="back()">
+               <i class="bi bi-arrow-left"></i> BACK
+            </a>
+            }
+         </li>
+
+      </ul>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+         <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+         <ul class="navbar-nav align-items-center">
+            <li class="nav-item">
+               <a class="nav-link px-2 pointer-event" (click)="logService.logAction('Click Print Queue');"
+                  [routerLink]="['/printQueue']"> <i class="bi bi-list-check"></i> Print Queue</a>
+            </li>
+
+            <li class="nav-item">
+               <a class="nav-link px-2 pointer-event" (click)="logService.logAction('click setting');"
+                  [routerLink]="['/setting']">
+                  <i class="bi bi-gear"></i> Setting</a>
+            </li>
+            <li class="nav-item">
+               <a class="nav-link px-2 pointer-event" (click)="logService.logAction('click Adjustment Item');"
+                  [routerLink]="['/items/']"><i class="bi bi-bag-plus"></i> Adjust Item</a>
+            </li>
+            <li class="nav-item">
+               <a class="nav-link px-2 pointer-event"
+                  (click)="offcanvasService.dismiss();logService.logAction('click Report')"
+                  [routerLink]="['/transaction']"><i class="bi bi-receipt"></i> Report</a>
+            </li>
+            <li class="nav-item">
+               <a class="nav-link px-2 pointer-event"
+                  (click)="offcanvasService.dismiss();logService.logAction('click daily/cashBalance')"
+                  [routerLink]="['/daily/cashBalance']"><i class="bi bi-cash-coin"></i> Cash</a>
+            </li>
+            <li class="nav-item">
+               <a class="nav-link px-2 pointer-event"
+                  (click)="offcanvasService.dismiss();logService.logAction('click User logs')"
+                  [routerLink]="['/userLogs']" routerLinkActive="router-link-active"> <i
+                     class="bi bi-person-exclamation"></i> User Log</a>
+            </li>
+            <li class="nav-item">
+               <a class="nav-link px-2 pointer-event" (click)=" signOff(); "><i class="bi bi-box-arrow-left"></i> Sign
+                  Off</a>
+            </li>
+            <li class="nav-item">
+               <a class="nav-link px-2 pointer-event" (click)="dailyClose();">
+                  <i class="bi bi-key"></i> Daily Close</a>
+            </li>
+
+
+
+         </ul>
+      </div>
+
+      <!-- Right menu -->
+      <ul class="navbar-nav flex-row ms-3">
+
+         <li class="nav-item">
+            <a class="nav-link btn btn-primary px-3 d-flex align-items-center"
+               (click)="logOff(); logService.logAction('logOff')">
+               <i class="bi bi-power"></i> Log off
+            </a>
+         </li>
+      </ul>
+
+   </div>
+</nav>
+
+<!-- 
 <div class="top-header bg-white">
 
-    <div class="header mb-3 border-bottom shadow-sm">
-        <nav class="p-1">
-            <div class="container-fluid">
-                <div class="row g-1">
-                    <div class="col-2">
-                        @if(path == 'tables' || path == '' ){ 
-                        <a class="navbar-brand" href="#">
-                            <img src="./img/logo.png" height="30">
-                        </a>  
-                        }
-                        @else {
-                        <a class=" btn btn-outline-dark" (click)="back()" >
-                          <i class="bi bi-arrow-left"></i> BACK
-                        </a> 
-                        }
-                    </div>
-                    <div class="col-8 text-center"> 
-                        <div class="header-text"> 
-                            <span class="me-1 py-1 px-3 "> 
-                                 <i class="bi bi-clock"></i>  {{ currentTime | date: 'medium' }}  
-                            </span>
-                        </div>
-                    </div>
-                    <div class="col-2 text-end">
+   <div class="header mb-3 border-bottom shadow-sm">
+      <nav class="p-1">
+         <div class="container-fluid">
+            <div class="row g-1">
+               <div class="col-2">
+                  @if(path == 'tables' || path == '' ){
+                  <a class="navbar-brand" href="#">
+                     <img src="./img/logo.png" height="30">
+                  </a>
+                  }
+                  @else {
+                  <a class=" btn btn-outline-dark" (click)="back()">
+                     <i class="bi bi-arrow-left"></i> BACK
+                  </a>
+                  }
+               </div>
+               <div class="col-8 text-center">
+                  <div class="header-text">
+                     <span class="me-1 py-1 px-3 ">
+                        <i class="bi bi-clock"></i> {{ currentTime | date: 'medium' }}
+                     </span>
+                  </div>
+               </div>
+               <div class="col-2 text-end">
 
-                        <button type="button" class="btn btn-success" (click)="openEnd(content)"><i class="bi bi-list"></i> Menu</button>
-                    </div>
-                </div>
+                  <button type="button" class="btn btn-success" (click)="openEnd(content)"><i class="bi bi-list"></i>
+                     Menu</button>
+               </div>
             </div>
-        </nav>
-    </div>
+         </div>
+      </nav>
+   </div>
 
 </div>
 
 
 <ng-template #content let-offcanvas>
-	<div class="offcanvas-header">
-		<strong class="offcanvas-title"><i class="bi bi-list"></i> Menu</strong>
-		<button type="button" class="btn-close" aria-label="Close" (click)="offcanvas.dismiss('Cross click')"></button>
-	</div>
-	<div class="offcanvas-body">
-		
-        <div class="row g-1">
-            <div class="col-12">
-               <strong>Information</strong>
-               <table class="table table-sm">
-                  <tbody>
-                     <tr>
-                        <td class="align-content-center">Daily Start</td>
-                        <td>
-                           : {{dataHeader['startDate'] | date:'medium'}} 
-                        </td>
-                     </tr>
-                      <tr>
-                        <td class="align-content-center">User</td>
-                        <td>
-                            : {{getTokenJson['name']  }} 
-                        </td>
-                     </tr>  
-                     <tr>
-                        <td class="align-content-center">Level</td>
-                        <td>
-                           : {{getTokenJson['authlevel']  }} 
-                        </td>
-                     </tr>
-                       <tr>
-                        <td class="align-content-center">Terminal ID</td>
-                        <td>
-                           : {{terminalId}} 
-                        </td>
-                     </tr>
-                  </tbody>
-               </table>
-              
+   <div class="offcanvas-header">
+      <strong class="offcanvas-title"><i class="bi bi-list"></i> Menu</strong>
+      <button type="button" class="btn-close" aria-label="Close" (click)="offcanvas.dismiss('Cross click')"></button>
+   </div>
+   <div class="offcanvas-body">
+
+      <div class="row g-1">
+         <div class="col-12">
+            <strong>Information</strong>
+            <table class="table table-sm">
+               <tbody>
+                  <tr>
+                     <td class="align-content-center">Daily Start</td>
+                     <td>
+                        : {{dataHeader['startDate'] | date:'medium'}}
+                     </td>
+                  </tr>
+                  <tr>
+                     <td class="align-content-center">User</td>
+                     <td>
+                        : {{getTokenJson['name'] }}
+                     </td>
+                  </tr>
+                  <tr>
+                     <td class="align-content-center">Level</td>
+                     <td>
+                        : {{getTokenJson['authlevel'] }}
+                     </td>
+                  </tr>
+                  <tr>
+                     <td class="align-content-center">Terminal ID</td>
+                     <td>
+                        : {{terminalId}}
+                     </td>
+                  </tr>
+               </tbody>
+            </table>
+
+         </div>
+         <div class="col-6 mb-3">
+            <strong>General</strong>
+
+            <div class="d-grid">
+               <a class="btn btn-lg btn-outline-dark rounded-0 m-1"
+                  (click)="logService.logAction('Click Print Queue');offcanvasService.dismiss()"
+                  [routerLink]="['/printQueue']">
+                  <i class="bi bi-list-check"></i> Print Queue</a>
             </div>
-            <div class="col-6 mb-3">
-               <strong>General</strong>
-               <!-- <div class="d-grid">
-                  <a class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="reload(); logService.logAction('Click reload')">
-                     <i class="bi bi-arrow-clockwise"></i> Refresh</a> 
-               </div> -->
 
-                <div class="d-grid">
-                  <a class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="logService.logAction('Click Print Queue');offcanvasService.dismiss()" [routerLink]="['/printQueue']">
-                     <i class="bi bi-list-check"></i> Print Queue</a> 
-               </div>
-
-               <div class="d-grid">
-                  <a class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="logService.logAction('click setting');offcanvasService.dismiss()" [routerLink]="['/setting']"> <i
-                        class="bi bi-gear"></i> Setting</a>
-               </div>
-
-               <div class="d-grid">
-                  <button class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="logService.logAction('click Adjustment Item');offcanvasService.dismiss()" [routerLink]="['/items/']"><i
-                        class="bi bi-bag-plus"></i> Adjust Item</button>
-               </div>
-
-               <!-- <div class="d-grid">
-                  <button class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="modal(modalSwitchOutlet); logService.logAction('modalSwitchOutlet')"><i
-                        class="bi bi-diagram-3"></i> Switch Outlet</button>
-               </div> -->
-
-
+            <div class="d-grid">
+               <a class="btn btn-lg btn-outline-dark rounded-0 m-1"
+                  (click)="logService.logAction('click setting');offcanvasService.dismiss()"
+                  [routerLink]="['/setting']"> <i class="bi bi-gear"></i> Setting</a>
             </div>
-            <div class="col-6 mb-3">
-               <strong>Operation</strong>
-               <div class="d-grid">    
-                  <button class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="offcanvasService.dismiss();logService.logAction('click Report')" [routerLink]="['/transaction']"><i
-                        class="bi bi-receipt"></i> Report</button>
-               </div>
 
-               <div class="d-grid">
-                  <button class="btn btn-lg btn-outline-dark rounded-0 m-1"  (click)="offcanvasService.dismiss();logService.logAction('click daily/cashBalance')" [routerLink]="['/daily/cashBalance']"><i
-                        class="bi bi-cash-coin"></i> Cash</button>
-               </div>
-               <div class="d-grid">
-                  <a class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="offcanvasService.dismiss();logService.logAction('click User logs')" [routerLink]="['/userLogs']" routerLinkActive="router-link-active"> <i class="bi bi-person-exclamation"></i> User Log</a>
-               </div>
-
-               <div class="d-grid" >
-                  <a class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)=" signOff(); "><i
-                        class="bi bi-box-arrow-left"></i> Sign Off</a>
-               </div>
-               <div class="d-grid" *ngIf="getTokenJson['dailyAccess'] == 1 ">
-                  <button class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="dailyClose();">
-                     <i class="bi bi-key"></i> Daily Close</button>
-               </div>
+            <div class="d-grid">
+               <button class="btn btn-lg btn-outline-dark rounded-0 m-1"
+                  (click)="logService.logAction('click Adjustment Item');offcanvasService.dismiss()"
+                  [routerLink]="['/items/']"><i class="bi bi-bag-plus"></i> Adjust Item</button>
             </div>
-            <div class="col-12">
-               <!-- https://www.npmjs.com/package/node-thermal-printer -->
 
-               <div class="d-grid">
-                  <a class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="logOff(); logService.logAction('logOff')"> <i class="bi bi-power"></i>
-                     Log off</a>
-               </div>
+
+         </div>
+         <div class="col-6 mb-3">
+            <strong>Operation</strong>
+            <div class="d-grid">
+               <button class="btn btn-lg btn-outline-dark rounded-0 m-1"
+                  (click)="offcanvasService.dismiss();logService.logAction('click Report')"
+                  [routerLink]="['/transaction']"><i class="bi bi-receipt"></i> Report</button>
+            </div>
+
+            <div class="d-grid">
+               <button class="btn btn-lg btn-outline-dark rounded-0 m-1"
+                  (click)="offcanvasService.dismiss();logService.logAction('click daily/cashBalance')"
+                  [routerLink]="['/daily/cashBalance']"><i class="bi bi-cash-coin"></i> Cash</button>
+            </div>
+            <div class="d-grid">
+               <a class="btn btn-lg btn-outline-dark rounded-0 m-1"
+                  (click)="offcanvasService.dismiss();logService.logAction('click User logs')"
+                  [routerLink]="['/userLogs']" routerLinkActive="router-link-active"> <i
+                     class="bi bi-person-exclamation"></i> User Log</a>
+            </div>
+
+            <div class="d-grid">
+               <a class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)=" signOff(); "><i
+                     class="bi bi-box-arrow-left"></i> Sign Off</a>
+            </div>
+            <div class="d-grid" *ngIf="getTokenJson['dailyAccess'] == 1 ">
+               <button class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="dailyClose();">
+                  <i class="bi bi-key"></i> Daily Close</button>
             </div>
          </div>
+         <div class="col-12">  
+            <div class="d-grid">
+               <a class="btn btn-lg btn-outline-dark rounded-0 m-1" (click)="logOff(); logService.logAction('logOff')">
+                  <i class="bi bi-power"></i>
+                  Log off</a>
+            </div>
+         </div>
+      </div>
 
 
-	</div>
-</ng-template>
+   </div>
+</ng-template> 
+-->

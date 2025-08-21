@@ -18,3 +18,10 @@
 .disable-icon{
      opacity: 0.5;
 }
+
+.tab-content{
+    padding: 10px;
+    margin-bottom: 20px;
+    max-height: 62vh;
+    overflow-y: auto;
+}

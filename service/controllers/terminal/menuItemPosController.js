@@ -27,7 +27,7 @@ exports.getMenuItem = async (req, res) => {
           const padded = base64 + '='.repeat((4 - base64.length % 4) % 4);
           const decodedStr = Buffer.from(padded, 'base64').toString('utf-8');
           decodedToken = JSON.parse(decodedStr);
-         // console.log('Decoded Authorization:', decodedToken);
+          // console.log('Decoded Authorization:', decodedToken);
         } else {
           decodedToken = {};
         }
@@ -40,7 +40,7 @@ exports.getMenuItem = async (req, res) => {
 
     try {
       header = JSON.parse(req.headers['x-terminal']);
-   //   console.log(header);
+      //   console.log(header);
       const [terminal] = await db.query(`SELECT priceNo FROM terminal WHERE terminalId = ${header['terminalId']}`);
       if (terminal[0]['priceNo'] != 0) {
         i = terminal[0]['priceNo'];
@@ -416,7 +416,12 @@ exports.cart = async (req, res) => {
 
 
     const q2 = `
-      SELECT * FROM cart WHERE id = '${cartId}' and presence = 1;
+     SELECT c.*, t.tableName, c.startDate, c.overDue,
+       TIMESTAMPDIFF(MINUTE,  c.overDue, NOW())  AS overTime
+     FROM cart  AS c
+      JOIN outlet_table_map AS t ON t.id = c.outletTableMapId
+      WHERE c.id = '${cartId}' 
+      AND c.presence = 1;
     `;
 
     const [table] = await db.query(q2);
@@ -1281,7 +1286,7 @@ exports.addToItemModifier = async (req, res) => {
 exports.addDiscountGroup = async (req, res) => {
   const cart = req.body['cart'];
   const cartOrdered = req.body['cartOrdered'];
- const remark = req.body['remark'];
+  const remark = req.body['remark'];
 
   const discountGroup = req.body['discountGroup'];
   const cartId = req.body['cartId'];

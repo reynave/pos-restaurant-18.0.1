@@ -1,16 +1,12 @@
-/* You can add global styles to this file, and also import other style files */
-* {
-    font-family: "Open Sans", sans-serif;
-
-}
-
 html,
 body {
     min-height: 100%;
-    margin: 0;
-
+    margin: 0; 
 }
 
+body {
+    background: var(--color-bg);
+}
 strong {
     font-family: "Gabarito", sans-serif;
     font-optical-sizing: auto;
@@ -27,186 +23,184 @@ small,
     font-variation-settings:
         "wdth" 100;
 }
-
-body {
-    margin: 0 auto;
-    max-width: var(--body-width);
-}
-
-.body-with-header {
-    padding-top: 4rem;
-}
-
-div,
-p,
-label {
-    font-size: var(--font-size);
-}
-
-label {
-    color: #333 !important;
-}
-
-.wrapper-sm {
-    max-width: var(--wrapper-sm-width);
-    margin: 0 auto;
-}
-
-.wrapper-md {
-    max-width: var(--wrapper-md-width);
-    margin: 0 auto;
-}
-
-.wrapper {
-    height: 100vh;
-    position: relative;
-    overflow-y: auto;
-}
-
-.main {
-    height: 95vh;
-    display: flex;
-    overflow-y: auto;
-}
-
-.map {
-    margin: 0 auto;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-}
-
-.btn {
-    border-radius: 0px;
-     font-family: "Gabarito", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 400;
-  font-style: normal;
-}
-
-.menu {
-    max-width: 300px;
-}
-
-.content-table {
-    max-height: 80vh;
-    overflow-y: auto;
-}
-
-.content-table table thead th {
-    background-color: var(--bg-color-primary-10);
+ 
+strong {
+    font-family: "Gabarito", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-style: normal;
 }
 
 
-.wrapper-fix-bottom {
-    position: fixed;
-    left: 0px;
-    bottom: 0px;
-    width: 100%;
+.bg-success {
+  background-color: var(--bg-color-primary-100) !important;
+  color: #fff;
 }
 
-.table thead th {
-    font-size: var(--font-size);
+.btn{
+    font-family: "Gabarito", sans-serif; 
+    font-style: normal; 
+}
+.btn-primary {
+    background-color: #607f9f !important;
+    border-color: #607f9f !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+    background-color: #4e6a85 !important;
+    border-color: #4e6a85 !important;
+}
+
+.btn-dark {
+    background-color: #3c4d65 !important;
+    border-color: #3c4d65 !important;
+}
+
+.btn-dark:hover,
+.btn-dark:focus,
+.btn-dark:active {
+    background-color: #2e3a4d !important;
+    border-color: #2e3a4d !important;
+}
+.btn-light {
+  background-color: #ccd7e3 !important;
+  border-color: #ccd7e3 !important;
+  color: #3a4a5d !important;
+}
+
+.btn-light:hover,
+.btn-light:focus,
+.btn-light:active {
+  background-color: #b7c6d6 !important;
+  border-color: #b7c6d6 !important;
+  color: #3a4a5d !important;
+}
+.text-primary {
+    color: #4e6a85 !important;
+}
+
+.bg-dark {
+    background-color: #3c4d65 !important;
+}
+
+
+.nav-item a{
+    font-size: 0.9rem;
     text-transform: uppercase;
-      font-family: "Gabarito", sans-serif;
-  font-weight: 600; 
-  font-size: 0.9rem;
+        font-family: "Gabarito", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    cursor: pointer;
+}
+.card-menu {
+    cursor: pointer;
+    transition: transform 0.2s;
+    border-radius: 15px;
+    box-shadow: 0 0 8px var(--color-card-shadow);
 }
 
-.table .bg-light td {
-    background-color: var(--bg-color-primary-3);
-    border-bottom: 1px solid #cecece;
+.card-menu:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 16px var(--color-card-shadow-hover);
 }
 
-.table td {
-    cursor: pointer; 
+.order-panel {
+    background: var(--color-order-panel-bg);
+    border-radius: 15px;
+    padding: 18px;
+    box-shadow: 0 0 8px var(--color-order-panel-shadow);
 }
 
-.tr-active td {
-    background-color: #f4f4f4;
+.order-panel-fixHeight {
+    height: 55vh;
+    overflow-y: auto;
+}
+.order-panel-fixHeight-table {
+    height: 72vh;
+    overflow-y: auto;
 }
 
-.table-bill td {
-    padding: 2px 5px;
-}
-
-.table-bill td,
-.table-bill td strong,
-.table-bill td div,
-.table-bill span {
-    font-family: var(--bs-font-monospace) !important;
-}
-
-.navbar {
-    padding: 0.3rem 10px !important;
-}
-
-.top-header {
-    z-index: 99;
-    position: fixed;
-    top: 0px;
-    left: 0px;
-    width: 100%;
-}
-
-.header-text {
-    font-size: 1.1rem;
-    padding: 5px;
-}
-
-small {
-    font-size: 0.8rem;
+.order-panel-overflow { 
+    overflow-y: auto;
 }
 
 
-button:disabled,
-button[disabled] {
-    border: none;
+.btn-action {
+
+    margin-bottom: 8px;
+    padding: 12px;
+    font-weight: bold;
+    border-radius: 10px;
 }
 
-.table-30 {
-    background-color: var(--bg-color-danger) !important;
-}
-
-
-.table-10 {
-    background-color: var(--bg-color-primary-50) !important;
-}
-
-.table-12 {
-    background-color: var(--bg-color-primary-40) !important;
-}
-
-.table-18 {
-    background-color: var(--bg-color-primary-30) !important;
-}
-
-.table-name {
-    text-shadow: 2px 2px 2px #f4f4f4;
-    color: #333;
-
-}
-
-.table-pos-label {
-    position: absolute;
-    bottom: -1.2rem;
-    left: 0px;
-    width: 100%;
+.nav-pills .nav-link {
+    background: #4e6a85;
+    color: var(--color-white);
+    margin: 0.3rem;
+    min-width: 10rem;
     text-align: center;
+    font-family: "Gabarito", sans-serif;
+    text-transform: uppercase;
+
+}
+.nav-pills .nav-link.active {
+    background: #2e3e4e; 
+
 }
 
-.table> :not(caption)>*>* {
+.category-tabs .nav-link.active {
+    border-bottom: 2px solid var(--color-accent);
+    color: var(--color-accent) !important;
     background: none;
+    font-family: "Gabarito", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-style: normal;
 }
 
+.category-tabs .nav-link {
+    color: var(--color-text);
+    border-radius: 0;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.table th,
+.table td {
+    vertical-align: text-top;
+    font-size: 15px;
+}
+
+.order-summary {
+    font-size: 16px;
+}
+
+.order-summary .fw-bold {
+    font-size: 18px;
+}
+
+.btn-group-action {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.alert-primary{
+    background-color: #e9f0fe ;
+    border-color: #dde8fc ;
+    color: #3e4c65 ;
+}
 
 /* for component  tables.component.html */
 .table-map {
+  
     position: relative;
     width: 100%;
     height: var(--map-height);
-    background-color: var(--bg-color-primary-1);
+ 
     overflow-y: auto;
 }
 
@@ -215,16 +209,7 @@ button[disabled] {
 }
 
 .table-map .floorPlan .items {
-
     cursor: pointer;
 }
+/* END :: for component  tables.component.html */
 
-.table-sm td {
-    font-size: 0.9rem;
-}
-
-
-
-.table-cart td {
-    padding: 5px 10px;
-}

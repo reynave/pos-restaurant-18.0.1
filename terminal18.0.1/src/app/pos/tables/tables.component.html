@@ -52,9 +52,9 @@
          @if(items.length > 0){
 
          @if(activeView == 'map'){
-         <div class="map">
+         <div class="map bg-white shadow-sm rounded p-1 mb-3">
 
-            <div class="table-map border p-1 shadow-sm  rounded "
+            <div class="table-map  p-1  "
                style="background: url('{{public}}floor/{{items[current]?.image}}') left top no-repeat;">
                <div class="floorPlan" *ngFor="let x of items[current]?.maps ; let i = index">
 

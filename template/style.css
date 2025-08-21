@@ -46,9 +46,15 @@ strong {
     overflow-y: auto;
 }
 .order-panel-fixHeight-table {
-    height: 80vh;
+    height: 72vh;
     overflow-y: auto;
 }
+
+.order-panel-overflow { 
+    overflow-y: auto;
+}
+
+
 .btn-action {
 
     margin-bottom: 8px;
@@ -65,6 +71,10 @@ strong {
     text-align: center;
     font-family: "Gabarito", sans-serif;
     text-transform: uppercase;
+
+}
+.nav-pills .nav-link.active {
+    background: #2e3e4e; 
 
 }
 

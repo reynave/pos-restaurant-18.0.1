@@ -19,6 +19,7 @@ import { KeyNumberComponent } from '../../keypad/key-number/key-number.component
 import { TransferLogComponent } from './transfer-log/transfer-log.component';
 import { UserLoggerService } from '../../service/user-logger.service';
 import { MergerLogComponent } from './merger-log/merger-log.component';
+import { PrintQueueComponent } from "../print-queue/print-queue.component";
 export class Actor {
   constructor(public newQty: number, public note: string) {}
 }
@@ -33,15 +34,16 @@ export class Actor {
     RouterModule,
     HeaderMenuComponent,
     KeyNumberComponent,
-  ],
+    PrintQueueComponent
+],
   templateUrl: './menu.component.html',
   styleUrl: './menu.component.css',
 })
 export class MenuComponent implements OnInit, OnDestroy {
   @ViewChild('myInput') myInputRef!: ElementRef<HTMLInputElement>;
-// ...existing code...
-@ViewChild('remarkInput') remarkInputRef!: ElementRef<HTMLInputElement>;
-// ...existing code...
+  // ...existing code...
+  @ViewChild('remarkInput') remarkInputRef!: ElementRef<HTMLInputElement>;
+  // ...existing code...
   loading: boolean = false;
   current: number = 0;
   checkboxAll: number = 0;
@@ -51,6 +53,7 @@ export class MenuComponent implements OnInit, OnDestroy {
       menu: [],
     },
   ];
+  summary: any = [];
   modifiers: any = [];
   item: any = [];
   cart: any = [];
@@ -67,7 +70,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   isChecked: boolean = false;
   model = new Actor(1, '');
 
-  cssClass: string = 'btn btn-sm py-3 btn-outi mb-2 rounded shadow-sm';
+  cssClass: string = 'btn btn-sm py-3   rounded shadow-sm';
   cssMenu: string = 'btn btn-sm py-3 bg-white  me-1 lh-1  rounded shadow-sm';
   cssMenuDisable: string =
     'btn btn-sm py-3 btn-light me-1 lh-1  rounded shadow-sm';
@@ -90,8 +93,9 @@ export class MenuComponent implements OnInit, OnDestroy {
 
   tablesMaps: any = [];
   table: any = [];
-
+  screenWidth: number = window.innerWidth;
   checkBoxAll: boolean = false;
+  activeTab: string = 'function';
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
@@ -100,10 +104,12 @@ export class MenuComponent implements OnInit, OnDestroy {
     private activeRouter: ActivatedRoute,
     private renderer: Renderer2,
     public logService: UserLoggerService
-  ) {}
-  ngOnDestroy(): void {
-    this.renderer.setStyle(document.body, 'background-color', '#fff');
+  ) {
+    window.addEventListener('resize', () => {
+      this.screenWidth = window.innerWidth;
+    });
   }
+  ngOnDestroy(): void {}
 
   fnCheckBoxAll() {
     if (this.checkBoxAll == false) {
@@ -127,18 +133,13 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.renderer.setStyle(
-      document.body,
-      'background-color',
-      'var(--bg-color-primary-1)'
-    );
-
     (this.id = this.activeRouter.snapshot.queryParams['id']),
       this.modalService.dismissAll();
     if (this.id == undefined) {
       alert('ERROR, ngOnInit() id == undefined ');
       this.router.navigate(['tables']);
     } else {
+      this.httpMenuLookUp(0);
       this.httpMenu();
       this.httpCart();
       this.httpCartOrdered();
@@ -648,7 +649,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     } else {
     }
   }
-  remark : string = '';
+  remark: string = '';
   results: any = [];
   addToItemModifier(a: any) {
     if (this.isChecked == false) {
@@ -691,18 +692,18 @@ export class MenuComponent implements OnInit, OnDestroy {
         );
     }
   }
-  discountGroupSelect : any = {}
- addDiscountGroupWithRemark(content: any, a: any) {
-  if (this.isChecked == false) {
-    alert('Please check item first!');
-  } else {
-    this.discountGroupSelect = a
-    const modalRef = this.modalService.open(content, { size: 'md' });
-    setTimeout(() => {
-      this.remarkInputRef?.nativeElement.focus();
-    }, 300);
+  discountGroupSelect: any = {};
+  addDiscountGroupWithRemark(content: any, a: any) {
+    if (this.isChecked == false) {
+      alert('Please check item first!');
+    } else {
+      this.discountGroupSelect = a;
+      const modalRef = this.modalService.open(content, { size: 'md' });
+      setTimeout(() => {
+        this.remarkInputRef?.nativeElement.focus();
+      }, 300);
+    }
   }
-}
 
   addDiscountGroup(a: any) {
     if (this.isChecked == false) {
@@ -712,7 +713,7 @@ export class MenuComponent implements OnInit, OnDestroy {
       const body = {
         cart: this.cart,
         cartOrdered: this.cartOrdered,
-        remark : this.remark,
+        remark: this.remark,
         cartId: this.id,
         discountGroup: a,
       };
@@ -724,7 +725,7 @@ export class MenuComponent implements OnInit, OnDestroy {
         })
         .subscribe(
           (data) => {
-            this.remark = ''; 
+            this.remark = '';
             this.modalService.dismissAll();
             console.log(data);
             this.reload();
@@ -989,6 +990,7 @@ export class MenuComponent implements OnInit, OnDestroy {
           this.loading = false;
           console.log('httpTables', data);
           this.tablesMaps = data['items'];
+        
         },
         (error) => {
           console.log(error);
