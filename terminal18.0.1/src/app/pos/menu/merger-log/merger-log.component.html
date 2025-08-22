@@ -77,6 +77,14 @@
     </ng-template>
 
     <!-- Trigger pertama -->
+    @if( data && data.items && data.items.length > 0) {
+
     <ng-container *ngTemplateOutlet="recursive; context: { $implicit: data.items }"></ng-container>
+    }
+    @else {
+        <div class="text-center">
+            <p class="text-muted">No merger logs found.</p>
+        </div>
+    }
 
 </div>

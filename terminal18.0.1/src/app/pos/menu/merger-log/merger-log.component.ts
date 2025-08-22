@@ -13,7 +13,7 @@ import { CommonModule } from '@angular/common';
   styleUrl: './merger-log.component.css'
 })
 export class MergerLogComponent implements OnInit {
-  data  : any = []; 
+  data  : any = [];  
   activeModal = inject(NgbActiveModal);
   @Input() cartId: any;
   constructor(

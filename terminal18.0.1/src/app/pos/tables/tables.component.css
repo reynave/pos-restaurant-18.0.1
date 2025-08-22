@@ -1,0 +1,21 @@
+.floating-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    z-index: 10;
+    width: 100%;
+    height: auto;
+}
+
+.floating-wrapper .floating-content {
+    margin: 0 auto; 
+    width: 900px;
+
+    background:#fff;
+}
+
+.floating-content strong {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+}

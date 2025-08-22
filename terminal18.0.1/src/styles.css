@@ -32,6 +32,46 @@ strong {
 }
 
 
+.bg-overdue {
+    background: #e57373d4; /* soft red */
+}
+.bg-avaliable {
+    background: #daecffd4; /* teal, related to #ccd7e3 */
+}
+.bg-filled {
+    background: #fff9c4d4; /* soft yellow */
+}
+.bg-sendOrder {
+    background: #90caf9d4; /* blue, related to #ccd7e3 */
+}
+.bg-payment {
+    background: #ffd54fd4; /* amber */
+}
+.bg-paid {
+    background: #ccd7e3d4; /* main color as requested */
+}
+
+
+.text-overdue {
+    color: #e30000; /* soft red */
+}
+.text-avaliable {
+    color: #65affe; /* teal, related to #ccd7e3 */
+}
+.text-filled {
+    color: #fde400; /* soft yellow */
+}
+.text-sendOrder {
+    color: #0087f6; /* blue, related to #ccd7e3 */
+}
+.text-payment {
+    color: #fac518; /* amber */
+}
+.text-paid {
+    color: #5987b9; /* main color as requested */
+}
+
+
 .bg-success {
   background-color: var(--bg-color-primary-100) !important;
   color: #fff;
@@ -41,9 +81,12 @@ strong {
     font-family: "Gabarito", sans-serif; 
     font-style: normal; 
 }
-.btn-primary {
+.btn-primary, .bg-primary {
     background-color: #607f9f !important;
     border-color: #607f9f !important;
+}
+.bg-primary, a.bg-primary:hover{
+    color: #fff !important;;
 }
 
 .btn-primary:hover,
