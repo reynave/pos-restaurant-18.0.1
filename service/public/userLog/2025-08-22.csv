@@ -368,3 +368,68 @@ time,outletId,workStationId,userId,bill,action,url,method,server
 17:26:25,Imperial Kitchen(15),0005,sa (76),250822000327,Go to Menu,http://localhost:4850/#/tables
 17:26:25,Imperial Kitchen(15),0005,sa (76),250822000327,Menu Lookup 0,http://localhost:4850/#/menu?id=250822000327
 17:26:26,Imperial Kitchen(15),0005,sa (76),250822000327,Click BILL,http://localhost:4850/#/menu?id=250822000327
+17:35:23,Imperial Kitchen(15),0005,sa (76),250822000324,Go to Menu,http://localhost:4850/#/tables
+17:35:23,Imperial Kitchen(15),0005,sa (76),250822000324,Menu Lookup 0,http://localhost:4850/#/menu?id=250822000324
+17:35:26,Imperial Kitchen(15),0005,sa (76),250822000325,Go to Menu,http://localhost:4850/#/tables
+17:35:26,Imperial Kitchen(15),0005,sa (76),250822000325,Menu Lookup 0,http://localhost:4850/#/menu?id=250822000325
+17:35:30,Imperial Kitchen(15),0005,sa (76),250822000325,Go to Menu,http://localhost:4850/#/tables
+17:35:30,Imperial Kitchen(15),0005,sa (76),250822000325,Menu Lookup 0,http://localhost:4850/#/menu?id=250822000325
+17:35:34,Imperial Kitchen(15),0005,sa (76),250822000324,Go to Menu,http://localhost:4850/#/tables
+17:35:34,Imperial Kitchen(15),0005,sa (76),250822000324,Menu Lookup 0,http://localhost:4850/#/menu?id=250822000324
+17:39:45,Imperial Kitchen(15),0005,sa (76),250822000325,Go to Menu,http://localhost:4850/#/tables
+17:39:45,Imperial Kitchen(15),0005,sa (76),250822000325,Menu Lookup 0,http://localhost:4850/#/menu?id=250822000325
+17:39:52,Imperial Kitchen(15),0005,sa (76),250822000325,Go to Menu,http://localhost:4850/#/tables
+17:39:52,Imperial Kitchen(15),0005,sa (76),250822000325,Menu Lookup 0,http://localhost:4850/#/menu?id=250822000325
+17:45:57,Imperial Kitchen(15),0005,sa (76),,Change Map Dine In,http://localhost:4850/#/tables
+17:45:59,Imperial Kitchen(15),0005,sa (76),,Change Map Other,http://localhost:4850/#/tables
+17:46:43,Imperial Kitchen(15),0005,sa (76),250822000326,Go to Menu,http://localhost:4850/#/tables
+17:46:43,Imperial Kitchen(15),0005,sa (76),250822000326,Menu Lookup 0,http://localhost:4850/#/menu?id=250822000326
+17:46:48,Imperial Kitchen(15),0005,sa (76),250822000327,Go to payment,http://localhost:4850/#/tables
+17:57:49,Imperial Kitchen(15),0005,sa (76),,Change View to table,http://localhost:4850/#/tables
+17:57:49,Imperial Kitchen(15),0005,sa (76),,Change View to map,http://localhost:4850/#/tables
+17:57:51,Imperial Kitchen(15),0005,sa (76),,Change View to table,http://localhost:4850/#/tables
+17:57:52,Imperial Kitchen(15),0005,sa (76),,modalSwitchOutlet,http://localhost:4850/#/tables
+17:57:54,Imperial Kitchen(15),0005,sa (76),,Change Map Dine In,http://localhost:4850/#/tables
+17:57:54,Imperial Kitchen(15),0005,sa (76),,Change Map Other,http://localhost:4850/#/tables
+17:58:00,Imperial Kitchen(15),0005,sa (76),,Change Map Dine In,http://localhost:4850/#/tables
+17:58:00,Imperial Kitchen(15),0005,sa (76),,Change Map Other,http://localhost:4850/#/tables
+17:58:01,Imperial Kitchen(15),0005,sa (76),,Change Map Dine In,http://localhost:4850/#/tables
+17:58:01,Imperial Kitchen(15),0005,sa (76),,Change Map Other,http://localhost:4850/#/tables
+17:58:02,Imperial Kitchen(15),0005,sa (76),,Change View to map,http://localhost:4850/#/tables
+17:59:17,Imperial Kitchen(15),0005,sa (76),,Change Map Dine In,http://localhost:4850/#/tables
+17:59:17,Imperial Kitchen(15),0005,sa (76),,Change Map Other,http://localhost:4850/#/tables
+17:59:18,Imperial Kitchen(15),0005,sa (76),,click Adjustment Item,http://localhost:4850/#/tables
+17:59:24,Imperial Kitchen(15),0005,sa (76),250822000326,Go to Menu,http://localhost:4850/#/tables
+17:59:24,Imperial Kitchen(15),0005,sa (76),250822000326,Menu Lookup 0,http://localhost:4850/#/menu?id=250822000326
+17:59:26,Imperial Kitchen(15),0005,sa (76),250822000326,Popup transfer Log,http://localhost:4850/#/menu?id=250822000326
+18:12:38,Imperial Kitchen(15),0005,sa (76),,Change Map Dine In,http://localhost:4850/#/tables
+18:12:39,Imperial Kitchen(15),0005,sa (76),,Change Map Other,http://localhost:4850/#/tables
+18:13:30,Imperial Kitchen(15),0005,sa (76),,Change Map Dine In,http://localhost:4850/#/tables
+18:13:31,Imperial Kitchen(15),0005,sa (76),,Change Map Other,http://localhost:4850/#/tables
+18:13:32,Imperial Kitchen(15),0005,sa (76),,Change Map Dine In,http://localhost:4850/#/tables
+18:13:34,Imperial Kitchen(15),0005,sa (76),,Change Map Other,http://localhost:4850/#/tables
+18:14:13,Imperial Kitchen(15),0005,sa (76),,Change Map Dine In,http://localhost:4850/#/tables
+18:14:13,Imperial Kitchen(15),0005,sa (76),,Change Map Other,http://localhost:4850/#/tables
+18:14:43,Imperial Kitchen(15),0005,sa (76),250822000325,Go to Menu,http://localhost:4850/#/tables
+18:14:43,Imperial Kitchen(15),0005,sa (76),250822000325,Menu Lookup 0,http://localhost:4850/#/menu?id=250822000325
+18:15:14,Imperial Kitchen(15),0005,sa (76),,modalSwitchOutlet,http://localhost:4850/#/tables
+18:15:16,Imperial Kitchen(15),0005,sa (76),,Change View to map,http://localhost:4850/#/tables
+18:15:16,Imperial Kitchen(15),0005,sa (76),,Change View to table,http://localhost:4850/#/tables
+18:15:17,Imperial Kitchen(15),0005,sa (76),,Change View to map,http://localhost:4850/#/tables
+18:15:17,Imperial Kitchen(15),0005,sa (76),,modalSwitchOutlet,http://localhost:4850/#/tables
+18:15:18,Imperial Kitchen(15),0005,sa (76),,Change View to table,http://localhost:4850/#/tables
+18:15:19,Imperial Kitchen(15),0005,sa (76),250822000326,Go to Menu,http://localhost:4850/#/tables
+18:15:20,Imperial Kitchen(15),0005,sa (76),250822000326,Menu Lookup 0,http://localhost:4850/#/menu?id=250822000326
+18:15:22,Imperial Kitchen(15),0005,sa (76),,Change Map Dine In,http://localhost:4850/#/tables
+18:15:22,Imperial Kitchen(15),0005,sa (76),,Change Map Other,http://localhost:4850/#/tables
+18:15:35,Imperial Kitchen(15),0005,sa (76),,Log Off,http://localhost:4850/#/tables
+18:15:42,Imperial Kitchen(15),0005,sa (76),,Log In Success,http://localhost:4850/#/home
+18:15:46,Imperial Kitchen(15),0005,sa (76),,Change View to map,http://localhost:4850/#/tables
+18:35:53,Imperial Kitchen(15),0005,sa (76),,logOff,http://localhost:4850/#/tables
+18:35:53,Imperial Kitchen(15),0005,sa (76),,logOff,http://localhost:4850/#/tables
+18:37:42,Imperial Kitchen(15),0005,sa (76),,logOff,http://localhost:4850/#/tables
+18:37:42,Imperial Kitchen(15),0005,sa (76),,logOff,http://localhost:4850/#/tables
+18:38:43,Imperial Kitchen(15),0005,sa (76),,logOff,http://localhost:4850/#/tables
+18:38:43,Imperial Kitchen(15),0005,sa (76),,logOff,http://localhost:4850/#/tables
+18:42:07,Imperial Kitchen(15),0005,sa (76),,logOff,http://localhost:4850/#/tables
+18:42:07,Imperial Kitchen(15),0005,sa (76),,logOff,http://localhost:4850/#/tables

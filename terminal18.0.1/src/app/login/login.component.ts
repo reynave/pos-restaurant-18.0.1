@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, Renderer2 } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { environment } from '../../environments/environment';
@@ -33,17 +33,15 @@ export class LoginComponent implements OnInit {
   constructor(
     private config: ConfigService,
     private router: Router,
-    private http: HttpClient,
-    private renderer: Renderer2
+    private http: HttpClient, 
   ) { }
 
   ngOnDestroy(): void {
-    this.renderer.setStyle(document.body, 'background-color', '#fff');
-
+    
   }
 
   ngOnInit(): void {
-    this.renderer.setStyle(document.body, 'background-color', 'var(--bg-color-primary-1)');
+    
     this.httpGet();
 
     if (this.config.getConfigJson() !== null) {

@@ -67,9 +67,9 @@
          <div class="row g-1 mb-2">
 
             <div class="col-7 ">
-               <div class="bg-light p-1  border rounded-pill d-inline-block">
+               <div class="bg-light p-1  rounded border  d-inline-block">
                   <span *ngFor="let x of items; let i = index">
-                     <button type="button" class="btn rounded-pill px-3 py-1" (click)="onMap(i)" [class]="{
+                     <button type="button" class="btn px-3 py-1" (click)="onMap(i)" [class]="{
                            'border': current == i,
                             'bg-primary': current == i,
                             'shadow-sm': current == i,
