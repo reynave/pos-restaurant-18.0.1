@@ -14,10 +14,11 @@ const dailyCheckId = req.query.dailyCheckId;
     // ${so ? 'AND so = "'+so+'"' : '' }
       const a = `
         SELECT p.id, p.cartId, p.so, p.dailyCheckId, s.name as 'statusName', p.status, p.consoleError, p.inputDate,
-        r.name AS 'printer'
+        r.name AS 'printer', m.name AS 'menu', p.message
         FROM print_queue  as p
         join print_queue_status as s on s.id = p.status 
           JOIN printer AS r ON r.id = p.printerId
+          left join menu as m ON m.id = p.menuId
         WHERE p.presence = 1 AND  p.dailyCheckId = '${dailyCheckId}' ${cartId != 'undefined' ? 'AND p.cartId = "'+cartId+'"' : ''}
         ORDER BY p.id DESC
       `;

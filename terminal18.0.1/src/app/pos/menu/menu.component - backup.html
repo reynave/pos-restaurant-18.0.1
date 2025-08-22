@@ -35,7 +35,7 @@
                   </thead>
 
                   <tbody *ngFor="let x of cartOrdered; let i = index" [class]="{'tr-active':x.checkBox == 1 }">
-                     <tr (click)="fnCheckedOrdered(i)">
+                     <tr [class]="{'bg-light':x.sendOrder !== ''}" (click)="fnCheckedOrdered(i)">
                         <td>
 
                            <i *ngIf="x.checkBox == 0 " class="bi bi-square"></i>
@@ -47,14 +47,12 @@
                         </td>
                         <td>
                            <div class="lh-1">
-                              <strong>
-                                 <span class="text-primary"><i class="bi bi-lock-fill"></i></span>
-                                  {{x.name }} {{x.totalModifier > 0 ? '*':''}} 
-                              </strong>
+                              <strong> <span><i class="bi bi-fork-knife"></i></span> {{x.name }} {{x.totalModifier > 0 ?
+                                 '*':''}} </strong>
                            </div>
                            <div class="lh-2">
                               <small class="font-monospace"> &#64;{{x.price | number}}</small>
-                              <small class="badge text-bg-success ms-2">KITCHEN</small>
+                              <small class="badge text-bg-secondary ms-2">SO {{x.sendOrder}}</small>
                               <small *ngIf="x.ta > 0 " class="badge text-bg-warning ms-2">TA </small>
                            </div>
 
@@ -234,7 +232,7 @@
          <!-- Tabs -->
          <ul class="nav nav-pills mb-2">
             <li class="nav-item">
-               <a class="nav-link" (click)="sendOrder();">
+               <a class="nav-link" href="#" (click)="sendOrder();">
                   <i class="bi bi-fork-knife"></i> Send Order
                </a>
             </li>
@@ -242,7 +240,7 @@
                <a class="nav-link" (click)="printTableChecker()">
                   <i class="bi bi-receipt-cutoff"></i> Guest Check
                </a>
-            </li>
+            </li> 
             <li class="nav-item"><a class="nav-link" [routerLink]="['/transaction/detail']" [queryParams]="{id:id}"><i
                      class="bi bi-list-check"></i> Transaction Detail</a></li>
             <li class="nav-item"><a class="nav-link" (click)="openComponent(id);logService.logAction('Click BILL', id)">
@@ -447,88 +445,15 @@
             </div>
 
             <div *ngIf="activeTab === 'info'">
-               <div class="order-panel">
-                  <div class="row">
-                     <div class="col-6">
-                        <table class="table table-sm">
-                           <tbody>
-                              <tr>
-                                 <th>ID</th>
-                                 <td>{{table?.id}}</td>
-                              </tr>
-                              <tr>
-                                 <th>Daily Check ID</th>
-                                 <td>{{table?.dailyCheckId}}</td>
-                              </tr>
-                              <tr>
-                                 <th>Outlet ID</th>
-                                 <td>{{table?.outletId}}</td>
-                              </tr>
-                              
-                              <tr>
-                                 <th>Table Name / ID </th>
-                                 <td>{{table?.tableName}}   / {{table?.outletTableMapId}}  </td>
-                              </tr>
-                              <tr>
-                                 <th>Cover</th>
-                                 <td>{{table?.cover}}</td>
-                              </tr>
-                              <tr>
-                                 <th>Status / ID</th>
-                                 <td> {{table?.status}} / {{table?.tableMapStatusId}}</td>
-                              </tr>
-                              
-                             
-
-                           </tbody>
-                        </table>
-                     </div>
-                     <div class="col-6">
-                        <table class="table table-sm">
-                           <tbody>
-
-                              <tr>
-                                 <th>Start Date</th>
-                                 <td>{{table?.startDate | date:'yyyy-MM-dd HH:mm:ss'}}</td>
-                              </tr>
-                              <tr>
-                                 <th>End Date</th>
-                                 <td>{{table?.endDate | date:'yyyy-MM-dd HH:mm:ss'}}</td>
-                              </tr>
-                              <tr>
-                                 <th>Overdue</th>
-                                 <td>{{table?.overDue | date:'yyyy-MM-dd HH:mm:ss'}}</td>
-                              </tr>
-                              <tr>
-                                 <th>Over Time</th>
-                                 <td>{{table.overTime > 0 ? table.overTime : ''}}</td>
-                              </tr>
-                              <tr>
-                                 <th>Input Date</th>
-                                 <td>{{table?.inputDate | date:'yyyy-MM-dd HH:mm:ss'}}</td>
-                              </tr>
-                              <tr>
-                                 <th>Input By</th>
-                                 <td>{{table?.inputBy}}</td>
-                              </tr>
-                              <tr>
-                                 <th>Update Date</th>
-                                 <td>{{table?.updateDate | date:'yyyy-MM-dd HH:mm:ss'}}</td>
-                              </tr>
-                              <tr>
-                                 <th>Update By</th>
-                                 <td>{{table?.updateBy}}</td>
-                              </tr>
-
-                           </tbody>
-                        </table>
-                     </div>
-                  </div>
+               <div class="alert alert-primary">
+                  <strong>Table:</strong> {{table?.name}}<br>
+                  <strong>Waiter:</strong> {{table?.waiter}}<br>
+                  <strong>Time:</strong> {{table?.startTime}} - {{table?.endTime}}<br>
+                  <strong>Cover:</strong> {{table?.cover}}
                </div>
             </div>
 
          </div>
-
          <div class="px-2" *ngIf="activeTab === 'menu' || activeTab === 'modifier' || activeTab === 'discount'">
             <div class="row g-1 mb-3">
                <div class="col-3 mb-1 d-grid" *ngIf="activeTab === 'menu' && menuLookUpParent.length > 0">
@@ -545,6 +470,252 @@
             </div>
          </div>
 
+
+         <br><br><br>
+         <hr>
+         VER LAMA
+         <div class="wrapper  px-2  ">
+            <div class="mb-3">
+               <div class=" shadow-sm bg-white rounded p-2">
+                  <div class="row ">
+                     <div class="col-3 align-content-center">
+
+                        @if(showHeader == false){
+                        <button type="button" class="btn border" (click)="backMenu(menuLookUpParent)"> <i
+                              class="bi bi-arrow-left"></i>
+                           BACK</button>
+                        }
+                        @else {
+                        <button type="button" class="btn border" (click)="back()"><i class="bi bi-arrow-left"></i>
+                           BACK</button>
+                        }
+
+                     </div>
+                     <div class="col-9 text-end">
+                        <button type="button" class="btn   btn-outline-dark me-1" [routerLink]="['/transaction/detail']"
+                           [queryParams]="{id:id}"><i class="bi bi-list-check"></i> Transaction Detail</button>
+                        <button type="button" class="btn   btn-outline-dark" (click)="open(modalPrinting,[],0)"><i
+                              class="bi bi-printer"></i> Print</button>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            @if(showHeader == true){
+            <div>
+               <div class="row g-2">
+                  <div class="col-3 d-grid">
+                     <button type="button" [class]="cssClass" class="bg-white" [disabled]="!isChecked"
+                        (click)="onVoid()">
+                        <i class="bi bi-x-lg"></i> VOID ITEM</button>
+                  </div>
+                  <div class="col-3 d-grid">
+                     <button type="button" [class]="cssClass" class="bg-white" [disabled]="cart.length < 1 || lock"
+                        (click)="sendOrder();">
+                        <i class="bi bi-fork-knife"></i> SEND ORDER</button>
+                  </div>
+                  <div class="col-3 d-grid">
+                     <button type="button" [class]="cssClass" class="bg-white"
+                        (click)="openComponent(id);logService.logAction('Click BILL', id)">
+                        <i class="bi bi-receipt-cutoff"></i> BILL</button>
+                  </div>
+                  <div class="col-3 d-grid">
+                     <button type="button" [class]="cssClass" class="bg-white" (click)="payment()"><i
+                           class="bi bi-credit-card"></i>
+                        PAYMENT</button>
+                  </div>
+
+               </div>
+
+               <div class="row g-2">
+                  <div class="col-3 d-grid">
+                     <button type="button" [class]="cssClass" class="btn-danger" (click)="exitWithoutOrder();"><i
+                           class="bi bi-trash"></i>
+                        EXIT WITHOUT ORDER</button>
+                  </div>
+                  <div class="col-3 d-grid">
+                     <button type="button" [disabled]="lock" [class]="cssClass" class="btn-warning"
+                        (click)="transferItemsGroup()"> <i class="bi bi-send-plus"></i>
+                        TRANSFER ITEMS
+                     </button>
+                  </div>
+
+
+                  <div class="col-3 d-grid">
+                     <button type="button" [disabled]="lock" [class]="cssClass" class="bg-white" (click)="takeOut()">
+                        <i class="bi bi-bag-check"></i>
+                        TAKE OUT</button>
+                  </div>
+
+                  <div class="col-3 d-grid">
+                     <button type="button" [class]="cssClass" class="bg-white" (click)="openTables(modelTables)">
+                        <i class="bi bi-intersect"></i>
+                        MERGE CHECK </button>
+                  </div>
+
+                  <div class="col-3 d-grid">
+                     <button type="button" [class]="cssClass" class="bg-white"
+                        (click)="model.newQty = 0; openSm(modalChangeCover)">
+                        <i class="bi bi-people"></i>
+                        CHANGE COVER </button>
+                  </div>
+
+               </div>
+
+               <div class="row g-2">
+                  <div class="col-3 d-grid">
+                     <button type="button" [class]="cssClass" class="bg-white" (click)="transferLog()">
+                        <i class="bi bi-clock-history"></i>
+                        TRANSFER LOG</button>
+                  </div>
+                  <div class="col-3 d-grid">
+                     <button type="button" [class]="cssClass" class="bg-white" (click)="mergerLog()">
+                        <i class="bi bi-clock-history"></i>
+                        MERGE LOG</button>
+                  </div>
+               </div>
+            </div>
+            }
+
+            <div>
+
+               @if(showHeader == true ){
+               <div class="row g-2">
+                  <div class="col-3 d-grid">
+                     <button type="button" [disabled]="lock" [class]="cssClass" class="bg-white"
+                        (click)="httpMenuLookUp(0);showMenu = true; showHeader= false"><i class="bi bi-cup-straw"></i>
+                        MENU</button>
+                  </div>
+                  <div class="col-3 d-grid">
+                     <button type="button" [disabled]="lock" [class]="cssClass" class="bg-white"
+                        (click)="showModifier = true;  showHeader= false"><i class="bi bi-pencil"></i> MODIFIER</button>
+                  </div>
+                  <div class="col-4 d-grid">
+                     <button type="button" [disabled]="lock" [class]="cssClass" class="bg-white"
+                        (click)="showApplyDiscount =true; showHeader= false"><i class="bi bi-percent"></i>
+                        ITEM DISCOUNT</button>
+                  </div>
+               </div>
+               }
+
+               @if(showHeader == false){
+               <!-- <h4>
+                  <span *ngIf="showMenu">MENU</span>
+                  <span *ngIf="showModifier">MODIFIER</span>
+                  <span *ngIf="showApplyDiscount">APPLY ITEM DISCOUNT</span>
+               </h4> -->
+               }
+            </div>
+            @if(showMenu == true){
+
+            <div class="row g-1 mb-3">
+               @if(menuLookUpParent.length> 0){
+               <div>Lookup Menu : <strong class="text-uppercase">{{menuLookUpParent[0]['name'] }} </strong> </div>
+
+               }
+               @else {
+               <div>Lookup Menu : <strong class="text-uppercase">MENU</strong> </div>
+               }
+
+               <div class="col-3 mb-1 d-grid" *ngFor="let x of menuLookUp; let i= index">
+                  <button type="button" [class]="cssMenu" (click)="httpMenuLookUp(x.id);">
+                     <div class="mb-1"> {{x.id}} {{x.name}}</div>
+                  </button>
+               </div>
+            </div>
+
+
+            <div class="row g-1 mb-3">
+               <div class="col-3 mb-1 d-grid" *ngFor="let a of items">
+                  <button type="button" [class]="((a.qty - a.usedQty)< 1) ? cssMenuDisable : cssMenu"
+                     (click)=" a.menuSet == 'SELECT' ? open(modalMenuSet,a,0, 'lg','SELECT') :addToCart(a)"
+                     [disabled]="(a.qty - a.usedQty) < 1">
+                     <div class="mb-1">{{a.name}}</div>
+                     <small>&#64;{{a.price | number}} </small>
+                     <small *ngIf="a.adjustItemsId != ''"> / {{(a.qty - a.usedQty)}}</small>
+                  </button>
+               </div>
+            </div>
+            }
+
+            @if(showModifier == true){
+            <div class="row g-1 mb-3">
+               <div class="col-3 mb-1 d-grid" *ngFor="let x of modifiers; let i = index">
+                  <button type="button" [class]="cssMenu" [disabled]=" x.id == modifierDetail['id'] ? true : false "
+                     (click)="fnShowModifierDetail(i);logService.logAction('Click MODIFIER : '+ x.name,id) ">
+                     <div class="mb-1"> {{x.name}}</div>
+                  </button>
+               </div>
+
+               <div class="col-3 mb-1 d-grid">
+                  <button type="button" [class]="cssMenu" (click)="modal(modalAddMemo,'md');">
+                     <div class="mb-1"><i class="bi bi-pen"></i> Custom Notes</div>
+                  </button>
+               </div>
+            </div>
+
+            <div class="row g-1 mb-3">
+               <h6 class="text-center">{{modifierDetail['name']}}</h6>
+               <div class="col-3 mb-1 d-grid" *ngFor="let a of modifierDetail['detail']">
+                  <a type="button" [class]="cssMenu" (click)="addToItemModifier(a);">
+                     <div class="mb-1"> {{a.descs}}</div>
+                  </a>
+               </div>
+            </div>
+
+            <div class="alert alert-warning" *ngIf="results.length > 0">
+               <ul>
+                  <li *ngFor="let x of results">{{x.status}}</li>
+               </ul>
+            </div>
+            }
+
+            @if(showApplyDiscount == true){
+            <!-- ITEM DISCOUNT -->
+
+            <div class="row g-1" *ngFor="let x of discountGroup">
+               @if(x.discount.length > 0){
+               <div class="col-12">
+                  <strong class="text-uppercase">{{x.name}}</strong>
+               </div>
+               <div class="col-3 mb-1 d-grid" *ngFor="let a of x.discount">
+
+                  <a href="javascript:;" *ngIf="a.remark == 0" [class]="cssMenu"
+                     (click)="addDiscountGroup(a)">{{a.name}}</a>
+                  <a href="javascript:;" *ngIf="a.remark == 1" [class]="cssMenu"
+                     (click)="addDiscountGroupWithRemark(contentRemark,a)">{{a.name}}</a>
+
+               </div>
+
+
+               <div class="col-12 mb-1">
+                  &nbsp;
+               </div>
+               }
+            </div>
+
+            <div class="alert alert-warning" *ngIf="results.length > 0">
+               <ul>
+                  <li *ngFor="let x of results">{{x.status}}</li>
+               </ul>
+            </div>
+            }
+
+            @if(showMenu == true || showModifier == true || showApplyDiscount == true){
+            <div class="row g-1 mb-3">
+               <div class="col-3 mb-1 d-grid">
+                  <button type="button" [class]="cssMenu" (click)="btnFinish(); menuLookupId = 0; results = '' ">
+                     <div class="mb-1"> <i class="bi bi-check2"></i> FINISH</div>
+                  </button>
+               </div>
+               <div class="col-3 mb-1 d-grid">
+                  <button type="button" [class]="cssMenu" (click)="onVoid();">
+                     <div class="mb-1"> <i class="bi bi-x-lg"></i> DELETE</div>
+                  </button>
+               </div>
+            </div>
+            }
+
+         </div>
 
       </div>
    </div>

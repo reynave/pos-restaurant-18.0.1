@@ -18,8 +18,8 @@ import { BillComponent } from '../bill/bill.component';
 import { KeyNumberComponent } from '../../keypad/key-number/key-number.component';
 import { TransferLogComponent } from './transfer-log/transfer-log.component';
 import { UserLoggerService } from '../../service/user-logger.service';
-import { MergerLogComponent } from './merger-log/merger-log.component';
-import { PrintQueueComponent } from "../print-queue/print-queue.component";
+import { MergerLogComponent } from './merger-log/merger-log.component'; 
+import { TablePrintQueueComponent } from "../print-queue/table-print-queue/table-print-queue.component";
 export class Actor {
   constructor(public newQty: number, public note: string) {}
 }
@@ -33,17 +33,15 @@ export class Actor {
     NgbDropdownModule,
     RouterModule,
     HeaderMenuComponent,
-    KeyNumberComponent,
-    PrintQueueComponent
+    KeyNumberComponent, 
+    TablePrintQueueComponent
 ],
   templateUrl: './menu.component.html',
   styleUrl: './menu.component.css',
 })
 export class MenuComponent implements OnInit, OnDestroy {
-  @ViewChild('myInput') myInputRef!: ElementRef<HTMLInputElement>;
-  // ...existing code...
-  @ViewChild('remarkInput') remarkInputRef!: ElementRef<HTMLInputElement>;
-  // ...existing code...
+  @ViewChild('myInput') myInputRef!: ElementRef<HTMLInputElement>; 
+  @ViewChild('remarkInput') remarkInputRef!: ElementRef<HTMLInputElement>; 
   loading: boolean = false;
   current: number = 0;
   checkboxAll: number = 0;

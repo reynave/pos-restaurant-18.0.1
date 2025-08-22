@@ -368,3 +368,12 @@ time,outletId,workStationId,userId,bill,action,url,method,server
 18:30:21,Imperial Kitchen(15),0005,sa (76),250821000319,Menu Lookup 3,http://localhost:4850/#/menu?id=250821000319
 18:30:49,Imperial Kitchen(15),0005,sa (76),250821000319,Menu Lookup 0,http://localhost:4850/#/menu?id=250821000319
 18:30:51,Imperial Kitchen(15),0005,sa (76),250821000319,Click MODIFIER : Bar Info,http://localhost:4850/#/menu?id=250821000319
+18:31:36,Imperial Kitchen(15),0005,sa (76),250821000319,Send Order,http://localhost:4850/#/menu?id=250821000319
+18:31:36,Imperial Kitchen(15),0005,sa (76),250821000319,printQueue,http://localhost:4850/#/menu?id=250821000319
+18:31:40,Imperial Kitchen(15),0005,sa (76),250821000320,Go to Menu,http://localhost:4850/#/tables
+18:31:40,Imperial Kitchen(15),0005,sa (76),250821000320,Menu Lookup 0,http://localhost:4850/#/menu?id=250821000320
+18:31:41,Imperial Kitchen(15),0005,sa (76),250821000320,Click PAYMENT,http://localhost:4850/#/menu?id=250821000320
+18:31:42,Imperial Kitchen(15),0005,sa (76),250821000320,Update to payment,http://localhost:4850/#/tables
+18:31:49,Imperial Kitchen(15),0005,sa (76),250821000320,Go to payment,http://localhost:4850/#/tables
+18:31:52,Imperial Kitchen(15),0005,sa (76),250821000319,Go to Menu,http://localhost:4850/#/tables
+18:31:52,Imperial Kitchen(15),0005,sa (76),250821000319,Menu Lookup 0,http://localhost:4850/#/menu?id=250821000319

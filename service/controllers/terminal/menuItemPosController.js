@@ -417,9 +417,10 @@ exports.cart = async (req, res) => {
 
     const q2 = `
      SELECT c.*, t.tableName, c.startDate, c.overDue,
-       TIMESTAMPDIFF(MINUTE,  c.overDue, NOW())  AS overTime
+       TIMESTAMPDIFF(MINUTE,  c.overDue, NOW())  AS overTime, s.name AS 'status'
      FROM cart  AS c
       JOIN outlet_table_map AS t ON t.id = c.outletTableMapId
+      left join outlet_table_map_status as s on s.id = c.tableMapStatusId
       WHERE c.id = '${cartId}' 
       AND c.presence = 1;
     `;
@@ -1948,12 +1949,12 @@ exports.printQueue = async (req, res) => {
             INSERT INTO print_queue (
                 dailyCheckId, cartId,  so,
                 message,  printerId, status, 
-                inputDate, updateDate 
+                inputDate, updateDate , menuId
             ) 
           VALUES (
             '${result[0]['dailyCheckId']}', '${row['cartId']}', '${row['sendOrder']}',
             '${JSON.stringify(row)}',  '${rexv['id']}',  0,
-            '${today()}', '${today()}'
+            '${today()}', '${today()}', '${row['menuId']}'
           )`;
 
         const [rest] = await db.query(q11);
