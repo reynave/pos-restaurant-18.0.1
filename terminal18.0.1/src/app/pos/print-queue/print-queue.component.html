@@ -1,42 +1,45 @@
 <app-header-menu></app-header-menu>
 
-<div class="container body-with-header">
-
-    <div class="row">
-        <div class="col-12 ">  
-            <table class="table table-sm border">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Printer</th>
-                        <td>ID</td>
-                        <td>SO</td>
-                        <td>Status</td>
-                        <td>console Error</td>
-                        <td>Input Date</td>
-                        <td></td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let x of items; let i = index">
-                        <td>{{i+1}}</td>
-                         <td>{{x.printer}}</td>
-                        <td>{{x.cartId}}</td>
-                        <td>{{x.so}}</td>
-                        <td>  
-                            <span class="badge " [ngClass]="{
+<div class="container">
+    <div class="order-panel">
+        <div class="row">
+            <div class="col-12 "> 
+                <table class="table table-sm ">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Items</th>
+                            <th>Printer</th>
+                            <th>ID</th>
+                            <th>SO</th>
+                            <th>Status</th>
+                            <th>Input Date</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let x of items; let i = index">
+                            <td>{{i+1}}</td>
+                            <td>{{x.menu}}</td>
+                            <td>{{x.printer}}</td>
+                            <td>{{x.cartId}}</td>
+                            <td>{{x.so}}</td>
+                            <td>
+                                <span class="badge " [ngClass]="{
                             'text-bg-warning': x.status ==  0,
                             'text-bg-info': x.status == 1,
                             'text-bg-success': x.status == 2,
                             'text-bg-danger': x.status == -1
-                            }">{{ x.statusName }}</span> 
-                        </td>
-                        <td>{{x.consoleError}}</td>
-                        <td>{{x.inputDate | date:'medium'}}</td>
-                        <td><button type="button" (click)="fnReprint(x);" class="btn btn-sm btn-outline-dark py-0" ><i class="bi bi-printer-fill"></i> Reprint</button></td>
-                    </tr>
-                </tbody>
-            </table>
+                            }">{{ x.statusName }}</span>
+                            </td> 
+                            <td>{{x.inputDate | date:'medium'}}</td>
+                            <td><button type="button" (click)="fnReprint(x);"
+                                    class="btn btn-sm btn-outline-dark py-0"><i class="bi bi-printer-fill"></i>
+                                    Reprint</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

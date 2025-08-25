@@ -3,11 +3,14 @@
 <div class="floating-wrapper">
    <div class="floating-content shadow border  p-2 rounded-bottom">
 
-      <div class="row">
-         <div class="col-6">
+      <div class="row mb-3">
+         <div class="col-3">
             <h5>Table <span>{{item.tableName}}</span></h5>
          </div>
-         <div class="col-6 text-end">
+         <div class="col-6">
+            <div class="text-center"><small><em>Double Click for go to detail</em></small></div>
+         </div>
+         <div class="col-3 text-end">
             <button class="btn btn-sm btn-light" (click)="onRemoveCurrentTable()"><i class="bi bi-x-lg"></i>
                CLOSE</button>
          </div>
@@ -18,8 +21,7 @@
          <ng-container *ngIf="item.detail.id; else noDetail">
             <div class="row">
                <div class="col-3 lh-1">
-                  <strong>Bill :</strong> {{item.cardId}}
-
+                  <strong>Bill :</strong> {{item.cardId}} 
                </div>
                <div class="col-3 lh-1">
                   <strong>Start Time :</strong> {{item.detail.startDate | date : 'HH:mm'}}
@@ -53,7 +55,7 @@
             </div>
          </ng-template>
       </div>
-      <div class="text-center"><small><em>Double Click for go to detail</em></small></div>
+      
       }
    </div>
 </div>
@@ -62,7 +64,7 @@
 <div [ngClass]="{'container': screenWidth >= 1200, 'container-fluid': screenWidth < 1200}">
    <div class="row g-3">
 
-      <div class="col-12 col-xl-9">
+      <div class="col-9 ">
 
          <div class="row g-1 mb-2">
 
@@ -71,7 +73,7 @@
                   <span *ngFor="let x of items; let i = index">
                      <button type="button" class="btn px-3 py-1" (click)="onMap(i)" [class]="{
                            'border': current == i,
-                            'bg-primary': current == i,
+                            'btn-primary': current == i,
                             'shadow-sm': current == i,
                            }"> {{x.desc1}}
                         <span *ngIf="x.checking > 0  " class="badge text-bg-danger rounded-circle">
@@ -83,6 +85,7 @@
                </div>
 
             </div>
+
             <div class="col-5 text-end">
                <a class="btn  btn-light  me-2"
                   (click)="modal(modalSwitchOutlet); logService.logAction('modalSwitchOutlet')"><i
@@ -106,26 +109,27 @@
                style="background: url('{{public}}floor/{{items[current]?.image}}') left top no-repeat;">
                <div class="floorPlan " *ngFor="let x of items[current]?.maps ; let i = index">
 
-                  <div class="items   {{ x.active == 1 ? 'border border-dark border-3 shadow-sm' : '' }} {{x.bgn}} "
-                     [style.transform]="'translate(' + x.posX + 'px,' + x.posY + 'px)'" [style.width.px]="x.width"
-                     [style.height.px]="x.height" [style.backgroundImage]="'url('+public+'icon/'+x.icon+')'"
-                     style="background-size: cover;" (click)="open(modalCheckIn, x, current, i)">
+                  <div class="items   {{ x.active == 1 ? 'border border-dark border-3 shadow' : '' }} {{x.bgn}} "
+                     [style.transform]="'translate(' + x.posX + 'px,' + x.posY + 'px)'" 
+                     [style.width.px]="x.width"
+                     [style.height.px]="x.height" 
+                     [style.backgroundImage]="'url('+public+'icon/'+x.icon+')'"
+                     style="background-size: cover;" 
+                     (click)="open(modalCheckIn, x, current, i)">
                      <div class="text-end p-1" style=" cursor: pointer;">
                         <div class="table-pos-label">
                            <strong class="table-name">
                               <span *ngIf="x.overdueMinute > 0 "> <i class="bi bi-exclamation-diamond"></i> </span>
                               {{x.tableName}} </strong>
                         </div>
-                        <h5>
-                           <span *ngIf="x.active == 1 "> <i class="bi bi-check"></i></span>
-                           <!-- <span *ngIf="x.tableMapStatusId == '12' "> <i class="bi bi-fork-knife"></i></span>
-                              <span *ngIf="x.tableMapStatusId == '18' "> <i class="bi bi-receipt-cutoff"></i></span> -->
-                        </h5>
+                      
                      </div>
                   </div>
 
                </div>
             </div>
+
+           
          </div>
          }
          @else {
@@ -193,62 +197,57 @@
          </div>
       </div>
 
-      <div class="col-3 d-none d-xl-block">
+      <div class="col-3 ">
          <div class="row g-1">
             <div class="col-12 mb-2">
                <div class="alert alert-warning text-center">
                   <strong><i class="bi bi-clock"></i> {{ currentTime | date: 'medium' }}</strong>
                </div>
                <div class="order-panel ">
-                  <table class="table table-sm">
-                     <tbody>
-                        <tr>
-                           <td class="align-content-center">Daily Start</td>
-                           <td>
-                              : {{dataDailyStart['startDate'] | date:'medium'}}
-                           </td>
-                        </tr>
-                        <tr>
-                           <td class="align-content-center">Schedule</td>
-                           <td>
-                              : {{dataDailyStart['name']}}
-                           </td>
-                        </tr>
-
-                        <tr>
-                           <td class="align-content-center">Will Close at</td>
-                           <td>
-                              : {{dataDailyStart['closeDateLimit'] | date:'medium'}}
-                           </td>
-                        </tr>
-                        <tr *ngIf="dataDailyStart['closeDateWarning'] < 0">
-                           <td class="align-content-center"><strong class="text-danger">Warning Daily Close</strong>
-                           </td>
-                           <td>
-                              : <strong class="text-danger"> +{{dataDailyStart['closeDateWarning'] * -1}}
-                                 Minute</strong>
-                           </td>
-                        </tr>
-                        <tr>
-                           <td class="align-content-center">User</td>
-                           <td>
-                              : {{getTokenJson['name'] }}
-                           </td>
-                        </tr>
-                        <tr>
-                           <td class="align-content-center">Level</td>
-                           <td>
-                              : {{getTokenJson['authlevel'] }}
-                           </td>
-                        </tr>
-                        <tr>
-                           <td class="align-content-center">Terminal ID</td>
-                           <td>
-                              : {{terminalId}}
-                           </td>
-                        </tr>
-                     </tbody>
-                  </table>
+                  <div class="info-panel">
+                      <div class="mb-2 ">
+                        <div>
+                           <label class="me-2">Daily Start:</label>
+                        </div>
+                        <div>{{dataDailyStart['startDate'] | date:'medium'}}</div>
+                      </div>
+                      <div class="mb-2 ">
+                        <div>
+                           <label class="me-2">Schedule:</label>
+                        </div>
+                        <div>{{dataDailyStart['name']}}</div>
+                      </div>
+                      <div class="mb-2 ">
+                        <div>
+                           <label class="me-2">Will Close at:</label>
+                        </div>
+                        <div>{{dataDailyStart['closeDateLimit'] | date:'medium'}}</div>
+                      </div>
+                      <div class="mb-2 " *ngIf="dataDailyStart['closeDateWarning'] < 0">
+                        <div>
+                           <label class="text-danger me-2">Warning Daily Close:</label>
+                        </div>
+                        <div><strong class="text-danger">+{{dataDailyStart['closeDateWarning'] * -1}} Minute</strong></div>
+                      </div>
+                      <div class="mb-2 ">
+                        <div>
+                           <label class="me-2">User:</label>
+                        </div>
+                        <div>{{getTokenJson['name']}}</div>
+                      </div>
+                      <div class="mb-2 ">
+                        <div>
+                           <label class="me-2">Level:</label>
+                        </div>
+                        <div>{{getTokenJson['authlevel']}}</div>
+                      </div>
+                      <div class="mb-2 ">
+                        <div>
+                           <label class="me-2">Terminal ID:</label>
+                        </div>
+                        <div>{{terminalId}}</div>
+                     </div>
+                  </div>
                </div>
             </div>
 
@@ -256,7 +255,7 @@
                <!-- https://www.npmjs.com/package/node-thermal-printer -->
 
                <div class="d-grid">
-                  <a class="btn btn-lg btn-primary " (click)="logOff();">
+                  <a class="btn btn-lg btn-primary py-3" (click)="logOff();">
                      <i class="bi bi-power"></i> LOG OFF
                   </a>
                </div>

@@ -28,6 +28,10 @@ export class TransferItemsGroupComponent implements OnInit {
   loading: boolean = false;
   tablesMaps: any = [];
   qty: any = 0;
+   screenWidth: number = window.innerWidth;
+
+     zoom :number = parseInt(localStorage.getItem('pos3.zoom') || '100');
+    public: string = environment.api + '../public/floorMap/';
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
@@ -36,7 +40,11 @@ export class TransferItemsGroupComponent implements OnInit {
     private activeRouter: ActivatedRoute,
     public logService: UserLoggerService
 
-  ) { }
+  ) {
+     window.addEventListener('resize', () => {
+      this.screenWidth = window.innerWidth;
+    });
+   }
   ngOnInit(): void {
     this.id = this.activeRouter.snapshot.queryParams['id'];
     this.modalService.dismissAll();

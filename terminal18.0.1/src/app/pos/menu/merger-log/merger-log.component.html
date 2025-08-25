@@ -1,16 +1,25 @@
 <div class="modal-header">
-    <strong class="modal-title">Marge log</strong>
+    <strong class="modal-title">MARGE LOG</strong>
     <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
 </div>
-<div class="modal-body">
-    <ng-template #recursive let-item>
-        <div class=" border-start ms-4 ">
-            <div class="mb-3 ms-2 p-2 bg-light shadow-sm border rounded">
+<div class="modal-body bg-main rounded-bottom">
+    <ng-template #recursive let-item let-i="index">
+        <div class="ms-4 ">
+            <div class="mb-3 ms-2 p-2 bg-white shadow-sm border rounded">
 
                 <div class="mb-1">
-                    <strong>
-                        <span class="badge text-bg-secondary">{{ !item.parent ? 'PAST MERGED' : ''}}</span>
-                        Log Id : {{item.id}}</strong>
+                    <div class="row">
+                        <div class="col-6">
+                            <strong>
+                                <span class="badge text-bg-primary">LOG ID : {{item.id}}</span>
+                                <span class="ms-2">Index: {{i}}</span>
+                            </strong>
+                        </div>
+
+                        <div class="col-6 text-end">
+                          <span class="badge text-bg-secondary" *ngIf="i>1">History</span>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="row">
@@ -71,20 +80,21 @@
             </div>
 
             <ng-container *ngIf="item.parent">
-                <ng-container *ngTemplateOutlet="recursive; context: { $implicit: item.parent }"></ng-container>
+                <ng-container
+                    *ngTemplateOutlet="recursive; context: { $implicit: item.parent, index: (i !== undefined ? i + 1 : 1) }"></ng-container>
             </ng-container>
         </div>
     </ng-template>
 
     <!-- Trigger pertama -->
-    @if( data && data.items && data.items.length > 0) {
 
-    <ng-container *ngTemplateOutlet="recursive; context: { $implicit: data.items }"></ng-container>
-    }
-    @else {
+    <ng-container *ngIf="data?.items">
+        <ng-container *ngTemplateOutlet="recursive; context: { $implicit: data.items, index: 1 }"></ng-container>
+    </ng-container>
+    <ng-container *ngIf="!data?.items">
         <div class="text-center">
             <p class="text-muted">No merger logs found.</p>
         </div>
-    }
+    </ng-container>
 
 </div>

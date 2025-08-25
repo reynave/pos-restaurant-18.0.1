@@ -26,19 +26,23 @@ export class TransactionComponent implements OnInit {
   outletId : number =0;
   id: string = ''; 
   api: string = environment.api;  
+   screenWidth: number = window.innerWidth;
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
     public modalService: NgbModal,
     private router: Router,
     private activeRouter: ActivatedRoute
-  ) { }
+  ) { 
+     window.addEventListener('resize', () => {
+      this.screenWidth = window.innerWidth;
+    });
+  }
 
 
   ngOnInit() { 
     this.outletId = this.configService.getConfigJson()['outlet']['id'];
-    this.modalService.dismissAll();
- 
+    this.modalService.dismissAll(); 
     this.httpOutlet(); 
 
   }

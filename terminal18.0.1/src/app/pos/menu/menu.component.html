@@ -49,7 +49,7 @@
                            <div class="lh-1">
                               <strong>
                                  <span class="text-primary"><i class="bi bi-lock-fill"></i></span>
-                                  {{x.name }} {{x.totalModifier > 0 ? '*':''}} 
+                                 {{x.name }} {{x.totalModifier > 0 ? '*':''}}
                               </strong>
                            </div>
                            <div class="lh-2">
@@ -321,9 +321,9 @@
                   </div>
 
                   <div class="col-3 d-grid">
-                     <button type="button" [class]="cssClass" class="btn-light" (click)="openTables(modelTables)">
+                     <button type="button" [class]="cssClass" class="btn-light" (click)="openTables(modalMergeCheck)">
                         <i class="bi bi-intersect"></i>
-                        MERGE CHECK </button>
+                        MERGE </button>
                   </div>
 
                   <div class="col-3 d-grid">
@@ -464,10 +464,10 @@
                                  <th>Outlet ID</th>
                                  <td>{{table?.outletId}}</td>
                               </tr>
-                              
+
                               <tr>
                                  <th>Table Name / ID </th>
-                                 <td>{{table?.tableName}}   / {{table?.outletTableMapId}}  </td>
+                                 <td>{{table?.tableName}} / {{table?.outletTableMapId}} </td>
                               </tr>
                               <tr>
                                  <th>Cover</th>
@@ -477,8 +477,8 @@
                                  <th>Status / ID</th>
                                  <td> {{table?.status}} / {{table?.tableMapStatusId}}</td>
                               </tr>
-                              
-                             
+
+
 
                            </tbody>
                         </table>
@@ -491,7 +491,7 @@
                                  <th>Start Date</th>
                                  <td>{{table?.startDate | date:'yyyy-MM-dd HH:mm:ss'}}</td>
                               </tr>
-                             
+
                               <tr>
                                  <th>Over Time</th>
                                  <td>{{table.overTime > 0 ? table.overTime : ''}}</td>
@@ -648,18 +648,14 @@
 </ng-template>
 
 
-<ng-template #modelTables let-modal>
-   <div class="modal-header">
-      <strong class="modal-title" id="modal-basic-title">Select Tables for Merger to</strong>
-      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
-   </div>
-   <div class="modal-body">
-      <div class="mb-2">
-         <div class="bg-light p-1  border rounded-pill d-inline-block">
+<ng-template #modalMergeCheck let-modal>
+   <div class="modal-header"> 
+      <strong class="modal-title" >
+         <div class="bg-light p-1  rounded border  d-inline-block">
             <span *ngFor="let x of tablesMaps; let i = index">
-               <button type="button" class="btn btn-sm rounded-pill px-3" (click)="onMap(i)" [class]="{
+               <button type="button" class="btn btn-sm px-3" (click)="onMap(i)" [class]="{
                            'border': current == i,
-                            'bg-white': current == i,
+                            'btn-primary': current == i,
                             'shadow-sm': current == i,
                            }"> {{x.desc1}}
 
@@ -667,33 +663,40 @@
                      {{x.checking}}
                   </span>
                </button>
-            </span>
+            </span> 
+         </div> 
+      </strong>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+   </div>
+   <div class="modal-body bg-main rounded-bottom">
 
-         </div>
-      </div>
 
       <div class="map">
-         <div class="table-map border p-1 shadow-sm  rounded ">
-            <div class="floorPlan" *ngFor="let x of tablesMaps[current]?.maps">
+
+         <div style="height: 75vh; zoom:{{zoom}}% ">
+            <div class="table-map"
+               style="background: url('{{public}}floor/{{tablesMaps[current]?.image}}') left top no-repeat;">
+               <div class="floorPlan" *ngFor="let x of tablesMaps[current]?.maps">
 
 
-               <div class="items border rounded shadow-sm table-{{x.tableMapStatusId}}"
-                  [style.transform]="'translate(' + x.posX + 'px,' + x.posY + 'px)'" [style.width.px]="x.width"
-                  [style.height.px]="x.height" [style.backgroundImage]="'url(' + x.icon + ')'"
-                  style="background-size: cover; margin: 30% auto; cursor: pointer;"
-                  [style.opacity]="x.id == table.outletTableMapId ? 0.4 : 1" (click)="mergerCheck(x)">
-                  <div class="text-center">
-                     {{x.tableName}}
+                  <div class="items  {{x.bgn}}" 
+                     [style.transform]="'translate(' + x.posX + 'px,' + x.posY + 'px)'"
+                     [style.width.px]="x.width" [style.height.px]="x.height"
+                     [style.backgroundImage]="'url('+public+'icon/'+x.icon+')'" style="background-size: cover;"
+                     [style.opacity]="(x.id == table.outletTableMapId) || ( x.cardId == '') ? 0.4 : 1"
+                     (click)="mergerCheck(x)">
+                     <div class="text-end p-1" style=" cursor: pointer;">
+                        <div class="table-pos-label">
+                           <strong class="table-name">
 
-                     <div>
-                        <span *ngIf="x.tableMapStatusId == '12' "> <i class="bi bi-fork-knife"></i></span>
-                        <span *ngIf="x.tableMapStatusId == '18' "> <i class="bi bi-receipt-cutoff"></i></span>
+                              <span *ngIf="x.overdueMinute > 0 "> <i class="bi bi-exclamation-diamond"></i> </span>
+                              {{x.tableName}} </strong>
+                        </div>
+
                      </div>
-
-
                   </div>
-               </div>
 
+               </div>
             </div>
          </div>
       </div>
@@ -702,6 +705,7 @@
 
 
    </div>
+
 
 </ng-template>
 

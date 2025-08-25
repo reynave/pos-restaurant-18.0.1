@@ -1,21 +1,22 @@
-<div class="container mt-3">
-    <div class="row g-2">
+<div class="mt-3" [ngClass]="{'container': screenWidth >= 1200, 'container-fluid': screenWidth < 1200}">
+
+    <div class="row g-0">
         <div class="col-9">
-            <div class="p-2 bg-white rounded rounded-end-0 shadow-sm">
+            <div class="p-2 bg-main rounded rounded-end-0 ">
                 <app-view-tables></app-view-tables>
-            </div> 
+            </div>
         </div>
-        <div class="col-3 bg-white rounded rounded-start-0 shadow-sm">
-            <div class="p-2  "> 
-                <div class="p-1 text-center my-5">
+        <div class="col-3 bg-white rounded rounded-start-0">
+            <div class="p-3  ">
+                <div class="p-1 text-center my-3">
                     <img src="./img/logo.png" width="200">
                 </div>
                 <div *ngIf="warning != '' " class="alert alert-danger">{{warning}}</div>
                 <div class="form-control form-control-lg  bg-light mb-1">
                     {{getTokenJson.username}}
                 </div>
-                <input type="password" autocomplete="off" class="form-control form-control-lg  bg-light mb-2" placeholder="PASSWORD"
-                    [(ngModel)]="password" #myInput>
+                <input type="password" autocomplete="off" class="form-control form-control-lg  bg-light mb-2"
+                    placeholder="PASSWORD" [(ngModel)]="password" #myInput>
 
                 <div class="mb-2">
                     <app-key-number (dataEmitted)="handleData($event)"></app-key-number>
@@ -26,14 +27,14 @@
                         <button type="button" class="btn btn-warning btn-lg" (click)="password=''">CE</button>
                     </div>
                     <div class="col-6 d-grid">
-                        <button type="button" class="btn btn-dark btn-lg" (click)="onSubmit()">SUBMIT</button>
+                        <button type="button" class="btn btn-primary btn-lg" (click)="onSubmit()">SUBMIT</button>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-12 d-grid">
-                          <a class="btn btn-lg btn-outline-dark rounded-0 " (click)="signOff();"><i
-                        class="bi bi-box-arrow-left"></i> Sign Off</a>
+                        <a class="btn btn-lg btn-light  " (click)="signOff();"><i class="bi bi-box-arrow-left"></i> Sign
+                            Off</a>
                     </div>
                 </div>
 
@@ -42,7 +43,8 @@
         </div>
 
         <div class="col-12">
-            <div class="text-center text-white"><small>Mitralink POS ver {{ver}}</small></div>
+            <div class="text-center"><small>Mitralink POS ver {{ver}}</small></div>
         </div>
     </div>
+
 </div>

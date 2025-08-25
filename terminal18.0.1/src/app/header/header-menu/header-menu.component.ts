@@ -23,6 +23,7 @@ export class HeaderMenuComponent implements OnInit, OnDestroy {
   currentTime: Date = new Date();
   private intervalId: any;
   getTokenJson: any = [];
+  ver : string = environment.ver; 
   path: any = '';
   constructor(
     public configService: ConfigService,
@@ -39,9 +40,7 @@ export class HeaderMenuComponent implements OnInit, OnDestroy {
     this.httpHeader();
     this.getTokenJson = this.configService.getTokenJson();
     this.path = this.activeRouter.snapshot.routeConfig?.path;
-    this.intervalId = setInterval(() => {
-      this.currentTime = new Date();
-    }, 1000); // update setiap 1 detik 
+    
   }
 
   openEnd(content: any) {
@@ -49,7 +48,7 @@ export class HeaderMenuComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    clearInterval(this.intervalId);
+    
   }
   back() {
     history.back();

@@ -51,6 +51,8 @@ export class MenuComponent implements OnInit, OnDestroy {
       menu: [],
     },
   ];
+  zoom :number = parseInt(localStorage.getItem('pos3.zoom') || '100');
+    public: string = environment.api + '../public/floorMap/';
   summary: any = [];
   modifiers: any = [];
   item: any = [];
@@ -917,7 +919,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   transferLog() {
     this.logService.logAction('Popup transfer Log', this.id);
     const modalRef = this.modalService.open(TransferLogComponent, {
-      size: 'lg',
+      size: 'xl',
     });
     modalRef.componentInstance.cartId = this.id;
   }

@@ -1,79 +1,60 @@
-<div class="wrapper-sm mt-5">
-   <div class="border  bg-white  shadow rounded mt-lg-3  ">
-      <div class="container p-3">
 
-         <div class="row">
-            <div class="col-12 text-center">
-               <div class="my-3">
-                  <img src="./img/logo.png" width="50%">
-               </div>
+<div class="container d-flex align-items-center justify-content-center" style="min-height: 100vh;">
+   <div class="login-card position-relative">
+
+      <div class="text-center">
+         <img src="http://localhost:4850/img/logo.png" width="80%" class="img-fluid mb-3" alt="Logo">
+      </div>
+      <div class="text-center text-secondary mb-3" style="font-size: 1rem;">
+      <i>From the moment customers order to the time they pay, we make every step seamless and efficient.</i>
+      </div>
+      <form (ngSubmit)="onSubmit()" #actorForm="ngForm">
+         <div class="mb-2">
+            <div class="input-group">
+               <span class="input-group-text bg-light border border-end-0"> <i class="bi bi-bezier"></i> </span>
+
+               <select class="form-control form-control-lg" id="outletId" required [(ngModel)]="model.outletId"
+                  name="outletId" #outletId="ngModel">
+                  <option *ngFor="let x of outletSelect" [value]="x.id">{{x.name}}</option>
+               </select>
+
             </div>
          </div>
 
-         <div class="row">
-            <div class="col-12" [hidden]="error ==''">
-               <div class="alert alert-danger">
-                  {{error}}
-               </div>
+         <div class="mb-2">
+            <div class="input-group">
+               <span class="input-group-text bg-light border border-end-0"> <i class="bi bi-person-circle"></i> </span>
+               <input type="email" class="form-control form-control-lg bg-white" placeholder="Username" id="username"
+                  required [(ngModel)]="model.username" name="username" #username="ngModel">
             </div>
-            <div class="col-12">
-               <form (ngSubmit)="onSubmit()" #actorForm="ngForm">
-
-                  <div class="form-group mb-3">
-                     <label for="outletId">Outlet</label>
-                     <select class="form-control form-control-lg" id="outletId" required [(ngModel)]="model.outletId"
-                        name="outletId" #outletId="ngModel">
-                        <option *ngFor="let x of outletSelect" [value]="x.id">{{x.name}}</option>
-                     </select>
-
-                     <div [hidden]="outletId.valid || outletId.pristine" class="text-danger">
-                        Outlet Id is required
-                     </div>
-                  </div>
-
-
-                  <div class="form-group mb-3">
-                     <label for="username">User ID</label>
-                     <input type="text" class="form-control  form-control-lg" id="username" required
-                        [(ngModel)]="model.username" name="username" #username="ngModel">
-                     <!-- <select class="form-control  form-control-lg" id="username" required [(ngModel)]="model.username"
-                        name="username" #username="ngModel">
-                        <option *ngFor="let x of employeeSelect; let i = index" [value]="i">{{x.name}}</option>
-
-                     </select> -->
-
-                     <div [hidden]="username.valid || username.pristine" class="text-danger">
-                        userID is required
-                     </div>
-                  </div>
-                  <div class="form-group  mb-3">
-                     <label for="name">Password</label>
-                     <input type="password" class="form-control  form-control-lg" id="password" required
-                        [(ngModel)]="model.password" name="password" #password="ngModel">
-                     <div [hidden]="password.valid || password.pristine" class="text-danger">
-                        Password is required
-                     </div>
-
-                     <!-- <div class="mt-1">
-                        <app-key-number (dataEmitted)="handleData($event)"></app-key-number>
-                     </div> -->
-
-                  </div>
-
-
-
-                  <div class="d-grid">
-                     <button type="submit" class="btn btn-dark py-3 bt-lg rounded shadow-sm"
-                        [disabled]="!actorForm.form.valid || !model.outletId">SUBMIT</button>
-
-                  </div>
-               </form>
+            <label [hidden]="username.valid || username.pristine" class="text-danger">
+               User ID is required
+            </label>
+         </div>
+         <div class="mb-2">
+            <div class="input-group">
+               <span class="input-group-text bg-light border border-end-0"><i class="bi bi-lock-fill"></i></span>
+               <input type="password" class="form-control form-control-lg bg-white" placeholder="Password" required
+                 [(ngModel)]="model.password" name="password" #password="ngModel">
             </div>
-
-
-
+            <label [hidden]="password.valid || password.pristine" class="text-danger">
+               Password is required
+            </label>
          </div>
 
+         <div class="alert alert-danger my-3" [hidden]="error ==''">
+            {{error}}
+         </div>
+         <div class="row">
+            <div class="col-12 d-grid">
+               <button type="submit" [disabled]="!actorForm.form.valid || !model.outletId"
+                  class="btn btn-primary btn-lg">LOG IN</button>
+            </div>
+         </div>
+      </form>
+
+      <div class="text-center mt-1">
+         <strong><small> Ver {{ver}} |  PT MITRALINK</small></strong>
       </div>
    </div>
-</div>
+</div> 

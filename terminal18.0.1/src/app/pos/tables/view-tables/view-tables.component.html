@@ -1,47 +1,43 @@
-<div class="bg-light p-1  border rounded-pill d-inline-block mb-1">
+<div class="bg-white p-1 mb-2 rounded border  d-inline-block">
     <span *ngFor="let x of items; let i = index">
-        <button type="button" class="btn rounded-pill px-3" (click)="onMap(i)" [class]="{
+        <button type="button" class="btn px-3" (click)="onMap(i)" [class]="{
                            'border': current == i,
-                            'bg-white': current == i,
+                            'btn-primary': current == i,
                             'shadow-sm': current == i,
                            }"> {{x.desc1}}
 
             <span *ngIf="x.checking > 0  " class="badge text-bg-danger rounded-circle">
                 {{x.checking}}
             </span>
-
-
         </button>
     </span>
 
 </div>
 
-<div class="map bg-white mb-2">
+<div class="map  mb-2">
+    <div  class="order-panel " style="height: 75vh; zoom:{{zoom}}% ">
+        <div class="table-map" style="background: url('{{public}}floor/{{items[current]?.image}}') left top no-repeat;">
+            <div class="floorPlan" *ngFor="let x of items[current]?.maps">
 
-    <div class="table-map border p-1 shadow-sm  rounded "
-        style="background: url('{{public}}{{items[current]?.image}}') left top no-repeat;">
-        <div class="floorPlan" *ngFor="let x of items[current]?.maps">
 
+                <div class="items   table-{{x.tableMapStatusId}} {{x.bgn}}"
+                    [style.transform]="'translate(' + x.posX + 'px,' + x.posY + 'px)'" 
+                    [style.width.px]="x.width"
+                    [style.height.px]="x.height" 
+                    [style.backgroundImage]="'url('+public+'icon/'+x.icon+')'"
+                    style="background-size: cover;">
+                    <div class="text-end p-1" style=" cursor: pointer;">
 
-            <div class="items   table-{{x.tableMapStatusId}}"
-                [style.transform]="'translate(' + x.posX + 'px,' + x.posY + 'px)'" [style.width.px]="x.width"
-                [style.height.px]="x.height" [style.backgroundImage]="'url('+public+x.icon+')'"
-                style="background-size: cover;">
-                <div class="text-end p-1" style=" cursor: pointer;">
-
-                    <div class="table-pos-label">
-                        <strong class="table-name">{{x.tableName}} </strong>
+                        <div class="table-pos-label">
+                           <strong class="table-name">
+                              <span *ngIf="x.overdueMinute > 0 "> <i class="bi bi-exclamation-diamond"></i> </span>
+                              {{x.tableName}} </strong>
+                        </div>
+                      
                     </div>
-
-                    <h5>
-                        <span *ngIf="x.tableMapStatusId == '12' "> <i class="bi bi-fork-knife"></i></span>
-                        <span *ngIf="x.tableMapStatusId == '18' "> <i class="bi bi-receipt-cutoff"></i></span>
-                    </h5>
-
-
                 </div>
-            </div>
 
+            </div>
         </div>
     </div>
 </div>

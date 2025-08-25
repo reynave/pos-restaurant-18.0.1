@@ -13,7 +13,9 @@ import { CommonModule } from '@angular/common';
   styleUrl: './merger-log.component.css'
 })
 export class MergerLogComponent implements OnInit {
-  data  : any = [];  
+  data  : any = [
+    {items:[]}
+  ];  
   activeModal = inject(NgbActiveModal);
   @Input() cartId: any;
   constructor(
