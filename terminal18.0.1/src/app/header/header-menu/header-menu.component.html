@@ -19,8 +19,8 @@
 
       </ul>
 
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-         <span class="navbar-toggler-icon"></span>
+      <button class="navbar-toggler btn btn-primary" type="button" (click)="openEnd(content)" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+         <span class="navbar-toggler-icon"></span> MENU
       </button>
 
       <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
@@ -127,6 +127,7 @@
 </div>
 
 
+-->
 <ng-template #content let-offcanvas>
    <div class="offcanvas-header">
       <strong class="offcanvas-title"><i class="bi bi-list"></i> Menu</strong>
@@ -232,4 +233,3 @@
 
    </div>
 </ng-template> 
--->

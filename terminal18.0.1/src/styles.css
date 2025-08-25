@@ -33,6 +33,11 @@ small,
         "wdth" 100;
 }
 
+.dropdown-menu.show {
+    display: block;
+    z-index: 9999;
+}
+
 .form-control {
     font-family: "Poppins", sans-serif;
     font-weight: 400;
@@ -171,9 +176,9 @@ a.bg-primary:hover {
 }
 
 .btn-light {
-    background-color: #ccd7e3 !important;
-    border-color: #ccd7e3 !important;
-    color: #3a4a5d !important;
+    background-color: #ccd7e3 ;
+    border-color: #ccd7e3 ;
+    color: #3a4a5d ;
 }
 
 
