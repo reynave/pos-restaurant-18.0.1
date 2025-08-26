@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core'; 
+import { Component, OnInit, Input } from '@angular/core';
 import { ConfigService } from '../../../service/config.service';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { SocketService } from '../../../service/socket.service';
@@ -11,82 +11,91 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-table-print-queue',
   standalone: true,
-  imports: [ HttpClientModule, CommonModule, RouterModule],
+  imports: [HttpClientModule, CommonModule, RouterModule],
   templateUrl: './table-print-queue.component.html',
-  styleUrl: './table-print-queue.component.css'
+  styleUrl: './table-print-queue.component.css',
 })
 export class TablePrintQueueComponent implements OnInit {
   @Input() data: string = ''; // Declare an input property
   items: any = [];
-  cartId : string = '';
+  cartId: string = '';
   loading: boolean = false;
   environment: any = environment;
-    item: any;
+  item: any;
+  template : string = '';
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
     private socketService: SocketService,
     public logService: UserLoggerService,
     private activatedRoute: ActivatedRoute,
-    public modalService: NgbModal,
-  ) { }
+    public modalService: NgbModal
+  ) {}
   ngOnInit() {
-    console.log("messageFromParent:", this.data)
-    this.cartId = this.data ? this.data : this.activatedRoute.snapshot.queryParams['cartId'];
+    console.log('messageFromParent:', this.data);
+    this.cartId = this.data
+      ? this.data
+      : this.activatedRoute.snapshot.queryParams['cartId'];
     this.httpGet();
     this.socketService.listen<any>('printing').subscribe((msg) => {
       console.log(msg);
-      let getIndexById = this.items.findIndex((obj: { id: number; }) => (obj.id === msg['id']));
+      let getIndexById = this.items.findIndex(
+        (obj: { id: number }) => obj.id === msg['id']
+      );
 
       if (getIndexById > -1) {
         this.items[getIndexById]['status'] = msg['status'];
         this.items[getIndexById]['statusName'] = msg['statusName'];
         this.items[getIndexById]['consoleError'] = msg['consoleError'];
-      }   
+      }
     });
   }
 
-  httpGet() { 
+  httpGet() {
     this.loading = true;
-    const url = environment.api + "printQueue/queue";
-    this.http.get<any>(url, {
-      headers: this.configService.headers(),
-      params: {
-        dailyCheckId: this.configService.getDailyCheck(),
-        cartId : this.cartId,
-      }
-    }).subscribe(
-      data => {
-        this.loading = false;
-        this.items = data['items'];
-      },
-      error => {
-        console.log(error);
-      }
-    )
+    const url = environment.api + 'printQueue/queue';
+    this.http
+      .get<any>(url, {
+        headers: this.configService.headers(),
+        params: {
+          dailyCheckId: this.configService.getDailyCheck(),
+          cartId: this.cartId,
+        },
+      })
+      .subscribe(
+        (data) => {
+          this.loading = false;
+          this.items = data['items'];
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
   }
 
   fnReprint(item: any) {
     this.loading = true;
-    const url = environment.api + "printQueue/fnReprint";
+    const url = environment.api + 'printQueue/fnReprint';
     const body = {
       item: item,
-    }
-    this.http.post<any>(url, body, {
-      headers: this.configService.headers(),
-    }).subscribe(
-      data => {
-        console.log(data);
-        this.loading = false;
-        this.httpGet();
-      },
-      error => {
-        console.log(error);
-      }
-    )
+    };
+    this.http
+      .post<any>(url, body, {
+        headers: this.configService.headers(),
+      })
+      .subscribe(
+        (data) => {
+          console.log(data);
+          this.loading = false;
+          this.httpGet();
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
   }
-  
-  itemDetail : any = {};
+
+  itemDetail: any = {};
   openDetailModal(item: any, content: any) {
     this.item = item;
     try {
@@ -94,6 +103,50 @@ export class TablePrintQueueComponent implements OnInit {
     } catch (e) {
       this.itemDetail = item.message;
     }
+
     this.modalService.open(content);
+
+    const url = environment.api + 'printQueue/template';
+    const body = {
+      itemDetail: this.itemDetail,
+      rushPrinting: item.rushPrinting
+    };
+    this.http
+      .post<any>(url, body, {
+        headers: this.configService.headers(),
+        responseType: 'text' as 'json' // <-- tambahkan ini agar response berupa string (html)
+      })
+      .subscribe(
+        (data) => {
+          console.log(data);
+          this.template = data as string; // <-- assign html string ke this.template
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+  }
+
+  fnRushPrint(item: any) {
+    this.loading = true;
+    const url = environment.api + 'printQueue/fnRushPrint';
+    const body = {
+      item: item,
+    };
+    this.http
+      .post<any>(url, body, {
+        headers: this.configService.headers(),
+      })
+      .subscribe(
+        (data) => {
+          console.log(data);
+          this.modalService.dismissAll();
+          this.loading = false;
+          this.httpGet();
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
   }
 }

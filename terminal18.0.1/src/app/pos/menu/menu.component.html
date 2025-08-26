@@ -1,7 +1,7 @@
 <app-header-menu></app-header-menu>
 
 <div [ngClass]="{'container': screenWidth >= 1200, 'container-fluid': screenWidth < 1200}">
-   <div class="row g-3">
+   <div class="row g-2">
 
       <div class="col-4">
          <!-- TABLE cart -->
@@ -251,7 +251,7 @@
          </ul>
 
          <ul class="nav category-tabs mb-3">
-            <li class="nav-item">
+            <li class="nav-item ms-2">
                <a class="nav-link pointer-event" [class.active]="activeTab === 'function'"
                   (click)="activeTab = 'function'"><i class="bi bi-gear"></i> FUNCTION</a>
             </li>

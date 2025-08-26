@@ -170,12 +170,12 @@ export class BillComponent implements OnInit {
     this.htmlBill.forEach((element: any) => {
       htmlBill += element;
     });
-
-    const printerIp = '10.51.122.20';
-    const printerPort = 9100;
+    const config = this.configService.getConfigJson();
+    const printerIp = config.printerIp;
+    const printerPort = config.printerPort;
     const body = {
       message: htmlBill,
-      ip: printerIp,
+      ipAddress: printerIp,
       port: printerPort
     }
 

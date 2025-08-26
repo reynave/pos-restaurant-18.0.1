@@ -1,70 +1,135 @@
-const db = require('../../config/db'); 
-const { today } = require('../../helpers/global'); 
-
-const ejs = require('ejs');
+const db = require('../../config/db');
+const { today, formatDateTime, formatCurrency, formatLine, centerText } = require('../../helpers/global');
+const fs = require('fs');
 const path = require('path');
 
- 
+const Handlebars = require("handlebars");
+require("../../helpers/handlebarsFunction")(Handlebars);
+
+
+
 exports.queue = async (req, res) => {
-  
-const dailyCheckId = req.query.dailyCheckId;
- const cartId = req.query.cartId;
+
+  const dailyCheckId = req.query.dailyCheckId;
+  const cartId = req.query.cartId;
 
   try {
     // ${so ? 'AND so = "'+so+'"' : '' }
-      const a = `
+    const a = `
         SELECT p.id, p.cartId, p.so, p.dailyCheckId, s.name as 'statusName', p.status, p.consoleError, p.inputDate,
-        r.name AS 'printer', m.name AS 'menu', p.message
+        r.name AS 'printer', m.name AS 'menu', p.message, p.rushPrinting
         FROM print_queue  as p
         join print_queue_status as s on s.id = p.status 
           JOIN printer AS r ON r.id = p.printerId
           left join menu as m ON m.id = p.menuId
-        WHERE p.presence = 1 AND  p.dailyCheckId = '${dailyCheckId}' ${cartId != 'undefined' ? 'AND p.cartId = "'+cartId+'"' : ''}
+        WHERE p.presence = 1 AND  p.dailyCheckId = '${dailyCheckId}' ${cartId != 'undefined' ? 'AND p.cartId = "' + cartId + '"' : ''}
         ORDER BY p.id DESC
       `;
-  
-     const [formattedRows] = await db.query(a);
- 
+
+    const [formattedRows] = await db.query(a);
+
     res.json({
-      items: formattedRows, 
-    });  
+      items: formattedRows,
+    });
 
   } catch (err) {
     console.error('Render error:', err);
     res.status(500).send('Gagal render HTML');
   }
 };
- 
+
+exports.template = async (req, res) => {
+  // Untuk render file .hbs (Handlebars), harus pakai handlebars, bukan ejs
+  const templatePath = path.join(__dirname, '../../public/template/kitchen.hbs');
+
+  const itemDetail = req.body.itemDetail;
+  const rushPrinting = req.body.rushPrinting; 
+
+  if (!itemDetail) {
+    return res.status(400).json({ error: 'itemDetail is required in request body' });
+  }
+
+
+  try {
+    
+    itemDetail['rushPrinting'] = rushPrinting;  
+    const templateSource = fs.readFileSync(templatePath, 'utf8');
+    const template = Handlebars.compile(templateSource);
+    const result = template(itemDetail);
+    res.setHeader('Content-Type', 'text/html');
+    res.send(result);
+
+
+  } catch (err) {
+    console.error('Render error:', err);
+    res.status(500).send('Gagal render HTML');
+  }
+};
+
+
 exports.fnReprint = async (req, res) => {
-  
+
   const item = req.body['item'];
   const results = [];
   try {
-    const id =  item['id'];
+    const id = item['id'];
     console.log(item['id']);
- 
-    const [result] = await db.query( `
+
+    const [result] = await db.query(`
         UPDATE print_queue SET  
           status = 0,
           updateDate = '${today()}'
         WHERE id = ${id}
-    `); 
+    `);
 
     if (result.affectedRows === 0) {
-      results.push({   status: 'not found' });
+      results.push({ status: 'not found' });
     } else {
-      results.push({   status: 'print_queue updated' });
+      results.push({ status: 'print_queue updated' });
     }
- 
+
     res.status(201).json({
       error: false,
-      item: item, 
-      results :results,
-    });  
+      item: item,
+      results: results,
+    });
 
   } catch (err) {
-      console.error(err);
+    console.error(err);
     res.status(500).json({ error: 'Database error' });
   }
 };
- 
+
+exports.fnRushPrint = async (req, res) => {
+
+  const item = req.body['item'];
+  const results = [];
+  try {
+    const id = item['id'];
+    console.log(item['id']);
+
+    const [result] = await db.query(`
+        UPDATE print_queue SET  
+          status = 0,
+          rushPrinting = 1,
+          updateDate = '${today()}'
+        WHERE id = ${id}
+    `);
+
+    if (result.affectedRows === 0) {
+      results.push({ status: 'not found' });
+    } else {
+      results.push({ status: 'print_queue updated' });
+    }
+
+    res.status(201).json({
+      error: false,
+      item: item,
+      results: results,
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+};

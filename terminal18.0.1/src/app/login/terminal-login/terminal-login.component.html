@@ -1,29 +1,39 @@
-<div class="wrapper-md border rounded shadow py-2 mt-5">
-    <div class="container">
-        <div class="row g-2">
-            <div class="col-6">
-                <img src="./img/img1.jpg"  width="100%">
+<div class="wrapper-md ">
+    <div class="order-panel">
+
+        <div class="row g-3">
+            <div class="col-6 align-content-center text-center">
+                <img src="./img/keylogin.png" class="img-fluid" />
+                <small>KEY TERMINAL</small>
             </div>
             <div class="col-6">
+                <div class="mb-3">
+                      <img src="./img/logo.png" class="img-fluid" />
+                </div>
                 <div *ngIf="error != '' " class="alert alert-danger text-center">
                     {{error}}
                 </div>
                 <div class="mb-2">
-                    <input type="text" class="form-control form-control-lg text-end bg-light" placeholder="POS / TERMINAL ID"
-                        [(ngModel)]="terminalId">
+                    <input type="text" class="form-control form-control-lg text-end bg-light"
+                        placeholder="POS / TERMINAL ID" [(ngModel)]="terminalId">
                 </div>
                 <div class="mb-1">
                     <app-key-number (dataEmitted)="handleData($event)"></app-key-number>
                 </div>
-                <div class="row g-1">
+                <div class="row g-1 mb-2">
                     <div class="col-6 d-grid">
                         <button type="button" class="btn btn-warning" (click)="terminalId=''">CE</button>
                     </div>
                     <div class="col-6 d-grid">
-                        <button type="button" class="btn btn-dark" (click)="onSubmit()">SUBMIT</button>
+                        <button type="button" class="btn btn-primary" (click)="onSubmit()">SUBMIT</button>
                     </div>
                 </div>
+                <div class="text-center">
+                     <a href="javascript:;" (click)="back()">Back</a>
+                </div>
             </div>
+           
         </div>
+       
     </div>
 </div>

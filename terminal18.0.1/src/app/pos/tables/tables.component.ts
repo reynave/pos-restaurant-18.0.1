@@ -36,7 +36,6 @@ export class Actor {
   styleUrl: './tables.component.css',
 })
 export class TablesComponent implements OnInit {
-
   loading: boolean = false;
   lock: boolean = true;
   current: number = 0;
@@ -56,7 +55,7 @@ export class TablesComponent implements OnInit {
   activeView: string = localStorage.getItem('pos3.view') ?? 'map';
   terminalId: any = localStorage.getItem('pos3.terminal.mitralink');
   getTokenJson: any = [];
-  zoom :number = parseInt(localStorage.getItem('pos3.zoom') || '100');
+  zoom: number = parseInt(localStorage.getItem('pos3.zoom') || '100');
   getConfigJson: any = [];
   dataDailyStart: any = {};
   public: string = environment.api + '../public/floorMap/';
@@ -103,10 +102,10 @@ export class TablesComponent implements OnInit {
     console.log('EMIT');
     this.socketService.emit('message-from-client', 'reload');
   }
-onZoomChange() {
-   console.log(this.zoom);
-   localStorage.setItem('pos3.zoom', this.zoom.toString());
-}
+  onZoomChange() {
+    console.log(this.zoom);
+    localStorage.setItem('pos3.zoom', this.zoom.toString());
+  }
   handleData(data: string) {
     if (this.model.cover == null) {
       this.model.cover = 0;
@@ -174,6 +173,7 @@ onZoomChange() {
   open(content: any, x: any, current: number, i: number) {
     if (this.items[current]['maps'][i]['active'] == 1) {
       if (x.cover <= 0 || x.cover == '') {
+        this.logService.logAction('Select Table ' + x.tableName);
         this.tableSelect = x;
         this.model.cover = x.capacity;
         this.model.outletTableMapId = x.id;
@@ -382,5 +382,12 @@ onZoomChange() {
     this.activeView = activeView;
     this.logService.logAction('Change View to ' + activeView);
     localStorage.setItem('pos3.view', activeView);
+  }
+
+  getHourMinute(minutes: number): string {
+    const total = Math.abs(minutes);
+    const hour = Math.floor(total / 60);
+    const min = total % 60;
+    return `${hour}:${min < 10 ? '0' : ''}${min}`;
   }
 }

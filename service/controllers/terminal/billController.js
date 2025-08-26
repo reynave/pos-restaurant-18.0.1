@@ -307,8 +307,8 @@ exports.copyBill = async (req, res) => {
 
 
 exports.ipPrint = async (req, res) => {
-  const printerIp = '10.51.122.20'; // ganti dengan IP printer kamu
-  const printerPort = 9100;
+  const printerIp = req.body['ipAddress']; // ganti dengan IP printer kamu
+  const printerPort = req.body['port']; // ganti dengan port printer kamu, biasanya 9100
 
   const cut = "\x1B\x69"; // ESC i = cut paper (Epson-style)
 

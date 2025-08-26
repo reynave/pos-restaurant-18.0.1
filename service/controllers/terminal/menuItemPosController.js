@@ -1944,7 +1944,21 @@ exports.printQueue = async (req, res) => {
       const [printerList] = await db.query(x1);
 
       for (const rexv of printerList) {
+        // Format date and time
+        const now = new Date();
+        const pad = (n) => n.toString().padStart(2, '0');
+        const date = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+        const time = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
 
+        const message = {
+          tableName: row['tableName'],
+          dateTime: today(),
+          date: date,
+          time: time,
+          descs: row['descs'],
+          modifier: row['modifier'],
+        }
+ 
         const q11 = `
             INSERT INTO print_queue (
                 dailyCheckId, cartId,  so,
@@ -1953,7 +1967,7 @@ exports.printQueue = async (req, res) => {
             ) 
           VALUES (
             '${result[0]['dailyCheckId']}', '${row['cartId']}', '${row['sendOrder']}',
-            '${JSON.stringify(row)}',  '${rexv['id']}',  0,
+            '${JSON.stringify(message)}',  '${rexv['id']}',  0,
             '${today()}', '${today()}', '${row['menuId']}'
           )`;
 

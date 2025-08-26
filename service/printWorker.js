@@ -1,11 +1,21 @@
-require('dotenv').config(); 
-const { io } = require('socket.io-client'); 
+require('dotenv').config();
+const { io } = require('socket.io-client');
 const pool = require('./config/db');
 const { sendToPrinter, sendToPrinterDummy } = require('./helpers/printer');
- 
-const socket = io( process.env.LOCALHOST); 
-socket.emit('message-from-client', 'PrinterWorker Active message-from-client'); 
- 
+
+
+
+const fs = require('fs');
+const path = require('path');
+
+const Handlebars = require("handlebars");
+require("./helpers/handlebarsFunction")(Handlebars);
+
+
+
+const socket = io(process.env.LOCALHOST);
+socket.emit('message-from-client', 'PrinterWorker Active message-from-client');
+
 async function processQueue() {
   console.log("WAITING", new Date())
   const db = await pool.getConnection();
@@ -14,9 +24,11 @@ async function processQueue() {
 
     // Ambil 1 data status = 0 (PENDING)
     const [rows] = await db.query(
-      `SELECT q.*, p.printerTypeCon, p.ipAddress, p.port FROM print_queue AS q
+      `SELECT 
+            q.*, p.printerTypeCon, p.ipAddress, p.port , q.message, q.rushPrinting
+        FROM print_queue AS q
         LEFT JOIN printer AS p ON p.id = q.printerId
-        WHERE q.status = 0  ORDER BY q.id DESC LIMIT 1 FOR UPDATE`
+      WHERE q.status = 0  ORDER BY q.id DESC LIMIT 1 FOR UPDATE`
     );
 
     if (rows.length === 0) {
@@ -32,37 +44,54 @@ async function processQueue() {
 
     await db.commit(); // penting! simpan perubahan status
     db.release();      // kembalikan koneksi ke pool
+    rows[0].message = JSON.parse(rows[0].message);
+    const dataToPrint =  rows[0].message;  
+    dataToPrint['rushPrinting'] = rows[0]['rushPrinting'];
 
-    const dataToPrint = rows[0];
+
+    console.log(dataToPrint)
+   
     const data = {
-      id : task.id,
-      status : 1,
-      statusName : "PRINTING",
-      consoleError : ''
-    } 
-    socket.emit('printing-reload', data); 
- 
+      id: task.id,
+      status: 1,
+      statusName: "PRINTING",
+      consoleError: ''
+    }
+    socket.emit('printing-reload', data);
+
     try {
       // Proses cetak
-      await sendToPrinter(dataToPrint);
+      const templatePath = path.join(__dirname, './public/template/kitchen.hbs');
+      const templateSource = fs.readFileSync(templatePath, 'utf8');
+      const template = Handlebars.compile(templateSource);
+      const result = {
+        port : rows[0].port,
+        ipAddress : rows[0].ipAddress,
+        message : template(dataToPrint),
+      };
+      
+      
+      console.log("Await sendToPrinter(dataToPrint)",result)
+      await sendToPrinter(result);
+
       const data = {
-        id : task.id,
-        status : 2,
-         statusName : "DONE",
-         consoleError : ''
-      } 
-      socket.emit('printing-reload', data); 
+        id: task.id,
+        status: 2,
+        statusName: "DONE",
+        consoleError: ''
+      }
+      socket.emit('printing-reload', data);
       // Update status jadi 2 (DONE)
       await pool.query(`UPDATE print_queue SET status = 2 WHERE id = ?`, [task.id]);
     } catch (printErr) {
       console.error('❌ Gagal print:', printErr.message);
       const data = {
-        id : task.id,
-        status : -1,
-        statusName : "FAILED",
-        consoleError : printErr.message
-      } 
-      socket.emit('printing-reload', data); 
+        id: task.id,
+        status: -1,
+        statusName: "FAILED",
+        consoleError: printErr.message
+      }
+      socket.emit('printing-reload', data);
       // Update status jadi -1 (FAILED)
       await pool.query(`UPDATE print_queue  SET 
         status = -1 , consoleError = '${printErr.message}'

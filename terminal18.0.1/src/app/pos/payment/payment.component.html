@@ -1,37 +1,32 @@
-<div class="container-fluid sticky-top">
-   <div class="shadow-sm bg-white rounded p-2">
-      <div class="row">
-         <div class="col-6  ">
-            <button type="button" (click)="back()" class="btn border"><i class="bi bi-arrow-left"></i>
-               BACK</button>
-         </div>
-         <div class="col-6 text-end">
-
-         </div>
-      </div>
-
-   </div>
-</div>
-
-<div class="container-fluid mt-2">
-   <div class="row g-0">
+<app-header-menu></app-header-menu>
+<div [ngClass]="{'container': screenWidth >= 1200, 'container-fluid': screenWidth < 1200}">
+   <div class="row g-3">
       <div class="col-4">
 
-         <div class=" bg-light p-3 shadow-sm border rounded" #myDiv>
-            <a class="btn btn-sm btn-outline-dark"
-               (click)="showApplyDiscount==false ? showApplyDiscount = true : showApplyDiscount = false">
-               {{showApplyDiscount==false ? 'Show' : 'Hide' }} Apply Discount </a>
-               
+         <div class="row g-1 mb-2">
+            <div class="col-6">
+               <strong class="fw-bold ms-2"> Bill {{id}} </strong>
+            </div>
+            <div class="col-6  d-grid">
+               <a class="btn btn-sm btn-primary"
+                  (click)="showApplyDiscount==false ? showApplyDiscount = true : showApplyDiscount = false">
+                  {{showApplyDiscount==false ? 'Show' : 'Hide' }} Apply Discount </a>
+            </div>
+         </div>
+
+         <div class="order-panel mb-2" style="height: 80vh; overflow-y: auto;" #myDiv>
             <app-bill-table [data]="data" [showApplyDiscount]="showApplyDiscount">Loading...</app-bill-table>
          </div>
+
+
       </div>
 
       <div class="col-6 ">
-         <div class="wrapper px-2 ">
+         <div>
 
-            <div class="border bg-white p-1 rounded shadow-sm">
+            <div class="order-panel p-0 mb-3" style="height: 50vh; overflow-y: auto;">
                <table class="table table-sm">
-                  <thead>
+                  <thead class="sticky-top bg-white">
                      <tr>
                         <th>Payment</th>
                         <th class="text-end">Amount</th>
@@ -74,7 +69,7 @@
             </div>
 
 
-            <div class="d-grid sticky-bottom mt-3 bg-white p-3">
+            <div class="order-panel p-3">
                <div class="row g-3">
                   <div class="col-6">
                      <app-key-number (dataEmitted)="handleData($event)"></app-key-number>
@@ -98,13 +93,12 @@
       </div>
       <div class="col-2 ">
          <div class="my-2 text-center">
-            <strong>SELECT PAYMENT GROUP</strong>
+            <strong>SELECT PAYMENT</strong>
          </div>
          <div *ngFor="let x of paymentGroups" class="d-grid">
-            <button type="button" (click)="open(modalPayment, x)" class="py-3 btn btn-lg bg-warning mb-1">{{x.name |
+            <button type="button" (click)="open(modalPayment, x)" class="btn btn-lg bg-primary mb-1">{{x.name |
                uppercase}}</button>
          </div>
-
       </div>
    </div>
 </div>
@@ -137,24 +131,31 @@
    <div class="modal-body">
       <div class="row">
 
-         <div class="col-12 text-center">
-            <h4>Payment Finish</h4>
-            <h4> CHANGE : {{data['change'] | number}} </h4>
+         <div class="col-12 text-center my-4">
+            <h4>PAYMENT FINISH</h4>
+            <strong> CHANGE : {{data['change'] | number}} </strong>
          </div>
       </div>
-   </div>
-   <div class="p-3">
-      <div class="d-grid mb-3">
-         <button type="button" class="btn btn-lg btn-outline-dark py-3"
-            (click)="modal.close('OK click'); logService.logAction('Finish Payment', id);"><i class="bi bi-check2"></i>
-            Finish</button>
+      <div class="row g-2 mb-3">
+      
+         <div class="col-6 d-grid">
+            <button type="button" class="btn btn-lg btn-primary py-3"
+               (click)="modal.close('OK click'); logService.logAction('Finish Payment', id);">
+               <h1>
+                  <i class="bi bi-check2"></i>
+               </h1>
+               Finish</button>
+         </div>
+         <div class="col-6 d-grid">
+            <button type="button" class="btn btn-lg btn-success py-3"
+               (click)="modal.close('OK click');logService.logAction('Finish Payment And Print Closed Bill', id);">
+               <h1> <i  class="bi bi-printer"></i> </h1> Print Closed Bill
+               
+               </button>
+         </div>
       </div>
 
-      <div class="d-grid">
-         <button type="button" class="btn btn-lg btn-success py-3"
-            (click)="modal.close('OK click');logService.logAction('Finish Payment And Print Closed Bill', id);"><i
-               class="bi bi-printer"></i> Finish And Print Closed Bill</button>
-      </div>
-
+       <p class="text-center"><em>Thank you for finish payment!</em></p>
    </div>
+    
 </ng-template>

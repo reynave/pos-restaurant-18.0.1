@@ -28,13 +28,15 @@ const printToPrinter = (message, printerIp = '10.51.122.20', printerPort = 9100)
 async function sendToPrinter(data) {
   return new Promise((resolve, reject) => {
     const client = new net.Socket();
-    console.log(data);
-    const message = data.message+cutCommand;
+   // console.log(data);
+    const message = data.message; 
+  
+  //  const jsonMessage = typeof data.message === 'string' ? JSON.parse(data.message) : data.message;
+   // console.log("Message:", jsonMessage);
+
     const printerPort = data.port;
     const printerIp = data.ipAddress;
-
-
-
+ 
 
     client.connect(printerPort, printerIp, () => {
       console.log('🖨️  Connected to printer');

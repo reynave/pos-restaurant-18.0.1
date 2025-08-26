@@ -1,5 +1,4 @@
-
-<table class=" table-bill" width="100%">
+<table class="table-bill" width="100%">
 
     <tbody *ngFor="let x of data['cart']; let i = index">
         <tr>
@@ -54,14 +53,10 @@
         </tr>
 
 
-
         <tr>
             <td class="text-end" colspan="2"> Sub Total : </td>
             <td class="text-end "> {{data['subTotal'] | number}} </td>
         </tr>
-
-
-
 
 
         <tr *ngFor="let x of data['taxSc']">
@@ -73,9 +68,7 @@
         <tr *ngFor="let x of data['bill']">
             <td colspan="2" class="text-end">{{x.name}} : </td>
             <td class="text-end">{{x.amount | number}}</td>
-        </tr>
-
-
+        </tr> 
 
         <tr>
             <td colspan="2" class="text-end"><strong class="font-monospace" style="font-size: 1.2rem;">Grand
@@ -95,4 +88,7 @@
             <td class="text-end">{{data['change'] | number}}</td>
         </Tr>
     </tbody>
+
+
 </table>
+ 

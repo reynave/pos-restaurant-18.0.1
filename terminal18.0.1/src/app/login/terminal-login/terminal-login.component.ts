@@ -8,11 +8,12 @@ import { ConfigService } from '../../service/config.service';
 import { environment } from '../../../environments/environment';
 import { JwtVerifyService } from '../../service/jwt-verify.service';
 import { SocketService } from '../../service/socket.service';
+import { HeaderMenuComponent } from "../../header/header-menu/header-menu.component";
 
 @Component({
   selector: 'app-terminal-login',
   standalone: true,
-  imports: [HttpClientModule, CommonModule, FormsModule, RouterModule, KeyNumberComponent],
+  imports: [HttpClientModule, CommonModule, FormsModule, RouterModule, KeyNumberComponent, HeaderMenuComponent],
   templateUrl: './terminal-login.component.html',
   styleUrl: './terminal-login.component.css'
 })
@@ -37,6 +38,9 @@ export class TerminalLoginComponent {
       this.terminalId = this.terminalId + data;
     }
 
+  }
+  back(){
+    history.back();
   }
 
   onSubmit() {

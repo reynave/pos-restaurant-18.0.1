@@ -1,7 +1,7 @@
 <app-header-menu></app-header-menu>
 @if(currentTable != 0){
 <div class="floating-wrapper">
-   <div class="floating-content shadow border  p-2 rounded-bottom">
+   <div class="floating-content shadow border  p-2 rounded">
 
       <div class="row mb-3">
          <div class="col-3">
@@ -21,7 +21,7 @@
          <ng-container *ngIf="item.detail.id; else noDetail">
             <div class="row">
                <div class="col-3 lh-1">
-                  <strong>Bill :</strong> {{item.cardId}} 
+                  <strong>Bill :</strong> {{item.cardId}}
                </div>
                <div class="col-3 lh-1">
                   <strong>Start Time :</strong> {{item.detail.startDate | date : 'HH:mm'}}
@@ -55,7 +55,7 @@
             </div>
          </ng-template>
       </div>
-      
+
       }
    </div>
 </div>
@@ -110,26 +110,23 @@
                <div class="floorPlan " *ngFor="let x of items[current]?.maps ; let i = index">
 
                   <div class="items   {{ x.active == 1 ? 'border border-dark border-3 shadow' : '' }} {{x.bgn}} "
-                     [style.transform]="'translate(' + x.posX + 'px,' + x.posY + 'px)'" 
-                     [style.width.px]="x.width"
-                     [style.height.px]="x.height" 
-                     [style.backgroundImage]="'url('+public+'icon/'+x.icon+')'"
-                     style="background-size: cover;" 
-                     (click)="open(modalCheckIn, x, current, i)">
+                     [style.transform]="'translate(' + x.posX + 'px,' + x.posY + 'px)'" [style.width.px]="x.width"
+                     [style.height.px]="x.height" [style.backgroundImage]="'url('+public+'icon/'+x.icon+')'"
+                     style="background-size: cover;" (click)="open(modalCheckIn, x, current, i)">
                      <div class="text-end p-1" style=" cursor: pointer;">
                         <div class="table-pos-label">
                            <strong class="table-name">
                               <span *ngIf="x.overdueMinute > 0 "> <i class="bi bi-exclamation-diamond"></i> </span>
                               {{x.tableName}} </strong>
                         </div>
-                      
+
                      </div>
                   </div>
 
                </div>
             </div>
 
-           
+
          </div>
          }
          @else {
@@ -175,13 +172,15 @@
 
          <div class="d-flex flex-row-reverse ">
             <div class="p-2" style="width: 200px;">
-               <div class="row">
-                  <div class="col-6 text-end">
-                    <small> Map Zoom : </small>
+               <div class="row g-1">
+                  <div class="col-5 text-end">
+                     <small> Map Size % : </small>
                   </div>
-                  <div class="col-6">
-                     <input type="number" class="form-control form-control-sm " (change)="onZoomChange()" [(ngModel)]="zoom" />
+                  <div class="col-5">
+                     <input type="number" class="form-control form-control-sm " (change)="onZoomChange()"
+                        [(ngModel)]="zoom" />
                   </div>
+                   
                </div>
             </div>
             <div class="p-2" *ngFor="let x of statusMap">
@@ -200,48 +199,53 @@
       <div class="col-3 ">
          <div class="row g-1">
             <div class="col-12 mb-2">
-               <div class="alert alert-warning text-center">
+               <div class="alert alert-{{dataDailyStart['closeDateWarning'] < 0 ? 'danger' : 'primary'}} text-center">
                   <strong><i class="bi bi-clock"></i> {{ currentTime | date: 'medium' }}</strong>
                </div>
                <div class="order-panel ">
                   <div class="info-panel">
-                      <div class="mb-2 ">
+                     <div class="mb-2 ">
                         <div>
                            <label class="me-2">Daily Start:</label>
                         </div>
                         <div>{{dataDailyStart['startDate'] | date:'medium'}}</div>
-                      </div>
-                      <div class="mb-2 ">
+                     </div>
+                     <div class="mb-2 ">
                         <div>
                            <label class="me-2">Schedule:</label>
                         </div>
                         <div>{{dataDailyStart['name']}}</div>
-                      </div>
-                      <div class="mb-2 ">
+                     </div>
+                     <div class="mb-2 ">
                         <div>
                            <label class="me-2">Will Close at:</label>
                         </div>
                         <div>{{dataDailyStart['closeDateLimit'] | date:'medium'}}</div>
-                      </div>
-                      <div class="mb-2 " *ngIf="dataDailyStart['closeDateWarning'] < 0">
+                     </div>
+                     <div class="mb-2 " *ngIf="dataDailyStart['closeDateWarning'] < 0">
                         <div>
                            <label class="text-danger me-2">Warning Daily Close:</label>
                         </div>
-                        <div><strong class="text-danger">+{{dataDailyStart['closeDateWarning'] * -1}} Minute</strong></div>
-                      </div>
-                      <div class="mb-2 ">
+                        <div>
+                           <strong class="text-danger">
+                              +{{ getHourMinute(dataDailyStart['closeDateWarning']) }}
+                           </strong>
+                           <small>(Hour:Minute)</small>
+                        </div>
+                     </div>
+                     <div class="mb-2 ">
                         <div>
                            <label class="me-2">User:</label>
                         </div>
                         <div>{{getTokenJson['name']}}</div>
-                      </div>
-                      <div class="mb-2 ">
+                     </div>
+                     <div class="mb-2 ">
                         <div>
                            <label class="me-2">Level:</label>
                         </div>
                         <div>{{getTokenJson['authlevel']}}</div>
-                      </div>
-                      <div class="mb-2 ">
+                     </div>
+                     <div class="mb-2 ">
                         <div>
                            <label class="me-2">Terminal ID:</label>
                         </div>

@@ -546,3 +546,16 @@ time,outletId,workStationId,userId,bill,action,url,method,server
 18:02:33,Imperial Kitchen(15),0005,sa (76),,Search log 2025-08-25,http://localhost:4850/#/userLogs
 18:02:49,Imperial Kitchen(15),0005,sa (76),,Search log 2025-08-25,http://localhost:4850/#/userLogs
 18:03:05,Imperial Kitchen(15),0005,sa (76),,Search log 2025-08-25,http://localhost:4850/#/userLogs
+18:10:09,Imperial Kitchen(15),0005,sa (76),,click User logs,http://localhost:4850/#/userLogs
+18:10:13,Imperial Kitchen(15),0005,sa (76),,click setting,http://localhost:4850/#/transaction
+18:11:20,Imperial Kitchen(15),0005,sa (76),,logOff,http://localhost:4850/#/items
+18:11:20,Imperial Kitchen(15),0005,sa (76),,Sign Off,http://localhost:4850/#/items
+18:11:27,Imperial Kitchen(15),0005,sa (76),,logOff,http://localhost:4850/#/tables
+18:11:27,Imperial Kitchen(15),0005,sa (76),,Sign Off,http://localhost:4850/#/tables
+18:11:40,Imperial Kitchen(15),0005,sa (76),,logOff,http://localhost:4850/#/tables
+18:11:40,Imperial Kitchen(15),0005,sa (76),,Sign Off,http://localhost:4850/#/tables
+18:17:45,Imperial Kitchen(15),0005,sa (76),,click setting,http://localhost:4850/#/tables
+18:17:47,Imperial Kitchen(15),0005,sa (76),,Click Tables,http://localhost:4850/#/setting
+18:17:49,Imperial Kitchen(15),0005,sa (76),,Click Print Queue,http://localhost:4850/#/tables
+18:17:53,Imperial Kitchen(15),0005,sa (76),250825000332,Go to Menu,http://localhost:4850/#/tables
+18:17:53,Imperial Kitchen(15),0005,sa (76),250825000332,Menu Lookup 0,http://localhost:4850/#/menu?id=250825000332
