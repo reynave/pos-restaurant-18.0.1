@@ -1958,7 +1958,7 @@ exports.printQueue = async (req, res) => {
           descs: row['descs'],
           modifier: row['modifier'],
         }
- 
+
         const q11 = `
             INSERT INTO print_queue (
                 dailyCheckId, cartId,  so,
@@ -2339,6 +2339,7 @@ exports.transferTable = async (req, res) => {
   try {
     let cartId = table['cardId'];
 
+    // CART
     if (cartId == '') {
       const originalDate = inputDate;
       const timeToAdd = '01:01:00';
@@ -2346,8 +2347,7 @@ exports.transferTable = async (req, res) => {
       const { hours, minutes, seconds } = parseTimeString(timeToAdd);
       const updatedDate = addTime(originalDate, hours, minutes, seconds);
 
-      // Format hasil
-      // Format hasil
+      // Format hasil 
       let overDue = updatedDate.toLocaleString(process.env.TO_LOCALE_STRING).replace('T', ' ').substring(0, 19);
       overDue = convertCustomDateTime(overDue.toString())
 
@@ -2372,11 +2372,25 @@ exports.transferTable = async (req, res) => {
       if (newOrder.affectedRows === 0) {
         results.push({ status: 'not found' });
       } else {
-        results.push({ status: 'updated' });
+        results.push({ status: 'insert new table' });
+      }
+    }
+    else {
+      const q0 = `
+          UPDATE cart SET 
+            tableMapStatusId = '${cart['tableMapStatusId']},',  
+            updateDate = '${today()}'
+          WHERE id = ${cartId}`;
+
+      const [result] = await db.query(q0);
+      if (result.affectedRows === 0) {
+        results.push({ cartId, status: 'not found' });
+      } else {
+        results.push({ cartId, status: 'updated table' });
       }
     }
 
-    // Detail Item
+    // CARD Detail 
     for (const emp of itemsTransfer) {
       const { menuId, price, total } = emp;
 
@@ -2391,6 +2405,23 @@ exports.transferTable = async (req, res) => {
         LIMIT ${total}`;
 
       const [cartDb] = await db.query(l1);
+
+
+      // PRINTER KITCHEN CHANGE BILL
+      const q0 = `
+        UPDATE print_queue SET 
+          cartId = '${cartId}',  
+          updateDate = '${today()}'
+        WHERE cartId = '${cart['id']}' AND menuId = ${menuId} `; 
+      const [result] = await db.query(q0);
+      if (result.affectedRows === 0) {
+        results.push({   status: 'not found' });
+      } else {
+        results.push({  status: 'PRINTER KITCHEN CHANGE BILL updated' });
+      }
+      // END >> PRINTER KITCHEN CHANGE BILL
+
+
 
       for (const emp2 of cartDb) {
 
@@ -2439,9 +2470,10 @@ exports.transferTable = async (req, res) => {
       }
 
 
-
-
     }
+
+
+
 
 
 

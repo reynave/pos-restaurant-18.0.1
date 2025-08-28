@@ -1,0 +1,10 @@
+{{!-- Set line variable --}}
+{{!-- Handlebars tidak mendukung assignment langsung, gunakan helper jika perlu --}}
+* * * Transfer Item * * *
+TABLE : {{transaction.tableName}} | {{transaction.startDate}}
+{{#each cart}}
+{{this.total}}X {{this.name}}
+{{#each this.modifier}}
+- {{this.descl}}
+{{/each}}
+{{/each}}

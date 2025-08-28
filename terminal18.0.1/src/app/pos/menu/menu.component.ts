@@ -18,8 +18,8 @@ import { BillComponent } from '../bill/bill.component';
 import { KeyNumberComponent } from '../../keypad/key-number/key-number.component';
 import { TransferLogComponent } from './transfer-log/transfer-log.component';
 import { UserLoggerService } from '../../service/user-logger.service';
-import { MergerLogComponent } from './merger-log/merger-log.component'; 
-import { TablePrintQueueComponent } from "../print-queue/table-print-queue/table-print-queue.component";
+import { MergerLogComponent } from './merger-log/merger-log.component';
+import { TablePrintQueueComponent } from '../print-queue/table-print-queue/table-print-queue.component';
 export class Actor {
   constructor(public newQty: number, public note: string) {}
 }
@@ -33,15 +33,15 @@ export class Actor {
     NgbDropdownModule,
     RouterModule,
     HeaderMenuComponent,
-    KeyNumberComponent, 
-    TablePrintQueueComponent
-],
+    KeyNumberComponent,
+    TablePrintQueueComponent,
+  ],
   templateUrl: './menu.component.html',
   styleUrl: './menu.component.css',
 })
 export class MenuComponent implements OnInit, OnDestroy {
-  @ViewChild('myInput') myInputRef!: ElementRef<HTMLInputElement>; 
-  @ViewChild('remarkInput') remarkInputRef!: ElementRef<HTMLInputElement>; 
+  @ViewChild('myInput') myInputRef!: ElementRef<HTMLInputElement>;
+  @ViewChild('remarkInput') remarkInputRef!: ElementRef<HTMLInputElement>;
   loading: boolean = false;
   current: number = 0;
   checkboxAll: number = 0;
@@ -51,8 +51,8 @@ export class MenuComponent implements OnInit, OnDestroy {
       menu: [],
     },
   ];
-  zoom :number = parseInt(localStorage.getItem('pos3.zoom') || '100');
-    public: string = environment.api + '../public/floorMap/';
+  zoom: number = parseInt(localStorage.getItem('pos3.zoom') || '100');
+  public: string = environment.api + '../public/floorMap/';
   summary: any = [];
   modifiers: any = [];
   item: any = [];
@@ -82,6 +82,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   showModifier: boolean = false;
 
   checkBoxAllModifier: boolean = false;
+  checkBoxAllScTax: boolean = false;
   modifierDetail: any = [];
   totalCard: number = 0;
   totalCardOrder: number = 0;
@@ -871,21 +872,60 @@ export class MenuComponent implements OnInit, OnDestroy {
     //   }
     // )
   }
+  questCheckTemp: string = '';
 
-  printTableChecker() {
-    window.open(environment.api + 'printing/tableChecker?id=' + this.id);
-    // this.http.get<any>(environment.api+"printing/tableChecker",{
-    //   params : {
-    //     id : this.id
-    //   }
-    // }).subscribe(
-    //   data=>{
-    //     console.log(data);
-    //   },
-    //   error=>{
-    //     console.log(error);
-    //   }
-    // )
+  printTableChecker(content: any) {
+    //window.open(environment.api + 'printing/tableChecker?id=' + this.id);
+    this.modalService.open(content, { size: 'md' });
+    this.http
+      .get(environment.api + 'printing/tableChecker', {
+        params: {
+          id: this.id,
+        },
+        responseType: 'text',
+      })
+      .subscribe(
+        (data) => {
+          this.questCheckTemp = data;
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+  }
+  printNote: string = '';
+printNoteError : boolean = false;
+printLoading : boolean = false;
+  fnPrint() {
+    this.printNoteError = false;
+    this.printNote  = '';
+    this.printLoading = true;
+    const body = {
+      id: this.id,
+      printer: {
+        address: this.configService.getConfigJson()['printer']['address'],
+        port: this.configService.getConfigJson()['printer']['port'],
+      },
+      message: this.questCheckTemp,
+    };
+    this.printNote = 'Printing, please wait...';
+    this.http
+      .post(environment.api + 'printing/print', body, {
+        headers: this.configService.headers(),
+      })
+      .subscribe(
+        (data) => {
+          console.log(data);
+          this.printNote = 'Print Success';
+             this.printLoading = false;
+        },
+        (error) => {
+          this.printNoteError = true;
+               this.printLoading = false;
+          console.log(error);
+          this.printNote =  'ERROR '+error.error.detail;
+        }
+      );
   }
 
   handleData(data: string) {
@@ -990,7 +1030,6 @@ export class MenuComponent implements OnInit, OnDestroy {
           this.loading = false;
           console.log('httpTables', data);
           this.tablesMaps = data['items'];
-        
         },
         (error) => {
           console.log(error);

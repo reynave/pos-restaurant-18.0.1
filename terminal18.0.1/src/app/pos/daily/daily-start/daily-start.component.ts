@@ -21,6 +21,7 @@ export class DailyStartComponent implements OnInit {
   ver: string = environment.ver;
   outletSelect: any = [];
   employeeSelect: any = [];
+  dailyAccess : string = '';
   constructor(
     private configService: ConfigService,
     private router: Router,
@@ -30,6 +31,7 @@ export class DailyStartComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.dailyAccess = this.configService.getTokenJson()['dailyAccess'];
     console.log(this.configService.getTokenJson()['dailyAccess'])
     if (this.configService.getTokenJson()['dailyAccess'] != 1) {
       this.router.navigate(['setting']);

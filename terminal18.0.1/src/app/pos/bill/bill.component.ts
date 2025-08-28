@@ -4,24 +4,36 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { environment } from '../../../environments/environment.development';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NgbActiveModal, NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import {
+  NgbActiveModal,
+  NgbDropdownModule,
+  NgbModal,
+} from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { BillTableComponent } from "./bill-table/bill-table.component";
+import { BillTableComponent } from './bill-table/bill-table.component';
 
 @Component({
   selector: 'app-bill',
   standalone: true,
-  imports: [HttpClientModule, CommonModule, FormsModule, NgbDropdownModule, RouterModule, BillTableComponent],
+  imports: [
+    HttpClientModule,
+    CommonModule,
+    FormsModule,
+    NgbDropdownModule,
+    RouterModule,
+    BillTableComponent,
+  ],
   templateUrl: './bill.component.html',
-  styleUrl: './bill.component.css'
+  styleUrl: './bill.component.css',
 })
 export class BillComponent implements OnInit {
-
   @Input() id: any;
   loading: boolean = false;
-  items: any = [{
-    menu: []
-  }];
+  items: any = [
+    {
+      menu: [],
+    },
+  ];
   item: any = [];
   cart: any = [];
   //id: string = '';
@@ -51,8 +63,7 @@ export class BillComponent implements OnInit {
     public modalService: NgbModal,
     private router: Router,
     private activeRouter: ActivatedRoute
-  ) { }
-
+  ) {}
 
   ngOnInit() {
     this.httpCart();
@@ -61,30 +72,29 @@ export class BillComponent implements OnInit {
   }
 
   httpCart() {
-
     this.loading = true;
-    const url = environment.api + "payment/cart";
-    this.http.get<any>(url, {
-      headers: this.configService.headers(),
-      params: {
-        id: this.id,
-      }
-    }).subscribe(
-      data => {
-        this.close = data['cart']['close'];
-        this.groups = data['groups'];
+    const url = environment.api + 'payment/cart';
+    this.http
+      .get<any>(url, {
+        headers: this.configService.headers(),
+        params: {
+          id: this.id,
+        },
+      })
+      .subscribe(
+        (data) => {
+          this.close = data['cart']['close'];
+          this.groups = data['groups'];
 
-        // this.groups.forEach((el: any) => {
-        //    this.httpBill(el.subgroup);
-        //  });
-        this.callWithDelay();
-
-
-      },
-      error => {
-        console.log(error);
-      }
-    )
+          // this.groups.forEach((el: any) => {
+          //    this.httpBill(el.subgroup);
+          //  });
+          this.callWithDelay();
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
   }
 
   async callWithDelay() {
@@ -95,44 +105,48 @@ export class BillComponent implements OnInit {
   }
 
   delay(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   getCartCopyBill() {
-    const url = environment.api + "bill/getCartCopyBill";
-    this.http.get<any>(url, {
-      headers: this.configService.headers(),
-      params: {
-        id: this.id,
-      }
-    }).subscribe(
-      data => {
-        console.log(data);
-        this.cartCopyBill = data['items'];
-      },
-      error => {
-        console.log(error);
-      }
-    );
+    const url = environment.api + 'bill/getCartCopyBill';
+    this.http
+      .get<any>(url, {
+        headers: this.configService.headers(),
+        params: {
+          id: this.id,
+        },
+      })
+      .subscribe(
+        (data) => {
+          console.log(data);
+          this.cartCopyBill = data['items'];
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
   }
 
   httpBill(subgroup: number) {
     this.loading = true;
-    const url = environment.api + "bill/printing";
-    this.http.get(url, {
-      responseType: 'text' as const,
-      params: {
-        id: this.id,
-        subgroup: subgroup
-      }
-    }).subscribe(
-      (data: string) => {
-        this.htmlBill.push(data);
-      },
-      error => {
-        console.log(error);
-      }
-    );
+    const url = environment.api + 'bill/printing';
+    this.http
+      .get(url, {
+        responseType: 'text' as const,
+        params: {
+          id: this.id,
+          subgroup: subgroup,
+        },
+      })
+      .subscribe(
+        (data: string) => {
+          this.htmlBill.push(data);
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
   }
 
   reload() {
@@ -143,29 +157,34 @@ export class BillComponent implements OnInit {
     this.loading = true;
     const body = {
       id: this.id,
-    }
-    console.log(body)
-    this.http.post<any>(environment.api + "payment/submit", body, {
-      headers: this.configService.headers(),
-    }).subscribe(
-      data => {
-        this.modalService.dismissAll();
-        console.log(data);
-        history.back();
-        setTimeout(() => {
-          this.router.navigate(['payment'], { queryParams: { id: this.id } });
-        }, 500);
-      },
-      error => {
-        console.log(error);
-      }
-    )
+    };
+    console.log(body);
+    this.http
+      .post<any>(environment.api + 'payment/submit', body, {
+        headers: this.configService.headers(),
+      })
+      .subscribe(
+        (data) => {
+          this.modalService.dismissAll();
+          console.log(data);
+          history.back();
+          setTimeout(() => {
+            this.router.navigate(['payment'], { queryParams: { id: this.id } });
+          }, 500);
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
   }
 
-  ipPrint() {
+  printNote: string = '';
+  printNoteError: boolean = false;
+  printLoading: boolean = false;
+  fnPrint() {
     this.printResp = '';
-    this.isPrinting = true;  
-    let htmlBill = "";
+    this.isPrinting = true;
+    let htmlBill = '';
 
     this.htmlBill.forEach((element: any) => {
       htmlBill += element;
@@ -175,52 +194,60 @@ export class BillComponent implements OnInit {
     const printerPort = config.printerPort;
     const body = {
       message: htmlBill,
-      ipAddress: printerIp,
-      port: printerPort
-    }
-
-
-    console.log(body);
-    this.http.post<any>(environment.api + "bill/ipPrint", body, {
-      headers: this.configService.headers(),
-    }).subscribe(
-      data => {
-        this.isPrinting = false;
-        console.log(data);
-        this.printResp = data['note'];
+      printer: {
+        address: config.printerIp,
+        port: config.printerPort,
       },
-      error => {
-        this.isPrinting = false;
-        console.log(error);
-        this.printResp = 'Server error';
-      }
-    );
+    };
+ this.printNoteError = false;
+    this.printNote  = '';
+    this.printLoading = true;
+    console.log(body);
+    this.printNote = 'Printing, please wait...';
+    this.http
+      .post(environment.api + 'printing/print', body, {
+        headers: this.configService.headers(),
+      })
+      .subscribe(
+        (data) => {
+          console.log(data);
+          this.printNote = 'Print Success';
+          this.printLoading = false;
+        },
+        (error) => {
+          this.printNoteError = true;
+          this.printLoading = false;
+          console.log(error);
+          this.printNote = 'ERROR ' + error.error.detail;
+        }
+      );
   }
 
   printCopyBill() {
     const body = {
-      id: this.id
-    }
-    this.http.post<any>(environment.api + "bill/copyBill", body, {
-      headers: this.configService.headers(),
-    }).subscribe(
-      data => {
-        this.getCartCopyBill();
-        this.ipPrint();
-        console.log(data);
-      },
-      error => {
-        console.log(error);
-      }
-    )
+      id: this.id,
+    };
+    this.http
+      .post<any>(environment.api + 'bill/copyBill', body, {
+        headers: this.configService.headers(),
+      })
+      .subscribe(
+        (data) => {
+          this.getCartCopyBill();
+          this.fnPrint();
+          console.log(data);
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
   }
 
   splitBill() {
-    this.router.navigate(['bill/splitBill'], { queryParams: { id: this.id } }).then(
-      () => {
+    this.router
+      .navigate(['bill/splitBill'], { queryParams: { id: this.id } })
+      .then(() => {
         this.activeModal.dismiss();
-      }
-    )
+      });
   }
-
 }

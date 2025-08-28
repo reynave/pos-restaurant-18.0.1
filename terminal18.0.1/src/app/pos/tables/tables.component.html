@@ -68,7 +68,7 @@
 
          <div class="row g-1 mb-2">
 
-            <div class="col-7 ">
+            <div class="col-6 col-xl-7">
                <div class="bg-light p-1  rounded border  d-inline-block">
                   <span *ngFor="let x of items; let i = index">
                      <button type="button" class="btn px-3 py-1" (click)="onMap(i)" [class]="{
@@ -86,7 +86,7 @@
 
             </div>
 
-            <div class="col-5 text-end">
+            <div class="col-6 col-xl-5 text-end">
                <a class="btn  btn-light  me-2"
                   (click)="modal(modalSwitchOutlet); logService.logAction('modalSwitchOutlet')"><i
                      class="bi bi-diagram-3"></i> Switch Outlet</a>
