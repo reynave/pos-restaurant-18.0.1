@@ -1,0 +1,47 @@
+time,outletId,workStationId,userId,bill,action,url,method,server
+15:27:24,Imperial Kitchen(15),0001,sa (76),,Click Print Queue,http://localhost/terminal/#/tables
+15:27:24,Imperial Kitchen(15),0001,sa (76),,Click Tables,http://localhost/terminal/#/printQueue
+15:27:26,Imperial Kitchen(15),0001,sa (76),250828000339,Go to Menu,http://localhost/terminal/#/tables
+15:27:26,Imperial Kitchen(15),0001,sa (76),250828000339,Menu Lookup 0,http://localhost/terminal/#/menu?id=250828000339
+15:27:41,Imperial Kitchen(15),0001,sa (76),,click setting,http://localhost/terminal/#/tables
+15:27:46,Imperial Kitchen(15),0001,sa (76),,Change Map Dine In,http://localhost/terminal/#/tables
+15:27:46,Imperial Kitchen(15),0001,sa (76),,Change Map Other,http://localhost/terminal/#/tables
+15:32:46,Imperial Kitchen(15),0001,sa (76),,Log Off,http://localhost/terminal/#/tables
+16:29:04,Imperial Kitchen(15),0001,sa (76),250828000344,Go to Menu,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist/win-unpacked/resources/app.asar/angular18/#/tables
+16:29:04,Imperial Kitchen(15),0001,sa (76),250828000344,Menu Lookup 0,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist/win-unpacked/resources/app.asar/angular18/#/menu?id=250828000344
+16:29:08,Imperial Kitchen(15),0001,sa (76),250828000344,Exit Without Order,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist/win-unpacked/resources/app.asar/angular18/#/menu?id=250828000344
+16:29:30,Imperial Kitchen(15),0001,sa (76),250828000341,Go to Menu,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist/win-unpacked/resources/app.asar/angular18/#/tables
+16:29:30,Imperial Kitchen(15),0001,sa (76),250828000341,Menu Lookup 0,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist/win-unpacked/resources/app.asar/angular18/#/menu?id=250828000341
+16:29:32,Imperial Kitchen(15),0001,sa (76),250828000341,Click PAYMENT,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist/win-unpacked/resources/app.asar/angular18/#/menu?id=250828000341
+16:29:32,Imperial Kitchen(15),0001,sa (76),250828000341,Update to payment,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist/win-unpacked/resources/app.asar/angular18/#/tables
+16:29:35,Imperial Kitchen(15),0001,sa (76),250828000341,Add Payment CIMB DEBIT ,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist/win-unpacked/resources/app.asar/angular18/#/payment?id=250828000341
+16:29:44,Imperial Kitchen(15),0001,sa (76),250828000341,Delete Paid CIMB DEBIT  @9240035,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist/win-unpacked/resources/app.asar/angular18/#/payment?id=250828000341
+16:29:46,Imperial Kitchen(15),0001,sa (76),250828000341,Add Payment CASH,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist/win-unpacked/resources/app.asar/angular18/#/payment?id=250828000341
+16:30:38,Imperial Kitchen(15),0001,sa (76),250828000341,Submit Payment,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist/win-unpacked/resources/app.asar/angular18/#/payment?id=250828000341
+16:30:40,Imperial Kitchen(15),0001,sa (76),250828000341,Finish Payment,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist/win-unpacked/resources/app.asar/angular18/#/payment?id=250828000341
+16:30:40,Imperial Kitchen(15),0001,sa (76),250828000341,CLOSE PAYMENT,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist/win-unpacked/resources/app.asar/angular18/#/payment?id=250828000341
+16:30:42,Imperial Kitchen(15),0001,sa (76),250828000340,Go to Menu,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist/win-unpacked/resources/app.asar/angular18/#/tables
+16:30:42,Imperial Kitchen(15),0001,sa (76),250828000340,Menu Lookup 0,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist/win-unpacked/resources/app.asar/angular18/#/menu?id=250828000340
+16:32:23,Imperial Kitchen(15),0001,sa (76),250828000340,Go to Menu,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist/win-unpacked/resources/app.asar/angular18/#/tables
+16:32:23,Imperial Kitchen(15),0001,sa (76),250828000340,Menu Lookup 0,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist/win-unpacked/resources/app.asar/angular18/#/menu?id=250828000340
+16:32:26,Imperial Kitchen(15),0001,sa (76),250828000340,menu/modifier SO MANGGO KYOTO menuId : 24, price : 30000,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist/win-unpacked/resources/app.asar/angular18/#/menu?id=250828000340
+16:32:30,Imperial Kitchen(15),0001,sa (76),250828000340,Menu Lookup 0,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist/win-unpacked/resources/app.asar/angular18/#/menu?id=250828000340
+16:41:42,Imperial Kitchen(15),0001,sa (76),250828000340,Go to Menu,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist/win-unpacked/resources/app.asar/angular18/#/tables
+16:41:42,Imperial Kitchen(15),0001,sa (76),250828000340,Menu Lookup 0,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist/win-unpacked/resources/app.asar/angular18/#/menu?id=250828000340
+16:41:43,Imperial Kitchen(15),0001,sa (76),250828000340,Click PAYMENT,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist/win-unpacked/resources/app.asar/angular18/#/menu?id=250828000340
+16:41:44,Imperial Kitchen(15),0001,sa (76),250828000340,Update to payment,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist/win-unpacked/resources/app.asar/angular18/#/tables
+16:41:46,Imperial Kitchen(15),0001,sa (76),250828000340,Add Payment BCA FLAZZ ,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist/win-unpacked/resources/app.asar/angular18/#/payment?id=250828000340
+16:41:47,Imperial Kitchen(15),0001,sa (76),250828000340,Update Paid value,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist/win-unpacked/resources/app.asar/angular18/#/payment?id=250828000340
+16:41:47,Imperial Kitchen(15),0001,sa (76),250828000340,Update Paid value,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist/win-unpacked/resources/app.asar/angular18/#/payment?id=250828000340
+16:41:54,Imperial Kitchen(15),0001,sa (76),250828000340,Go to Menu,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist/win-unpacked/resources/app.asar/angular18/#/tables
+16:41:54,Imperial Kitchen(15),0001,sa (76),250828000340,Menu Lookup 0,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist/win-unpacked/resources/app.asar/angular18/#/menu?id=250828000340
+16:41:57,Imperial Kitchen(15),0001,sa (76),250828000340,Click PAYMENT,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist/win-unpacked/resources/app.asar/angular18/#/menu?id=250828000340
+16:41:58,Imperial Kitchen(15),0001,sa (76),250828000340,Update to payment,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist/win-unpacked/resources/app.asar/angular18/#/tables
+16:42:01,Imperial Kitchen(15),0001,sa (76),250828000340,Update Paid value,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist/win-unpacked/resources/app.asar/angular18/#/payment?id=250828000340
+16:42:02,Imperial Kitchen(15),0001,sa (76),250828000340,Submit Payment,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist/win-unpacked/resources/app.asar/angular18/#/payment?id=250828000340
+16:42:04,Imperial Kitchen(15),0001,sa (76),250828000340,Finish Payment,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist/win-unpacked/resources/app.asar/angular18/#/payment?id=250828000340
+16:42:04,Imperial Kitchen(15),0001,sa (76),250828000340,CLOSE PAYMENT,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist/win-unpacked/resources/app.asar/angular18/#/payment?id=250828000340
+16:49:54,Imperial Kitchen(15),0001,sa (76),250828000339,Go to Menu,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist/win-unpacked/resources/app.asar/angular18/#/tables
+16:49:54,Imperial Kitchen(15),0001,sa (76),250828000339,Menu Lookup 0,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist/win-unpacked/resources/app.asar/angular18/#/menu?id=250828000339
+16:49:59,Imperial Kitchen(15),0001,sa (76),250828000339,menu/modifier SO MANGGO KYOTO menuId : 24, price : 30000,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist/win-unpacked/resources/app.asar/angular18/#/menu?id=250828000339
+16:50:02,Imperial Kitchen(15),0001,sa (76),250828000339,Menu Lookup 0,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist/win-unpacked/resources/app.asar/angular18/#/menu?id=250828000339
