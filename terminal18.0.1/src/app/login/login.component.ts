@@ -29,7 +29,8 @@ export class LoginComponent implements OnInit {
   ver: string = environment.ver;
   outletSelect: any = [];
   employeeSelect: any = [];
-
+  api : string = localStorage.getItem('pos3.env.api') || environment.api;
+  
   constructor(
     private config: ConfigService,
     private router: Router,
@@ -51,7 +52,7 @@ export class LoginComponent implements OnInit {
 
   httpGet() {
     this.loading = true;
-    const url = environment.api + "login/outlet";
+    const url = this.api + "login/outlet";
     this.http.get<any>(url).subscribe(
       data => {
         console.log(data);
@@ -70,7 +71,7 @@ export class LoginComponent implements OnInit {
     this.error = '';
     const getIndexById = this.outletSelect.findIndex((obj: { id: any; }) => obj.id === parseInt(this.model.outletId));
 
-    const url = environment.api + "login/signin";
+    const url = this.api + "login/signin";
     const body = {
       // username: this.employeeSelect[this.model.username]['id'],
       username: this.model['username'], 

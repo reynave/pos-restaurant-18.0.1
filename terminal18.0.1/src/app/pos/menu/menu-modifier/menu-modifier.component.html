@@ -1,143 +1,149 @@
-<div class="container-fluid ">
-   <div class="row g-0">
+<app-header-menu></app-header-menu>
+
+
+<div [ngClass]="{'container': screenWidth >= 1200, 'container-fluid': screenWidth < 1200}">
+   <div class="row g-2">
 
       <div class="col-5">
          <!-- TABLE cart -->
-         <div class="wrapper border bg-white">
-            <table class="table table-hover ">
-               <tbody class="sticky-top">
-                  <tr>
-                     <td colspan="5"><strong>MENU MODIFIER</strong></td> 
-                  </tr>
-               </tbody>
-
-               <tbody>
-                  <tr (click)="fnChecked(i)" *ngFor="let x of cart; let i = index"
-                     [class]="{'tr-active':x.checkBox == 1, 'bg-light':x.sendOrder == 1 }"
-                     [hidden]="x.menuTaxScId != 0 && hideTaxSc != 0">
-                     <td>
- 
-                        <div *ngIf="(x.menuTaxScId == 0 && x.menuSetMenuId == 0) && x.sendOrder == 0 "> 
-                           <i *ngIf="x.checkBox == 0 " class="bi bi-square"></i>
-                           <i *ngIf="x.checkBox == 1 " class="bi bi-check-square-fill"></i> 
-                        </div>
-                        <div *ngIf="x.sendOrder == 1">
-                           <i class="bi bi-receipt"></i>
-                        </div>
-
-                       
-                     </td>
-
-                     <td> {{x.no != 0 ? x.no : ''}} </td>
-                     <td> {{x.no != 0 ? '': '+'}} {{x.name}} {{x.priceIncluded == 0 ? '' : '('+(x.priceIncluded |
-                        number)+')'}}
-                        
-                
-                     </td>
-
-                     <td class="text-end">
-                        <span class="badge text-bg-warning me-1" *ngIf="x.ta==1">TA</span>
-                        <span class="badge text-bg-secondary me-1">{{x.sendOrder}}</span>
+         <div class="order-panel mb-2">
 
 
-                     </td>
+            <div class="d-flex justify-content-between align-items-center">
+               <strong class="fw-bold mb-0"> MENU MODIFIER </strong>
 
-                     <td class="text-end font-monospace">
-                        {{x.price | number}}
-                     </td>
+            </div>
 
-                  </tr>
+            <div class="order-panel-fixHeight">
+               <table class="table table-sm table-hove">
+                  <tbody>
+                     <tr (click)="fnChecked(i)" *ngFor="let x of cart; let i = index"
+                        [class]="{'tr-active':x.checkBox == 1, 'bg-light':x.sendOrder == 1 }"
+                        [hidden]="x.menuTaxScId != 0 && hideTaxSc != 0">
+                        <td>
 
-               </tbody>
-               
-               <tfoot>
-                  <tr>
-                     <td colspan="3">
-                         <button type="button" class="btn btn-outline-dark"
-                           (click)="hideTaxSc == 0 ? hideTaxSc = 1  : hideTaxSc = 0">
-                           <i *ngIf="hideTaxSc == 1" class="bi bi-square"></i>
-                           <i *ngIf="hideTaxSc == 0" class="bi bi-check-square-fill"></i>
-                           {{hideTaxSc == 1 ? 'Show':'Hide'}} Tax & SC</button>
-                     </td>
-                     <td  class="text-end ">
-                        TOTAL {{!hideTaxSc? "+ TAX & SC":""}}
-                     </td>
-
-                     <td class="text-end">
-                        <h4> {{(hideTaxSc ? totalAmount : grandAmount) | number}}</h4>
-                     </td>
-
-                  </tr>
-               </tfoot>
+                           <div *ngIf="(x.menuTaxScId == 0 && x.menuSetMenuId == 0) && x.sendOrder == 0 ">
+                              <i *ngIf="x.checkBox == 0 " class="bi bi-square"></i>
+                              <i *ngIf="x.checkBox == 1 " class="bi bi-check-square-fill"></i>
+                           </div>
+                           <div *ngIf="x.sendOrder == 1">
+                              <i class="bi bi-receipt"></i>
+                           </div>
 
 
-            </table>
+                        </td>
+
+                        <td> {{x.no != 0 ? x.no : ''}} </td>
+                        <td> {{x.no != 0 ? '': '+'}} {{x.name}} {{x.priceIncluded == 0 ? '' : '('+(x.priceIncluded |
+                           number)+')'}}
+
+
+                        </td>
+
+                        <td class="text-end">
+                           <span class="badge text-bg-warning me-1" *ngIf="x.ta==1">TA</span>
+                           <span class="badge text-bg-secondary me-1">{{x.sendOrder}}</span>
+
+
+                        </td>
+
+                        <td class="text-end ">
+                           <div class="text-end font-monospace">
+                              <strong>
+                                 {{x.price | number}}
+                              </strong>
+                           </div>
+                        </td>
+
+                     </tr>
+
+                  </tbody>
+
+
+
+               </table>
+            </div>
          </div>
 
+         <div class="order-panel mb-2">
+            <div class="order-summary ">
+               <div class="d-flex justify-content-between">
+                  <strong> TOTAL {{!hideTaxSc? "+ TAX & SC":""}}</strong>
+                  <span class="fw-bold"> {{(hideTaxSc ? totalAmount : grandAmount) | number}} </span>
+               </div>
+            </div>
+         </div>
+
+         <div class="row g-1 mb-2">
+            <div class="col-10 d-grid">
+               <button type="button" class="btn btn-light" (click)="hideTaxSc == 0 ? hideTaxSc = 1  : hideTaxSc = 0">
+                  <i *ngIf="hideTaxSc == 1" class="bi bi-square"></i>
+                  <i *ngIf="hideTaxSc == 0" class="bi bi-check-square-fill"></i>
+                  {{hideTaxSc == 1 ? 'Show':'Hide'}} Show All Modifier</button>
+            </div>
+
+            <div class="col-2 d-grid">
+
+               <button type="button" class="btn btn-danger  " [disabled]="!isChecked" (click)="onVoid()">
+                  <i class="bi bi-x-lg"></i> </button>
+            </div>
+         </div>
       </div>
       <div class="col-7">
          <div class="wrapper  px-2  ">
-            <div class="sticky-top mb-3">
-               <div class=" shadow-sm bg-white rounded p-2">
-                  <div class="row ">
-                     <div class="col-6 align-content-center">
-                        <button type="button" class="btn border" (click)="back()"><i class="bi bi-arrow-left"></i>
-                           BACK</button>
-                     </div>
-                     <div class="col-6 text-end">
-                       
-                     </div>
-                  </div>
-               </div>
-            </div>
-            <div class="row g-2 mb-2">
+
+            <div class="row g-2 mb-3">
                <div class="col-4 d-grid">
-                  <button type="button" class="btn btn-danger py-3 rounded shadow-sm" [disabled]="!isChecked"
+                  <button type="button" [class]="cssClass" class="btn-danger" [disabled]="!isChecked"
                      (click)="onVoid()">
                      <i class="bi bi-x-lg"></i> VOID ITEM</button>
                </div>
                <div class="col-4 d-grid">
-                  <button type="button" class="btn btn-danger   py-3 rounded shadow-sm"
-                     (click)="onRemoveModifier()">
+                  <button type="button" [class]="cssClass" class="btn-warning" (click)="onRemoveModifier()">
                      <i class="bi bi-trash"></i> REMOVE MODIFIER</button>
                </div>
                <div class="col-4 d-grid">
-                  <button type="button" class="btn btn-warning   py-3 rounded shadow-sm"
-                     (click)="takeOutDetail()">
+                  <button type="button" [class]="cssClass" class="btn-primary" (click)="takeOutDetail()">
                      <i class="bi bi-bag-check"></i> TAKE OUT</button>
                </div>
             </div>
 
-            <div class="row g-1 mb-3">
-               <div class="col-3 mb-1 d-grid" *ngFor="let x of items; let i = index">
-                  <button type="button" [class]="cssMenu" [disabled]=" x.id == modifierDetail['id'] ? true : false "
-                     (click)="fnShowModifierDetail(i)">
-                     <div class="mb-1"> {{x.name}}</div>
-                  </button>
-               </div>
-               <div class="col-3 mb-1 d-grid">
-                  <button type="button" [class]="cssMenu" (click)="open(modalAddMemo)">
-                     <div class="mb-1"><i class="bi bi-pen"></i> Custom Notes</div>
-                  </button>
-               </div>
+            <div>
+               <ul class="nav nav-pills mb-2">
+                  <li class="nav-item" *ngFor="let x of items; let i = index">
+                     <button type="button" class="nav-link" [disabled]=" x.id == modifierDetail['id'] ? true : false "
+                        (click)="fnShowModifierDetail(i);logService.logAction('Click MODIFIER : '+ x.name,id) ">
+                        {{x.name}}</button>
+                  </li>
+                  <li>
+                     <button type="button" class="nav-link" (click)="open(modalAddMemo)"><i class="bi bi-pen"></i>
+                        Custom Notes</button>
+                  </li>
+               </ul>
             </div>
 
+            <div style="height: 350px; overflow-y: auto; overflow-x: hidden;">
 
-            <div class="row g-1 mb-3">
-               <h6 class="text-center">{{modifierDetail['name']}}</h6>
-               <div class="col-3 mb-1 d-grid" *ngFor="let a of modifierDetail['detail']">
-                  <a type="button" [class]="cssMenu" (click)="addToCart(a)">
-                     <div class="mb-1"> {{a.descs}}</div>
-                  </a>
-               </div> 
+
+               <div class="row g-1 mb-3">
+                  <h6 class="text-center">{{modifierDetail['name']}}</h6>
+                  <div class="col-3 mb-1 d-grid" *ngFor="let a of modifierDetail['detail']">
+                     <a type="button" (click)="addToCart(a)" class="btn btn-light">
+                        {{a.descs}}
+                     </a>
+                  </div>
+               </div>
             </div>
 
             <div class="row">
                <div class="col-12">
                   <ul>
-                     <li><small>Cannot <span class="badge text-bg-danger"> VOID ITEM</span> if SendOrder (SO)</small></li>
-                     <li><small>Cannot <span class="badge text-bg-danger"> REMOVE MODIFIER</span> if SendOrder (SO)</small></li>
-                     
+                     <li><small>Cannot <span class="badge text-bg-danger"> VOID ITEM</span> if it has SendOrder
+                           (SO)</small>
+                     </li>
+                     <li><small>Cannot <span class="badge text-bg-warning"> REMOVE MODIFIER</span> if it has SendOrder
+                           (SO)</small></li>
+
                   </ul>
                </div>
             </div>
@@ -159,8 +165,8 @@
 
       <form (ngSubmit)="addCustomNotesDetail()" #actorForm="ngForm">
          <div class="mb-3">
-            <input type="text" class="form-control form-control-lg"  #myInput  id="note" 
-               required [(ngModel)]="model.note"  name="note" #note="ngModel" autofocus >
+            <input type="text" class="form-control form-control-lg" #myInput id="note" required [(ngModel)]="model.note"
+               name="note" #note="ngModel" autofocus>
             <div [hidden]="note.valid || note.pristine" class="text-danger">
                Note is required
             </div>
@@ -168,14 +174,13 @@
 
          <div class="row g-1">
             <div class="col-6 d-grid">
-               <button type="button" class="btn btn-lg btn-outline-secondary"  
+               <button type="button" class="btn btn-lg btn-outline-secondary"
                   (click)="modal.close('Save click')">Cancel</button>
             </div>
-             <div class="col-6 d-grid">
-               <button type="submit" class="btn btn-lg btn-dark"  
-                  [disabled]="!actorForm.form.valid">Ok</button>
+            <div class="col-6 d-grid">
+               <button type="submit" class="btn btn-lg btn-dark" [disabled]="!actorForm.form.valid">Ok</button>
             </div>
-         </div> 
+         </div>
 
       </form>
    </div>

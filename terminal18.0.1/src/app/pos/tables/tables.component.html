@@ -180,28 +180,35 @@
                      <input type="number" class="form-control form-control-sm " (change)="onZoomChange()"
                         [(ngModel)]="zoom" />
                   </div>
-                   
+
                </div>
             </div>
             <div class="p-2" *ngFor="let x of statusMap">
                <small><i [ngClass]="x.color" class="bi bi-square-fill"></i> {{x.name}} </small>
             </div>
 
-            <div class="p-2" *ngIf="dataDailyStart['closeDateWarning'] < 0">
-               <div class="badge text-bg-danger">
-                  <span *ngIf="lock==true"><i class="bi bi-lock-fill"></i></span>
-                  Warning Daily Close : +{{dataDailyStart['closeDateWarning'] * -1}} Minute
-               </div>
-            </div>
+
          </div>
       </div>
 
       <div class="col-3 ">
          <div class="row g-1">
             <div class="col-12 mb-2">
-               <div class="alert alert-{{dataDailyStart['closeDateWarning'] < 0 ? 'danger' : 'primary'}} text-center">
-                  <strong><i class="bi bi-clock"></i> {{ currentTime | date: 'medium' }}</strong>
+               <div *ngIf="dataDailyStart['closeDateWarning'] < 0"
+                  class="bg-danger text-white p-1 rounded mb-2 text-center">
+                  <strong><small> Warning Daily Close : +{{ getHourMinute(dataDailyStart['closeDateWarning']) }}</small></strong>
+
                </div>
+
+               <div class="alert alert-{{dataDailyStart['closeDateWarning'] < 0 ? 'danger' : 'primary'}} text-center">
+                  <strong>
+                     <span *ngIf="lock==true"><i class="bi bi-lock-fill"></i></span>
+                     <span *ngIf="lock!=true"> <i class="bi bi-clock"></i></span>
+
+                     {{ currentTime | date: 'medium' }}</strong>
+               </div>
+
+
                <div class="order-panel ">
                   <div class="info-panel">
                      <div class="mb-2 ">
@@ -218,21 +225,12 @@
                      </div>
                      <div class="mb-2 ">
                         <div>
-                           <label class="me-2">Will Close at:</label>
+                           <label  *ngIf="dataDailyStart['closeDateWarning'] > 0" class="me-2">Will Close at:</label>
+                           <label   *ngIf="dataDailyStart['closeDateWarning'] < 0" class="text-danger me-2">Warning Daily Close:</label>
                         </div>
                         <div>{{dataDailyStart['closeDateLimit'] | date:'medium'}}</div>
                      </div>
-                     <div class="mb-2 " *ngIf="dataDailyStart['closeDateWarning'] < 0">
-                        <div>
-                           <label class="text-danger me-2">Warning Daily Close:</label>
-                        </div>
-                        <div>
-                           <strong class="text-danger">
-                              +{{ getHourMinute(dataDailyStart['closeDateWarning']) }}
-                           </strong>
-                           <small>(Hour:Minute)</small>
-                        </div>
-                     </div>
+                      
                      <div class="mb-2 ">
                         <div>
                            <label class="me-2">User:</label>

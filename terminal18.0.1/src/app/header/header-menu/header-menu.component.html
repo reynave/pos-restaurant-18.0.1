@@ -19,71 +19,66 @@
 
       </ul>
 
-      <button class="navbar-toggler btn btn-primary" type="button" (click)="openEnd(content)" data-bs-toggle="collapse"
-         data-bs-target="#navbarNav">
-         <span class="navbar-toggler-icon"></span> MENU
-      </button>
-
+ 
       <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
-         <ul class="navbar-nav align-items-center">
+          <ul class="navbar-nav align-items-center">
             <li class="nav-item">
-               <a class="nav-link px-2 pointer-event" (click)="logService.logAction('Click Tables');"
-                  [routerLink]="['/tables']"> <i class="bi bi-map"></i> Tables</a>
+               <a class="btn btn-primary mx-2" title="Tables" (click)="logService.logAction('Click Tables');"
+                 [routerLink]="['/tables']"> <i class="bi bi-map"></i> </a>
             </li>
 
             <li class="nav-item">
-               <a class="nav-link px-2 pointer-event" (click)="logService.logAction('Click Print Queue');"
-                  [routerLink]="['/printQueue']"> <i class="bi bi-list-check"></i> Print Queue</a>
+               <a class="btn btn-primary mx-2" title="Print Queue" (click)="logService.logAction('Click Print Queue');"
+                 [routerLink]="['/printQueue']"> <i class="bi bi-list-check"></i> </a>
             </li>
 
             <li class="nav-item">
-               <a class="nav-link px-2 pointer-event" (click)="logService.logAction('click setting');"
-                  [routerLink]="['/setting']">
-                  <i class="bi bi-gear"></i> Setting</a>
+               <a class="btn btn-primary mx-2" title="Setting" (click)="logService.logAction('click setting');"
+                 [routerLink]="['/setting']">
+                 <i class="bi bi-gear"></i> </a>
             </li>
             <li class="nav-item">
-               <a class="nav-link px-2 pointer-event" (click)="logService.logAction('click Adjustment Item');"
-                  [routerLink]="['/items/']"><i class="bi bi-bag-plus"></i> Adjust Item</a>
+               <a class="btn btn-primary mx-2" title="Adjust Item" (click)="logService.logAction('click Adjustment Item');"
+                 [routerLink]="['/items/']"><i class="bi bi-bag-plus"></i> </a>
             </li>
             <li class="nav-item">
-               <a class="nav-link px-2 pointer-event"
-                  (click)="offcanvasService.dismiss();logService.logAction('click Report')"
-                  [routerLink]="['/transaction']"><i class="bi bi-receipt"></i> Report</a>
+               <a class="btn btn-primary mx-2" title="Report"
+                 (click)="offcanvasService.dismiss();logService.logAction('click Report')"
+                 [routerLink]="['/transaction']"><i class="bi bi-receipt"></i> </a>
             </li>
             <li class="nav-item">
-               <a class="nav-link px-2 pointer-event"
-                  (click)="offcanvasService.dismiss();logService.logAction('click daily/cashBalance')"
-                  [routerLink]="['/daily/cashBalance']"><i class="bi bi-cash-coin"></i> Cash</a>
+               <a class="btn btn-primary mx-2" title="Cash"
+                 (click)="offcanvasService.dismiss();logService.logAction('click daily/cashBalance')"
+                 [routerLink]="['/daily/cashBalance']"><i class="bi bi-cash-coin"></i> </a>
             </li>
             <li class="nav-item">
-               <a class="nav-link px-2 pointer-event"
-                  (click)="offcanvasService.dismiss();logService.logAction('click User logs')"
-                  [routerLink]="['/userLogs']" routerLinkActive="router-link-active"> <i
-                     class="bi bi-person-exclamation"></i> User Log</a>
+               <a class="btn btn-primary mx-2" title="User Logs"
+                 (click)="offcanvasService.dismiss();logService.logAction('click User logs')"
+                 [routerLink]="['/userLogs']" routerLinkActive="router-link-active"> <i
+                   class="bi bi-person-exclamation"></i> </a>
             </li>
             <li class="nav-item">
-               <a class="nav-link px-2 pointer-event" (click)=" signOff(); "><i class="bi bi-box-arrow-left"></i> Sign
-                  Off</a>
+               <a class="nav-link px-2 pointer-event" title="Sign Off" (click)=" signOff(); "><i class="bi bi-box-arrow-left"></i> Sign
+                 Off</a>
             </li>
             <li class="nav-item">
-               <a class="nav-link px-2 pointer-event" (click)="dailyClose();">
-                  <i class="bi bi-key"></i> Daily Close</a>
+               <a class="nav-link px-2 pointer-event" title="Daily Close" (click)="dailyClose();">
+                 <i class="bi bi-key"></i> Daily Close</a>
             </li>
-
-
-
-         </ul>
+          </ul>
       </div>
 
       <!-- Right menu -->
       <ul class="navbar-nav flex-row ms-3">
 
-         <li class="nav-item">
+         <li class="nav-item mx-1">
             <a class="nav-link btn btn-primary px-3 d-flex align-items-center"
-               (click)="logOff(); logService.logAction('Sign Off')">
-               <i class="bi bi-power"></i> Sign Off
+               (click)="openEnd(content)" >
+              <span class="navbar-toggler-icon"></span> MENU
             </a>
          </li>
+
+         
       </ul>
 
    </div>

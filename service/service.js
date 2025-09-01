@@ -44,16 +44,31 @@ app.use(express.urlencoded({ extended: true }));
 app.get(process.env.PREFIX + 'checkdb', async (req, res) => {
     console.log('PREFIX : ', process.env.PREFIX);
     try {
+
+       
+         const q = `SELECT now() as 'dbDateTime'`;
+        const [formattedRows] = await db.query(q);
+
+
         const conn = await db.getConnection(); // ambil koneksi dari pool
         await conn.ping(); // ping koneksi ke database
         conn.release(); // jangan lupa lepas koneksi
-        res.json({ success: true, message: 'Berhasil konek ke database' });
+        // Mendapatkan tanggal sekarang +7 jam (WIB)
+        const now = new Date();
+        now.setHours(now.getHours() + 7);
+
+        res.json({ 
+            success: true, 
+            message: 'Successfully connected to the database',
+            date: now,
+            db: formattedRows,  
+        });
     } catch (err) {
         console.error('❌ DB error:', err.message);
-        res.status(500).json({
-            success: false,
-            message: 'Gagal konek ke database',
-            error: err.message
+        res.status(500).json({ 
+            message: 'ERROR! Failed to connect to the database',
+            error: err.message,
+            date : new Date(),
         });
     }
 });

@@ -1,0 +1,112 @@
+time,outletId,workStationId,userId,bill,action,url,method,server
+12:44:27,Imperial Kitchen(15),0005,sa (76),,Sign Off,http://localhost:4850/#/tables
+15:26:57,Imperial Kitchen(15),0001,sa (76),,Sign Off,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist/win-unpacked/resources/app.asar/angular18/#/tables
+15:27:29,Imperial Kitchen(15),0001,sa (76),,Sign Off,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist/win-unpacked/resources/app.asar/angular18/#/tables
+16:52:36,Imperial Kitchen(15),0005,sa (76),,Sign Off,http://localhost:4850/#/tables
+17:06:24,Imperial Kitchen(15),0005,sa (76),,Click Tables,http://localhost:4850/#/tables
+17:06:25,Imperial Kitchen(15),0005,sa (76),,Click Print Queue,http://localhost:4850/#/tables
+17:06:26,Imperial Kitchen(15),0005,sa (76),,Click Tables,http://localhost:4850/#/printQueue
+17:06:27,Imperial Kitchen(15),0005,sa (76),,Click Print Queue,http://localhost:4850/#/tables
+17:07:55,Imperial Kitchen(15),0005,sa (76),,Click Print Queue,http://localhost:4850/#/printQueue
+17:07:56,Imperial Kitchen(15),0005,sa (76),,click setting,http://localhost:4850/#/printQueue
+17:07:57,Imperial Kitchen(15),0005,sa (76),,Click Print Queue,http://localhost:4850/#/setting
+17:07:58,Imperial Kitchen(15),0005,sa (76),,Click Print Queue,http://localhost:4850/#/printQueue
+17:08:01,Imperial Kitchen(15),0005,sa (76),,Click Tables,http://localhost:4850/#/printQueue
+17:14:06,Imperial Kitchen(15),0005,sa (76),250828000339,Go to Menu,http://localhost:4850/#/tables
+17:14:06,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000339
+17:14:08,Imperial Kitchen(15),0005,sa (76),250828000339,menu/modifier SO MANGGO KYOTO menuId : 24, price : 30000,http://localhost:4850/#/menu?id=250828000339
+17:28:55,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000339
+17:28:57,Imperial Kitchen(15),0005,sa (76),250828000339,menu/modifier SO MANGGO KYOTO menuId : 24, price : 30000,http://localhost:4850/#/menu?id=250828000339
+17:29:01,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000339
+17:29:02,Imperial Kitchen(15),0005,sa (76),250828000339,menu/modifier SO MANGGO KYOTO menuId : 24, price : 30000,http://localhost:4850/#/menu?id=250828000339
+17:47:50,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000339
+17:47:52,Imperial Kitchen(15),0005,sa (76),250828000339,menu/modifier SO MANGGO KYOTO menuId : 24, price : 30000,http://localhost:4850/#/menu?id=250828000339
+17:48:19,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000339
+17:48:31,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000339
+17:48:59,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000339
+17:49:49,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000339
+17:50:03,Imperial Kitchen(15),0005,sa (76),250828000339,menu/modifier SO MANGGO KYOTO menuId : 24, price : 30000,http://localhost:4850/#/menu?id=250828000339
+17:52:52,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000339
+17:52:55,Imperial Kitchen(15),0005,sa (76),250828000339,menu/modifier SO MANGGO KYOTO menuId : 24, price : 30000,http://localhost:4850/#/menu?id=250828000339
+17:53:01,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000339
+17:53:02,Imperial Kitchen(15),0005,sa (76),250828000339,menu/modifier SO MANGGO KYOTO menuId : 24, price : 30000,http://localhost:4850/#/menu?id=250828000339
+17:55:39,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000339
+17:57:06,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000339
+17:57:08,Imperial Kitchen(15),0005,sa (76),250828000339,menu/modifier SO MANGGO KYOTO menuId : 24, price : 30000,http://localhost:4850/#/menu?id=250828000339
+17:59:23,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000339
+17:59:24,Imperial Kitchen(15),0005,sa (76),250828000339,menu/modifier SO MANGGO KYOTO menuId : 24, price : 30000,http://localhost:4850/#/menu?id=250828000339
+18:01:05,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000339
+18:01:53,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000339
+18:02:33,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000339
+18:02:37,Imperial Kitchen(15),0005,sa (76),250828000339,menu/modifier SO MANGGO KYOTO menuId : 24, price : 30000,http://localhost:4850/#/menu?id=250828000339
+18:02:41,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000339
+18:02:42,Imperial Kitchen(15),0005,sa (76),250828000339,menu/modifier SO MANGGO KYOTO menuId : 24, price : 30000,http://localhost:4850/#/menu?id=250828000339
+18:03:11,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000339
+18:03:13,Imperial Kitchen(15),0005,sa (76),250828000339,menu/modifier SO MANGGO KYOTO menuId : 24, price : 30000,http://localhost:4850/#/menu?id=250828000339
+18:04:33,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000339
+18:04:50,Imperial Kitchen(15),0005,sa (76),250828000339,menu/modifier SO MANGGO KYOTO menuId : 24, price : 30000,http://localhost:4850/#/menu?id=250828000339
+18:05:53,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000339
+18:07:02,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000339
+18:07:10,Imperial Kitchen(15),0005,sa (76),250828000339,menu/modifier SO MANGGO KYOTO menuId : 24, price : 30000,http://localhost:4850/#/menu?id=250828000339
+18:08:03,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000339
+18:08:05,Imperial Kitchen(15),0005,sa (76),250828000339,menu/modifier SO MANGGO KYOTO menuId : 24, price : 30000,http://localhost:4850/#/menu?id=250828000339
+18:08:07,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000339
+18:08:09,Imperial Kitchen(15),0005,sa (76),250828000339,menu/modifier SO MANGGO KYOTO menuId : 24, price : 30000,http://localhost:4850/#/menu?id=250828000339
+18:08:56,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000339
+18:09:05,Imperial Kitchen(15),0005,sa (76),250828000339,Click MODIFIER : Bar Info,http://localhost:4850/#/menu?id=250828000339
+18:09:10,Imperial Kitchen(15),0005,sa (76),250828000339,menu/modifier SO MANGGO KYOTO menuId : 24, price : 30000,http://localhost:4850/#/menu?id=250828000339
+18:09:22,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000339
+18:09:24,Imperial Kitchen(15),0005,sa (76),250828000339,Click MODIFIER : Bar Info,http://localhost:4850/#/menu?id=250828000339
+18:12:42,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000339
+18:12:43,Imperial Kitchen(15),0005,sa (76),250828000339,menu/modifier SO MANGGO KYOTO menuId : 24, price : 30000,http://localhost:4850/#/menu?id=250828000339
+18:13:29,Imperial Kitchen(15),0005,sa (76),250828000339,Click MODIFIER : Kitchen Info,http://localhost:4850/#/menu/modifier?id=250828000339&menuId=24&price=30000
+18:13:29,Imperial Kitchen(15),0005,sa (76),250828000339,Click MODIFIER : Bar Info,http://localhost:4850/#/menu/modifier?id=250828000339&menuId=24&price=30000
+18:13:30,Imperial Kitchen(15),0005,sa (76),250828000339,Click MODIFIER : Kitchen Info,http://localhost:4850/#/menu/modifier?id=250828000339&menuId=24&price=30000
+18:16:06,Imperial Kitchen(15),0005,sa (76),250828000339,Click MODIFIER : Kitchen Info,http://localhost:4850/#/menu/modifier?id=250828000339&menuId=24&price=30000
+18:16:08,Imperial Kitchen(15),0005,sa (76),250828000339,Click MODIFIER : Bar Info,http://localhost:4850/#/menu/modifier?id=250828000339&menuId=24&price=30000
+18:16:09,Imperial Kitchen(15),0005,sa (76),250828000339,Click MODIFIER : Tamplate Memo,http://localhost:4850/#/menu/modifier?id=250828000339&menuId=24&price=30000
+18:16:09,Imperial Kitchen(15),0005,sa (76),250828000339,Click MODIFIER : Bar Info,http://localhost:4850/#/menu/modifier?id=250828000339&menuId=24&price=30000
+18:16:24,Imperial Kitchen(15),0005,sa (76),250828000339,Click MODIFIER : Kitchen Info,http://localhost:4850/#/menu/modifier?id=250828000339&menuId=24&price=30000
+18:16:26,Imperial Kitchen(15),0005,sa (76),250828000339,Click MODIFIER : Bar Info,http://localhost:4850/#/menu/modifier?id=250828000339&menuId=24&price=30000
+18:16:26,Imperial Kitchen(15),0005,sa (76),250828000339,Click MODIFIER : Tamplate Memo,http://localhost:4850/#/menu/modifier?id=250828000339&menuId=24&price=30000
+18:18:10,Imperial Kitchen(15),0005,sa (76),250828000339,Click MODIFIER : Kitchen Info,http://localhost:4850/#/menu/modifier?id=250828000339&menuId=24&price=30000
+18:18:14,Imperial Kitchen(15),0005,sa (76),250828000339,Click MODIFIER : Tamplate Memo,http://localhost:4850/#/menu/modifier?id=250828000339&menuId=24&price=30000
+18:18:17,Imperial Kitchen(15),0005,sa (76),250828000339,Click MODIFIER : Juice Mix,http://localhost:4850/#/menu/modifier?id=250828000339&menuId=24&price=30000
+18:18:18,Imperial Kitchen(15),0005,sa (76),250828000339,Click MODIFIER : Kitchen Info,http://localhost:4850/#/menu/modifier?id=250828000339&menuId=24&price=30000
+18:19:04,Imperial Kitchen(15),0005,sa (76),250828000339,Click MODIFIER : Juice Mix,http://localhost:4850/#/menu/modifier?id=250828000339&menuId=24&price=30000
+18:19:04,Imperial Kitchen(15),0005,sa (76),250828000339,Click MODIFIER : Bar Info,http://localhost:4850/#/menu/modifier?id=250828000339&menuId=24&price=30000
+18:20:06,Imperial Kitchen(15),0005,sa (76),250828000339,Click MODIFIER : Juice Mix,http://localhost:4850/#/menu/modifier?id=250828000339&menuId=24&price=30000
+18:20:08,Imperial Kitchen(15),0005,sa (76),250828000339,Click MODIFIER : Tamplate Memo,http://localhost:4850/#/menu/modifier?id=250828000339&menuId=24&price=30000
+18:20:09,Imperial Kitchen(15),0005,sa (76),250828000339,Click MODIFIER : Bar Info,http://localhost:4850/#/menu/modifier?id=250828000339&menuId=24&price=30000
+18:20:09,Imperial Kitchen(15),0005,sa (76),250828000339,Click MODIFIER : Kitchen Info,http://localhost:4850/#/menu/modifier?id=250828000339&menuId=24&price=30000
+18:20:11,Imperial Kitchen(15),0005,sa (76),250828000339,Click MODIFIER : Juice Mix,http://localhost:4850/#/menu/modifier?id=250828000339&menuId=24&price=30000
+18:20:13,Imperial Kitchen(15),0005,sa (76),250828000339,Click MODIFIER : Kitchen Info,http://localhost:4850/#/menu/modifier?id=250828000339&menuId=24&price=30000
+18:20:16,Imperial Kitchen(15),0005,sa (76),250828000339,Click MODIFIER : Bar Info,http://localhost:4850/#/menu/modifier?id=250828000339&menuId=24&price=30000
+18:20:17,Imperial Kitchen(15),0005,sa (76),250828000339,Click MODIFIER : Kitchen Info,http://localhost:4850/#/menu/modifier?id=250828000339&menuId=24&price=30000
+18:20:29,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000339
+18:20:40,Imperial Kitchen(15),0005,sa (76),250828000339,Click MODIFIER : Bar Info,http://localhost:4850/#/menu/modifier?id=250828000339&menuId=24&price=30000
+18:20:51,Imperial Kitchen(15),0005,sa (76),250828000339,Click MODIFIER : Tamplate Memo,http://localhost:4850/#/menu/modifier?id=250828000339&menuId=24&price=30000
+18:20:52,Imperial Kitchen(15),0005,sa (76),250828000339,Click MODIFIER : Bar Info,http://localhost:4850/#/menu/modifier?id=250828000339&menuId=24&price=30000
+18:21:00,Imperial Kitchen(15),0005,sa (76),250828000339,Click MODIFIER : Juice Mix,http://localhost:4850/#/menu/modifier?id=250828000339&menuId=24&price=30000
+18:21:07,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000339
+18:21:11,Imperial Kitchen(15),0005,sa (76),250828000339,menu/modifier SO MANGGO KYOTO menuId : 24, price : 30000,http://localhost:4850/#/menu?id=250828000339
+18:21:13,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000339
+18:21:14,Imperial Kitchen(15),0005,sa (76),,Click Print Queue,http://localhost:4850/#/menu?id=250828000339
+18:21:21,Imperial Kitchen(15),0005,sa (76),,Click Tables,http://localhost:4850/#/printQueue
+18:21:33,Imperial Kitchen(15),0005,sa (76),250828000339,Go to Menu,http://localhost:4850/#/tables
+18:21:33,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000339
+18:21:55,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000339
+18:22:02,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000339
+18:23:49,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000339
+18:23:51,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000339
+18:24:01,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000339
+18:24:11,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 1,http://localhost:4850/#/menu?id=250828000339
+18:24:12,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 3,http://localhost:4850/#/menu?id=250828000339
+18:24:13,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 1,http://localhost:4850/#/menu?id=250828000339
+18:24:14,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000339
+18:24:15,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 1,http://localhost:4850/#/menu?id=250828000339
+18:24:16,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 3,http://localhost:4850/#/menu?id=250828000339
+18:24:16,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 1,http://localhost:4850/#/menu?id=250828000339
+18:24:17,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 4,http://localhost:4850/#/menu?id=250828000339
+18:36:29,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000339
+18:59:59,Imperial Kitchen(15),0005,sa (76),,Sign Off,http://localhost:4850/#/menu?id=250828000339

@@ -103,7 +103,6 @@ export class MenuComponent implements OnInit, OnDestroy {
     public modalService: NgbModal,
     private router: Router,
     private activeRouter: ActivatedRoute,
-    private renderer: Renderer2,
     public logService: UserLoggerService
   ) {
     window.addEventListener('resize', () => {

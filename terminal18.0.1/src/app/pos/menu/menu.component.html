@@ -14,8 +14,7 @@
                      class="bi bi-exclamation-triangle"></i></button>
             </div>
             <div class="mb-2">Table {{table.tableName}}, Waiter: {{table.inputBy}}</div>
-            <div class="order-panel-fixHeight">
-
+            <div class="order-panel-fixHeight"> 
                <table class="table table-sm table-hover">
                   <thead class="sticky-top">
                      <tr>
@@ -226,8 +225,7 @@
 
                   </tbody>
 
-               </table>
-
+               </table> 
             </div>
          </div>
 
@@ -241,12 +239,11 @@
          </div>
 
          <div class="row g-1">
-            <div class="col-5 d-grid">
-
+            <div class="col-5 d-grid"> 
                <button class="btn btn-light  text-start"
                   (click)="checkBoxAllModifier == false ? checkBoxAllModifier = true : checkBoxAllModifier = false">
                   <i *ngIf="checkBoxAllModifier == false " class="bi bi-square"></i>
-                  <i *ngIf="checkBoxAllModifier == true " class="bi bi-check-square-fill"></i> Show Modifier
+                  <i *ngIf="checkBoxAllModifier == true " class="bi bi-check-square-fill"></i>  Modifier
                </button>
             </div>
             <div class="col-5 d-grid">
@@ -254,7 +251,7 @@
                <button class="btn btn-light  text-start"
                   (click)="checkBoxAllScTax == false ? checkBoxAllScTax = true : checkBoxAllScTax = false">
                   <i *ngIf="checkBoxAllScTax == false " class="bi bi-square"></i>
-                  <i *ngIf="checkBoxAllScTax == true " class="bi bi-check-square-fill"></i> Show Sc & Tax
+                  <i *ngIf="checkBoxAllScTax == true " class="bi bi-check-square-fill"></i>  Sc & Tax
                </button>
             </div>
             <div class="col-2 d-grid">
