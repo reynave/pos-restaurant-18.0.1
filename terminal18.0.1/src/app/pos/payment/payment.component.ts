@@ -58,7 +58,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
   id: string = '';
   totalAmount: number = 0;
   totalItem: number = 0;
-  api: string = environment.api;
+  api: string = '';
   htmlBill: any = '';
   isChecked: boolean = false;
   paid: any = [];
@@ -111,7 +111,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
-   
+    this.api = this.configService.getApiUrl();
 
     this.id = this.activeRouter.snapshot.queryParams['id'];
     this.modalService.dismissAll();
@@ -125,7 +125,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
 
   httpPaid() {
     this.loading = true;
-    const url = environment.api + 'payment/paid';
+    const url = this.api + 'payment/paid';
     this.http
       .get<any>(url, {
         headers: this.configService.headers(),
@@ -146,7 +146,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
 
   httpCart() {
     this.loading = true;
-    const url = environment.api + 'payment/cart';
+    const url = this.api + 'payment/cart';
     this.http
       .get<any>(url, {
         headers: this.configService.headers(),
@@ -173,7 +173,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
 
   httpPaymentType() {
     this.loading = true;
-    const url = environment.api + 'payment/paymentGroup';
+    const url = this.api + 'payment/paymentGroup';
     this.http
       .get<any>(url, {
         headers: this.configService.headers(),
@@ -190,7 +190,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
 
   httpBill() {
     this.loading = true;
-    const url = environment.api + 'bill/printing';
+    const url = this.api + 'bill/printing';
     this.http
       .get(url, {
         responseType: 'text' as const,
@@ -221,7 +221,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     };
     console.log(body);
     this.http
-      .post<any>(environment.api + 'payment/addPayment', body, {
+      .post<any>(this.api + 'payment/addPayment', body, {
         headers: this.configService.headers(),
       })
       .subscribe(
@@ -263,7 +263,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
       };
       console.log(body);
       this.http
-        .post<any>(environment.api + 'payment/deletePayment', body, {
+        .post<any>(this.api + 'payment/deletePayment', body, {
           headers: this.configService.headers(),
         })
         .subscribe(
@@ -296,7 +296,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     };
     console.log(body);
     this.http
-      .post<any>(environment.api + 'payment/addPaid', body, {
+      .post<any>(this.api + 'payment/addPaid', body, {
         headers: this.configService.headers(),
       })
       .subscribe(
@@ -334,7 +334,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
       item: x,
     };
     this.http
-      .post<any>(environment.api + 'payment/updateRow', body, {
+      .post<any>(this.api + 'payment/updateRow', body, {
         headers: this.configService.headers(),
       })
       .subscribe(
@@ -389,7 +389,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     this.paymentGroup = paymentGroup;
     this.modalService.open(content, { size: 'lg' });
 
-    const url = environment.api + 'payment/paymentType';
+    const url = this.api + 'payment/paymentType';
     this.http
       .get<any>(url, {
         headers: this.configService.headers(),

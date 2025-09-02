@@ -98,7 +98,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       password: this.password,
       outletId: this.configService.getConfigJson()['outlet']['id'],
     };
-    const url = environment.api + 'login/signin';
+    const url = this.configService.getApiUrl() + 'login/signin';
     this.http
       .post(url, body, {
         headers: this.configService.headers(),

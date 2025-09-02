@@ -19,6 +19,8 @@ export class PrintQueueComponent implements OnInit {
   items: any = [];
   loading: boolean = false;
   environment: any = environment;
+  api: string = '';
+
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
@@ -27,6 +29,8 @@ export class PrintQueueComponent implements OnInit {
     private activatedRoute: ActivatedRoute
   ) { }
   ngOnInit() {
+    
+    this.api = this.configService.getApiUrl();
     this.httpGet();
     this.socketService.listen<any>('printing').subscribe((msg) => {
       console.log(msg);
@@ -36,15 +40,14 @@ export class PrintQueueComponent implements OnInit {
         this.items[getIndexById]['status'] = msg['status'];
         this.items[getIndexById]['statusName'] = msg['statusName'];
         this.items[getIndexById]['consoleError'] = msg['consoleError'];
-      }  
-
+      }   
 
     });
   }
 
   httpGet() {
     this.loading = true;
-    const url = environment.api + "printQueue/queue";
+    const url = this.api + "printQueue/queue";
     this.http.get<any>(url, {
       headers: this.configService.headers(),
       params: {
@@ -64,7 +67,7 @@ export class PrintQueueComponent implements OnInit {
 
   fnReprint(item: any) {
     this.loading = true;
-    const url = environment.api + "printQueue/fnReprint";
+    const url = this.api + "printQueue/fnReprint";
     const body = {
       item: item,
     }

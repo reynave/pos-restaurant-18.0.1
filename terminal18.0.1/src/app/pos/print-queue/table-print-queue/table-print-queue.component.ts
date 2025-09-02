@@ -23,6 +23,7 @@ export class TablePrintQueueComponent implements OnInit {
   environment: any = environment;
   item: any;
   template : string = '';
+  api: string = '';
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
@@ -31,7 +32,9 @@ export class TablePrintQueueComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     public modalService: NgbModal
   ) {}
-  ngOnInit() {
+  ngOnInit() { 
+    this.api = this.configService.getApiUrl();
+
     console.log('messageFromParent:', this.data);
     this.cartId = this.data
       ? this.data
@@ -53,7 +56,7 @@ export class TablePrintQueueComponent implements OnInit {
 
   httpGet() {
     this.loading = true;
-    const url = environment.api + 'printQueue/queue';
+    const url = this.api + 'printQueue/queue';
     this.http
       .get<any>(url, {
         headers: this.configService.headers(),
@@ -75,7 +78,7 @@ export class TablePrintQueueComponent implements OnInit {
 
   fnReprint(item: any) {
     this.loading = true;
-    const url = environment.api + 'printQueue/fnReprint';
+    const url = this.api + 'printQueue/fnReprint';
     const body = {
       item: item,
     };
@@ -106,7 +109,7 @@ export class TablePrintQueueComponent implements OnInit {
 
     this.modalService.open(content);
 
-    const url = environment.api + 'printQueue/template';
+    const url = this.api + 'printQueue/template';
     const body = {
       itemDetail: this.itemDetail,
       rushPrinting: item.rushPrinting
@@ -129,7 +132,7 @@ export class TablePrintQueueComponent implements OnInit {
 
   fnRushPrint(item: any) {
     this.loading = true;
-    const url = environment.api + 'printQueue/fnRushPrint';
+    const url = this.api + 'printQueue/fnRushPrint';
     const body = {
       item: item,
     };

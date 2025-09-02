@@ -13,16 +13,14 @@
                                 <input type="text" class="form-control" [value]="env.ver" disabled>
                             </td>
                         </tr>
-                        <tr>
-                            <td><label>API</label></td>
-                            <td>
-                                <input type="text" class="form-control" [(ngModel)]="api">
-                            </td>
-                        </tr>
+                       
                         <tr>
                             <td><label>SERVER</label></td>
                             <td>
                                 <input type="text" class="form-control" [(ngModel)]="server">
+                                <div class="mx-3">
+                                    <small>With <em>http://</em> or <em>https://</em></small>
+                                </div>
                             </td>
                         </tr>
                         <tr>
@@ -49,12 +47,12 @@
                 <div class="mt-3" *ngIf="response.message">
 
                     @if(error ) {
-                    <div class="alert alert-danger">
+                    <div class="alert alert-danger text-center">
                         {{ response.message }}
                     </div>
                     }
                     @else {
-                    <div class="alert alert-warning">
+                    <div class="alert alert-warning  text-center">
                         {{ response.message }}
                     </div>
                     }

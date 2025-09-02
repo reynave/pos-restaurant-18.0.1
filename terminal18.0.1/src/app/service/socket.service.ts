@@ -1,17 +1,17 @@
 import { Injectable } from '@angular/core';
 import { io, Socket } from 'socket.io-client';
 import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment.development';
+import { environment } from '../../environments/environment';
+import { ConfigService } from './config.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SocketService {
-
   private socket: Socket;
 
-  constructor() {
-    this.socket = io(environment.server); // URL server
+  constructor(private configService: ConfigService) {
+    this.socket = io(this.configService.getServerUrl()); // URL server
   }
 
   // Emit event ke server

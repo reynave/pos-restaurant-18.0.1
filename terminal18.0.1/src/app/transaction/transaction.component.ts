@@ -25,7 +25,7 @@ export class TransactionComponent implements OnInit {
   outletSelect : any = [];
   outletId : number =0;
   id: string = ''; 
-  api: string = environment.api;  
+  api: string = '';  
    screenWidth: number = window.innerWidth;
   constructor(
     public configService: ConfigService,
@@ -41,6 +41,7 @@ export class TransactionComponent implements OnInit {
 
 
   ngOnInit() { 
+     this.api = this.configService.getApiUrl();
     this.outletId = this.configService.getConfigJson()['outlet']['id'];
     this.modalService.dismissAll(); 
     this.httpOutlet(); 
@@ -48,7 +49,7 @@ export class TransactionComponent implements OnInit {
   }
   httpOutlet() {
     this.loading = true;
-    const url = environment.api + "login/outlet";
+    const url = this.api + "login/outlet";
     this.http.get<any>(url, {
       headers: this.configService.headers(),
     }).subscribe(
@@ -64,7 +65,7 @@ export class TransactionComponent implements OnInit {
 
   httpGet() {
     this.loading = true;
-    const url = environment.api + "transaction";
+    const url = this.api + "transaction";
     this.http.get<any>(url, {
       headers: this.configService.headers(),
       params: {

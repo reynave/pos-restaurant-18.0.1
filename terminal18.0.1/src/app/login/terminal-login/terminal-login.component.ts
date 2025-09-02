@@ -21,6 +21,8 @@ export class TerminalLoginComponent {
   terminalId: string = localStorage.getItem('pos3.terminal.mitralink') ?? '';
   loading: boolean = false;
   error: string = '';
+ 
+  
   constructor(
     private config: ConfigService,
     private router: Router,
@@ -44,7 +46,7 @@ export class TerminalLoginComponent {
   }
 
   onSubmit() {
-    const url = environment.api + "login/terminal";
+    const url = this.config.getApiUrl() + "login/terminal";
     const body = {
       terminalId: this.terminalId
     }

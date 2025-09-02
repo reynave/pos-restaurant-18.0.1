@@ -27,6 +27,7 @@ export class DailyCashBalanceComponent implements OnInit {
   total: any = {};
   cssMenu: string = "btn btn-lg btn outl";
   currencyOption: any = { prefix: '', thousands: ',', decimal: '.', precision: 0, }
+    api: string = '';
   constructor(
     private config: ConfigService,
     private http: HttpClient,
@@ -35,6 +36,7 @@ export class DailyCashBalanceComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.api = this.config.getApiUrl();
     this.httpGet();
     this.httpGetCashType();
   }
@@ -42,7 +44,7 @@ export class DailyCashBalanceComponent implements OnInit {
   httpGet() {
     this.modalService.dismissAll();
     let id = this.config.getDailyCheck() ?? '';
-    this.http.get<any>(environment.api + "daily/cashBalance", {
+    this.http.get<any>(this.api + "daily/cashBalance", {
       headers: this.config.headers(),
       params: {
         id: id,
@@ -55,12 +57,12 @@ export class DailyCashBalanceComponent implements OnInit {
       },
       error => {
         console.log(error);
-        this.logService.logAction('ERROR httpGet ' + environment.api + "daily/cashBalance ");
+        this.logService.logAction('ERROR httpGet ' + this.api + "daily/cashBalance ");
       }
     )
   }
   httpGetCashType() {
-    this.http.get<any>(environment.api + "daily/checkCashType", {
+    this.http.get<any>(this.api + "daily/checkCashType", {
       headers: this.config.headers(),
     }).subscribe(
       data => {
@@ -69,7 +71,7 @@ export class DailyCashBalanceComponent implements OnInit {
       },
       error => {
         console.log(error);
-        this.logService.logAction('ERROR httpGetCashType ' + environment.api + "daily/checkCashType ");
+        this.logService.logAction('ERROR httpGetCashType ' + this.api + "daily/checkCashType ");
       }
     )
   }
@@ -90,7 +92,7 @@ export class DailyCashBalanceComponent implements OnInit {
       cashIn: this.cashIn,
       dailyCheckId: this.config.getDailyCheck() ?? ''
     }
-    this.http.post<any>(environment.api + "daily/addCashIn", body, {
+    this.http.post<any>(this.api + "daily/addCashIn", body, {
       headers: this.config.headers(),
     }).subscribe(
       data => {

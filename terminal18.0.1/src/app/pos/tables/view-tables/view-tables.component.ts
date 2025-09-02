@@ -34,7 +34,7 @@ export class ViewTablesComponent implements OnInit {
   ];
   tableSelect: any = [];
   outletSelect: any = [];
-  api: string = environment.api;
+  api: string = '';
   model = new Actor(0, 1, 0);
   terminalId: any = localStorage.getItem('pos3.terminal.mitralink');
   getTokenJson: any = [];
@@ -43,7 +43,9 @@ export class ViewTablesComponent implements OnInit {
   dataHeader: any = {};
   statusMap: any = [];
   zoom: number = parseInt(localStorage.getItem('pos3.zoom') || '100');
-  public: string = environment.api + '../public/floorMap/';
+  public: string = '';
+
+  server: string = '';
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
@@ -53,6 +55,13 @@ export class ViewTablesComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+
+      this.api = this.configService.getApiUrl();
+    this.server = this.configService.getServerUrl();
+    this.public = this.server + 'public/floorMap/';
+
+
+
     this.current = 0;
     this.getConfigJson = this.configService.getConfigJson();
     this.getTokenJson = this.configService.getTokenJson();
@@ -74,7 +83,7 @@ export class ViewTablesComponent implements OnInit {
 
   httpOutlet() {
     this.loading = true;
-    const url = environment.api + 'login/outlet';
+    const url = this.api + 'login/outlet';
     this.http.get<any>(url).subscribe(
       (data) => {
         this.loading = false;
@@ -88,7 +97,7 @@ export class ViewTablesComponent implements OnInit {
   httpGet() {
     this.modalService.dismissAll();
     this.loading = true;
-    const url = environment.api + 'tableMap';
+    const url = this.api + 'tableMap';
     this.http
       .get<any>(url, {
         headers: this.configService.headers(),

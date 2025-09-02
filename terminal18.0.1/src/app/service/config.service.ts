@@ -17,7 +17,7 @@ export class ConfigService {
 
   //private jtiKey: string = "jti.openAkunting.com";
 
-  private api: string = 'pos3.env.api';
+  //private api: string = 'pos3.env.api';
   private server: string = 'pos3.env.server';
 
   constructor(private router: Router) {}
@@ -27,7 +27,7 @@ export class ConfigService {
     return localStorage.getItem(this.server) || environment.server;
   }
   getApiUrl(): string {
-    return localStorage.getItem(this.api) || environment.api;
+    return (localStorage.getItem(this.server) || environment.server) + 'terminal/';
   }
 
  

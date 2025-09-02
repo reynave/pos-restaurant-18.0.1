@@ -23,46 +23,46 @@
       <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
           <ul class="navbar-nav align-items-center">
             <li class="nav-item">
-               <a class="btn btn-primary mx-2" title="Tables" (click)="logService.logAction('Click Tables');"
+               <a class="btn btn-primary mx-1" title="Tables" (click)="logService.logAction('Click Tables');"
                  [routerLink]="['/tables']"> <i class="bi bi-map"></i> </a>
             </li>
 
             <li class="nav-item">
-               <a class="btn btn-primary mx-2" title="Print Queue" (click)="logService.logAction('Click Print Queue');"
+               <a class="btn btn-primary mx-1" title="Print Queue" (click)="logService.logAction('Click Print Queue');"
                  [routerLink]="['/printQueue']"> <i class="bi bi-list-check"></i> </a>
             </li>
 
             <li class="nav-item">
-               <a class="btn btn-primary mx-2" title="Setting" (click)="logService.logAction('click setting');"
+               <a class="btn btn-primary mx-1" title="Setting" (click)="logService.logAction('click setting');"
                  [routerLink]="['/setting']">
                  <i class="bi bi-gear"></i> </a>
             </li>
             <li class="nav-item">
-               <a class="btn btn-primary mx-2" title="Adjust Item" (click)="logService.logAction('click Adjustment Item');"
+               <a class="btn btn-primary mx-1" title="Adjust Item" (click)="logService.logAction('click Adjustment Item');"
                  [routerLink]="['/items/']"><i class="bi bi-bag-plus"></i> </a>
             </li>
             <li class="nav-item">
-               <a class="btn btn-primary mx-2" title="Report"
+               <a class="btn btn-primary mx-1" title="Report"
                  (click)="offcanvasService.dismiss();logService.logAction('click Report')"
                  [routerLink]="['/transaction']"><i class="bi bi-receipt"></i> </a>
             </li>
             <li class="nav-item">
-               <a class="btn btn-primary mx-2" title="Cash"
+               <a class="btn btn-primary mx-1" title="Cash"
                  (click)="offcanvasService.dismiss();logService.logAction('click daily/cashBalance')"
                  [routerLink]="['/daily/cashBalance']"><i class="bi bi-cash-coin"></i> </a>
             </li>
             <li class="nav-item">
-               <a class="btn btn-primary mx-2" title="User Logs"
+               <a class="btn btn-primary mx-1" title="User Logs"
                  (click)="offcanvasService.dismiss();logService.logAction('click User logs')"
                  [routerLink]="['/userLogs']" routerLinkActive="router-link-active"> <i
                    class="bi bi-person-exclamation"></i> </a>
             </li>
             <li class="nav-item">
-               <a class="nav-link px-2 pointer-event" title="Sign Off" (click)=" signOff(); "><i class="bi bi-box-arrow-left"></i> Sign
+               <a class="btn btn-primary mx-1" title="Sign Off" (click)=" signOff(); "><i class="bi bi-box-arrow-left"></i> Sign
                  Off</a>
             </li>
             <li class="nav-item">
-               <a class="nav-link px-2 pointer-event" title="Daily Close" (click)="dailyClose();">
+               <a class="btn btn-primary mx-1" title="Daily Close" (click)="dailyClose();">
                  <i class="bi bi-key"></i> Daily Close</a>
             </li>
           </ul>

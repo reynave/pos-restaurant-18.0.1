@@ -13,11 +13,11 @@ import { UserLoggerService } from '../../../service/user-logger.service';
   standalone: true,
   imports: [HttpClientModule, CommonModule, FormsModule, RouterModule],
   templateUrl: './daily-close.component.html',
-  styleUrl: './daily-close.component.css'
+  styleUrl: './daily-close.component.css',
 })
 export class DailyCloseComponent implements OnInit {
   activeModal = inject(NgbActiveModal);
-
+  api: string = '';
   error: string = '';
   loading: boolean = false;
   ver: string = environment.ver;
@@ -28,45 +28,42 @@ export class DailyCloseComponent implements OnInit {
     private router: Router,
     private http: HttpClient,
     public modalService: NgbModal,
-     public logService: UserLoggerService
-    
-  ) { }
+    public logService: UserLoggerService
+  ) {}
 
   ngOnInit() {
-
+    this.api = this.config.getApiUrl();
   }
   back() {
     history.back();
   }
   onClose() {
     // this.router.navigate(['/']);
-    this.logService.logAction('Daily Close -> YES')
+    this.logService.logAction('Daily Close -> YES');
     const configData = this.config.getConfigJson();
     this.error = '';
     this.loading = true;
-    const url = environment.api + "daily/close";
+    const url = this.api + 'daily/close';
     const body = {
       id: this.config.getDailyCheck(),
-    }
-    console.log(body)
-    this.http.post<any>(url, body, {
-      headers: this.config.headers(),
-    }).subscribe(
-      data => {
-        console.log(data);
-        this.activeModal.dismiss();
-        this.config.removeToken().subscribe(
-          () => {
+    };
+    console.log(body);
+    this.http
+      .post<any>(url, body, {
+        headers: this.config.headers(),
+      })
+      .subscribe(
+        (data) => {
+          console.log(data);
+          this.activeModal.dismiss();
+          this.config.removeToken().subscribe(() => {
             this.router.navigate(['/']);
-          }
-        )
-
-      },
-      error => {
-        console.log(error);
-        this.error = error['error']['message'];
-      }
-    )
-
+          });
+        },
+        (error) => {
+          console.log(error);
+          this.error = error['error']['message'];
+        }
+      );
   }
 }

@@ -24,7 +24,7 @@ export class MergerLogComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.http.get<any>(environment.api+"menuItemPos/mergeLog",{
+    this.http.get<any>(this.configService.getApiUrl()+"menuItemPos/mergeLog",{
       headers : this.configService.headers(),
       params:{
         cartId : this.cartId

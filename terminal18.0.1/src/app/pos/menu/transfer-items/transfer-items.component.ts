@@ -22,7 +22,9 @@ export class TransferItemsComponent implements OnInit {
   subgroup: any = [];
   current: number = 0;
   loading: boolean = false;
-  tablesMaps: any = [];
+  tablesMaps: any = []; 
+  api: string = '';
+  server: string = '';
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
@@ -33,6 +35,11 @@ export class TransferItemsComponent implements OnInit {
 
   ) { }
   ngOnInit(): void {
+
+    this.api = this.configService.getApiUrl();
+    this.server = this.configService.getServerUrl();
+
+
     this.id = this.activeRouter.snapshot.queryParams['id'];
     this.modalService.dismissAll();
 
@@ -60,7 +67,7 @@ export class TransferItemsComponent implements OnInit {
   }
 
   httpGet() {
-    this.http.get<any>(environment.api + "menuItemPos/transferItems", {
+    this.http.get<any>(this.api + "menuItemPos/transferItems", {
       headers: this.configService.headers(),
       params: {
         id: this.id
@@ -86,7 +93,7 @@ export class TransferItemsComponent implements OnInit {
   httpTables() {
     this.modalService.dismissAll();
     this.loading = true;
-    const url = environment.api + "tableMap";
+    const url = this.api + "tableMap";
     this.http.get<any>(url, {
       headers: this.configService.headers(),
       params: {
@@ -135,7 +142,7 @@ export class TransferItemsComponent implements OnInit {
         outletId: this.table['outletId'],
       }
       console.log(body);
-      this.http.post<any>(environment.api + "menuItemPos/transferTable", body, {
+      this.http.post<any>(this.api + "menuItemPos/transferTable", body, {
         headers: this.configService.headers(),
       }).subscribe(
         data => {

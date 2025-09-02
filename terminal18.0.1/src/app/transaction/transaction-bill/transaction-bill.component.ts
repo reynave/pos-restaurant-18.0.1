@@ -28,7 +28,7 @@ export class TransactionBillComponent implements  OnInit {
   id: string = '';
   totalAmount: number = 0;
   totalItem : number = 0;
-  api: string = environment.api;
+  api: string = '';
   htmlBill: any = '';
   isChecked: boolean = false;  
   paid : any = [];
@@ -48,6 +48,7 @@ export class TransactionBillComponent implements  OnInit {
 
 
   ngOnInit() {
+    this.api = this.configService.getApiUrl();
     this.id = this.activeRouter.snapshot.queryParams['id'],
     this.modalService.dismissAll();
     this.httpCart(); 
@@ -61,7 +62,7 @@ export class TransactionBillComponent implements  OnInit {
 
   httpCart() {
     this.loading = true;
-    const url = environment.api + "payment/cart";
+    const url = this.api + "payment/cart";
     this.http.get<any>(url, {
       headers: this.configService.headers(),
       params: {
@@ -84,7 +85,7 @@ export class TransactionBillComponent implements  OnInit {
   }
    httpCopy() {
     this.loading = true;
-    const url = environment.api + "transaction/getCopyBill";
+    const url = this.api + "transaction/getCopyBill";
     this.http.get<any>(url, {
       headers: this.configService.headers(),
       params: {
@@ -105,7 +106,7 @@ export class TransactionBillComponent implements  OnInit {
 
   copyBill(){
     this.loading = true;
-    const url = environment.api + "transaction/addCopyBill";
+    const url = this.api + "transaction/addCopyBill";
     const body = {
       id: this.id,
     }

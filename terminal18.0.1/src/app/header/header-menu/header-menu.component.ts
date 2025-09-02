@@ -25,6 +25,7 @@ export class HeaderMenuComponent implements OnInit, OnDestroy {
   getTokenJson: any = [];
   ver : string = environment.ver; 
   path: any = '';
+  api : string= '';
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
@@ -37,6 +38,7 @@ export class HeaderMenuComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+    this.api = this.configService.getApiUrl();
     this.httpHeader();
     this.getTokenJson = this.configService.getTokenJson();
     this.path = this.activeRouter.snapshot.routeConfig?.path;
@@ -67,7 +69,7 @@ export class HeaderMenuComponent implements OnInit, OnDestroy {
 
   dailyClose() {
 
-    this.http.get<any>(environment.api + "daily/checkItems", {
+    this.http.get<any>(this.api + "daily/checkItems", {
       headers: this.configService.headers()
     }).subscribe(
       data => {
@@ -91,7 +93,7 @@ export class HeaderMenuComponent implements OnInit, OnDestroy {
 
   httpHeader() {
     let id = this.configService.getDailyCheck();
-    const url = environment.api + "daily/getDailyStart";
+    const url = this.api + "daily/getDailyStart";
     this.http.get<any>(url, {
       headers: this.configService.headers(),
       params: {

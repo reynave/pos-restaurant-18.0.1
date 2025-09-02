@@ -22,13 +22,14 @@ export class SettingComponent implements OnInit {
   loading: boolean = false;
   terminal : any = [];
     keyLicense : any = {};
-  
+  api : string = '';
   constructor(
     public configService: ConfigService,
     public logService: UserLoggerService,
     private http: HttpClient,
   ) { }
   ngOnInit(): void {
+     this.api = this.configService.getApiUrl();
     this.config = this.configService.getConfigJson();
     this.httpCheckKey();
   }
@@ -51,7 +52,7 @@ export class SettingComponent implements OnInit {
       note: this.printTest
     }
     console.log(body)
-    this.http.post<any>(environment.api + "printing/test",body, {
+    this.http.post<any>(this.api + "printing/test",body, {
       headers: this.configService.headers(), 
     }).subscribe(
       data => {
@@ -72,7 +73,7 @@ export class SettingComponent implements OnInit {
   httpCheckKey() {
     if (localStorage.getItem("pos3.terminal.mitralink")) {
     
-      const url = environment.api + "login/checkTerminal";
+      const url = this.api + "login/checkTerminal";
       this.http.get<any>(url, {
         params: {
           address: localStorage.getItem("pos3.address.mitralink") ?? '',

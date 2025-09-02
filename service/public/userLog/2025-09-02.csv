@@ -1,0 +1,68 @@
+time,outletId,workStationId,userId,bill,action,url,method,server
+12:12:19,Imperial Kitchen(15),0005,sa (76),250828000339,Go to Menu,http://localhost:4850/#/tables
+12:12:19,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000339
+12:12:21,Imperial Kitchen(15),0005,sa (76),,Select Table TA3,http://localhost:4850/#/tables
+12:12:24,Imperial Kitchen(15),0005,sa (76),250828000339,Go to Menu,http://localhost:4850/#/tables
+12:12:24,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000339
+12:23:04,Imperial Kitchen(15),0005,sa (76),,Click Print Queue,http://localhost:4850/#/tables
+12:23:06,Imperial Kitchen(15),0005,sa (76),,Click Tables,http://localhost:4850/#/printQueue
+12:23:06,Imperial Kitchen(15),0005,sa (76),250828000338,Go to Menu,http://localhost:4850/#/tables
+12:23:06,Imperial Kitchen(15),0005,sa (76),250828000338,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000338
+12:24:56,Imperial Kitchen(15),0005,sa (76),250828000338,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000338
+12:25:38,Imperial Kitchen(15),0005,sa (76),250828000338,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000338
+12:25:57,Imperial Kitchen(15),0005,sa (76),250828000338,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000338
+12:26:01,Imperial Kitchen(15),0005,sa (76),250828000338,Click PAYMENT,http://localhost:4850/#/menu?id=250828000338
+12:26:02,Imperial Kitchen(15),0005,sa (76),250828000338,Update to payment,http://localhost:4850/#/tables
+12:26:04,Imperial Kitchen(15),0005,sa (76),250828000338,Add Payment BCA DEBIT ,http://localhost:4850/#/payment?id=250828000338
+12:26:08,Imperial Kitchen(15),0005,sa (76),250828000338,Update Paid value,http://localhost:4850/#/payment?id=250828000338
+12:26:09,Imperial Kitchen(15),0005,sa (76),250828000338,Submit Payment,http://localhost:4850/#/payment?id=250828000338
+12:26:12,Imperial Kitchen(15),0005,sa (76),250828000338,Finish Payment,http://localhost:4850/#/payment?id=250828000338
+12:26:12,Imperial Kitchen(15),0005,sa (76),250828000338,CLOSE PAYMENT,http://localhost:4850/#/payment?id=250828000338
+12:28:53,Imperial Kitchen(15),0005,sa (76),,Sign Off,http://localhost:4850/#/tables
+12:39:14,Imperial Kitchen(15),0005,sa (76),,Sign Off,http://localhost:4850/#/tables
+13:09:08,Imperial Kitchen(15),0005,sa (76),,Select Table TA1,http://localhost:4850/#/tables
+13:26:35,Imperial Kitchen(15),0005,sa (76),,Select Table TA4,http://localhost:4850/#/tables
+13:26:37,Imperial Kitchen(15),0005,sa (76),250828000339,Go to Menu,http://localhost:4850/#/tables
+13:26:37,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000339
+13:26:40,Imperial Kitchen(15),0005,sa (76),250828000339,Exit Without Order,http://localhost:4850/#/menu?id=250828000339
+13:26:41,Imperial Kitchen(15),0005,sa (76),250828000343,Go to Menu,http://localhost:4850/#/tables
+13:26:41,Imperial Kitchen(15),0005,sa (76),250828000343,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000343
+13:26:42,Imperial Kitchen(15),0005,sa (76),250828000343,Exit Without Order,http://localhost:4850/#/menu?id=250828000343
+13:26:44,Imperial Kitchen(15),0005,sa (76),250828000342,Go to Menu,http://localhost:4850/#/tables
+13:26:44,Imperial Kitchen(15),0005,sa (76),250828000342,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000342
+13:26:46,Imperial Kitchen(15),0005,sa (76),250828000342,Exit Without Order,http://localhost:4850/#/menu?id=250828000342
+13:26:47,Imperial Kitchen(15),0005,sa (76),250828000345,Go to Menu,http://localhost:4850/#/tables
+13:26:47,Imperial Kitchen(15),0005,sa (76),250828000345,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000345
+13:26:48,Imperial Kitchen(15),0005,sa (76),250828000345,Exit Without Order,http://localhost:4850/#/menu?id=250828000345
+13:26:52,Imperial Kitchen(15),0005,sa (76),,WARNING Daily Close ?,http://localhost:4850/#/tables
+13:26:52,Imperial Kitchen(15),0005,sa (76),,Daily Close -> YES,http://localhost:4850/#/tables
+13:30:08,Imperial Kitchen(15),0005,sa (76),,WARNING Daily Close ?,http://localhost:4850/#/tables
+13:30:09,Imperial Kitchen(15),0005,sa (76),,Daily Close -> YES,http://localhost:4850/#/tables
+14:47:35,Imperial Kitchen(15),0001,sa (76),,modalSwitchOutlet,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist2/win-unpacked/resources/app.asar/terminal/#/tables
+14:47:38,Imperial Kitchen(15),0001,sa (76),,Select Table TA3,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist2/win-unpacked/resources/app.asar/terminal/#/tables
+14:47:40,Imperial Kitchen(15),0001,sa (76),,New Order Imperial Kitchen(15) Cover : 4, Table : TA3(3),file:///C:/nodejs/pos-restaurant-dev/electron-win/dist2/win-unpacked/resources/app.asar/terminal/#/tables
+14:47:40,Imperial Kitchen(15),0001,sa (76),250902000346,Go to Menu,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist2/win-unpacked/resources/app.asar/terminal/#/tables
+14:47:40,Imperial Kitchen(15),0001,sa (76),250902000346,Menu Lookup 0,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist2/win-unpacked/resources/app.asar/terminal/#/menu?id=250902000346
+14:47:47,Imperial Kitchen(15),0001,sa (76),250902000346,Menu Lookup 1,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist2/win-unpacked/resources/app.asar/terminal/#/menu?id=250902000346
+14:47:48,Imperial Kitchen(15),0001,sa (76),250902000346,Menu Lookup 3,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist2/win-unpacked/resources/app.asar/terminal/#/menu?id=250902000346
+14:47:49,Imperial Kitchen(15),0001,sa (76),250902000346,Add Menu MANGGO KYOTO(24) @30000.00,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist2/win-unpacked/resources/app.asar/terminal/#/menu?id=250902000346
+14:47:49,Imperial Kitchen(15),0001,sa (76),250902000346,Add Menu PASSION CCNT DELIGHT(25) @20000.00,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist2/win-unpacked/resources/app.asar/terminal/#/menu?id=250902000346
+14:47:50,Imperial Kitchen(15),0001,sa (76),250902000346,Add Menu STRAWBERRY MOJITO(26) @10000.00,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist2/win-unpacked/resources/app.asar/terminal/#/menu?id=250902000346
+14:47:51,Imperial Kitchen(15),0001,sa (76),250902000346,Menu Lookup 0,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist2/win-unpacked/resources/app.asar/terminal/#/menu?id=250902000346
+14:48:06,Imperial Kitchen(15),0001,sa (76),250902000346,Send Order,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist2/win-unpacked/resources/app.asar/terminal/#/menu?id=250902000346
+14:48:06,Imperial Kitchen(15),0001,sa (76),250902000346,printQueue,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist2/win-unpacked/resources/app.asar/terminal/#/menu?id=250902000346
+14:48:08,Imperial Kitchen(15),0001,sa (76),250902000346,Go to Menu,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist2/win-unpacked/resources/app.asar/terminal/#/tables
+14:48:08,Imperial Kitchen(15),0001,sa (76),250902000346,Menu Lookup 0,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist2/win-unpacked/resources/app.asar/terminal/#/menu?id=250902000346
+14:51:23,Imperial Kitchen(15),0001,sa (76),,Click Print Queue,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist2/win-unpacked/resources/app.asar/terminal/#/menu?id=250902000346
+14:51:26,Imperial Kitchen(15),0001,sa (76),,Click Tables,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist2/win-unpacked/resources/app.asar/terminal/#/printQueue
+14:51:26,Imperial Kitchen(15),0001,sa (76),,click setting,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist2/win-unpacked/resources/app.asar/terminal/#/tables
+14:51:28,Imperial Kitchen(15),0001,sa (76),,Click Tables,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist2/win-unpacked/resources/app.asar/terminal/#/setting
+14:51:54,Imperial Kitchen(15),0001,sa (76),,Log Off,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist2/win-unpacked/resources/app.asar/terminal/#/tables
+14:56:08,Imperial Kitchen(15),0001,sa (76),,Log Off,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist2/win-unpacked/resources/app.asar/terminal/#/tables
+14:56:19,Imperial Kitchen(15),0001,sa (76),,Log In ERROR PASSWORD,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist2/win-unpacked/resources/app.asar/terminal/#/home
+14:56:25,Imperial Kitchen(15),0001,sa (76),,Log In Success,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist2/win-unpacked/resources/app.asar/terminal/#/home
+14:57:04,Imperial Kitchen(15),0001,sa (76),,Change Map Dine In,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist2/win-unpacked/resources/app.asar/terminal/#/tables
+14:57:06,Imperial Kitchen(15),0001,sa (76),,Change Map Other,file:///C:/nodejs/pos-restaurant-dev/electron-win/dist2/win-unpacked/resources/app.asar/terminal/#/tables
+15:02:28,Imperial Kitchen(15),0005,sa (76),,Sign Off,http://localhost:4850/#/tables
+15:12:00,Imperial Kitchen(15),0001,sa (76),,Sign Off,http://localhost/terminal/#/tables
+15:13:37,Imperial Kitchen(15),0001,sa (76),,Sign Off,http://localhost/terminal/#/tables

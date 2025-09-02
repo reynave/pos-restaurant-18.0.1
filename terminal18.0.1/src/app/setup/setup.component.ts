@@ -38,14 +38,11 @@ export class SetupComponent implements OnInit {
   testConnection() {
 
     // Pastikan api dan server diakhiri dengan "/"
-    if (!this.api.endsWith('/')) {
-      this.api += '/';
-    }
+ 
     if (!this.server.endsWith('/')) {
       this.server += '/';
     }
-
-    localStorage.setItem('pos3.env.api', this.api);
+ 
     localStorage.setItem('pos3.env.server', this.server);
 
     this.loading = true;

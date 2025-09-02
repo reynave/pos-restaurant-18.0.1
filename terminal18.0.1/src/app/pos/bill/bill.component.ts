@@ -38,7 +38,7 @@ export class BillComponent implements OnInit {
   cart: any = [];
   //id: string = '';
   totalAmount: number = 0;
-  api: string = environment.api;
+  api: string = '';
   htmlBill: any = [];
   isChecked: boolean = false;
   paided: any = [];
@@ -66,6 +66,7 @@ export class BillComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.api = this.configService.getApiUrl();
     this.httpCart();
 
     this.getCartCopyBill();
@@ -73,7 +74,7 @@ export class BillComponent implements OnInit {
 
   httpCart() {
     this.loading = true;
-    const url = environment.api + 'payment/cart';
+    const url = this.api + 'payment/cart';
     this.http
       .get<any>(url, {
         headers: this.configService.headers(),
@@ -109,7 +110,7 @@ export class BillComponent implements OnInit {
   }
 
   getCartCopyBill() {
-    const url = environment.api + 'bill/getCartCopyBill';
+    const url = this.api + 'bill/getCartCopyBill';
     this.http
       .get<any>(url, {
         headers: this.configService.headers(),
@@ -130,7 +131,7 @@ export class BillComponent implements OnInit {
 
   httpBill(subgroup: number) {
     this.loading = true;
-    const url = environment.api + 'bill/printing';
+    const url = this.api + 'bill/printing';
     this.http
       .get(url, {
         responseType: 'text' as const,
@@ -160,7 +161,7 @@ export class BillComponent implements OnInit {
     };
     console.log(body);
     this.http
-      .post<any>(environment.api + 'payment/submit', body, {
+      .post<any>(this.api + 'payment/submit', body, {
         headers: this.configService.headers(),
       })
       .subscribe(
@@ -205,7 +206,7 @@ export class BillComponent implements OnInit {
     console.log(body);
     this.printNote = 'Printing, please wait...';
     this.http
-      .post(environment.api + 'printing/print', body, {
+      .post(this.api + 'printing/print', body, {
         headers: this.configService.headers(),
       })
       .subscribe(
@@ -228,7 +229,7 @@ export class BillComponent implements OnInit {
       id: this.id,
     };
     this.http
-      .post<any>(environment.api + 'bill/copyBill', body, {
+      .post<any>(this.api + 'bill/copyBill', body, {
         headers: this.configService.headers(),
       })
       .subscribe(

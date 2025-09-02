@@ -22,6 +22,7 @@ export class DailyStartComponent implements OnInit {
   outletSelect: any = [];
   employeeSelect: any = [];
   dailyAccess : string = '';
+  api: string = '';
   constructor(
     private configService: ConfigService,
     private router: Router,
@@ -31,8 +32,10 @@ export class DailyStartComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.dailyAccess = this.configService.getTokenJson()['dailyAccess'];
-    console.log(this.configService.getTokenJson()['dailyAccess'])
+     this.api = this.configService.getApiUrl();  
+    this.dailyAccess =  localStorage.getItem("pos3.dailyCheck.mitralink")||'';
+    
+    console.log('dailyAccess : ',this.dailyAccess )
     if (this.configService.getTokenJson()['dailyAccess'] != 1) {
       this.router.navigate(['setting']);
       console.log("ERROR")
@@ -43,7 +46,7 @@ export class DailyStartComponent implements OnInit {
     const configData = this.configService.getConfigJson();
     this.error = '';
     this.loading = true;
-    const url = environment.api + "daily/start";
+    const url = this.api + "daily/start";
     const body = {
       outletId: configData['outlet']['id'],
     }

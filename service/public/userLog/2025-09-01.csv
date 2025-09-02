@@ -110,3 +110,9 @@ time,outletId,workStationId,userId,bill,action,url,method,server
 18:24:17,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 4,http://localhost:4850/#/menu?id=250828000339
 18:36:29,Imperial Kitchen(15),0005,sa (76),250828000339,Menu Lookup 0,http://localhost:4850/#/menu?id=250828000339
 18:59:59,Imperial Kitchen(15),0005,sa (76),,Sign Off,http://localhost:4850/#/menu?id=250828000339
+19:07:16,Imperial Kitchen(15),0005,sa (76),,Click Print Queue,http://localhost:4850/#/tables
+19:07:17,Imperial Kitchen(15),0005,sa (76),,Click Tables,http://localhost:4850/#/printQueue
+19:07:18,Imperial Kitchen(15),0005,sa (76),,click setting,http://localhost:4850/#/tables
+19:07:19,Imperial Kitchen(15),0005,sa (76),,Click Print Queue,http://localhost:4850/#/setting
+19:07:19,Imperial Kitchen(15),0005,sa (76),,Click Tables,http://localhost:4850/#/printQueue
+19:07:20,Imperial Kitchen(15),0005,sa (76),,click setting,http://localhost:4850/#/tables

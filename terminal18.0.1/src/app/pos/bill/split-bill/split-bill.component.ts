@@ -18,6 +18,7 @@ export class SplitBillComponent implements OnInit {
   id: string = '';
   items: any = [];
   subgroup: any = [];
+    api: string = '';
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
@@ -27,6 +28,7 @@ export class SplitBillComponent implements OnInit {
 
   ) { }
   ngOnInit(): void {
+    this.api = this.configService.getApiUrl();
     this.id = this.activeRouter.snapshot.queryParams['id'],
       this.modalService.dismissAll();
 
@@ -39,7 +41,7 @@ export class SplitBillComponent implements OnInit {
   }
 
   httpGet() {
-    this.http.get<any>(environment.api + "bill/splitBill", {
+    this.http.get<any>(this.api + "bill/splitBill", {
       headers: this.configService.headers(),
       params: {
         id: this.id
@@ -66,7 +68,7 @@ export class SplitBillComponent implements OnInit {
       id : item.id,
       group : a
     }
-     this.http.post<any>(environment.api + "bill/updateGroup",body, {
+     this.http.post<any>(this.api + "bill/updateGroup",body, {
       headers: this.configService.headers(), 
     }).subscribe(
       data => {

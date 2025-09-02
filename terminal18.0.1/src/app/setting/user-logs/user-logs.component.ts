@@ -28,6 +28,7 @@ export class UserLogsComponent implements OnInit {
   today: any = new Date();
   loading: boolean = false;
   screenWidth: number = window.innerWidth;
+  api : string = '';
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
@@ -39,6 +40,7 @@ export class UserLogsComponent implements OnInit {
     });
   }
   ngOnInit(): void {
+    this.api = this.configService.getApiUrl();
     this.date['year'] = this.today.getFullYear();
     this.date['month'] = this.today.getMonth() + 1;
     this.date['day'] = this.today.getDate();
@@ -52,7 +54,7 @@ export class UserLogsComponent implements OnInit {
       this.date['day'].toString().padStart(2, '0');
 
     this.http
-      .get(environment.api + 'log/downloadLog', {
+      .get(this.api + 'log/downloadLog', {
         responseType: 'blob',
         headers: this.configService.headers(),
         params: {
@@ -87,7 +89,7 @@ export class UserLogsComponent implements OnInit {
       this.date['day'].toString().padStart(2, '0');
 
     this.http
-      .get<any>(environment.api + 'log/getLog', {
+      .get<any>(this.api + 'log/getLog', {
         headers: this.configService.headers(),
         params: {
           date: date,

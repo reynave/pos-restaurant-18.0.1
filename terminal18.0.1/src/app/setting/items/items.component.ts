@@ -26,6 +26,7 @@ export class ItemsComponent implements OnInit {
   loading: boolean = false;
   items: any = [];
   newQty: number = 99999;
+  api : string = '';
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
@@ -33,6 +34,7 @@ export class ItemsComponent implements OnInit {
     public logService: UserLoggerService
   ) { }
   ngOnInit(): void {
+    this.api = this.configService.getApiUrl();
     this.httpMenu();
   }
 
@@ -40,7 +42,7 @@ export class ItemsComponent implements OnInit {
     this.checkTotal = 0;
     this.modalService.dismissAll();
     this.loading = true;
-    const url = environment.api + "items/";
+    const url = this.api + "items/";
     this.http.get<any>(url, {
       headers: this.configService.headers(),
       params: {
@@ -83,7 +85,7 @@ export class ItemsComponent implements OnInit {
     });
     console.log(items, this.addQty);
     this.loading = true;
-    const url = environment.api + "items/addQty";
+    const url = this.api + "items/addQty";
     const body = {
       items: items,
       addQty: this.addQty,
@@ -116,7 +118,7 @@ export class ItemsComponent implements OnInit {
       console.log(items);
 
       this.loading = true;
-      const url = environment.api + "items/resetAdjust";
+      const url = this.api + "items/resetAdjust";
       const body = {
         items: items
       }

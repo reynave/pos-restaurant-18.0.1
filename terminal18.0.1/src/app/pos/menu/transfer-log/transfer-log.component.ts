@@ -23,7 +23,7 @@ export class TransferLogComponent implements OnInit {
     private http: HttpClient,
   ) { }
   ngOnInit(): void {
-    this.http.get<any>(environment.api+"menuItemPos/transferLog",{
+    this.http.get<any>(this.configService.getApiUrl()+"menuItemPos/transferLog",{
       headers : this.configService.headers(),
       params:{
         cartId : this.cartId

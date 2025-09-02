@@ -22,7 +22,7 @@ export class TransactionDetailComponent implements  OnInit {
   loading: boolean = false;
   items: any =  []; 
   id: string = ''; 
-  api: string = environment.api;  
+  api: string = '';  
   showModifier : number = 0;
   constructor(
     public configService: ConfigService,
@@ -34,7 +34,7 @@ export class TransactionDetailComponent implements  OnInit {
 
 
   ngOnInit() {
-    
+    this.api = this.configService.getApiUrl();
     this.id = this.activeRouter.snapshot.queryParams['id'],
     this.modalService.dismissAll();
  
@@ -47,7 +47,7 @@ export class TransactionDetailComponent implements  OnInit {
 
   httpGet() {
     this.loading = true;
-    const url = environment.api + "transaction/detail";
+    const url = this.api + "transaction/detail";
     this.http.get<any>(url, {
       headers: this.configService.headers(),
       params: {

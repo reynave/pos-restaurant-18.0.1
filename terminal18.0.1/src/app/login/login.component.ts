@@ -29,7 +29,7 @@ export class LoginComponent implements OnInit {
   ver: string = environment.ver;
   outletSelect: any = [];
   employeeSelect: any = [];
-  api : string = localStorage.getItem('pos3.env.api') || environment.api;
+  api : string = '';
   
   constructor(
     private config: ConfigService,
@@ -42,7 +42,7 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    
+     this.api = this.config.getApiUrl();  
     this.httpGet();
 
     if (this.config.getConfigJson() !== null) {

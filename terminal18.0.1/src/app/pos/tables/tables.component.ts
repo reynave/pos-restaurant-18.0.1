@@ -50,7 +50,7 @@ export class TablesComponent implements OnInit {
   screenWidth: number = window.innerWidth;
   tableSelect: any = [];
   outletSelect: any = [];
-  api: string = environment.api;
+  api: string = '';
   model = new Actor(0, 1, 0);
   activeView: string = localStorage.getItem('pos3.view') ?? 'map';
   terminalId: any = localStorage.getItem('pos3.terminal.mitralink');
@@ -58,9 +58,13 @@ export class TablesComponent implements OnInit {
   zoom: number = parseInt(localStorage.getItem('pos3.zoom') || '100');
   getConfigJson: any = [];
   dataDailyStart: any = {};
-  public: string = environment.api + '../public/floorMap/';
+  public: string =  '';
+
   private intervalId: any;
   currentTime: Date = new Date();
+
+  server: string = '';
+
   constructor(
     public configService: ConfigService,
     private http: HttpClient,
@@ -75,6 +79,11 @@ export class TablesComponent implements OnInit {
   }
 
   ngOnInit() {
+
+    this.api = this.configService.getApiUrl();
+    this.server = this.configService.getServerUrl();
+    this.public = this.server + 'public/floorMap/';
+
     this.intervalId = setInterval(() => {
       this.currentTime = new Date();
     }, 1000); // update setiap 1 detik
@@ -122,7 +131,7 @@ export class TablesComponent implements OnInit {
 
   httpOutlet() {
     this.loading = true;
-    const url = environment.api + 'login/outlet';
+    const url = this.api + 'login/outlet';
     this.http.get<any>(url).subscribe(
       (data) => {
         this.loading = false;
@@ -137,7 +146,7 @@ export class TablesComponent implements OnInit {
   httpGet() {
     this.modalService.dismissAll();
     this.loading = true;
-    const url = environment.api + 'tableMap';
+    const url = this.api + 'tableMap';
     this.http
       .get<any>(url, {
         headers: this.configService.headers(),
@@ -206,7 +215,7 @@ export class TablesComponent implements OnInit {
       i: i,
     };
     this.http
-      .get<any>(environment.api + 'tableMap/detail', {
+      .get<any>(this.api + 'tableMap/detail', {
         headers: this.configService.headers(),
         params: {
           cartId: this.item.cardId,
@@ -287,7 +296,7 @@ export class TablesComponent implements OnInit {
       dailyCheckId: this.configService.getDailyCheck(),
     };
     this.http
-      .post<any>(environment.api + 'tableMap/newOrder', body, {
+      .post<any>(this.api + 'tableMap/newOrder', body, {
         headers: this.configService.headers(),
       })
       .subscribe(
@@ -327,7 +336,7 @@ export class TablesComponent implements OnInit {
 
   httpDailyStart() {
     let id = this.configService.getDailyCheck();
-    const url = environment.api + 'daily/getDailyStart';
+    const url = this.api + 'daily/getDailyStart';
     this.http
       .get<any>(url, {
         headers: this.configService.headers(),
@@ -352,7 +361,7 @@ export class TablesComponent implements OnInit {
   dailyClose() {
     this.logService.logAction('Click Daily Close');
     this.http
-      .get<any>(environment.api + 'daily/checkItems', {
+      .get<any>(this.api + 'daily/checkItems', {
         headers: this.configService.headers(),
       })
       .subscribe(

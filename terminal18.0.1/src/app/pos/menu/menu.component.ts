@@ -52,7 +52,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     },
   ];
   zoom: number = parseInt(localStorage.getItem('pos3.zoom') || '100');
-  public: string = environment.api + '../public/floorMap/';
+  public: string = '';
   summary: any = [];
   modifiers: any = [];
   item: any = [];
@@ -65,8 +65,8 @@ export class MenuComponent implements OnInit, OnDestroy {
   totalAmount: number = 0;
   totalAmountOrdered: number = 0;
 
-  api: string = environment.api;
-
+  api: string = '';
+  server: string = ''; 
   isChecked: boolean = false;
   model = new Actor(1, '');
 
@@ -133,6 +133,11 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    
+    this.api = this.configService.getApiUrl();
+    this.server = this.configService.getServerUrl();
+    this.public = this.server + 'public/floorMap/';
+
     (this.id = this.activeRouter.snapshot.queryParams['id']),
       this.modalService.dismissAll();
     if (this.id == undefined) {
@@ -152,7 +157,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   lock: boolean = true;
   httpDailyStart() {
     let id = this.configService.getDailyCheck();
-    const url = environment.api + 'daily/getDailyStart';
+    const url = this.api + 'daily/getDailyStart';
     this.http
       .get<any>(url, {
         headers: this.configService.headers(),
@@ -177,7 +182,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   httpMenuLookUp(id: number) {
     this.logService.logAction('Menu Lookup ' + id, this.id);
     this.loading = true;
-    const url = environment.api + 'menuItemPos/menuLookUp';
+    const url = this.api + 'menuItemPos/menuLookUp';
     this.http
       .get<any>(url, {
         headers: this.configService.headers(),
@@ -223,7 +228,7 @@ export class MenuComponent implements OnInit, OnDestroy {
 
   httpMenu() {
     this.loading = true;
-    const url = environment.api + 'menuItemPos';
+    const url = this.api + 'menuItemPos';
     this.http
       .get<any>(url, {
         headers: this.configService.headers(),
@@ -246,7 +251,7 @@ export class MenuComponent implements OnInit, OnDestroy {
 
   httpGetModifier() {
     this.loading = true;
-    const url = environment.api + 'menuItemPos/getModifier';
+    const url = this.api + 'menuItemPos/getModifier';
     this.http
       .get<any>(url, {
         headers: this.configService.headers(),
@@ -267,7 +272,7 @@ export class MenuComponent implements OnInit, OnDestroy {
 
   httpCart() {
     this.loading = true;
-    const url = environment.api + 'menuItemPos/cart';
+    const url = this.api + 'menuItemPos/cart';
     this.http
       .get<any>(url, {
         headers: this.configService.headers(),
@@ -290,7 +295,7 @@ export class MenuComponent implements OnInit, OnDestroy {
 
   httpCartOrdered() {
     this.loading = true;
-    const url = environment.api + 'menuItemPos/cartOrdered';
+    const url = this.api + 'menuItemPos/cartOrdered';
     this.http
       .get<any>(url, {
         headers: this.configService.headers(),
@@ -343,7 +348,7 @@ export class MenuComponent implements OnInit, OnDestroy {
       };
       console.log(body);
       this.http
-        .post<any>(environment.api + 'menuItemPos/addToCart', body, {
+        .post<any>(this.api + 'menuItemPos/addToCart', body, {
           headers: this.configService.headers(),
         })
         .subscribe(
@@ -373,7 +378,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     this.modalService.open(content, { size: size });
     if (name == 'SELECT') {
       this.http
-        .get<any>(environment.api + 'menuItemPos/selectMenuSet', {
+        .get<any>(this.api + 'menuItemPos/selectMenuSet', {
           headers: this.configService.headers(),
           params: {
             itemId: x.id,
@@ -430,7 +435,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     };
     console.log(body);
     this.http
-      .post<any>(environment.api + 'menuItemPos/addCustomNotes', body, {
+      .post<any>(this.api + 'menuItemPos/addCustomNotes', body, {
         headers: this.configService.headers(),
       })
       .subscribe(
@@ -476,7 +481,7 @@ export class MenuComponent implements OnInit, OnDestroy {
         menu: menu,
       };
       this.http
-        .post<any>(environment.api + 'menuItemPos/addToCart', body, {
+        .post<any>(this.api + 'menuItemPos/addToCart', body, {
           headers: this.configService.headers(),
         })
         .subscribe(
@@ -517,7 +522,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     };
 
     this.http
-      .post<any>(environment.api + 'menuItemPos/updateQty', body, {
+      .post<any>(this.api + 'menuItemPos/updateQty', body, {
         headers: this.configService.headers(),
       })
       .subscribe(
@@ -557,7 +562,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     };
 
     this.http
-      .post<any>(environment.api + 'menuItemPos/updateCover', body, {
+      .post<any>(this.api + 'menuItemPos/updateCover', body, {
         headers: this.configService.headers(),
       })
       .subscribe(
@@ -623,7 +628,7 @@ export class MenuComponent implements OnInit, OnDestroy {
           cart: this.cart,
           cartId: this.id,
         };
-        const url = environment.api + 'menuItemPos/voidItem';
+        const url = this.api + 'menuItemPos/voidItem';
         this.http
           .post<any>(url, body, {
             headers: this.configService.headers(),
@@ -662,7 +667,7 @@ export class MenuComponent implements OnInit, OnDestroy {
         modifiers: a,
       };
       console.log(body);
-      const url = environment.api + 'menuItemPos/addToItemModifier';
+      const url = this.api + 'menuItemPos/addToItemModifier';
       this.http
         .post<any>(url, body, {
           headers: this.configService.headers(),
@@ -718,7 +723,7 @@ export class MenuComponent implements OnInit, OnDestroy {
         discountGroup: a,
       };
       console.log(body);
-      const url = environment.api + 'menuItemPos/addDiscountGroup';
+      const url = this.api + 'menuItemPos/addDiscountGroup';
       this.http
         .post<any>(url, body, {
           headers: this.configService.headers(),
@@ -763,7 +768,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     const body = {
       cartId: this.id,
     };
-    const url = environment.api + 'menuItemPos/sendOrder';
+    const url = this.api + 'menuItemPos/sendOrder';
     this.http
       .post<any>(url, body, {
         headers: this.configService.headers(),
@@ -782,7 +787,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
   printQueue(sendOrder: string = '') {
-    const url = environment.api + 'menuItemPos/printQueue';
+    const url = this.api + 'menuItemPos/printQueue';
     this.http
       .get<any>(url, {
         headers: this.configService.headers(),
@@ -809,7 +814,7 @@ export class MenuComponent implements OnInit, OnDestroy {
       const body = {
         cartId: this.id,
       };
-      const url = environment.api + 'menuItemPos/exitWithoutOrder';
+      const url = this.api + 'menuItemPos/exitWithoutOrder';
       this.http
         .post<any>(url, body, {
           headers: this.configService.headers(),
@@ -836,7 +841,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     };
     console.log(body);
     this.http
-      .post<any>(environment.api + 'payment/submit', body, {
+      .post<any>(this.api + 'payment/submit', body, {
         headers: this.configService.headers(),
       })
       .subscribe(
@@ -857,8 +862,8 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
   printToKitchen() {
-    window.open(environment.api + 'printQueue?cartId=' + this.id);
-    // this.http.get<any>(environment.api+"printing/tableChecker",{
+    window.open(this.api + 'printQueue?cartId=' + this.id);
+    // this.http.get<any>(this.api+"printing/tableChecker",{
     //   params : {
     //     id : this.id
     //   }
@@ -874,10 +879,10 @@ export class MenuComponent implements OnInit, OnDestroy {
   questCheckTemp: string = '';
 
   printTableChecker(content: any) {
-    //window.open(environment.api + 'printing/tableChecker?id=' + this.id);
+    //window.open(this.api + 'printing/tableChecker?id=' + this.id);
     this.modalService.open(content, { size: 'md' });
     this.http
-      .get(environment.api + 'printing/tableChecker', {
+      .get(this.api + 'printing/tableChecker', {
         params: {
           id: this.id,
         },
@@ -909,7 +914,7 @@ printLoading : boolean = false;
     };
     this.printNote = 'Printing, please wait...';
     this.http
-      .post(environment.api + 'printing/print', body, {
+      .post(this.api + 'printing/print', body, {
         headers: this.configService.headers(),
       })
       .subscribe(
@@ -994,7 +999,7 @@ printLoading : boolean = false;
         cartOrdered: cartOrdered,
         cartId: this.id,
       };
-      const url = environment.api + 'menuItemPos/takeOut';
+      const url = this.api + 'menuItemPos/takeOut';
       this.http
         .post<any>(url, body, {
           headers: this.configService.headers(),
@@ -1016,7 +1021,7 @@ printLoading : boolean = false;
   httpTables() {
     this.modalService.dismissAll();
     this.loading = true;
-    const url = environment.api + 'tableMap';
+    const url = this.api + 'tableMap';
     this.http
       .get<any>(url, {
         headers: this.configService.headers(),
@@ -1061,7 +1066,7 @@ printLoading : boolean = false;
           dailyCheckId: this.configService.getDailyCheck(),
         };
         console.log(body);
-        const url = environment.api + 'menuItemPos/mergerCheck';
+        const url = this.api + 'menuItemPos/mergerCheck';
         this.http
           .post<any>(url, body, {
             headers: this.configService.headers(),

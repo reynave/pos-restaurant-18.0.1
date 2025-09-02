@@ -41,7 +41,7 @@ export class MenuModifierComponent implements OnInit, OnDestroy {
   id: string = '';
   totalAmount: number = 0;
   grandAmount: number = 0;
-  api: string = environment.api;
+  api: string = '';
   model = new Actor(1, '');
   hideTaxSc: number = 1;
 
@@ -64,14 +64,18 @@ export class MenuModifierComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {}
 
   ngOnInit() {
-    (this.id = this.activeRouter.snapshot.queryParams['id']),
-      this.modalService.dismissAll();
+
+    
+    this.api = this.configService.getApiUrl();  
+
+    this.id = this.activeRouter.snapshot.queryParams['id'];
+    this.modalService.dismissAll();
     this.httpGetModifier();
     this.httpCart();
   }
   httpGetModifier() {
     this.loading = true;
-    const url = environment.api + 'menuItemPos/getModifier';
+    const url = this.api + 'menuItemPos/getModifier';
     this.http
       .get<any>(url, {
         headers: this.configService.headers(),
@@ -98,7 +102,7 @@ export class MenuModifierComponent implements OnInit, OnDestroy {
   }
   httpCart() {
     this.loading = true;
-    const url = environment.api + 'menuItemPos/cartDetail';
+    const url = this.api + 'menuItemPos/cartDetail';
     this.http
       .get<any>(url, {
         headers: this.configService.headers(),
@@ -146,7 +150,7 @@ export class MenuModifierComponent implements OnInit, OnDestroy {
       };
       console.log(body);
       this.http
-        .post<any>(environment.api + 'menuItemPos/addModifier', body, {
+        .post<any>(this.api + 'menuItemPos/addModifier', body, {
           headers: this.configService.headers(),
         })
         .subscribe(
@@ -176,7 +180,7 @@ export class MenuModifierComponent implements OnInit, OnDestroy {
       cartId: this.activeRouter.snapshot.queryParams['id'],
     };
     this.http
-      .post<any>(environment.api + 'menuItemPos/updateQty', body, {
+      .post<any>(this.api + 'menuItemPos/updateQty', body, {
         headers: this.configService.headers(),
       })
       .subscribe(
@@ -223,7 +227,7 @@ export class MenuModifierComponent implements OnInit, OnDestroy {
           cart: this.cart,
           cartId: this.id,
         };
-        const url = environment.api + 'menuItemPos/voidItemDetail';
+        const url = this.api + 'menuItemPos/voidItemDetail';
         this.http
           .post<any>(url, body, {
             headers: this.configService.headers(),
@@ -249,7 +253,7 @@ export class MenuModifierComponent implements OnInit, OnDestroy {
       cart: this.cart,
       cartId: this.id,
     };
-    const url = environment.api + 'menuItemPos/removeDetailModifier';
+    const url = this.api + 'menuItemPos/removeDetailModifier';
     this.http
       .post<any>(url, body, {
         headers: this.configService.headers(),
@@ -287,7 +291,7 @@ export class MenuModifierComponent implements OnInit, OnDestroy {
         cartId: this.id,
       };
       console.log(body);
-      const url = environment.api + 'menuItemPos/takeOutDetail';
+      const url = this.api + 'menuItemPos/takeOutDetail';
       this.http
         .post<any>(url, body, {
           headers: this.configService.headers(),
@@ -320,7 +324,7 @@ export class MenuModifierComponent implements OnInit, OnDestroy {
     };
     console.log(body, this.cart);
     this.http
-      .post<any>(environment.api + 'menuItemPos/addCustomNotesDetail', body, {
+      .post<any>(this.api + 'menuItemPos/addCustomNotesDetail', body, {
         headers: this.configService.headers(),
       })
       .subscribe(
