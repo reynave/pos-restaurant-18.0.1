@@ -160,7 +160,7 @@ exports.paymentGroup = async (req, res) => {
 
 exports.paymentType = async (req, res) => {
 
- const paymentGroupId = req.query.paymentGroupId;
+  const paymentGroupId = req.query.paymentGroupId;
   try {
     const [formattedRows] = await db.query(`
        SELECT  * from check_payment_type 
@@ -204,6 +204,7 @@ exports.addPayment = async (req, res) => {
   const payment = req.body['payment'];
   const unpaid = req.body['unpaid'];
   let amount = 0;
+  const userId = headerUserId(req);
   const results = [];
   try {
     if (payment['autoMatchAmount'] == 1) {
@@ -212,9 +213,11 @@ exports.addPayment = async (req, res) => {
     const [result] = await db.query(
       `INSERT INTO cart_payment (
           presence, inputDate,  updateDate,
-          cartId,  checkPaymentTypeId, paid, tips  ) 
+          cartId,  checkPaymentTypeId, paid, tips,
+          userId, userId
+           ) 
         VALUES (1, '${today()}',  '${today()}',
-          '${cartId}',  ${payment['id']}, ${amount}, 0
+          '${cartId}',  ${payment['id']}, ${amount}, 0, ${userId}, ${userId}
         )`
     );
 
@@ -240,14 +243,15 @@ exports.deletePayment = async (req, res) => {
   const connection = await db.getConnection();
   const cartId = req.body['cartId'];
   const paid = req.body['paid'];
-
+    const userId = headerUserId(req); 
   const results = [];
   try {
     await connection.beginTransaction();
     const q = `UPDATE cart_payment
       SET
-        presence = 0, 
-        updateDate = '${today()}'
+        presence = 0,
+        updateDate = '${today()}',
+        updateBy = ${userId}
     WHERE cartId = ${cartId} and id = '${paid['id']}' `;
     const [result] = await db.query(q);
 
@@ -276,7 +280,7 @@ exports.deletePayment = async (req, res) => {
 exports.updateRow = async (req, res) => {
   const connection = await db.getConnection();
   const item = req.body['item'];
-
+    const userId = headerUserId(req); 
   const results = [];
   try {
     await connection.beginTransaction();
@@ -284,7 +288,8 @@ exports.updateRow = async (req, res) => {
       SET
         tips = ${item['tips']}, 
         paid = ${item['paid']}, 
-        updateDate = '${today()}'
+        updateDate = '${today()}',
+        updateBy = ${userId}
     WHERE  id = ${item['id']} and submit = 0 `;
     const [result] = await db.query(q);
     console.log(q)
@@ -314,14 +319,15 @@ exports.submit = async (req, res) => {
 
   const cartId = req.body['id'];
   const results = [];
-
+    const userId = headerUserId(req); 
   try {
     const { insertId } = await autoNumber('sendOrder');
     const sendOrder = insertId;
     const q = `UPDATE cart_item
             SET
               sendOrder = '${sendOrder}', 
-              updateDate = '${today()}'
+              updateDate = '${today()}',
+              updateBy = ${userId}
           WHERE cartId = ${cartId} and void = 0 and presence = 1 and sendOrder = '' `;
     const [result] = await db.query(q);
 
@@ -335,7 +341,8 @@ exports.submit = async (req, res) => {
     const q1 = `
         UPDATE cart SET
           tableMapStatusId = 18, 
-          updateDate = '${today()}'
+          updateDate = '${today()}',
+          updateBy = ${userId}
         WHERE id = ${cartId}  `;
     const [result23] = await db.query(q1);
 
@@ -350,7 +357,8 @@ exports.submit = async (req, res) => {
     const q2 = `UPDATE cart_item_modifier
             SET
               sendOrder = '${sendOrder}', 
-              updateDate = '${today()}'
+              updateDate = '${today()}',
+              updateBy = ${userId}
           WHERE cartId = ${cartId} and void = 0 and presence = 1 and sendOrder = ''`;
     const [result2] = await db.query(q2);
 
@@ -378,7 +386,7 @@ exports.addPaid = async (req, res) => {
   const paid = req.body['paid'];
 
   const results = [];
-
+    const userId = headerUserId(req); 
   try {
     for (const emp of paid) {
       const { id, cartId, paid, tips } = emp;
@@ -394,7 +402,8 @@ exports.addPaid = async (req, res) => {
                   tips = ${tips}, 
                   
                   submit = 1,
-                  updateDate = '${today()}'
+                  updateDate = '${today()}',
+                  updateBy = ${userId}
               WHERE id = ${id}   and cartId = '${cartId}'`;
 
       const [result] = await db.query(q);

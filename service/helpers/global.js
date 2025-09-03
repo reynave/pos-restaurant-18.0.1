@@ -11,16 +11,16 @@ function today() {
 
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
-function nextDay( addDay = 1, hour = '00:00:00' ) {
+function nextDay(addDay = 1, hour = '00:00:00') {
   var date = new Date();
- 
+
   const now = new Date(date.setDate(date.getDate() + addDay));
 
 
   const year = now.getFullYear();
   const month = String(now.getMonth() + 1).padStart(2, '0'); // bulan dari 0
   const day = String(now.getDate()).padStart(2, '0');
- 
+
 
   return `${year}-${month}-${day} ${hour}`;
 }
@@ -87,27 +87,79 @@ function centerText(str, width = 50) {
 }
 
 function parseTimeString(timeStr) {
-    const [hours, minutes, seconds] = timeStr.split(':').map(Number);
-    return { hours, minutes, seconds };
+  const [hours, minutes, seconds] = timeStr.split(':').map(Number);
+  return { hours, minutes, seconds };
+}
+
+function addTime(dateStr, hoursToAdd, minutesToAdd, secondsToAdd) {
+  const date = new Date(dateStr);
+
+  const totalMilliseconds =
+    (hoursToAdd * 60 * 60 + minutesToAdd * 60 + secondsToAdd) * 1000;
+
+  const newDate = new Date(date.getTime() + totalMilliseconds);
+  return newDate;
+}
+
+// ...existing code...
+function getBearerToken(req) {
+  const authHeader = req.headers['authorization'] || req.headers['Authorization'];
+  if (!authHeader) return null;
+
+
+  const parts = authHeader.split(' ');
+
+  if (parts.length === 2 && parts[0] === 'Bearer') {
+    try {
+      // Decode base64 string (assume token is base64 encoded JSON array)
+      const decoded = parts[1].split('.');
+      const data = Buffer.from(decoded[1], 'base64').toString('utf8');
+      return JSON.parse(data);
+    } catch (e) {
+      return null;
+    }
   }
+  return null;
+}
 
-  function addTime(dateStr, hoursToAdd, minutesToAdd, secondsToAdd) {
-    const date = new Date(dateStr);
+// ...existing code...
+function headerUserId(req) {
+  const token = getBearerToken(req);
+  return token ? token.id : null;
+}
+// ...existing code...
 
-    const totalMilliseconds =
-      (hoursToAdd * 60 * 60 + minutesToAdd * 60 + secondsToAdd) * 1000;
-
-    const newDate = new Date(date.getTime() + totalMilliseconds);
-    return newDate;
-  }
-
+async function mapUpdateByName(db, table) {
+  return Promise.all(table.map(async row => {
+    let inputByName = null;
+    let updateByName = null;
+ 
+    
+    if (row.inputBy) {
+      const [userRows] = await db.query(`SELECT name FROM employee WHERE id = ${row.inputBy}`);
+      inputByName = userRows.length > 0 ? userRows[0].name : null;
+    }
+    if (row.updateBy) {
+      const [userRows] = await db.query(`SELECT name FROM employee WHERE id = ${row.updateBy}`);
+      updateByName = userRows.length > 0 ? userRows[0].name : null;
+    }
+    return {
+      ...row,
+      updateBy: updateByName,
+      inputBy: inputByName
+    };
+  }));
+}
 module.exports = {
   today, nextDay,
   formatDateOnly,
   formatDateTime,
-parseTimeString, addTime,
+  parseTimeString, addTime,
   formatCurrency,
   formatLine,
   centerText,
-  convertCustomDateTime
+  convertCustomDateTime,
+  getBearerToken,
+  headerUserId,
+  mapUpdateByName
 };

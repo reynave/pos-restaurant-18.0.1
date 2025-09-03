@@ -1,0 +1,39 @@
+time,outletId,workStationId,userId,bill,action,url,method,server
+13:56:11,Imperial Kitchen(15),0005,sa (76),250902000346,Go to Menu,http://localhost:4850/#/tables
+13:56:11,Imperial Kitchen(15),0005,sa (76),250902000346,Menu Lookup 0,http://localhost:4850/#/menu?id=250902000346
+13:56:13,Imperial Kitchen(15),0005,sa (76),250902000346,Exit Without Order,http://localhost:4850/#/menu?id=250902000346
+13:56:14,Imperial Kitchen(15),0005,sa (76),,WARNING Daily Close ?,http://localhost:4850/#/tables
+13:56:15,Imperial Kitchen(15),0005,sa (76),,Daily Close -> YES,http://localhost:4850/#/tables
+13:59:04,Imperial Kitchen(15),0005,sa (76),,Select Table TA1,http://localhost:4850/#/tables
+13:59:06,Imperial Kitchen(15),0005,sa (76),,New Order Imperial Kitchen(15) Cover : 4, Table : TA1(15),http://localhost:4850/#/tables
+13:59:06,Imperial Kitchen(15),0005,sa (76),250903000347,Go to Menu,http://localhost:4850/#/tables
+13:59:06,Imperial Kitchen(15),0005,sa (76),250903000347,Menu Lookup 0,http://localhost:4850/#/menu?id=250903000347
+15:01:19,Imperial Kitchen(15),0005,sa (76),250903000347,Menu Lookup 0,http://localhost:4850/#/menu?id=250903000347
+15:01:23,Imperial Kitchen(15),0005,sa (76),250903000347,Menu Lookup 0,http://localhost:4850/#/menu?id=250903000347
+15:18:02,Imperial Kitchen(15),0005,sa (76),250903000347,Menu Lookup 0,http://localhost:4850/#/menu?id=250903000347
+15:27:18,Imperial Kitchen(15),0005,sa (76),,Click Print Queue,http://localhost:4850/#/menu?id=250903000347
+15:27:20,Imperial Kitchen(15),0005,sa (76),,click setting,http://localhost:4850/#/printQueue
+15:27:22,Imperial Kitchen(15),0005,sa (76),,click Adjustment Item,http://localhost:4850/#/setting
+15:27:27,Imperial Kitchen(15),0005,sa (76),,Click Print Queue,http://localhost:4850/#/items
+15:27:28,Imperial Kitchen(15),0005,sa (76),,Click Tables,http://localhost:4850/#/printQueue
+15:27:29,Imperial Kitchen(15),0005,sa (76),250903000347,Go to Menu,http://localhost:4850/#/tables
+15:27:29,Imperial Kitchen(15),0005,sa (76),250903000347,Menu Lookup 0,http://localhost:4850/#/menu?id=250903000347
+15:27:33,Imperial Kitchen(15),0005,sa (76),250903000347,Menu Lookup 2,http://localhost:4850/#/menu?id=250903000347
+15:29:41,Imperial Kitchen(15),0005,sa (76),250903000347,Menu Lookup 6,http://localhost:4850/#/menu?id=250903000347
+15:29:42,Imperial Kitchen(15),0005,sa (76),250903000347,Add Menu BUNCIS GRG TLR ASIN(18) @43900.00,http://localhost:4850/#/menu?id=250903000347
+15:29:42,Imperial Kitchen(15),0005,sa (76),250903000347,Add Menu JMR THU GRG LD GRM(19) @36900.00,http://localhost:4850/#/menu?id=250903000347
+15:29:42,Imperial Kitchen(15),0005,sa (76),250903000347,Add Menu ENOKI GRG LD GRM(20) @36900.00,http://localhost:4850/#/menu?id=250903000347
+15:29:46,Imperial Kitchen(15),0005,sa (76),250903000347,Click MODIFIER : Bar Info,http://localhost:4850/#/menu?id=250903000347
+15:29:47,Imperial Kitchen(15),0005,sa (76),250903000347,Add Modifier dingin(48) @0,http://localhost:4850/#/menu?id=250903000347
+15:29:47,Imperial Kitchen(15),0005,sa (76),250903000347,Add Modifier no ice(49) @2,http://localhost:4850/#/menu?id=250903000347
+15:39:41,Imperial Kitchen(15),0005,sa (76),250903000347,Modifier Custom  Notes :123,http://localhost:4850/#/menu?id=250903000347
+15:39:50,Imperial Kitchen(15),0005,sa (76),250903000347,ERROR Add Qty 1 undefined,http://localhost:4850/#/menu?id=250903000347
+15:40:28,Imperial Kitchen(15),0005,sa (76),250903000347,Modifier Custom  Notes :Add Custom Notes 123,http://localhost:4850/#/menu?id=250903000347
+15:40:37,Imperial Kitchen(15),0005,sa (76),250903000347,Apply Discount Group 10% post SC(3) @10.00%,http://localhost:4850/#/menu?id=250903000347
+15:43:25,Imperial Kitchen(15),0005,sa (76),250903000347,Send Order,http://localhost:4850/#/menu?id=250903000347
+15:43:25,Imperial Kitchen(15),0005,sa (76),250903000347,printQueue,http://localhost:4850/#/menu?id=250903000347
+15:43:27,Imperial Kitchen(15),0005,sa (76),250903000347,Go to Menu,http://localhost:4850/#/tables
+15:43:27,Imperial Kitchen(15),0005,sa (76),250903000347,Menu Lookup 0,http://localhost:4850/#/menu?id=250903000347
+15:43:35,Imperial Kitchen(15),0005,sa (76),250903000347,menu/modifier SO BUNCIS GRG TLR ASIN menuId : 18, price : 43900,http://localhost:4850/#/menu?id=250903000347
+15:43:37,Imperial Kitchen(15),0005,sa (76),250903000347,Menu Lookup 0,http://localhost:4850/#/menu?id=250903000347
+16:09:59,Imperial Kitchen(15),0005,sa (76),,Sign Off,http://localhost:4850/#/menu?id=250903000347

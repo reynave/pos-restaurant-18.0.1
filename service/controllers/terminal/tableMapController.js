@@ -181,7 +181,7 @@ exports.newOrder = async (req, res) => {
   const outletId = req.body['outletId'];
   const inputDate = today();
   const results = [];
- 
+     const userId = headerUserId(req); 
   try {
     const q = `
     SELECT  count(c.close) AS 'total' 
@@ -213,10 +213,12 @@ exports.newOrder = async (req, res) => {
       const a = `INSERT INTO cart (
           presence, inputDate, tableMapStatusId, outletTableMapId, 
           cover,  id, outletId, dailyCheckId,
-          startDate, endDate, overDue ) 
+          startDate, endDate, overDue,
+          updateBy, inputBy
+        ) 
         VALUES (1, '${inputDate}', 10, ${model['outletTableMapId']}, 
           ${model['cover']},  '${insertId}',  ${outletId}, '${dailyCheckId}',
-          '${inputDate}', '${inputDate}' , '${overDue}' )`;
+          '${inputDate}', '${inputDate}' , '${overDue}', ${userId}, ${userId})`;
           console.log(a)
       const [newOrder] = await db.query(a);
       if (newOrder.affectedRows === 0) {
@@ -248,7 +250,7 @@ exports.newOrder = async (req, res) => {
 exports.postDelete = async (req, res) => {
   // const { id, name, position, email } = req.body;
   const data = req.body;
-
+    const userId = headerUserId(req); 
   // res.json({
   //   body: req.body, 
   // });
@@ -270,8 +272,8 @@ exports.postDelete = async (req, res) => {
 
 
       const [result] = await db.query(
-        'UPDATE outlet_bonus_rule SET presence = ?, updateDate = ? WHERE id = ?',
-        [checkbox == 0 ? 1 : 0, today(), id]
+        'UPDATE outlet_bonus_rule SET presence = ?, updateDate = ?, updateBy = ? WHERE id = ?',
+        [checkbox == 0 ? 1 : 0, today(), userId, id]
       );
 
 

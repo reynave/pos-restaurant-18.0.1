@@ -215,7 +215,7 @@ exports.getCopyBill = async (req, res) => {
 };
  
 exports.addCopyBill = async (req, res) => {
-
+    const userId = headerUserId(req); 
   const cartId = req.body['id'];
   const results = [];
 
@@ -224,9 +224,10 @@ exports.addCopyBill = async (req, res) => {
     const [result] = await db.query(
       `INSERT INTO cart_copy_bill (
         presence, inputDate,  updateDate,
-        cartId    ) 
+        cartId, updateBy, inputBy
+        ) 
       VALUES (1, '${today()}',  '${today()}',
-        '${cartId}'
+        '${cartId}', ${userId}, ${userId}
       )`
     );
 

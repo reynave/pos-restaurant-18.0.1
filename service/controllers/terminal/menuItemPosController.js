@@ -1,8 +1,8 @@
 const db = require('../../config/db');
-const { today, convertCustomDateTime, formatDateTime, parseTimeString, addTime } = require('../../helpers/global');
+const { headerUserId, mapUpdateByName, today, convertCustomDateTime, formatDateTime, parseTimeString, addTime } = require('../../helpers/global');
 const { autoNumber } = require('../../helpers/autoNumber');
 const { taxScUpdate, scUpdate, taxUpdate } = require('../../helpers/bill');
-
+const { logger } = require('./userLogController');
 exports.getMenuItem = async (req, res) => {
   let i = 1;
   let employeeAuthLevelId = 0;
@@ -426,10 +426,12 @@ exports.cart = async (req, res) => {
     `;
 
     const [table] = await db.query(q2);
+     
+    const tableRow = await mapUpdateByName(db, table);
 
-    res.json({
-      error: false,
-      table: table,
+    
+    res.json({ 
+      table: tableRow,
       items: formattedRows,
       sendOrder: sendOrder,
       totalAmount: totalAmount,
@@ -618,7 +620,7 @@ exports.cartOrdered = async (req, res) => {
 exports.addToCart = async (req, res) => {
   const menu = req.body['menu'];
   const cartId = req.body['id'];
-
+  const userId = headerUserId(req); 
   let inputDate = today();
   const results = [];
   try {
@@ -636,10 +638,11 @@ exports.addToCart = async (req, res) => {
 
     let q =
       `INSERT INTO cart_item (presence, inputDate, updateDate, menuId, price, cartId,
-      menuDepartmentId, menuCategoryId, adjustItemsId
+      menuDepartmentId, menuCategoryId, adjustItemsId, inputBy, updateBy
       )
       VALUES (1, '${inputDate}', '${inputDate}',  ${menu['id']}, ${menu['price']}, '${cartId}',
-        ${menu['menuDepartmentId']}, ${menu['menuCategoryId']}, '${!menu['adjustItemsId'] ? '' : menu['adjustItemsId']}'
+        ${menu['menuDepartmentId']}, ${menu['menuCategoryId']}, '${!menu['adjustItemsId'] ? '' : menu['adjustItemsId']}',
+        ${userId}, ${userId}
       )`;
 
     const [result] = await db.query(q);
@@ -663,12 +666,14 @@ exports.addToCart = async (req, res) => {
         `INSERT INTO cart_item_modifier (
         presence, inputDate, updateDate,  
         cartId, cartItemId, menuTaxScId, 
-        scRate, scStatus , price, priceIncluded
+        scRate, scStatus , price, priceIncluded,
+        inputBy, updateBy
       )
       VALUES (
         1, '${inputDate}', '${inputDate}', 
         '${cartId}',  ${cartItemId}, ${menu['menuTaxScId']}, 
-        ${menu['scRate']},  ${menu['scStatus']} , ${scAmount}, 0
+        ${menu['scRate']},  ${menu['scStatus']} , ${scAmount}, 0,
+        ${userId}, ${userId}
       )`;
       const [result2] = await db.query(q2);
 
@@ -684,12 +689,14 @@ exports.addToCart = async (req, res) => {
         presence, inputDate, updateDate,  
         cartId, cartItemId, menuTaxScId, 
         scRate, scStatus , 
-        price, priceIncluded
+        price, priceIncluded,
+        inputBy, updateBy
       )
       VALUES (
         1, '${inputDate}', '${inputDate}', 
         '${cartId}',  ${cartItemId}, ${menu['menuTaxScId']}, 
-        ${menu['scRate']},  ${menu['scStatus']} , 0, ${menu['scAmount']}
+        ${menu['scRate']},  ${menu['scStatus']} , 0, ${menu['scAmount']},
+        ${userId}, ${userId}
       )`;
       const [result2] = await db.query(q2);
 
@@ -722,13 +729,15 @@ exports.addToCart = async (req, res) => {
         presence, inputDate, updateDate,  
         cartId, cartItemId, menuTaxScId,
         taxRate, taxStatus,
-          price, priceIncluded
+          price, priceIncluded,
+          inputBy, updateBy
       )
       VALUES (
         1, '${inputDate}', '${inputDate}', 
         '${cartId}',  ${cartItemId}, ${menu['menuTaxScId']},
         ${menu['taxRate']},  ${menu['taxStatus']},
-          ${taxAmount}, 0
+          ${taxAmount}, 0,
+          ${userId}, ${userId}
       )`;
 
       const [result3] = await db.query(q3);
@@ -744,12 +753,14 @@ exports.addToCart = async (req, res) => {
         `INSERT INTO cart_item_modifier (
         presence, inputDate, updateDate,  
         cartId, cartItemId, menuTaxScId,
-        taxRate, taxStatus,  price, priceIncluded
+        taxRate, taxStatus,  price, priceIncluded,
+        inputBy, updateBy 
       )
       VALUES (
         1, '${inputDate}', '${inputDate}', 
         '${cartId}',  ${cartItemId}, ${menu['menuTaxScId']},
-        ${menu['taxRate']},  ${menu['taxStatus']}, 0, ${menu['taxAmount']}
+        ${menu['taxRate']},  ${menu['taxStatus']}, 0, ${menu['taxAmount']},
+        ${userId}, ${userId}
       )`;
 
       const [result3] = await db.query(q3);
@@ -778,12 +789,13 @@ exports.addToCart = async (req, res) => {
           `INSERT INTO cart_item_modifier (
             presence, inputDate, updateDate,  
             cartId, cartItemId, note, menuSetMenuId, 
-            menuSetAdjustItemsId
+            menuSetAdjustItemsId,
+            inputBy, updateBy
           )
           VALUES (
             1, '${inputDate}', '${inputDate}', 
             '${cartId}',  ${cartItemId} , '${row['name']}', '${row['detailMenuId']}',  
-            '${row['adjustItemsId']}'
+            '${row['adjustItemsId']}', ${userId}, ${userId}
           )`;
         const [result3] = await db.query(q3);
         if (result3.affectedRows === 0) {
@@ -803,12 +815,13 @@ exports.addToCart = async (req, res) => {
           `INSERT INTO cart_item_modifier (
             presence, inputDate, updateDate,  
             cartId, cartItemId, note, menuSetMenuId,
-            menuSetAdjustItemsId
+            menuSetAdjustItemsId,
+            inputBy, updateBy
           )
           VALUES (
             1, '${inputDate}', '${inputDate}', 
             '${cartId}',  ${cartItemId} , '${row['name']}', '${row['id']}',
-            '${row['adjustItemsId']}'
+            '${row['adjustItemsId']}', ${userId}, ${userId}
           )`;
 
         if (row['select'] > 0) {
@@ -841,7 +854,7 @@ exports.addToCart = async (req, res) => {
 
 exports.updateQty = async (req, res) => {
   // const { id, name, position, email } = req.body;
-
+ const userId = headerUserId(req); 
   const model = req.body['model'];
   const item = req.body['item'];
   const cartId = req.body['cartId'];
@@ -905,12 +918,14 @@ exports.updateQty = async (req, res) => {
           const [result] = await db.query(
             `INSERT INTO cart_item (
               presence, inputDate, updateDate, menuId, price, cartId,  
-              menuDepartmentId, menuCategoryId , adjustItemsId
+              menuDepartmentId, menuCategoryId , adjustItemsId,
+              inputBy, updateBy
             )
             VALUES (
               1, '${inputDate}', '${inputDate}',  ${item['menuId']},
               ${row[0]['price']}, '${cartId}',
-              ${row[0]['menuDepartmentId']}, ${row[0]['menuCategoryId']} , '${row[0]['adjustItemsId']}'
+              ${row[0]['menuDepartmentId']}, ${row[0]['menuCategoryId']} , '${row[0]['adjustItemsId']}',
+              ${userId}, ${userId}
             )`
           );
           const cartItemId = result.insertId;
@@ -937,7 +952,8 @@ exports.updateQty = async (req, res) => {
                 modifierId, price, priceIncluded, 
                 taxRate, taxStatus, 
                 scRate, scStatus, 
-                applyDiscount, sendOrder, menuSetMenuId, note, menuSetAdjustItemsId, remark, scTaxInclude
+                applyDiscount, sendOrder, menuSetMenuId, note, menuSetAdjustItemsId, remark, scTaxInclude,
+                inputBy, updateBy
               )
               VALUES (
                 1, '${today()}', '${today()}',
@@ -946,7 +962,8 @@ exports.updateQty = async (req, res) => {
                 ${rec['taxRate']}, ${rec['taxStatus']},
                 ${rec['scRate']}, ${rec['scStatus']} ,
                 ${rec['applyDiscount']}, '${rec['sendOrder']}', ${rec['menuSetMenuId']}, '${rec['note']}',
-                '${rec['menuSetAdjustItemsId']}', '${rec['remark']}', ${rec['scTaxInclude']}
+                '${rec['menuSetAdjustItemsId']}', '${rec['remark']}', ${rec['scTaxInclude']},
+                ${userId}, ${userId}
               )`;
 
 
@@ -1009,7 +1026,9 @@ exports.updateQty = async (req, res) => {
         UPDATE cart_item  SET 
           adjustItemsId = 'DELETE',
           presence = 0,
-          void = 1
+          void = 1,
+          updateBy = ${userId}
+
         WHERE cartId = '${cartId}'  AND  presence = 1 
           AND  menuId= ${item['menuId']}    AND sendOrder = ''
         ORDER BY inputDate  DESC
@@ -1034,7 +1053,8 @@ exports.updateQty = async (req, res) => {
         const q = ` 
         UPDATE cart_item_modifier  SET  
           presence = 0,
-          void = 1
+          void = 1,
+          updateBy = ${userId}
         WHERE cartItemId = '${row['id']}' 
         `;
         const [result] = await db.query(q);
@@ -1065,7 +1085,7 @@ exports.updateQty = async (req, res) => {
 
 exports.updateCover = async (req, res) => {
   // const { id, name, position, email } = req.body;
-
+  const userId = headerUserId(req); 
   const model = req.body['model'];
   const cartId = req.body['cartId'];
 
@@ -1077,14 +1097,15 @@ exports.updateCover = async (req, res) => {
     const q = `UPDATE cart
             SET
               cover = ${model['newQty']}, 
-              updateDate = '${today()}'
+              updateDate = '${today()}',
+              updateBy = ${userId}
           WHERE  id = '${cartId}'   `;
 
     const [result] = await db.query(q);
     if (result.affectedRows === 0) {
       results.push({ status: 'not found' });
     } else {
-      results.push({ status: 'UPDATE updated' });
+      results.push({ status: 'UPDATE updated' }); 
     }
 
     res.status(201).json({
@@ -1101,7 +1122,7 @@ exports.updateCover = async (req, res) => {
 
 exports.voidItem = async (req, res) => {
   // const { id, name, position, email } = req.body;
-
+const userId = headerUserId(req); 
   const data = req.body['cart'];
   const cartId = req.body['cartId'];
 
@@ -1122,7 +1143,8 @@ exports.voidItem = async (req, res) => {
             SET
               void = 1,
               presence = 0,
-              updateDate = '${today()}'
+              updateDate = '${today()}',
+              updateBy = ${userId}
           WHERE menuId = ${menuId}  and cartId = '${cartId}' and sendOrder = '' `;
         const [result] = await db.query(q);
         if (result.affectedRows === 0) {
@@ -1149,7 +1171,8 @@ exports.voidItem = async (req, res) => {
             SET
               void = 1,
               presence = 0,
-              updateDate = '${today()}'
+              updateDate = '${today()}',
+              updateBy = ${userId}
           WHERE  cartItemId = '${row['id']}'`;
         const [result] = await db.query(q);
 
@@ -1184,6 +1207,7 @@ exports.voidItem = async (req, res) => {
 
 exports.addToItemModifier = async (req, res) => {
   const data = req.body['cart'];
+  const userId = headerUserId(req); 
   const modifiers = req.body['modifiers'];
   const cartId = req.body['cartId'];
 
@@ -1228,12 +1252,14 @@ exports.addToItemModifier = async (req, res) => {
                 `INSERT INTO cart_item_modifier (
                 presence, inputDate, updateDate, void,
                 cartId, cartItemId, modifierId,
-                note, price
+                note, price,
+                inputBy, updateBy
               )
               VALUES (
                 1, '${today()}', '${today()}',  0,
                 '${cartId}',  ${cartItem['id']}, ${modifiers['id']},
-                '', ${modifiers['price']}
+                '', ${modifiers['price']},
+                ${userId}, ${userId}
             )`;
               const [result] = await db.query(q);
 
@@ -1285,6 +1311,7 @@ exports.addToItemModifier = async (req, res) => {
 };
 
 exports.addDiscountGroup = async (req, res) => {
+  const userId = headerUserId(req); 
   const cart = req.body['cart'];
   const cartOrdered = req.body['cartOrdered'];
   const remark = req.body['remark'];
@@ -1350,12 +1377,14 @@ exports.addDiscountGroup = async (req, res) => {
                   INSERT INTO cart_item_modifier (
                     presence, inputDate, updateDate, void,
                     cartId, cartItemId, modifierId,
-                    applyDiscount, price, remark
+                    applyDiscount, price, remark,
+                    inputBy, updateBy
                   )
                   VALUES (
                     1, '${today()}', '${today()}',  0,
                     '${cartId}',  ${cartItem['id']}, 0,
-                    ${discountGroup['id']}, ${discAmount}, '${remark}'
+                    ${discountGroup['id']}, ${discAmount}, '${remark}',
+                    ${userId}, ${userId}
                 )`;
               const [result] = await db.query(q);
               if (result.affectedRows === 0) {
@@ -1459,12 +1488,14 @@ exports.addDiscountGroup = async (req, res) => {
               `INSERT INTO cart_item_modifier (
                 presence, inputDate, updateDate, void,
                 cartId, cartItemId, modifierId,
-                applyDiscount, price, remark
+                applyDiscount, price, remark,
+                inputBy, updateBy
               )
               VALUES (
                 1, '${today()}', '${today()}',  0,
                 '${cartId}',  ${cartItem['id']}, 0,
-                ${discountGroup['id']}, ${discAmount}, '${remark}'
+                ${discountGroup['id']}, ${discAmount}, '${remark}',
+                ${userId}, ${userId}
             )`;
 
             const [result] = await db.query(q);
@@ -1717,7 +1748,7 @@ exports.getModifier = async (req, res) => {
 
 exports.voidItemDetail = async (req, res) => {
   // const { id, name, position, email } = req.body;
-
+const userId = headerUserId(req); 
   const data = req.body['cart'];
   const cartId = req.body['cartId'];
 
@@ -1737,7 +1768,8 @@ exports.voidItemDetail = async (req, res) => {
             SET
               void = 1,
               presence = 0,
-              updateDate = '${today()}'
+              updateDate = '${today()}',
+              updateBy = ${userId}
           WHERE id = ${id}  AND  sendOrder = ''  AND  cartId = '${cartId}'`;
         const [result] = await db.query(q);
         if (result.affectedRows === 0) {
@@ -1761,6 +1793,7 @@ exports.voidItemDetail = async (req, res) => {
 };
 
 exports.addModifier = async (req, res) => {
+  const userId = headerUserId(req); 
   const data = req.body['cart'];
   const menu = req.body['menu'];
   const cartId = req.body['id'];
@@ -1794,12 +1827,14 @@ exports.addModifier = async (req, res) => {
             `INSERT INTO cart_item_modifier (
             presence, inputDate, updateDate, void,
             cartId, cartItemId, modifierId,
-            note, price
+            note, price,
+            inputBy, updateBy
           )
           VALUES (
             1, '${today()}', '${today()}',  0,
             '${cartId}',  ${id}, ${menu['id']},
-            '', ${menu['price']}
+            '', ${menu['price']},
+            ${userId}, ${userId}
          )`;
           const [result] = await db.query(q);
 
@@ -1831,7 +1866,7 @@ exports.addModifier = async (req, res) => {
 
 exports.removeDetailModifier = async (req, res) => {
   // const { id, name, position, email } = req.body;
-
+const userId = headerUserId(req); 
   const data = req.body['cart'];
   const cartId = req.body['cartId'];
 
@@ -1847,7 +1882,9 @@ exports.removeDetailModifier = async (req, res) => {
             SET
               void = 1,
               presence = 0,
-              updateDate = '${today()}'
+              updateDate = '${today()}',
+              updateBy = ${userId}
+
           WHERE menuTaxScId = 0 AND sendOrder ='' AND  cartItemId = '${id}'`;
           const [result] = await db.query(q);
           if (result.affectedRows === 0) {
@@ -1863,7 +1900,8 @@ exports.removeDetailModifier = async (req, res) => {
             SET
               void = 1,
               presence = 0,
-              updateDate = '${today()}'
+              updateDate = '${today()}',
+              updateBy = ${userId}
           WHERE menuTaxScId = 0  AND sendOrder ='' AND   id = '${id}'`;
           const [result] = await db.query(q);
           if (result.affectedRows === 0) {
@@ -1892,6 +1930,7 @@ exports.removeDetailModifier = async (req, res) => {
 
 exports.printQueue = async (req, res) => {
   // const { id, name, position, email } = req.body;
+  const userId = headerUserId(req); 
   const results = [];
   const sendOrder = req.query.sendOrder;
   try {
@@ -1963,12 +2002,14 @@ exports.printQueue = async (req, res) => {
             INSERT INTO print_queue (
                 dailyCheckId, cartId,  so,
                 message,  printerId, status, 
-                inputDate, updateDate , menuId
+                inputDate, updateDate , menuId,
+                inputBy, updateBy
             ) 
           VALUES (
             '${result[0]['dailyCheckId']}', '${row['cartId']}', '${row['sendOrder']}',
             '${JSON.stringify(message)}',  '${rexv['id']}',  0,
-            '${today()}', '${today()}', '${row['menuId']}'
+            '${today()}', '${today()}', '${row['menuId']}',
+            ${userId}, ${userId}
           )`;
 
         const [rest] = await db.query(q11);
@@ -2002,7 +2043,7 @@ exports.printQueue = async (req, res) => {
 
 exports.sendOrder = async (req, res) => {
   // const { id, name, position, email } = req.body;
-
+  const userId = headerUserId(req); 
   const cartId = req.body['cartId'];
 
   const inputDate = today();
@@ -2014,7 +2055,8 @@ exports.sendOrder = async (req, res) => {
     const q1 = `
     UPDATE cart SET
       tableMapStatusId = 12, 
-      updateDate = '${today()}'
+      updateDate = '${today()}',
+      updateBy = ${userId}
     WHERE id = ${cartId}  `;
     const [result23] = await db.query(q1);
     if (result23.affectedRows === 0) {
@@ -2027,7 +2069,8 @@ exports.sendOrder = async (req, res) => {
     const q = `
     UPDATE cart_item SET
       sendOrder = '${sendOrder}', 
-      updateDate = '${today()}'
+      updateDate = '${today()}',
+      updateBy = ${userId}
     WHERE cartId = ${cartId}  and presence = 1 and void = 0 and sendOrder = '' `;
     const [result] = await db.query(q);
     if (result.affectedRows === 0) {
@@ -2039,7 +2082,8 @@ exports.sendOrder = async (req, res) => {
     const q2 = `
     UPDATE cart_item_modifier SET
       sendOrder =  '${sendOrder}', 
-      updateDate = '${today()}'
+      updateDate = '${today()}',
+      updateBy = ${userId}
     WHERE cartId = ${cartId}  and presence = 1 and void = 0 and sendOrder = ''`;
     const [result2] = await db.query(q2);
     if (result2.affectedRows === 0) {
@@ -2052,11 +2096,13 @@ exports.sendOrder = async (req, res) => {
       const q3 =
         `INSERT INTO send_order (
         presence, inputDate, updateDate,  
-        cartId, sendOrderDate, id
+        cartId, sendOrderDate, id,
+        inputBy, updateBy
       )
       VALUES (
-        1, '${today()}', '${today()}',  
-        '${cartId}',  '${today()}', '${sendOrder}'
+        1, '${today()}', '${today()}',
+        '${cartId}',  '${today()}', '${sendOrder}',
+        ${userId}, ${userId}
       )`;
       const [result3] = await db.query(q3);
       if (result3.affectedRows === 0) {
@@ -2085,6 +2131,7 @@ exports.sendOrder = async (req, res) => {
 exports.exitWithoutOrder = async (req, res) => {
   // const { id, name, position, email } = req.body;
   const results = [];
+  const userId = headerUserId(req); 
   const cartId = req.body['cartId'];
   try {
 
@@ -2101,7 +2148,8 @@ exports.exitWithoutOrder = async (req, res) => {
         close = 1,
         tableMapStatusId = 41,
         endDate =  '${today()}', 
-        updateDate = '${today()}'
+        updateDate = '${today()}',
+        updateBy = ${userId}
       WHERE id = '${cartId}' `;
       const [resulta] = await db.query(a);
 
@@ -2115,7 +2163,8 @@ exports.exitWithoutOrder = async (req, res) => {
       const q = `
       UPDATE cart_item SET
         void  = 1, 
-        updateDate = '${today()}'
+        updateDate = '${today()}',
+        updateBy = ${userId}
       WHERE cartId = '${cartId}' `;
       const [result] = await db.query(q);
 
@@ -2128,7 +2177,9 @@ exports.exitWithoutOrder = async (req, res) => {
 
       const a5 = `
       UPDATE cart_item_modifier SET
-        void = 1
+        void = 1,
+        updateDate = '${today()}',
+        updateBy = ${userId}
       WHERE cartId = '${cartId}' `;
       const [result5] = await db.query(a5);
 
@@ -2238,14 +2289,15 @@ exports.transferItems = async (req, res) => {
   try {
     const cartId = req.query.id;
     const q = `
-      SELECT i.id,   i.price, i.sendOrder, i.inputDate, c.id AS 'cartId' , c.outletTableMapId, c.outletId, t.tableName,
-m.name AS 'menu', 0 AS 'checkBox'
-FROM cart_item AS i
-JOIN cart AS c ON c.id = i.cartId
-JOIN menu AS m ON m.id = i.menuId
-JOIN outlet_table_map AS t ON t.id = c.outletTableMapId
-WHERE i.cartId = '${cartId}' AND i.presence = 1 AND i.void = 0 
-ORDER BY i.inputDate ASC;
+      SELECT 
+        i.id,   i.price, i.sendOrder, i.inputDate, c.id AS 'cartId' , c.outletTableMapId, c.outletId, t.tableName,
+        m.name AS 'menu', 0 AS 'checkBox'
+        FROM cart_item AS i
+        JOIN cart AS c ON c.id = i.cartId
+        JOIN menu AS m ON m.id = i.menuId
+        JOIN outlet_table_map AS t ON t.id = c.outletTableMapId
+        WHERE i.cartId = '${cartId}' AND i.presence = 1 AND i.void = 0 
+        ORDER BY i.inputDate ASC;
     `;
     const [items] = await db.query(q);
 
@@ -2327,6 +2379,7 @@ exports.transferItemsGroup = async (req, res) => {
 
 
 exports.transferTable = async (req, res) => {
+  const userId = headerUserId(req); 
   const table = req.body['table'];
   const cart = req.body['cart'];
   const itemsTransfer = req.body['itemsTransfer'];
@@ -2362,12 +2415,12 @@ exports.transferTable = async (req, res) => {
         `INSERT INTO cart (
           presence, inputDate,   outletTableMapId, 
           cover,  id, outletId, dailyCheckId, tableMapStatusId,
-          startDate, endDate, overDue
+          startDate, endDate, overDue, updateDate, updateBy, inputBy
           ) 
         VALUES (
           1, '${inputDate}',  ${table['outletTableMapId']}, 
           1,  '${insertId}',  ${outletId}, '${dailyCheckId}',   ${cart['tableMapStatusId']}, 
-          '${inputDate}', '${inputDate}', '${overDue}'  )`
+          '${inputDate}', '${inputDate}', '${overDue}', '${today()}', ${userId}, ${userId})`
       );
       if (newOrder.affectedRows === 0) {
         results.push({ status: 'not found' });
@@ -2379,7 +2432,8 @@ exports.transferTable = async (req, res) => {
       const q0 = `
           UPDATE cart SET 
             tableMapStatusId = '${cart['tableMapStatusId']},',  
-            updateDate = '${today()}'
+            updateDate = '${today()}',
+            updateBy = ${userId}
           WHERE id = ${cartId}`;
 
       const [result] = await db.query(q0);
@@ -2411,7 +2465,8 @@ exports.transferTable = async (req, res) => {
       const q0 = `
         UPDATE print_queue SET 
           cartId = '${cartId}',  
-          updateDate = '${today()}'
+          updateDate = '${today()}',
+          updateBy = ${userId}
         WHERE cartId = '${cart['id']}' AND menuId = ${menuId} `; 
       const [result] = await db.query(q0);
       if (result.affectedRows === 0) {
@@ -2430,7 +2485,8 @@ exports.transferTable = async (req, res) => {
           UPDATE cart_item SET 
             cartId = '${cartId}', 
             subgroup = 1, 
-            updateDate = '${today()}'
+            updateDate = '${today()}',
+            updateBy = ${userId}
           WHERE id = ${id}`;
 
         const [result] = await db.query(q0);
@@ -2443,7 +2499,8 @@ exports.transferTable = async (req, res) => {
         const q1 = `
         UPDATE cart_item_modifier SET 
           cartId = '${cartId}',  
-          updateDate = '${today()}'
+          updateDate = '${today()}',
+          updateBy = ${userId}
         WHERE cartItemId = ${id}`;
         const [result2] = await db.query(q1);
         if (result2.affectedRows === 0) {
@@ -2456,10 +2513,11 @@ exports.transferTable = async (req, res) => {
         const [cart_transfer_items] = await db.query(
           `INSERT INTO cart_transfer_items (
                 presence, inputDate,  outletTableMapId, outletTableMapIdNew,
-                cartItemId, cartId, cartIdNew, dailyCheckId
+                cartItemId, cartId, cartIdNew, dailyCheckId,
+                inputBy, updateBy
                ) 
         VALUES (1, '${inputDate}',  ${cart['outletTableMapId']},  ${table['outletTableMapId']}, 
-             ${id}, '${cart['id']}' ,'${cartId}',  '${dailyCheckId}'  )`
+             ${id}, '${cart['id']}' ,'${cartId}',  '${dailyCheckId}', ${userId}, ${userId})`
         );
         if (cart_transfer_items.affectedRows === 0) {
           results.push({ status: 'not found' });
@@ -2564,7 +2622,7 @@ exports.transferLog = async (req, res) => {
 exports.takeOut = async (req, res) => {
   const cart = req.body['cart'];
   const cartOrdered = req.body['cartOrdered'];
-
+  const userId = headerUserId(req); 
   const cartId = req.body['cartId'];
 
   const inputDate = today();
@@ -2582,7 +2640,8 @@ exports.takeOut = async (req, res) => {
       const q = `UPDATE cart_item
             SET
               ta = ${parseInt(ta) > 0 ? 0 : 1}, 
-              updateDate = '${today()}'
+              updateDate = '${today()}',
+              updateBy = ${userId}
           WHERE menuId = ${menuId}  and cartId = '${cartId}' and sendOrder = '' `;
       const [result] = await db.query(q);
       if (result.affectedRows === 0) {
@@ -2600,7 +2659,8 @@ exports.takeOut = async (req, res) => {
       const q = `UPDATE cart_item_modifier
             SET
               void = ${parseInt(data['ta'])}, 
-              updateDate = '${today()}'
+              updateDate = '${today()}',
+              updateBy = ${userId}
           WHERE cartItemId = ${data['id']}  and scStatus  = 1  `;
 
 
@@ -2626,7 +2686,8 @@ exports.takeOut = async (req, res) => {
       const q = `UPDATE cart_item
             SET
               ta = ${parseInt(ta) > 0 ? 0 : 1}, 
-              updateDate = '${today()}'
+              updateDate = '${today()}',
+              updateBy = ${userId}
           WHERE menuId = ${menuId}  and cartId = '${cartId}' and sendOrder != '' `;
       const [result] = await db.query(q);
       if (result.affectedRows === 0) {
@@ -2644,7 +2705,8 @@ exports.takeOut = async (req, res) => {
       const q = `UPDATE cart_item_modifier
             SET
               void = ${parseInt(data['ta'])}, 
-              updateDate = '${today()}'
+              updateDate = '${today()}',
+              updateBy = ${userId}
           WHERE cartItemId = ${data['id']}  and scStatus  = 1  `;
 
 
@@ -2746,6 +2808,7 @@ exports.mergerCheck = async (req, res) => {
   const dailyCheckId = req.body['dailyCheckId'];
   const inputDate = today();
   const results = [];
+    const userId = headerUserId(req); 
   try {
 
 
@@ -2754,7 +2817,8 @@ exports.mergerCheck = async (req, res) => {
           close = 1,
           tableMapStatusId = 40,
           endDate = '${today()}',
-          updateDate = '${today()}'
+          updateDate = '${today()}',
+          updateBy = ${userId}
         WHERE id = '${cartId}'`;
     const [result1] = await db.query(q1);
 
@@ -2766,7 +2830,8 @@ exports.mergerCheck = async (req, res) => {
 
     const q0 = `UPDATE cart SET   
           cover = ${table['cover'] + newTable['cover']}, 
-          updateDate = '${today()}'
+          updateDate = '${today()}', 
+          updateBy = ${userId}
         WHERE id ='${newTable['cardId']}'`;
     const [result0] = await db.query(q0);
 
@@ -2778,7 +2843,8 @@ exports.mergerCheck = async (req, res) => {
 
     const q2 = `UPDATE cart_item SET 
           cartId = '${newTable['cardId']}',
-          updateDate = '${today()}'
+          updateDate = '${today()}',
+          updateBy = ${userId}
         WHERE cartId = ${cartId}`;
     const [result2] = await db.query(q2);
     if (result2.affectedRows === 0) {
@@ -2789,7 +2855,8 @@ exports.mergerCheck = async (req, res) => {
 
     const q3 = `UPDATE cart_item_modifier SET 
           cartId = '${newTable['cardId']}',
-          updateDate = '${today()}'
+          updateDate = '${today()}',
+          updateBy = ${userId}
         WHERE cartId = ${cartId}`;
     const [result3] = await db.query(q3);
     if (result3.affectedRows === 0) {
@@ -2798,7 +2865,7 @@ exports.mergerCheck = async (req, res) => {
       results.push({ status: 'cart updated' });
     }
 
-    const inputBy = 1;
+ 
     // LOG
     let q =
       `INSERT INTO cart_merge_log (
@@ -2806,14 +2873,15 @@ exports.mergerCheck = async (req, res) => {
         cartId, cartIdNew, 
         outletTableMapId, outletTableMapIdNew, 
         cover1, cover2,  coverNew, 
-        dailyCheckId
+        dailyCheckId,
+        updateBy
       )
       VALUES (
-        1, '${inputDate}', ${inputBy}, 
+        1, '${inputDate}', ${userId}, 
         '${cartId}',  '${newTable['cardId']}',
         '${table['outletTableMapId']}', '${newTable['outletTableMapId']}', 
         ${table['cover']}, ${newTable['cover']}, ${table['cover'] + newTable['cover']},
-        '${dailyCheckId}'
+        '${dailyCheckId}', ${userId}
       )`;
     const [resultlog] = await db.query(q);
 
@@ -2890,7 +2958,7 @@ exports.addCustomNotes = async (req, res) => {
   const cartId = req.body['cartId'];
   const model = req.body['model'];
   const items = req.body['items'];
-
+    const userId = headerUserId(req); 
   const inputDate = today();
   const results = [];
   try {
@@ -2909,11 +2977,12 @@ exports.addCustomNotes = async (req, res) => {
         const q3 =
           `INSERT INTO cart_item_modifier (
             presence, inputDate, updateDate,  
-            cartId , note, cartItemId
+            cartId , note, cartItemId,
+            updateBy, inputBy
           )
           VALUES (
             1, '${inputDate}', '${inputDate}',  
-            '${cartId}', '${model['note']}', ${row['id']}
+            '${cartId}', '${model['note']}', ${row['id']}, ${userId}, ${userId}
           )`;
         const [result3] = await db.query(q3);
         if (result3.affectedRows === 0) {
@@ -2940,7 +3009,7 @@ exports.addCustomNotesDetail = async (req, res) => {
   const cartId = req.body['cartId'];
   const model = req.body['model'];
   const items = req.body['items'];
-
+    const userId = headerUserId(req); 
   const inputDate = today();
   const results = [];
   try {
@@ -2949,11 +3018,12 @@ exports.addCustomNotesDetail = async (req, res) => {
       const q3 =
         `INSERT INTO cart_item_modifier (
             presence, inputDate, updateDate,  
-            cartId , note, cartItemId
+            cartId , note, cartItemId,
+            updateBy, inputBy
           )
           VALUES (
             1, '${inputDate}', '${inputDate}',  
-            '${cartId}', '${model['note']}', ${row['id']}
+            '${cartId}', '${model['note']}', ${row['id']}, ${userId}, ${userId}
           )`;
       const [result3] = await db.query(q3);
       if (result3.affectedRows === 0) {
