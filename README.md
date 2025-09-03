@@ -1,27 +1,72 @@
-# Admin1801
+# POS Restaurant (Localhost, Server, Exe)
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.0.7.
+Here are the steps to install and run this application.  
+Global settings are in the **.env** file (set according to your server, port, and database).
 
-## Development server
+## Prerequisites for Windows
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+1. **Install Node.js v22.x or higher (LTS recommended)**  
+    [Download Node.js](https://nodejs.org/en)
+2. **Install MySQL user friendly**  
+    [Download XAMPP](https://www.apachefriends.org/)
 
-## Code scaffolding
+    [mysql editor] (https://www.heidisql.com/)
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+#### Clone or Download the Project
 
-## Build
+1. **Install GitHub Command Line**  
+    [Download GitHub CLI](https://cli.github.com/)  
+    Enter your project folder.  
+    Open Command Line (cmd) in Windows, set it in the system variable, and check with `git version`.
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+2. **Clone the repository**  
+    Run the following command in your project folder:
+    ```
+    git clone https://github.com/reynave/pos-restaurant-18.0.1
+    ```
+    Or download manually (without GitHub):
+    1. Download (click CODE, then Download ZIP)
+    2. Extract the *.zip file
+    3. Continue to **SERVER INSTALLATION**
 
-## Running unit tests
+#### Install SERVER
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Open **CMD / Command Prompt / Windows PowerShell** and navigate to your current project folder  
+*Example: c:\nodejs\server\ (your current project folder)*
+```
+c:\nodejs\server\npm install
+c:\nodejs\server\npm i nodemon
+```
 
-## Running end-to-end tests
+#### Install LOCALHOST
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+Open **CMD / Command Prompt / Windows PowerShell** and navigate to your current project folder  
+*Example: c:\nodejs\localhost\ (your current project folder)*
+```
+c:\nodejs\localhost\npm install
+c:\nodejs\localhost\npm i nodemon
+```
 
-## Further help
+# Run Server
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+### 1. For DEVELOPMENT / UAT / Testing
+```
+node index.js
+```
+OR  
+Using nodemon (install first: https://www.npmjs.com/package/nodemon)  
+```npm install -g nodemon```
+
+```
+nodemon index.js
+```
+
+### 2. For Production (**PM2** is required)  
+https://pm2.keymetrics.io/
+
+### 3. Update Patch Code - Only with GitHub CMD
+```
+git pull
+```
+In the current folder (see step 2: Clone the repository)  
+Or, without GitHub, just overwrite the folder and files.
