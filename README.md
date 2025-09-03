@@ -29,13 +29,17 @@ Global settings are in the **.env** file (set according to your server, port, an
     2. Extract the *.zip file
     3. Continue to **SERVER INSTALLATION**
 
-#### Install SERVER
+
+# Install SERVER
+Using nodemon (install first: https://www.npmjs.com/package/nodemon)  
+```npm install -g nodemon```
+
 
 Open **CMD / Command Prompt / Windows PowerShell** and navigate to your current project folder  
 *Example: c:\nodejs\server\ (your current project folder)*
 ```
 c:\nodejs\server\npm install
-c:\nodejs\server\npm i nodemon
+c:\nodejs\server\nodemon server.js
 ```
 
 #### Install LOCALHOST
@@ -44,27 +48,15 @@ Open **CMD / Command Prompt / Windows PowerShell** and navigate to your current 
 *Example: c:\nodejs\localhost\ (your current project folder)*
 ```
 c:\nodejs\localhost\npm install
-c:\nodejs\localhost\npm i nodemon
+c:\nodejs\localhost\nodemon host.js
 ```
 
-# Run Server
-
-### 1. For DEVELOPMENT / UAT / Testing
-```
-node index.js
-```
-OR  
-Using nodemon (install first: https://www.npmjs.com/package/nodemon)  
-```npm install -g nodemon```
-
-```
-nodemon index.js
-```
-
-### 2. For Production (**PM2** is required)  
+# Run Server Production
+ 
+###  **PM2** is required
 https://pm2.keymetrics.io/
 
-### 3. Update Patch Code - Only with GitHub CMD
+###  Update Patch Code - Only with GitHub CMD
 ```
 git pull
 ```
