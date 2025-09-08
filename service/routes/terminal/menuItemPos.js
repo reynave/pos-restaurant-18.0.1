@@ -15,11 +15,14 @@ router.post('/updateQty', menuItemPos.updateQty);
 router.post('/voidItem', menuItemPos.voidItem);
 router.post('/addToItemModifier', menuItemPos.addToItemModifier);
 router.post('/addDiscountGroup', menuItemPos.addDiscountGroup);
+router.post('/lockTable', menuItemPos.lockTable);
+router.post('/clearLockTable', menuItemPos.clearLockTable);
 
 
 router.get('/printQueue', menuItemPos.printQueue);
 router.post('/sendOrder', menuItemPos.sendOrder);
-router.post('/exitWithoutOrder', menuItemPos.exitWithoutOrder);
+router.post('/exitWithoutOrder', menuItemPos.exitWithoutOrder); 
+router.post('/voidTransacton', menuItemPos.voidTransacton);
 router.post('/updateCover', menuItemPos.updateCover);
 
 

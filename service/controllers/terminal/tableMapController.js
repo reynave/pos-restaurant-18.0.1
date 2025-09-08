@@ -1,5 +1,5 @@
 const db = require('../../config/db');
-const { today, convertCustomDateTime,  parseTimeString, addTime  } = require('../../helpers/global');
+const { headerUserId, today, convertCustomDateTime, parseTimeString, addTime } = require('../../helpers/global');
 const { autoNumber } = require('../../helpers/autoNumber');
 
 exports.getAllData = async (req, res) => {
@@ -27,7 +27,7 @@ exports.getAllData = async (req, res) => {
       SELECT 
         c.*, s.name AS 'tableMapStatus',  
         TIMESTAMPDIFF(MINUTE,  overDue, NOW()) AS overdueMinute,
-        s.bgn, s.color
+        s.bgn, s.color, c.lockBy
       FROM cart AS c
       LEFT JOIN outlet_table_map_status AS s ON c.tableMapStatusId = s.id 
       WHERE c.close  = 0 AND c.presence = 1 AND c.outletId = ${outletId}
@@ -71,6 +71,7 @@ exports.getAllData = async (req, res) => {
           x['cardId'] = cart[index]['id'];
           x['totalItem'] = cart[index]['totalItem'];
           x['cover'] = cart[index]['cover'];
+          x['lockBy'] = cart[index]['lockBy'] ? cart[index]['lockBy'] : '';
 
 
           if (cart[index]['overdueMinute'] > 0) {
@@ -181,7 +182,7 @@ exports.newOrder = async (req, res) => {
   const outletId = req.body['outletId'];
   const inputDate = today();
   const results = [];
-     const userId = headerUserId(req); 
+  const userId = headerUserId(req);
   try {
     const q = `
     SELECT  count(c.close) AS 'total' 
@@ -193,11 +194,11 @@ exports.newOrder = async (req, res) => {
     console.log(q);
     const [rows] = await db.query(q);
     const total = rows[0]?.total || 0; // gunakan optional chaining biar aman
-    const { insertId } = await autoNumber('cart');
+    const { insertId } = await autoNumber('order');
 
     const originalDate = inputDate;
 
- 
+
     const [outlet] = await db.query(`SELECT overDue FROM outlet   WHERE  id = ${outletId}`);
     const timeToAdd = outlet[0]['overDue'];
 
@@ -219,7 +220,7 @@ exports.newOrder = async (req, res) => {
         VALUES (1, '${inputDate}', 10, ${model['outletTableMapId']}, 
           ${model['cover']},  '${insertId}',  ${outletId}, '${dailyCheckId}',
           '${inputDate}', '${inputDate}' , '${overDue}', ${userId}, ${userId})`;
-          console.log(a)
+      console.log(a)
       const [newOrder] = await db.query(a);
       if (newOrder.affectedRows === 0) {
         results.push({ status: 'not found' });
@@ -250,7 +251,7 @@ exports.newOrder = async (req, res) => {
 exports.postDelete = async (req, res) => {
   // const { id, name, position, email } = req.body;
   const data = req.body;
-    const userId = headerUserId(req); 
+  const userId = headerUserId(req);
   // res.json({
   //   body: req.body, 
   // });

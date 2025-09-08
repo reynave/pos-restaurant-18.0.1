@@ -3,6 +3,7 @@ const { headerUserId, mapUpdateByName, today, convertCustomDateTime, formatDateT
 const { autoNumber } = require('../../helpers/autoNumber');
 const { taxScUpdate, scUpdate, taxUpdate } = require('../../helpers/bill');
 const { logger } = require('./userLogController');
+
 exports.getMenuItem = async (req, res) => {
   let i = 1;
   let employeeAuthLevelId = 0;
@@ -426,11 +427,11 @@ exports.cart = async (req, res) => {
     `;
 
     const [table] = await db.query(q2);
-     
+
     const tableRow = await mapUpdateByName(db, table);
 
-    
-    res.json({ 
+
+    res.json({
       table: tableRow,
       items: formattedRows,
       sendOrder: sendOrder,
@@ -620,7 +621,7 @@ exports.cartOrdered = async (req, res) => {
 exports.addToCart = async (req, res) => {
   const menu = req.body['menu'];
   const cartId = req.body['id'];
-  const userId = headerUserId(req); 
+  const userId = headerUserId(req);
   let inputDate = today();
   const results = [];
   try {
@@ -854,7 +855,7 @@ exports.addToCart = async (req, res) => {
 
 exports.updateQty = async (req, res) => {
   // const { id, name, position, email } = req.body;
- const userId = headerUserId(req); 
+  const userId = headerUserId(req);
   const model = req.body['model'];
   const item = req.body['item'];
   const cartId = req.body['cartId'];
@@ -1085,7 +1086,7 @@ exports.updateQty = async (req, res) => {
 
 exports.updateCover = async (req, res) => {
   // const { id, name, position, email } = req.body;
-  const userId = headerUserId(req); 
+  const userId = headerUserId(req);
   const model = req.body['model'];
   const cartId = req.body['cartId'];
 
@@ -1105,7 +1106,77 @@ exports.updateCover = async (req, res) => {
     if (result.affectedRows === 0) {
       results.push({ status: 'not found' });
     } else {
-      results.push({ status: 'UPDATE updated' }); 
+      results.push({ status: 'UPDATE updated' });
+    }
+
+    res.status(201).json({
+      error: false,
+      results: results
+    });
+
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database update error', details: err.message });
+  }
+};
+
+exports.lockTable = async (req, res) => { 
+  const userId = headerUserId(req); 
+  const cartId = req.body['cartId'];
+   const terminalId = req.body['terminalId'];
+
+  let inputDate = today();
+  const results = [];
+  
+  try {
+
+    const q = `UPDATE cart
+        SET
+          lockBy = '${terminalId}', 
+          updateDate = '${today()}',
+          updateBy = ${userId}
+      WHERE  id = '${cartId}' `; 
+    const [result] = await db.query(q);
+    if (result.affectedRows === 0) {
+      results.push({ status: 'not found' });
+    } else {
+      results.push({ status: 'UPDATE updated' });
+    }
+
+    res.status(201).json({
+      error: false,
+      results: results
+    });
+
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database update error', details: err.message });
+  }
+};
+
+exports.clearLockTable = async (req, res) => { 
+  const userId = headerUserId(req); 
+  const cartId = req.body['cartId'];
+
+ 
+  const results = [];
+  
+  try {
+
+    const q = `UPDATE cart
+        SET
+          lockBy = '', 
+          updateDate = '${today()}',
+          updateBy = ${userId}
+      WHERE  id = '${cartId}' `;
+    console.log(userId, q)
+    const [result] = await db.query(q);
+    if (result.affectedRows === 0) {
+      results.push({ status: 'not found' });
+    } else {
+      results.push({ status: 'UPDATE updated' });
     }
 
     res.status(201).json({
@@ -1122,7 +1193,7 @@ exports.updateCover = async (req, res) => {
 
 exports.voidItem = async (req, res) => {
   // const { id, name, position, email } = req.body;
-const userId = headerUserId(req); 
+  const userId = headerUserId(req);
   const data = req.body['cart'];
   const cartId = req.body['cartId'];
 
@@ -1207,7 +1278,7 @@ const userId = headerUserId(req);
 
 exports.addToItemModifier = async (req, res) => {
   const data = req.body['cart'];
-  const userId = headerUserId(req); 
+  const userId = headerUserId(req);
   const modifiers = req.body['modifiers'];
   const cartId = req.body['cartId'];
 
@@ -1311,7 +1382,7 @@ exports.addToItemModifier = async (req, res) => {
 };
 
 exports.addDiscountGroup = async (req, res) => {
-  const userId = headerUserId(req); 
+  const userId = headerUserId(req);
   const cart = req.body['cart'];
   const cartOrdered = req.body['cartOrdered'];
   const remark = req.body['remark'];
@@ -1724,7 +1795,7 @@ exports.getModifier = async (req, res) => {
     // Loop dengan for...of agar bisa pakai await
     for (const row of formattedRows) {
       const [detail] = await db.query(`
-        SELECT id, descl, descm,descs, price${i}  as 'price' ,printing, modifierGroupId
+        SELECT id, descl, descm,descs, price${i}  as 'price' ,printing, modifierGroupId, 0 as checkBox
         FROM modifier
         where modifierListId = ?
         order by sorting ASC
@@ -1748,7 +1819,7 @@ exports.getModifier = async (req, res) => {
 
 exports.voidItemDetail = async (req, res) => {
   // const { id, name, position, email } = req.body;
-const userId = headerUserId(req); 
+  const userId = headerUserId(req);
   const data = req.body['cart'];
   const cartId = req.body['cartId'];
 
@@ -1793,7 +1864,7 @@ const userId = headerUserId(req);
 };
 
 exports.addModifier = async (req, res) => {
-  const userId = headerUserId(req); 
+  const userId = headerUserId(req);
   const data = req.body['cart'];
   const menu = req.body['menu'];
   const cartId = req.body['id'];
@@ -1866,7 +1937,7 @@ exports.addModifier = async (req, res) => {
 
 exports.removeDetailModifier = async (req, res) => {
   // const { id, name, position, email } = req.body;
-const userId = headerUserId(req); 
+  const userId = headerUserId(req);
   const data = req.body['cart'];
   const cartId = req.body['cartId'];
 
@@ -1930,7 +2001,7 @@ const userId = headerUserId(req);
 
 exports.printQueue = async (req, res) => {
   // const { id, name, position, email } = req.body;
-  const userId = headerUserId(req); 
+  const userId = headerUserId(req);
   const results = [];
   const sendOrder = req.query.sendOrder;
   try {
@@ -2043,14 +2114,17 @@ exports.printQueue = async (req, res) => {
 
 exports.sendOrder = async (req, res) => {
   // const { id, name, position, email } = req.body;
-  const userId = headerUserId(req); 
+  const userId = headerUserId(req);
   const cartId = req.body['cartId'];
+  const tableSendOrder = req.body['tableSendOrder'];
+
 
   const inputDate = today();
   const results = [];
   const { insertId } = await autoNumber('sendOrder');
   const sendOrder = insertId;
   try {
+ 
 
     const q1 = `
     UPDATE cart SET
@@ -2113,6 +2187,24 @@ exports.sendOrder = async (req, res) => {
     }
 
 
+    if (tableSendOrder == 0) {
+      const { insertId } = await autoNumber('cart');
+      console.log("newIdCart", insertId);
+      const q2 = `
+      UPDATE cart SET
+        id =  '${insertId}', 
+        sendOrder = 1,
+        updateDate = '${today()}',
+        updateBy = ${userId}
+      WHERE id = ${cartId} and sendOrder = 0`;
+      const [result2] = await db.query(q2);
+      if (result2.affectedRows === 0) {
+        results.push({ insertId, status: 'not found', });
+      } else {
+        results.push({ insertId, status: 'newIdCart updated', });
+      }
+    }
+
 
     res.status(201).json({
       error: false,
@@ -2131,17 +2223,78 @@ exports.sendOrder = async (req, res) => {
 exports.exitWithoutOrder = async (req, res) => {
   // const { id, name, position, email } = req.body;
   const results = [];
-  const userId = headerUserId(req); 
+  const userId = headerUserId(req);
   const cartId = req.body['cartId'];
   try {
+ 
+      const a = `
+      UPDATE cart SET
+        void = 1,
+        close = 1,
+        tableMapStatusId = 42,
+        endDate =  '${today()}', 
+        updateDate = '${today()}',
+        updateBy = ${userId}
+      WHERE id = '${cartId}' and sendOrder != 1 `;
+      const [resulta] = await db.query(a);
 
-    const b = `
-    SELECT count(id) as 'total' FROM cart_item   
-    WHERE cartId = '${cartId}' AND sendOrder != '' `;
-    const [cart] = await db.query(b);
+      if (resulta.affectedRows === 0) {
+        results.push({ cartId, status: 'not found', });
+      } else {
+        results.push({ cartId, status: 'cart updated', });
+      }
 
-    if (cart[0]['total'] > 0) {
 
+      const q = `
+      UPDATE cart_item SET
+        void  = 1, 
+        updateDate = '${today()}',
+        updateBy = ${userId}
+      WHERE cartId = '${cartId}' and sendOrder = '' `;
+      const [result] = await db.query(q); 
+      if (result.affectedRows === 0) {
+        results.push({ cartId, status: 'not found', });
+      } else {
+        results.push({ cartId, status: 'cart_item updated', });
+      }
+
+
+      const a5 = `
+      UPDATE cart_item_modifier SET
+        void = 1,
+        updateDate = '${today()}',
+        updateBy = ${userId}
+      WHERE cartId = '${cartId}'  and sendOrder = '' `;
+      const [result5] = await db.query(a5);
+
+      if (result5.affectedRows === 0) {
+        results.push({ cartId, status: 'not found', });
+      } else {
+        results.push({ cartId, status: 'cart_item adjustItemsId = "DELETE"  updated', });
+      }
+ 
+
+    res.status(201).json({
+      error: false,
+      results: results,
+      message: 'cart_item close Order',
+    });
+
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database update error', details: err.message });
+  }
+};
+
+exports.voidTransacton = async (req, res) => {
+  // const { id, name, position, email } = req.body;
+  const results = [];
+  const userId = headerUserId(req);
+  const cartId = req.body['cartId'];
+  try {
+ 
+   
       const a = `
       UPDATE cart SET
         void = 1,
@@ -2165,9 +2318,8 @@ exports.exitWithoutOrder = async (req, res) => {
         void  = 1, 
         updateDate = '${today()}',
         updateBy = ${userId}
-      WHERE cartId = '${cartId}' `;
-      const [result] = await db.query(q);
-
+      WHERE cartId = '${cartId}'  `;
+      const [result] = await db.query(q); 
       if (result.affectedRows === 0) {
         results.push({ cartId, status: 'not found', });
       } else {
@@ -2180,7 +2332,7 @@ exports.exitWithoutOrder = async (req, res) => {
         void = 1,
         updateDate = '${today()}',
         updateBy = ${userId}
-      WHERE cartId = '${cartId}' `;
+      WHERE cartId = '${cartId}'   `;
       const [result5] = await db.query(a5);
 
       if (result5.affectedRows === 0) {
@@ -2190,41 +2342,7 @@ exports.exitWithoutOrder = async (req, res) => {
       }
 
 
-    } else {
-      const a = `
-        DELETE FROM cart  
-        WHERE id = '${cartId}' `;
-      const [resulta] = await db.query(a);
-
-      if (resulta.affectedRows === 0) {
-        results.push({ cartId, status: 'not found', });
-      } else {
-        results.push({ cartId, status: 'cart updated', });
-      }
-
-      const a2 = `
-        DELETE FROM cart_item  
-        WHERE cartId = '${cartId}' `;
-      const [resulta2] = await db.query(a2);
-
-      if (resulta2.affectedRows === 0) {
-        results.push({ cartId, status: 'not found', });
-      } else {
-        results.push({ cartId, status: 'cart updated', });
-      }
-
-      const a3 = `
-        DELETE FROM cart_item_modifier  
-        WHERE cartId = '${cartId}' `;
-      const [resulta3] = await db.query(a3);
-
-      if (resulta2.affectedRows === 0) {
-        results.push({ cartId, status: 'not found', });
-      } else {
-        results.push({ cartId, status: 'cart updated', });
-      }
-
-    }
+     
 
     res.status(201).json({
       error: false,
@@ -2379,7 +2497,7 @@ exports.transferItemsGroup = async (req, res) => {
 
 
 exports.transferTable = async (req, res) => {
-  const userId = headerUserId(req); 
+  const userId = headerUserId(req);
   const table = req.body['table'];
   const cart = req.body['cart'];
   const itemsTransfer = req.body['itemsTransfer'];
@@ -2467,12 +2585,12 @@ exports.transferTable = async (req, res) => {
           cartId = '${cartId}',  
           updateDate = '${today()}',
           updateBy = ${userId}
-        WHERE cartId = '${cart['id']}' AND menuId = ${menuId} `; 
+        WHERE cartId = '${cart['id']}' AND menuId = ${menuId} `;
       const [result] = await db.query(q0);
       if (result.affectedRows === 0) {
-        results.push({   status: 'not found' });
+        results.push({ status: 'not found' });
       } else {
-        results.push({  status: 'PRINTER KITCHEN CHANGE BILL updated' });
+        results.push({ status: 'PRINTER KITCHEN CHANGE BILL updated' });
       }
       // END >> PRINTER KITCHEN CHANGE BILL
 
@@ -2622,7 +2740,7 @@ exports.transferLog = async (req, res) => {
 exports.takeOut = async (req, res) => {
   const cart = req.body['cart'];
   const cartOrdered = req.body['cartOrdered'];
-  const userId = headerUserId(req); 
+  const userId = headerUserId(req);
   const cartId = req.body['cartId'];
 
   const inputDate = today();
@@ -2808,7 +2926,7 @@ exports.mergerCheck = async (req, res) => {
   const dailyCheckId = req.body['dailyCheckId'];
   const inputDate = today();
   const results = [];
-    const userId = headerUserId(req); 
+  const userId = headerUserId(req);
   try {
 
 
@@ -2865,7 +2983,7 @@ exports.mergerCheck = async (req, res) => {
       results.push({ status: 'cart updated' });
     }
 
- 
+
     // LOG
     let q =
       `INSERT INTO cart_merge_log (
@@ -2958,7 +3076,7 @@ exports.addCustomNotes = async (req, res) => {
   const cartId = req.body['cartId'];
   const model = req.body['model'];
   const items = req.body['items'];
-    const userId = headerUserId(req); 
+  const userId = headerUserId(req);
   const inputDate = today();
   const results = [];
   try {
@@ -3009,7 +3127,7 @@ exports.addCustomNotesDetail = async (req, res) => {
   const cartId = req.body['cartId'];
   const model = req.body['model'];
   const items = req.body['items'];
-    const userId = headerUserId(req); 
+  const userId = headerUserId(req);
   const inputDate = today();
   const results = [];
   try {
