@@ -2,6 +2,8 @@ const db = require('../../config/db');
 const net = require('net');
 const { formatDateTime, formatCurrency, formatLine, centerText } = require('../../helpers/global');
 const { cart } = require('../../helpers/bill');
+const { sendOrder } = require('../../helpers/sendOrder');
+
 const { printToPrinter } = require('../../helpers/printer'); // arahkan ke path file yg kamu punya
 
 const fs = require('fs');
@@ -18,7 +20,9 @@ exports.tableChecker = async (req, res) => {
 
   try {
     const cartId = req.query.id;
-    const data = await cart(cartId);
+    const so = req.query.so;
+    
+    const data = await sendOrder(so);
 
     const [transactionq] = await db.query(`
       SELECT 

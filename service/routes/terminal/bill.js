@@ -12,7 +12,7 @@ router.post('/ipPrint', bill.ipPrint);
 router.get('/getCartCopyBill', bill.getCartCopyBill);      
 router.post('/copyBill', bill.copyBill);      
 
-
+router.post('/billUpdate', bill.billUpdate);
 router.get('/splitBill', bill.splitBill);   
 router.post('/updateGroup', bill.updateGroup);   
 

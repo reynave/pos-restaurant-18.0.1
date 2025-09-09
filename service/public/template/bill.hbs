@@ -2,11 +2,12 @@
 {{center company.company 50}}
 {{center company.address 50}}
 {{center company.street 50}}
-{{center company.city 50}}
-{{center company.country 50}}
+{{center company.city 50}} 
 {{center (concat "Telp :" company.tel) 50}}
 
-{{formatLine "BILL" transaction.bill 50}}
+{{center (concat "BILL " transaction.bill "." transaction.billNo) 50}}
+ 
+{{formatLine "CASHIER" transaction.employeeName 50}}
 {{formatLine "START DATE" transaction.startDate 50}}
 {{formatLine "END DATE" transaction.endDate 50}}
 {{formatLine "TABLE" transaction.tableName 50}}

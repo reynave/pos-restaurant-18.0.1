@@ -1,9 +1,9 @@
 {{!-- Set line variable --}}
 {{!-- Handlebars tidak mendukung assignment langsung, gunakan helper jika perlu --}}
-* * * Transfer Item * * *
+* * * Table Checker * * *
 TABLE : {{transaction.tableName}} | {{transaction.startDate}}
 {{#each cart}}
-{{this.total}}X {{this.name}}
+{{this.qty}}X {{this.name}}
 {{#each this.modifier}}
 - {{this.descl}}
 {{/each}}

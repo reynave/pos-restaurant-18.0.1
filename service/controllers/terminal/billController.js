@@ -1,6 +1,6 @@
 const db = require('../../config/db');
 const net = require('net');
-const { today, formatDateTime, formatCurrency, formatLine, centerText } = require('../../helpers/global');
+const { headerUserId, today, formatDateTime, formatCurrency, formatLine, centerText } = require('../../helpers/global');
 const { cart } = require('../../helpers/bill');
 const Handlebars = require("handlebars");
 
@@ -85,9 +85,9 @@ exports.getData = async (req, res) => {
 exports.printing2 = async (req, res) => {
   const templatePath = path.join(__dirname, '../../public/template/bill.ejs');
   const api = req.query.api == 'true' ? true : false;
- 
+
   try {
-  
+
     const cartId = req.query.id;
     const subgroup = !req.query.subgroup ? 1 : req.query.subgroup;
 
@@ -173,12 +173,13 @@ exports.printing = async (req, res) => {
 
     const [transaction] = await db.query(`
      SELECT 
-         c.id   , c.id as 'bill', c.void,  c.dailyCheckId, c.cover, c.outletId,
+         c.id   , c.id as 'bill', c.void,  c.dailyCheckId, c.cover, c.outletId, c.billNo,
         o.name AS 'outlet', c.startDate, c.endDate , 
-        c.close,   t.tableName, t.tableNameExt, 'UAT PERSON' as 'servedBy' 
+        c.close,   t.tableName, t.tableNameExt, 'UAT PERSON' as 'servedBy' , e.name as 'employeeName'
       FROM cart AS c
       JOIN outlet AS o ON o.id = c.outletId
       JOIN outlet_table_map AS t ON t.id = c.outletTableMapId
+      JOIN employee AS e ON e.id = c.inputBy
       WHERE c.presence = 1 AND  c.id = '${cartId}'
     `);
 
@@ -188,6 +189,7 @@ exports.printing = async (req, res) => {
 
       startDate: formatDateTime(row.startDate),
       endDate: row.close == 0 ? '' : formatDateTime(row.endDate),
+      
     }));
 
     const [outlet] = await db.query(`
@@ -285,13 +287,13 @@ exports.copyBill = async (req, res) => {
 
     const [result] = await db.query(
       `INSERT INTO cart_copy_bill (
-              cartId, presence, inputDate, inputBy) 
-            VALUES ( '${cartId}', 1, '${today()}', '0' )`
+          cartId, presence, inputDate, inputBy) 
+        VALUES ( '${cartId}', 1, '${today()}', '0' )`
     );
     if (result.affectedRows === 0) {
       results.push({ status: 'not found' });
     } else {
-      results.push({ status: 'updated' });
+      results.push({ status: 'Insert success' });
     }
 
     res.json({
@@ -304,6 +306,63 @@ exports.copyBill = async (req, res) => {
     res.status(500).json({ error: 'Database error' });
   }
 }
+
+exports.billUpdate = async (req, res) => {
+  const cartId = req.body['id'];
+  const results = [];
+  const userId = headerUserId(req);
+  try {
+ 
+    const [item] = await db.query(`
+        SELECT  count(id)+1  as 'total' FROM bill 
+        where cartId = '${cartId}'  order by inputDate Desc
+      `);
+
+    const q3 =
+      `INSERT INTO bill (
+        presence, inputDate, updateDate, 
+        cartId, no,
+        inputBy, updateBy
+      )
+      VALUES (
+        1, '${today()}', '${today()}',
+        '${cartId}', ${item[0]['total']}, 
+        ${userId}, ${userId}
+      )`;
+    const [result23] = await db.query(q3); 
+    if (result23.affectedRows === 0) {
+      results.push({ status: 'not found' });
+    } else {
+      results.push({ status: 'BILL INSERT' });
+    }
+
+
+    const q2 = `UPDATE cart
+      SET
+        billNo =  ${item[0]['total']}, 
+        tableMapStatusId = 13, 
+        updateDate = '${today()}',
+        updateBy = ${userId}
+      WHERE  id = '${cartId}'`;
+    const [result2] = await db.query(q2);
+
+    if (result2.affectedRows === 0) {
+      results.push({ status: 'not found' });
+    } else {
+      results.push({ status: 'cart updated' });
+    }
+
+    res.json({
+      error: false,
+      get: req.query
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+}
+
 
 
 exports.ipPrint = async (req, res) => {

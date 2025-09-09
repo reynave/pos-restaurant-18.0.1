@@ -198,12 +198,14 @@ async function cart(cartId = '', subgroup = 0) {
     });
 
 
-
+ const [billVersion] = await db.query(`   
+        SELECT no  FROM  bill WHERE cartId = '${cartId}' ORDER BY no DESC LIMIT 1
+    `);
 
 
     return {
         cart: formattedRows,
-
+        billVersion: billVersion[0] ? billVersion[0]['no'] : 0,
         itemTotal: itemTotal,
         fixDiscountGroup: fixDiscountGroup,
         discountGroup: discountGroup,

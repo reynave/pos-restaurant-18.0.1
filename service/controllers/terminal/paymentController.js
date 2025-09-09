@@ -1,5 +1,5 @@
 const db = require('../../config/db');
-const { today, formatDateOnly } = require('../../helpers/global');
+const { headerUserId, today, formatDateOnly } = require('../../helpers/global');
 const { autoNumber } = require('../../helpers/autoNumber');
 const { cart } = require('../../helpers/bill');
 
@@ -124,8 +124,7 @@ exports.cart = async (req, res) => {
 
 
 
-    res.json({
-      error: false,
+    res.json({ 
       data: data,
       results: results,
       closePayment: data['unpaid'] == 0 ? 1 : 0,

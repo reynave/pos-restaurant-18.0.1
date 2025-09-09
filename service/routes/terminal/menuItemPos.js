@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const menuItemPos = require('../../controllers/terminal/menuItemPosController');
+const menuItemFunc = require('../../controllers/terminal/menuItemFuncController');
 
 // terminal/*
 router.get('/', menuItemPos.getMenuItem);
@@ -46,6 +47,11 @@ router.post('/mergerCheck', menuItemPos.mergerCheck);
 router.get('/mergeLog', menuItemPos.mergeLog);
 router.post('/addCustomNotes', menuItemPos.addCustomNotes);
 router.post('/addCustomNotesDetail', menuItemPos.addCustomNotesDetail);
+
+
+
+router.get('/tableChecker', menuItemFunc.tableChecker);
+router.get('/tableCheckerDetail', menuItemFunc.tableCheckerDetail);
 
 
 module.exports = router;
