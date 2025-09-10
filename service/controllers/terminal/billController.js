@@ -1,7 +1,9 @@
 const db = require('../../config/db');
 const net = require('net');
 const { headerUserId, today, formatDateTime, formatCurrency, formatLine, centerText } = require('../../helpers/global');
+const { autoNumber } = require('../../helpers/autoNumber');
 const { cart } = require('../../helpers/bill');
+const { printQueueInternal } = require('../../helpers/printer');
 const Handlebars = require("handlebars");
 
 require("../../helpers/handlebarsFunction")(Handlebars);
@@ -189,7 +191,7 @@ exports.printing = async (req, res) => {
 
       startDate: formatDateTime(row.startDate),
       endDate: row.close == 0 ? '' : formatDateTime(row.endDate),
-      
+
     }));
 
     const [outlet] = await db.query(`
@@ -249,7 +251,6 @@ exports.testHbs = async (req, res) => {
     };
 
     const result = template(data);
-    console.log(result);
     res.setHeader('Content-Type', 'application/json');
     res.send(result);
   } catch (err) {
@@ -312,9 +313,9 @@ exports.billUpdate = async (req, res) => {
   const results = [];
   const userId = headerUserId(req);
   try {
- 
+
     const [item] = await db.query(`
-        SELECT  count(id)+1  as 'total' FROM bill 
+        SELECT  count(id)  as 'total' FROM bill 
         where cartId = '${cartId}'  order by inputDate Desc
       `);
 
@@ -329,7 +330,7 @@ exports.billUpdate = async (req, res) => {
         '${cartId}', ${item[0]['total']}, 
         ${userId}, ${userId}
       )`;
-    const [result23] = await db.query(q3); 
+    const [result23] = await db.query(q3);
     if (result23.affectedRows === 0) {
       results.push({ status: 'not found' });
     } else {
@@ -344,6 +345,8 @@ exports.billUpdate = async (req, res) => {
         updateDate = '${today()}',
         updateBy = ${userId}
       WHERE  id = '${cartId}'`;
+
+    console.log(q2);
     const [result2] = await db.query(q2);
 
     if (result2.affectedRows === 0) {
@@ -352,9 +355,26 @@ exports.billUpdate = async (req, res) => {
       results.push({ status: 'cart updated' });
     }
 
-    res.json({
-      error: false,
-      get: req.query
+    //  const [so] = await db.query(`
+    //     SELECT  count(id)  as 'total' FROM cart_item 
+    //     where cartId = '${cartId}'  and sendOrder = '' and presence = 1 and void = 0
+    //     order by inputDate Desc
+    //   `);
+
+
+    const a1 = `
+        SELECT  sendOrder FROM cart
+        where id = '${cartId}'   and  presence = 1 and void = 0
+        order by inputDate Desc
+      `;
+      console.log(a1);
+    const [cartTable] = await db.query(a1);
+
+
+    res.json({ 
+      billNo: item[0]['total'],
+      // emptySendOrderTotal : so[0]['total'], 
+      tableSendOrder: cartTable[0]['sendOrder'],
     });
 
   } catch (err) {
@@ -453,6 +473,96 @@ exports.updateGroup = async (req, res) => {
     res.json({
       error: false,
       get: req.query
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+}
+
+
+exports.createPayment = async (req, res) => {
+  let cartId = req.body['id'];
+  const terminalId = req.body['terminalId'];
+  const userId = headerUserId(req);
+ 
+  try {
+    const { insertId:sendOrder } = await autoNumber('sendOrder');
+    const [tableSendOrder] = await db.query(`
+      SELECT  sendOrder FROM cart
+      where id = '${cartId}'   and  presence = 1 and void = 0
+      order by inputDate Desc
+    `);
+ 
+    if (tableSendOrder[0]['sendOrder'] == 0) {
+      const { insertId } = await autoNumber('cart');
+   
+      const q2 = `
+      UPDATE cart SET
+        id =  '${insertId}', 
+        sendOrder = 1, 
+        updateDate = '${today()}',
+        updateBy = ${userId},
+        lockBy = '${terminalId}'
+      WHERE id = ${cartId} and sendOrder = 0`;
+      await db.query(q2);
+     
+      const q3 = `
+      UPDATE cart_item SET
+        cartId =  '${insertId}'
+      WHERE cartId = ${cartId}`;
+      await db.query(q3);
+
+      const q4 = `
+      UPDATE cart_item_modifier SET
+        cartId =  '${insertId}'
+      WHERE cartId = ${cartId}`;
+      await db.query(q4); 
+      
+      cartId = insertId;
+    }
+ 
+    
+  
+    const q = `
+    UPDATE cart_item SET
+      sendOrder = '${sendOrder}', 
+      updateDate = '${today()}',
+      updateBy = ${userId}
+    WHERE cartId = ${cartId}  and presence = 1 and void = 0 and sendOrder = '' `;
+    await db.query(q);
+   
+    const q2 = `
+    UPDATE cart_item_modifier SET
+      sendOrder =  '${sendOrder}', 
+      updateDate = '${today()}',
+      updateBy = ${userId}
+    WHERE cartId = ${cartId}  and presence = 1 and void = 0 and sendOrder = ''`;
+     const [result2] = await db.query(q2);
+     
+    if (result2.affectedRows !== 0 ) {
+      const q3 =
+        `INSERT INTO send_order (
+        presence, inputDate, updateDate,  
+        cartId, sendOrderDate, id,
+        inputBy, updateBy
+      )
+      VALUES (
+        1, '${today()}', '${today()}',
+        '${cartId}',  '${today()}', '${sendOrder}',
+        ${userId}, ${userId}
+      )`;
+      await db.query(q3);
+    }
+ 
+    await printQueueInternal(db, sendOrder, userId);
+ 
+
+
+    res.json({
+      error: false,
+      id: cartId
     });
 
   } catch (err) {
