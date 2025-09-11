@@ -2,19 +2,26 @@ const express = require('express');
 const router = express.Router();
 const menuItemPos = require('../../controllers/terminal/menuItemPosController');
 const menuItemFunc = require('../../controllers/terminal/menuItemFuncController');
+const c = require('../../controllers/terminal/menuItemCartController');
 
 // terminal/*
 router.get('/', menuItemPos.getMenuItem);
-router.get('/cart', menuItemPos.cart);
+
+
+
+router.get('/cart', c.cart);
+router.post('/updateQty', c.updateQty);
+
+//router.get('/cart', menuItemPos.cart);
 router.get('/menuLookUp', menuItemPos.menuLookUp);
 router.get('/selectMenuSet', menuItemPos.selectMenuSet);
 
 router.get('/cartOrdered', menuItemPos.cartOrdered);
 
 router.post('/addToCart', menuItemPos.addToCart);
-router.post('/updateQty', menuItemPos.updateQty);
-router.post('/voidItem', menuItemPos.voidItem);
-router.post('/addToItemModifier', menuItemPos.addToItemModifier);
+
+router.post('/voidItem', c.voidItem);
+router.post('/addToItemModifier', c.addToItemModifier);
 router.post('/addDiscountGroup', menuItemPos.addDiscountGroup);
 router.post('/lockTable', menuItemPos.lockTable);
 router.post('/clearLockTable', menuItemPos.clearLockTable);

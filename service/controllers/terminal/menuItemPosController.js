@@ -81,20 +81,22 @@ exports.getMenuItem = async (req, res) => {
               ELSE  0
             END AS 'scAmount' ,
 
-              (
-              SELECT COUNT(ci.id)
+              COALESCE(
+                (
+                SELECT SUM(ci.qty)
                 FROM cart_item ci
-                WHERE ci.presence = 1 
-               
-                  AND ci.adjustItemsId = m.adjustItemsId AND ci.menuId = m.id
-              )  +
-              (
-              SELECT COUNT(cim.id)
+                WHERE ci.presence = 1
+                    AND ci.adjustItemsId = m.adjustItemsId AND ci.menuId = m.id
+                ), 0
+            ) +
+            COALESCE(
+                (
+                SELECT SUM(cim.menuSetQty)
                 FROM cart_item_modifier cim
-                WHERE cim.presence = 1 
-              
-                  AND cim.menuSetadjustItemsId = m.adjustItemsId AND cim.menuSetmenuId = m.id
-              ) AS usedQty
+                WHERE cim.presence = 1
+                    AND cim.menuSetadjustItemsId = m.adjustItemsId AND cim.menuSetmenuId = m.id
+                ), 0
+            ) AS usedQty
         FROM menu AS m
         LEFT JOIN menu_tax_sc AS t ON t.id = m.menuTaxScId
         WHERE 
@@ -215,20 +217,24 @@ exports.selectMenuSet = async (req, res) => {
   try {
     const q1 = `
        SELECT   m.id,  m.name, s.minQty, s.maxQty, m.adjustItemsId,
-        m.qty - ( (
-           SELECT COUNT(ci.id)
-            FROM cart_item ci
-            WHERE ci.presence = 1 
-             
-              AND ci.adjustItemsId = m.adjustItemsId AND ci.menuId = m.id
-          )  +
-          (
-           SELECT COUNT(cim.id)
-            FROM cart_item_modifier cim
-            WHERE cim.presence = 1 
-              
-              AND cim.menuSetadjustItemsId = m.adjustItemsId AND cim.menuSetmenuId = m.id
-  )) AS currentQty, 0 as 'select'
+        m.qty - ( COALESCE(
+                (
+                SELECT SUM(ci.qty)
+                FROM cart_item ci
+                WHERE ci.presence = 1
+                    AND ci.adjustItemsId = m.adjustItemsId AND ci.menuId = m.id
+                ), 0
+            ) +
+            COALESCE(
+                (
+                SELECT SUM(cim.menuSetQty)
+                FROM cart_item_modifier cim
+                WHERE cim.presence = 1
+                    AND cim.menuSetadjustItemsId = m.adjustItemsId AND cim.menuSetmenuId = m.id
+                ), 0
+            )) AS currentQty, 
+         
+        0 as 'select'
         FROM menu_set AS s
         JOIN menu AS m ON m.id = s.detailMenuId
         WHERE s.menuId = ${itemId} 
@@ -248,7 +254,7 @@ exports.selectMenuSet = async (req, res) => {
 }
 
 
-exports.cart = async (req, res) => {
+exports.cart_DEL = async (req, res) => {
   const i = 1;
   try {
     const cartId = req.query.id;
@@ -855,237 +861,7 @@ exports.addToCart = async (req, res) => {
   }
 };
 
-exports.updateQty = async (req, res) => {
-  // const { id, name, position, email } = req.body;
-  const userId = headerUserId(req);
-  const model = req.body['model'];
-  const item = req.body['item'];
-  const cartId = req.body['cartId'];
-
-  let inputDate = today();
-  const results = [];
-
-  try {
-    const newQty = model.newQty;
-    const currentQty = item['total'];
-
-    const [row] = await db.query(
-      `
-        SELECT * FROM cart_item
-          WHERE cartId = '${cartId}'  AND  presence = 1 AND void = 0
-          AND  menuId= ${item['menuId']}  
-          and sendOrder = ''
-        ORDER BY inputDate ASC
-        LIMIT 1
-        `
-    );
-    inputDate = formatDateTime(row[0]['inputDate']);
-
-    const q1 = `
-      SELECT 
-        m.id, m.name,   m.adjustItemsId,
-        m.qty -  (
-        (
-           SELECT COUNT(ci.id)
-            FROM cart_item ci
-            WHERE ci.presence = 1 
-            
-              AND ci.adjustItemsId = m.adjustItemsId AND ci.menuId = m.id
-          )  +
-          (
-           SELECT COUNT(cim.id)
-            FROM cart_item_modifier cim
-            WHERE cim.presence = 1 
-              
-              AND cim.menuSetadjustItemsId = m.adjustItemsId AND cim.menuSetmenuId = m.id
-          )
-        
-        )  AS qty
-      FROM menu AS m 
-      WHERE m.presence = 1 AND id = ${item['menuId']}
-    `;
-
-    const [row3] = await db.query(q1);
-
-    qtyMenu = row3[0]['adjustItemsId'] == '' ? 99999999 : parseInt(row3[0]['qty']);
-
-
-
-    let warning = '';
-    if (newQty > currentQty) {
-
-      for (let i = 0; i < (newQty - currentQty); i++) {
-
-        if (qtyMenu >= 1) {
-          // INSERT CART_ITEM
-          const [result] = await db.query(
-            `INSERT INTO cart_item (
-              presence, inputDate, updateDate, menuId, price, cartId,  
-              menuDepartmentId, menuCategoryId , adjustItemsId,
-              inputBy, updateBy
-            )
-            VALUES (
-              1, '${inputDate}', '${inputDate}',  ${item['menuId']},
-              ${row[0]['price']}, '${cartId}',
-              ${row[0]['menuDepartmentId']}, ${row[0]['menuCategoryId']} , '${row[0]['adjustItemsId']}',
-              ${userId}, ${userId}
-            )`
-          );
-          const cartItemId = result.insertId;
-          if (result.affectedRows === 0) {
-            results.push({ cartId, status: 'not found' });
-          } else {
-            results.push({ cartId, status: 'cart_item insert' });
-          }
-
-
-          // INSERT cart_item_modifier
-          const tt = `select * from cart_item_modifier 
-            where presence = 1 and void = 0  and cartItemId = ${row[0]['id']}  
-            and sendOrder = ''
-            `;
-
-          const [taxRow] = await db.query(tt);
-
-          for (const rec of taxRow) {
-            const j = `
-              INSERT INTO cart_item_modifier (  
-                presence, inputDate, updateDate,  
-                cartId, cartItemId, menuTaxScId, 
-                modifierId, price, priceIncluded, 
-                taxRate, taxStatus, 
-                scRate, scStatus, 
-                applyDiscount, sendOrder, menuSetMenuId, note, menuSetAdjustItemsId, remark, scTaxInclude,
-                inputBy, updateBy
-              )
-              VALUES (
-                1, '${today()}', '${today()}',
-                '${rec['cartId']}', ${cartItemId}, ${rec['menuTaxScId']}, 
-                ${rec['modifierId']}, ${rec['price']},  ${rec['priceIncluded']}, 
-                ${rec['taxRate']}, ${rec['taxStatus']},
-                ${rec['scRate']}, ${rec['scStatus']} ,
-                ${rec['applyDiscount']}, '${rec['sendOrder']}', ${rec['menuSetMenuId']}, '${rec['note']}',
-                '${rec['menuSetAdjustItemsId']}', '${rec['remark']}', ${rec['scTaxInclude']},
-                ${userId}, ${userId}
-              )`;
-
-
-            if (rec['menuSetAdjustItemsId']) {
-              const b1 = `
-                SELECT 
-                  m.id, m.adjustItemsId,
-                  m.qty - ((
-                    SELECT COUNT(ci.id)
-                    FROM cart_item ci
-                    WHERE ci.presence = 1 
-                     
-                      AND ci.adjustItemsId = m.adjustItemsId AND ci.menuId = m.id
-                  )  +
-                  (
-                    SELECT COUNT(cim.id)
-                    FROM cart_item_modifier cim
-                    WHERE cim.presence = 1 
-                      
-                      AND cim.menuSetadjustItemsId = m.adjustItemsId AND cim.menuSetmenuId = m.id
-                  )) AS 'qty' 
-                  FROM menu AS m 
-                  WHERE m.presence = 1 AND m.adjustItemsId = '${rec['menuSetAdjustItemsId']}';
-              `;
-              const [n1] = await db.query(b1);
-              if (n1[0]['qty'] > 0) {
-                const [result2] = await db.query(j);
-                if (result2.affectedRows === 0) {
-                  results.push({ cartId, status: 'not found' });
-                } else {
-                  results.push({ cartId, status: 'TAX cart_item_modifier insert' });
-                }
-              }
-
-            } else {
-              const [result2] = await db.query(j);
-              if (result2.affectedRows === 0) {
-                results.push({ cartId, status: 'not found' });
-              } else {
-                results.push({ cartId, status: 'TAX cart_item_modifier insert' });
-              }
-            }
-
-
-
-          }
-
-
-        } else {
-          warning = 'Qty items are empty!';
-          i = newQty + 1;
-        }
-        qtyMenu = qtyMenu - 1;
-      }
-    } else {
-      const limit = (currentQty - newQty);
-      for (let i = 0; i < limit; i++) {
-
-        const q = ` 
-        UPDATE cart_item  SET 
-          adjustItemsId = 'DELETE',
-          presence = 0,
-          void = 1,
-          updateBy = ${userId}
-
-        WHERE cartId = '${cartId}'  AND  presence = 1 
-          AND  menuId= ${item['menuId']}    AND sendOrder = ''
-        ORDER BY inputDate  DESC
-        LIMIT 1
-        `;
-        const [result] = await db.query(q);
-
-        if (result.affectedRows === 0) {
-          results.push({ status: 'not found' });
-        } else {
-          results.push({ status: 'cart_item insert' });
-        }
-
-      }
-
-      const q2 = ` 
-        SELECT * FROM cart_item  
-        WHERE presence = 0 AND cartId = '${cartId}'
-        `;
-      const [formattedRows] = await db.query(q2);
-      for (const row of formattedRows) {
-        const q = ` 
-        UPDATE cart_item_modifier  SET  
-          presence = 0,
-          void = 1,
-          updateBy = ${userId}
-        WHERE cartItemId = '${row['id']}' 
-        `;
-        const [result] = await db.query(q);
-
-        if (result.affectedRows === 0) {
-          results.push({ status: 'not found' });
-        } else {
-          results.push({ status: 'cart_item insert' });
-        }
-
-      }
-    }
-
-
-    res.status(201).json({
-      error: false,
-      inputDate: inputDate,
-      message: 'cart created',
-      warning: warning,
-    });
-
-
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Database update error', details: err.message });
-  }
-};
-
+ 
 exports.updateCover = async (req, res) => {
   // const { id, name, position, email } = req.body;
   const userId = headerUserId(req);
@@ -1193,7 +969,7 @@ exports.clearLockTable = async (req, res) => {
   }
 };
 
-exports.voidItem = async (req, res) => {
+exports.voidItem_DEL = async (req, res) => {
   // const { id, name, position, email } = req.body;
   const userId = headerUserId(req);
   const data = req.body['cart'];
@@ -1204,10 +980,10 @@ exports.voidItem = async (req, res) => {
 
   try {
     for (const emp of data) {
-      const { menuId, price, checkBox } = emp;
+      const { id, price, checkBox } = emp;
 
-      if (!menuId) {
-        results.push({ menuId, status: 'failed', reason: 'Missing fields' });
+      if (!id) {
+        results.push({ id, status: 'failed', reason: 'Missing fields' });
         continue;
       }
 
@@ -1218,12 +994,12 @@ exports.voidItem = async (req, res) => {
               presence = 0,
               updateDate = '${today()}',
               updateBy = ${userId}
-          WHERE menuId = ${menuId}  and cartId = '${cartId}' and sendOrder = '' `;
+          WHERE id = ${id}  and cartId = '${cartId}' and sendOrder = '' `;
         const [result] = await db.query(q);
         if (result.affectedRows === 0) {
-          results.push({ menuId, status: 'not found' });
+          results.push({ id, status: 'not found' });
         } else {
-          results.push({ menuId, status: 'cart_item updated' });
+          results.push({ id, status: 'cart_item updated' });
         }
 
 
@@ -1273,7 +1049,7 @@ exports.voidItem = async (req, res) => {
   }
 };
 
-exports.addToItemModifier = async (req, res) => {
+exports.addToItemModifier_DEL = async (req, res) => {
   const data = req.body['cart'];
   const userId = headerUserId(req);
   const modifiers = req.body['modifiers'];
