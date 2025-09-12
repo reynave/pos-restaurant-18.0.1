@@ -1,5 +1,5 @@
 :root {
-      --body-width: 1234px;
+  --body-width: 1234px;
 
   --map-width: 800px;
   --map-height: 500px;
@@ -7,15 +7,86 @@
   --wrapper-sm-width: 400px;
   --wrapper-md-width: 500px;
 
-  
-    --color-bg: #f3f6fb;
-    --color-card-shadow: rgba(0, 0, 0, 0.07);
-    --color-card-shadow-hover: rgba(0, 0, 0, 0.12);
-    --color-order-panel-bg: #fff;
-    --color-order-panel-shadow: rgba(0, 0, 0, 0.1);
-    --color-primary: #3a4a5d;
-    --color-accent: #1976d2;
-    --color-text: #3a4a5d;
-    --color-white: #ffffff;
+
+  --color-bg: #f3f6fb;
+  --color-card-shadow: rgba(0, 0, 0, 0.07);
+  --color-card-shadow-hover: rgba(0, 0, 0, 0.12);
+  --color-order-panel-bg: #fff;
+  --color-order-panel-shadow: rgba(0, 0, 0, 0.1);
+  --color-primary: #3a4a5d;
+  --color-accent: #1976d2;
+  --color-text: #3a4a5d;
+  --color-white: #ffffff;
 }
 
+
+.bg-overdue {
+  background: #e57373d4;
+  /* soft red */
+}
+
+.bg-avaliable {
+  background: #daecffd4;
+  /* teal, related to #ccd7e3 */
+}
+
+.bg-filled {
+  background: #8cc0f7d4;
+  /* soft yellow */
+}
+
+.bg-sendOrder {
+  background: #fff9c4d4;
+  /* blue, related to #ccd7e3 */
+}
+
+.bg-bill {
+  background: #b060f2d4;
+  /* amber */
+}
+
+.bg-payment {
+  background: #4fff75d4;
+  /* amber */
+}
+
+.bg-paid {
+  background: #ccd7e3d4;
+  /* main color as requested */
+}
+
+
+.text-overdue {
+  color: #e30000;
+  /* soft red */
+}
+
+.text-avaliable {
+  color: #65affe;
+  /* teal, related to #ccd7e3 */
+}
+
+.text-filled {
+  color: #2086f2;
+  /* soft yellow */
+}
+
+.text-sendOrder {
+  color: #fde400;
+  /* blue, related to #ccd7e3 */
+}
+
+.text-bill {
+  color: #b060f2;
+  /* amber */
+}
+
+.text-payment {
+  color: #60f280;
+  /* amber */
+}
+
+.text-paid {
+  color: #5987b9;
+  /* main color as requested */
+}

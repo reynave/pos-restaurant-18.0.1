@@ -342,3 +342,62 @@ time,outletId,workStationId,userId,bill,action,url,method,server
 17:43:00,Imperial Kitchen(15),0005,sa (76),,Change Map Other,http://localhost:4850/#/tables
 17:43:06,Imperial Kitchen(15),0005,sa (76),250912000427,Go to Menu,http://localhost:4850/#/tables
 17:43:06,Imperial Kitchen(15),0005,sa (76),250912000427,Menu Lookup 0,http://localhost:4850/#/menu?id=250912000427
+18:00:16,Imperial Kitchen(15),0005,sa (76),,Select Table TA2,http://localhost:4850/#/tables
+18:00:17,Imperial Kitchen(15),0005,sa (76),,New Order Imperial Kitchen(15) Cover : 4, Table : TA2(4),http://localhost:4850/#/tables
+18:00:17,Imperial Kitchen(15),0005,sa (76),000093,Go to Menu,http://localhost:4850/#/tables
+18:00:17,Imperial Kitchen(15),0005,sa (76),000093,Menu Lookup 0,http://localhost:4850/#/menu?id=000093
+18:00:18,Imperial Kitchen(15),0005,sa (76),000093,Menu Lookup 1,http://localhost:4850/#/menu?id=000093
+18:00:19,Imperial Kitchen(15),0005,sa (76),000093,Menu Lookup 3,http://localhost:4850/#/menu?id=000093
+18:00:19,Imperial Kitchen(15),0005,sa (76),000093,Add Menu MANGGO KYOTO(24) @30000.00,http://localhost:4850/#/menu?id=000093
+18:00:19,Imperial Kitchen(15),0005,sa (76),000093,Add Menu PASSION CCNT DELIGHT(25) @20000.00,http://localhost:4850/#/menu?id=000093
+18:00:19,Imperial Kitchen(15),0005,sa (76),000093,Add Menu STRAWBERRY MOJITO(26) @10000.00,http://localhost:4850/#/menu?id=000093
+18:00:22,Imperial Kitchen(15),0005,sa (76),000093,Click MODIFIER : Bar Info,http://localhost:4850/#/menu?id=000093
+18:00:25,Imperial Kitchen(15),0005,sa (76),000093,Add Modifier undefined(2) @undefined,http://localhost:4850/#/menu?id=000093
+18:00:29,Imperial Kitchen(15),0005,sa (76),000093,Modifier Custom  Notes :test123,http://localhost:4850/#/menu?id=000093
+18:00:35,Imperial Kitchen(15),0005,sa (76),000093,Void item ,http://localhost:4850/#/menu?id=000093
+18:00:35,Imperial Kitchen(15),0005,sa (76),000093,ERROR Void item ,http://localhost:4850/#/menu?id=000093
+18:02:37,Imperial Kitchen(15),0005,sa (76),000093,Void item ,http://localhost:4850/#/menu?id=000093
+18:02:37,Imperial Kitchen(15),0005,sa (76),000093,ERROR Void item ,http://localhost:4850/#/menu?id=000093
+18:03:10,Imperial Kitchen(15),0005,sa (76),000093,Void item ,http://localhost:4850/#/menu?id=000093
+18:03:10,Imperial Kitchen(15),0005,sa (76),000093,ERROR Void item ,http://localhost:4850/#/menu?id=000093
+18:03:47,Imperial Kitchen(15),0005,sa (76),000093,Void item ,http://localhost:4850/#/menu?id=000093
+18:03:47,Imperial Kitchen(15),0005,sa (76),000093,ERROR Void item ,http://localhost:4850/#/menu?id=000093
+18:05:51,Imperial Kitchen(15),0005,sa (76),000093,Menu Lookup 0,http://localhost:4850/#/menu?id=000093
+18:05:55,Imperial Kitchen(15),0005,sa (76),000093,Void item ,http://localhost:4850/#/menu?id=000093
+18:05:55,Imperial Kitchen(15),0005,sa (76),000093,ERROR Void item ,http://localhost:4850/#/menu?id=000093
+18:07:44,Imperial Kitchen(15),0005,sa (76),000093,Void item ,http://localhost:4850/#/menu?id=000093
+18:07:44,Imperial Kitchen(15),0005,sa (76),000093,ERROR Void item ,http://localhost:4850/#/menu?id=000093
+18:08:06,Imperial Kitchen(15),0005,sa (76),000093,Void item ,http://localhost:4850/#/menu?id=000093
+18:08:06,Imperial Kitchen(15),0005,sa (76),000093,ERROR Void item ,http://localhost:4850/#/menu?id=000093
+18:09:13,Imperial Kitchen(15),0005,sa (76),000093,Void item ,http://localhost:4850/#/menu?id=000093
+18:09:13,Imperial Kitchen(15),0005,sa (76),000093,ERROR Void item ,http://localhost:4850/#/menu?id=000093
+18:10:05,Imperial Kitchen(15),0005,sa (76),000093,Void item ,http://localhost:4850/#/menu?id=000093
+18:10:12,Imperial Kitchen(15),0005,sa (76),000093,Void item ,http://localhost:4850/#/menu?id=000093
+18:10:17,Imperial Kitchen(15),0005,sa (76),000093,Menu Lookup 2,http://localhost:4850/#/menu?id=000093
+18:10:18,Imperial Kitchen(15),0005,sa (76),000093,Menu Lookup 6,http://localhost:4850/#/menu?id=000093
+18:10:19,Imperial Kitchen(15),0005,sa (76),000093,Add Menu BUNCIS GRG TLR ASIN(18) @43900.00,http://localhost:4850/#/menu?id=000093
+18:10:19,Imperial Kitchen(15),0005,sa (76),000093,Add Menu JMR THU GRG LD GRM(19) @36900.00,http://localhost:4850/#/menu?id=000093
+18:10:19,Imperial Kitchen(15),0005,sa (76),000093,Add Menu ENOKI GRG LD GRM(20) @36900.00,http://localhost:4850/#/menu?id=000093
+18:10:25,Imperial Kitchen(15),0005,sa (76),000093,Void item ,http://localhost:4850/#/menu?id=000093
+18:10:25,Imperial Kitchen(15),0005,sa (76),000093,ERROR Void item ,http://localhost:4850/#/menu?id=000093
+18:10:28,Imperial Kitchen(15),0005,sa (76),000093,Void item ,http://localhost:4850/#/menu?id=000093
+18:10:28,Imperial Kitchen(15),0005,sa (76),000093,ERROR Void item ,http://localhost:4850/#/menu?id=000093
+18:11:21,Imperial Kitchen(15),0005,sa (76),000093,Void item ,http://localhost:4850/#/menu?id=000093
+18:11:25,Imperial Kitchen(15),0005,sa (76),000093,Menu Lookup 2,http://localhost:4850/#/menu?id=000093
+18:11:27,Imperial Kitchen(15),0005,sa (76),000093,Menu Lookup 6,http://localhost:4850/#/menu?id=000093
+18:11:28,Imperial Kitchen(15),0005,sa (76),000093,Menu Lookup 2,http://localhost:4850/#/menu?id=000093
+18:11:29,Imperial Kitchen(15),0005,sa (76),000093,Menu Lookup 0,http://localhost:4850/#/menu?id=000093
+18:11:30,Imperial Kitchen(15),0005,sa (76),000093,Menu Lookup 1,http://localhost:4850/#/menu?id=000093
+18:11:31,Imperial Kitchen(15),0005,sa (76),000093,Menu Lookup 3,http://localhost:4850/#/menu?id=000093
+18:11:32,Imperial Kitchen(15),0005,sa (76),000093,Add Menu MANGGO KYOTO(24) @30000.00,http://localhost:4850/#/menu?id=000093
+18:11:32,Imperial Kitchen(15),0005,sa (76),000093,Add Menu PASSION CCNT DELIGHT(25) @20000.00,http://localhost:4850/#/menu?id=000093
+18:11:32,Imperial Kitchen(15),0005,sa (76),000093,Add Menu STRAWBERRY MOJITO(26) @10000.00,http://localhost:4850/#/menu?id=000093
+18:11:34,Imperial Kitchen(15),0005,sa (76),000093,Add Menu MANGGO KYOTO(24) @30000.00,http://localhost:4850/#/menu?id=000093
+18:11:36,Imperial Kitchen(15),0005,sa (76),000093,Add Qty 5 MANGGO KYOTO,http://localhost:4850/#/menu?id=000093
+18:11:40,Imperial Kitchen(15),0005,sa (76),000093,Click MODIFIER : Bar Info,http://localhost:4850/#/menu?id=000093
+18:11:43,Imperial Kitchen(15),0005,sa (76),000093,Add Modifier undefined(2) @undefined,http://localhost:4850/#/menu?id=000093
+18:11:49,Imperial Kitchen(15),0005,sa (76),000093,Void item ,http://localhost:4850/#/menu?id=000093
+18:11:53,Imperial Kitchen(15),0005,sa (76),000093,Void item ,http://localhost:4850/#/menu?id=000093
+18:12:01,Imperial Kitchen(15),0005,sa (76),000093,Add Menu STRAWBERRY MOJITO(26) @10000.00,http://localhost:4850/#/menu?id=000093
+18:12:06,Imperial Kitchen(15),0005,sa (76),000093,Void item ,http://localhost:4850/#/menu?id=000093
+18:12:10,Imperial Kitchen(15),0005,sa (76),000093,Void item ,http://localhost:4850/#/menu?id=000093
