@@ -22,7 +22,7 @@ router.post('/addToCart', menuItemPos.addToCart);
 
 router.post('/voidItem', c.voidItem);
 router.post('/addToItemModifier', c.addToItemModifier);
-router.post('/addDiscountGroup', menuItemPos.addDiscountGroup);
+router.post('/addDiscountGroup', c.addDiscountGroup);
 router.post('/lockTable', menuItemPos.lockTable);
 router.post('/clearLockTable', menuItemPos.clearLockTable);
 
@@ -52,7 +52,7 @@ router.post('/mergerCheck', menuItemPos.mergerCheck);
 
 
 router.get('/mergeLog', menuItemPos.mergeLog);
-router.post('/addCustomNotes', menuItemPos.addCustomNotes);
+router.post('/addCustomNotes', c.addCustomNotes);
 router.post('/addCustomNotesDetail', menuItemPos.addCustomNotesDetail);
 
 

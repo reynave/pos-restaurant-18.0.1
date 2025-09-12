@@ -1155,7 +1155,7 @@ exports.addToItemModifier_DEL = async (req, res) => {
   }
 };
 
-exports.addDiscountGroup = async (req, res) => {
+exports.addDiscountGroup_DEL = async (req, res) => {
   const userId = headerUserId(req);
   const cart = req.body['cart'];
   const cartOrdered = req.body['cartOrdered'];
@@ -2756,7 +2756,7 @@ exports.mergeLog = async (req, res) => {
   }
 };
 
-exports.addCustomNotes = async (req, res) => {
+exports.addCustomNotes_DEL = async (req, res) => {
   const cartId = req.body['cartId'];
   const model = req.body['model'];
   const items = req.body['items'];

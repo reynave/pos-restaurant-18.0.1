@@ -33,4 +33,9 @@ module.exports = (Handlebars) => {
     Handlebars.registerHelper("eq", function (a, b) {
         return a === b;
     });
+
+    Handlebars.registerHelper('breakEvery50', function(text) {
+        if (!text) return '';
+        return text.replace(/(.{50})/g, '$1\n');
+    });
 };

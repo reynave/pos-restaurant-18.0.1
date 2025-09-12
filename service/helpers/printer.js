@@ -68,47 +68,45 @@ async function sendToPrinterDummy(data) {
 }
 
 async function printQueueInternal(db, sendOrder, userId) {
-   const q1 = `SELECT c.cartId, c.sendOrder,  c.menuId , c.id AS 'cartItemId',    m.descs,   m.printerGroupId,  
-        b.tableName, '' as modifier, 1 as qty, a.dailyCheckId
+   const q1 = `SELECT c.qty , c.cartId, c.sendOrder,  c.menuId , c.id AS 'cartItemId',    m.descs,   m.printerGroupId,  
+        b.tableName, '' as modifier,  a.dailyCheckId
       FROM cart_item AS c
       JOIN cart AS a ON c.cartId = a.id
       LEFT JOIN menu AS m ON m.id = c.menuId 
       LEFT JOIN outlet_table_map AS b ON b.id = a.outletTableMapId
       WHERE c.sendOrder = '${sendOrder}' `;
-    const [result] = await db.query(q1);
+    const [items] = await db.query(q1);
 
     let i = 0;
-    for (const emp of result) {
-      const { cartId, cartItemId, } = emp;
+    for (const emp of items) {
+      const {   cartItemId, } = emp;
 
-      const q2 = `SELECT  m.descs 
+      const q2 = `
+      SELECT m.descs
       FROM cart_item_modifier AS c
       LEFT JOIN modifier AS m ON m.id = c.modifierId
-      WHERE c.cartId = '${cartId}' AND c.cartItemId = ${cartItemId} AND c.modifierId != 0
-        `;
+      WHERE c.cartItemId = ${cartItemId} AND c.modifierId != 0
+
+      UNION
+
+      SELECT c.note as descs
+      FROM cart_item_modifier AS c
+      LEFT JOIN modifier AS m ON m.id = c.modifierId
+      WHERE c.cartItemId = ${cartItemId} AND c.note != ''
+      ORDER BY descs ASC
+      `;
 
       const [cart_item_modifier] = await db.query(q2);
-
       let n = 0;
       cart_item_modifier.forEach(element => {
-        result[i]['modifier'] += ((n > 0) ? ', ' : '') + element['descs'];
+        items[i]['modifier'] += ((n > 0) ? ', ' : '') + element['descs'] ; 
+
         n++
       });
       i++;
     }
 
-    const items = [];
-    for (const row of result) {
-      let getIndexById = items.findIndex((obj) => (obj.menuId === row.menuId) && (obj.modifier == row.modifier));
-
-      if (getIndexById > -1) {
-        items[getIndexById]['qty'] += 1;
-      } else {
-        items.push(row);
-      }
-
-    }
-
+     
 
     for (const row of items) {
 
@@ -128,22 +126,26 @@ async function printQueueInternal(db, sendOrder, userId) {
           dateTime: today(),
           date: date,
           time: time,
+          cartItemId: row['cartItemId'],
+          qty : row['qty'],
           descs: row['descs'],
           modifier: row['modifier'],
-        }
+        };
 
         const q11 = `
             INSERT INTO print_queue (
-                dailyCheckId, cartId,  so,
+                dailyCheckId, cartId,  so, 
+                cartItemId,
                 message,  printerId, status, 
                 inputDate, updateDate , menuId,
                 inputBy, updateBy
             ) 
           VALUES (
-            '${result[0]['dailyCheckId']}', '${row['cartId']}', '${row['sendOrder']}',
+            '${items[0]['dailyCheckId']}', '${row['cartId']}', '${row['sendOrder']}', 
+            '${row['cartItemId']}',
             '${JSON.stringify(message)}',  '${rexv['id']}',  0,
             '${today()}', '${today()}', '${row['menuId']}',
-            ${userId}, ${userId}
+             ${userId}, ${userId}
           )`;
 
         const [rest] = await db.query(q11);

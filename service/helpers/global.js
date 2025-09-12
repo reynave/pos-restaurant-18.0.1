@@ -11,6 +11,7 @@ function today() {
 
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
+
 function nextDay(addDay = 1, hour = '00:00:00') {
   var date = new Date();
 
@@ -121,7 +122,14 @@ function getBearerToken(req) {
   }
   return null;
 }
-
+function sanitizeText(text) {
+  let note = text || '';
+  // Remove single quotes, double quotes, and common SQL injection characters
+  note = note.replace(/['";\\]/g, '');
+  // Optionally, remove other special characters (keep alphanumeric and spaces)
+  note = note.replace(/[^a-zA-Z0-9\s]/g, '');
+  return note;
+}
 // ...existing code...
 function headerUserId(req) {
   const token = getBearerToken(req);
@@ -133,8 +141,8 @@ async function mapUpdateByName(db, table) {
   return Promise.all(table.map(async row => {
     let inputByName = null;
     let updateByName = null;
- 
-    
+
+
     if (row.inputBy) {
       const [userRows] = await db.query(`SELECT name FROM employee WHERE id = ${row.inputBy}`);
       inputByName = userRows.length > 0 ? userRows[0].name : null;
@@ -161,5 +169,6 @@ module.exports = {
   convertCustomDateTime,
   getBearerToken,
   headerUserId,
-  mapUpdateByName
+  mapUpdateByName,
+  sanitizeText
 };

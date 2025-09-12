@@ -16,14 +16,16 @@ exports.queue = async (req, res) => {
   try {
     // ${so ? 'AND so = "'+so+'"' : '' }
     const a = `
-        SELECT p.id, p.cartId, p.so, p.dailyCheckId, s.name as 'statusName', p.status, p.consoleError, p.inputDate,
-        r.name AS 'printer', m.name AS 'menu', p.message, p.rushPrinting
+        SELECT 
+          p.id, p.cartId, p.so, p.dailyCheckId, s.name as 'statusName', p.status, p.consoleError, p.inputDate,
+          r.name AS 'printer', m.name AS 'menu', p.message, p.rushPrinting, c.qty
         FROM print_queue  as p
-        join print_queue_status as s on s.id = p.status 
+          JOIN print_queue_status as s on s.id = p.status 
           JOIN printer AS r ON r.id = p.printerId
-          left join menu as m ON m.id = p.menuId
+          LEFT JOIN menu AS m ON m.id = p.menuId
+          LEFT JOIN cart_item AS c ON c.id = p.cartItemId
         WHERE p.presence = 1 AND  p.dailyCheckId = '${dailyCheckId}' ${cartId != 'undefined' ? 'AND p.cartId = "' + cartId + '"' : ''}
-        ORDER BY p.id DESC
+        ORDER BY c.id ASC
       `;
 
     const [formattedRows] = await db.query(a);
@@ -39,10 +41,18 @@ exports.queue = async (req, res) => {
 };
 
 exports.template = async (req, res) => {
+  const n = 33;
   // Untuk render file .hbs (Handlebars), harus pakai handlebars, bukan ejs
   const templatePath = path.join(__dirname, '../../public/template/kitchen.hbs');
 
   const itemDetail = req.body.itemDetail;
+  
+
+  // didalam itemDetail ada modifier, saya mau setiap kelipatan 50 karakter \n
+  itemDetail['modifier'] = itemDetail['modifier'].replace(new RegExp(`(.{${n}})`, 'g'), '$1\n');
+  itemDetail['descs'] = itemDetail['descs'].replace(new RegExp(`(.{${n}})`, 'g'), '$1\n');
+  
+  console.log(itemDetail);
   const rushPrinting = req.body.rushPrinting; 
 
   if (!itemDetail) {

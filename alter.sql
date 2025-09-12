@@ -34,3 +34,6 @@ ALTER TABLE `cart`
 
 ALTER TABLE `cart_item_modifier`
 	ADD COLUMN `menuSetQty` TINYINT NOT NULL DEFAULT 0 AFTER `menuSetMenuId`;
+
+ALTER TABLE `print_queue`
+	ADD COLUMN `cartItemId` INT NOT NULL DEFAULT 0 AFTER `cartId`;
