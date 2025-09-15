@@ -122,29 +122,31 @@ exports.cart = async (req, res) => {
       });
 
 
-      // buatkan function untuk menghitung total dari total + modifier
-      const calculateGrandTotal = (item) => {
-         const modifierTotal = item.modifier.reduce((acc, curr) => acc + curr.totalAmount, 0);
-         return item.totalAmount + modifierTotal;
-      };
-      items.forEach(item => {
-         item.grandTotalAmount = calculateGrandTotal(item);
-      });
-
+     
 
       // function to calculate total amount and total items
       let totalAmount = 0;
       let totalItem = 0;
 
+       // buatkan function untuk menghitung total dari total + modifier
+      const calculateGrandTotal = (item) => {
+         const modifierTotal = item.modifier.reduce((acc, curr) => acc + curr.totalAmount, 0);
+         return item.totalAmount + modifierTotal;
+      };
       items.forEach(item => {
-         totalAmount += item.totalAmount;
+         item.grandTotalAmount = calculateGrandTotal(item) 
+      });
+
+      // function to calculate total amount and total items
+      items.forEach(item => {
+         totalAmount += item.grandTotalAmount;
          totalItem += item.total;
       });
+
       // End of calculation
       res.json({
          table: tableRow,
-         items: items,
-         //modifier: modifier,
+         items: items, 
          totalAmount: totalAmount,
          totalItem: totalItem,
       });

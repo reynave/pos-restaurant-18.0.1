@@ -7,7 +7,20 @@ async function cart(cartId = '', subgroup = 0) {
     let totalItem = 0;
     let itemTotal = 0;
     //let subgroup = subgroup;
-   
+    const qOLD = `
+         SELECT t1.* , (t1.total * t1.price) as 'totalAmount', m.name , 0 as 'checkBox', '' as modifier, t1.printerId
+         FROM (
+           SELECT   c.price, c.menuId, COUNT(c.menuId) AS 'total' , m.printerId
+           FROM cart_item AS c
+           JOIN menu AS m ON m.id = c.menuId
+           WHERE c.cartId = '${cartId}' AND c.presence = 1 AND c.void  = 0  ${subgroup == 0 ? '' : ' and c.subgroup = ' + subgroup}
+           GROUP BY  c.menuId, c.price,  m.printerId
+           ORDER BY MAX(c.inputDate) ASC
+         ) AS t1
+         JOIN menu AS m ON m.id = t1.menuId 
+       `;
+
+
       const q = `
        SELECT  c.id,  c.menuId, c.price, c.qty AS 'total', c.ta, (c.qty * c.price) AS 'totalAmount', 
          m.name, 0 AS 'checkBox', 
@@ -21,62 +34,63 @@ async function cart(cartId = '', subgroup = 0) {
       `;
     const [formattedRows] = await db.query(q);
 
- 
+    for (const row of formattedRows) {
 
-      // DETAIL / MODIFIER 
-          const s = ` 
-        -- CUSTOM NOTES
-          SELECT  'MODIFIER' as 'type',  r.id, i.id AS cartItemId, r.menuTaxScId AS modifierId, r.note AS descl, r.price, 
-          NULL AS rateOrDiscount, NULL AS remark, 1 as 'modifier', 0 as 'checkBox', r.sendOrder, i.inputDate, i.inputBy, i.updateDate, i.updateBy
-          FROM cart_item  AS i
-          RIGHT JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
-          WHERE  i.cartId = '${cartId}' AND r.void = 0 AND r.presence = 1 
-          AND r.presence = 1 AND i.void = 0 AND r.modifierId = 0 AND r.note != ''
-    
-          UNION
-    
-          -- MODIFIER
-          SELECT  'MODIFIER' as 'type',  r.id, i.id AS cartItemId, r.modifierId, m.descl, r.price, 
-          NULL AS rateOrDiscount, r.remark, 1 as 'modifier', 0 as 'checkBox', r.sendOrder, i.inputDate, i.inputBy, i.updateDate, i.updateBy
-          FROM cart_item  AS i 
-          RIGHT JOIN cart_item_modifier AS r ON r.cartItemId = i.id
-          JOIN modifier AS m ON m.id = r.modifierId 
-          WHERE  i.cartId = '${cartId}' AND r.void = 0 AND r.presence = 1 
-          AND r.presence = 1 AND i.void = 0   
-    
-          UNION
-    
-          -- DISCOUNT
-          SELECT 'APPLY_DISCOUNT' as 'type',  r.id,i.id AS cartItemId, r.modifierId, d.name AS descl, r.price,
-           r.applyDiscount AS rateOrDiscount, r.remark, 1 as 'modifier', 0 as 'checkBox', r.sendOrder, i.inputDate, i.inputBy, i.updateDate, i.updateBy
-          FROM cart_item  AS i
-             JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
-             JOIN discount AS d ON d.id = r.applyDiscount
-          WHERE  i.cartId = '${cartId}' AND r.void = 0 AND r.presence = 1 
-             AND r.presence = 1 AND i.void = 0  
-     
-          `;
-          const [modifier] = await db.query(s);
-    
-    
-          // Merge detail into header
-          const items = formattedRows.map(header => {
-             const itemModifier = modifier
-                .filter(detail => detail.cartItemId === header.id)
-                .map(detail => ({ ...detail, totalAmount: detail.price * header.total, total: header.total })); // Add qty from header to each modifier
-             return { ...header, modifier: itemModifier };
-          });
+        const s = `
+            -- MODIFIER 
+           SELECT 'MODIFIER' as 'type',  COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price
+           FROM (
+             SELECT r.modifierId, m.descl, r.price
+             FROM cart_item  AS i 
+             right JOIN cart_item_modifier AS r ON r.cartItemId = i.id
+             JOIN modifier AS m ON m.id = r.modifierId 
+             WHERE i.menuId = ${row['menuId']}  
+             AND i.cartId = '${cartId}' AND i.void = 0 AND i.presence = 1
+            
+             AND r.presence = 1 AND i.void = 0   
+           ) AS t1
+           GROUP BY t1.descl, t1.price 
 
-    
+              UNION 
+        --  CUSTOM NOTES
+         SELECT 'MODIFIER' as 'type',  COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price
+           FROM (
+             SELECT r.modifierId, r.note AS 'descl', r.price
+             FROM cart_item  AS i 
+             LEFT JOIN cart_item_modifier AS r ON r.cartItemId = i.id  
+             WHERE i.menuId = ${row['menuId']}  
+             AND i.cartId = '${cartId}' AND i.void = 0 AND i.presence = 1
+            AND r.modifierId = 0 AND r.note != ''
+             AND r.presence = 1 AND i.void = 0   
+           ) AS t1
+           GROUP BY t1.descl, t1.price 
+
+           UNION  
+            -- APPLYDISCOUNT
+            SELECT 'APPLY_DISCOUNT' as 'type', COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price
+           FROM ( SELECT r.modifierId,   r.price, r.applyDiscount, d.name AS 'descl'
+             FROM cart_item  AS i
+               JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
+              JOIN discount AS d ON d.id = r.applyDiscount
+             WHERE i.menuId = ${row['menuId']}  
+             AND i.cartId = '${cartId}' AND i.void = 0 AND i.presence = 1  
+            
+             AND r.presence = 1 AND i.void = 0 
+         ) AS t1
+           GROUP BY t1.descl, t1.price    
+   ;
+         `;
+        const [modifier] = await db.query(s);
+        row.modifier = modifier; // tambahkan hasil ke properti maps 
+
+    }
 
     const [sc] = await db.query(`
         SELECT t1.*, 'SC' as 'type' , a.scNote AS 'name' FROM (
-           SELECT m.menuTaxScId,  SUM( i.qty) AS 'totalQty', 
-            sum(m.price * i.qty) AS 'totalAmount'
+            SELECT m.menuTaxScId, SUM(m.price) AS 'totalAmount', COUNT(m.menuTaxScId) AS 'totalQty'
             FROM cart_item_modifier AS m
             JOIN cart_item AS i ON i.id = m.cartItemId
-            WHERE m.presence= 1 AND m.void = 0     
-             ${subgroup == 0 ? '' : ' AND i.subgroup = ' + subgroup} 
+            WHERE m.presence= 1 AND m.void = 0    ${subgroup == 0 ? '' : ' AND i.subgroup = ' + subgroup} 
             AND m.cartId = '${cartId}'  AND m.menuTaxScId != 0 AND m.scStatus != 0
             GROUP BY m.menuTaxScId 
         )AS t1
@@ -85,12 +99,10 @@ async function cart(cartId = '', subgroup = 0) {
 
     const [tax] = await db.query(`
         SELECT t1.* , 'SC' as 'TAX' , a.taxNote AS 'name' FROM (
-            SELECT m.menuTaxScId,  SUM( i.qty) AS 'totalQty', 
-            sum(m.price * i.qty) AS 'totalAmount'
+            SELECT m.menuTaxScId, SUM(m.price) AS 'totalAmount', COUNT(m.menuTaxScId) AS 'totalQty'
             FROM cart_item_modifier AS m
             JOIN cart_item AS i ON i.id = m.cartItemId
-            WHERE m.presence= 1 AND m.void = 0 
-            ${subgroup == 0 ? '' : ' AND i.subgroup = ' + subgroup} 
+            WHERE m.presence= 1 AND m.void = 0  ${subgroup == 0 ? '' : ' AND i.subgroup = ' + subgroup} 
             AND  m.cartId = '${cartId}' AND m.menuTaxScId != 0 AND m.taxStatus != 0
             GROUP BY menuTaxScId 
         )AS t1
@@ -106,7 +118,7 @@ async function cart(cartId = '', subgroup = 0) {
         taxSc.push(element);
     });
 
-    items.forEach(element => {
+    formattedRows.forEach(element => {
         //  subTotal += parseInt(element['totalAmount']);
         totalItem += element['total'];
         itemTotal += parseInt(element['totalAmount']);
@@ -157,16 +169,15 @@ async function cart(cartId = '', subgroup = 0) {
     let [discountGroup] = await db.query(`  
         
         SELECT a.* FROM (
-  
-            SELECT d.name,
-                m.applyDiscount, i.qty AS 'qty',   d.maxDiscount,
-            SUM(m.price) * i.qty AS 'amount' ,  0 as  discAmount , d.maxDiscount+(SUM(m.price)*i.qty) AS 'def'
+
+ 			SELECT d.name,
+                m.applyDiscount, COUNT(m.applyDiscount) AS 'qty',   d.maxDiscount,
+            SUM(m.price) AS 'amount' ,  0 as  discAmount , d.maxDiscount+SUM(m.price) AS 'def'
             FROM cart_item_modifier AS m 
-            JOIN cart_item AS i ON i.id = m.cartItemId
             LEFT JOIN discount AS d ON d.id = m.applyDiscount
             WHERE m.applyDiscount != 0 AND m.cartId = '${cartId}' AND m.presence = 1 AND m.void =0
             GROUP BY m.applyDiscount,   d.maxDiscount
- 
+            
             ) AS a 
         WHERE a.amount < 0
 
@@ -206,7 +217,7 @@ async function cart(cartId = '', subgroup = 0) {
 
 
     return {
-        cart: items,
+        cart: formattedRows,
         billVersion: billVersion[0] ? billVersion[0]['no'] : 0,
         itemTotal: itemTotal,
         fixDiscountGroup: fixDiscountGroup,

@@ -7,7 +7,7 @@ exports.getAllData = async (req, res) => {
   try {
 
     const [formattedRows] = await db.query(`
-      SELECT id, outletId, desc1, null as 'maps', 0 as 'checking', image
+      SELECT id, outletId, desc1, '' as 'maps', 0 as 'checking', image
       FROM outlet_floor_plan  
       WHERE presence = 1  ${!outletId ? '' : 'AND outletId = ' + outletId}
     `);
