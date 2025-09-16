@@ -1,0 +1,307 @@
+time,outletId,workStationId,userId,bill,action,url,method,server
+13:32:26,Imperial Kitchen(15),0005,sa (76),250915000447,Go to Menu,http://localhost:4850/#/tables
+13:32:26,Imperial Kitchen(15),0005,sa (76),250915000447,Menu Lookup 0,http://localhost:4850/#/menu?id=250915000447
+13:32:30,Imperial Kitchen(15),0005,sa (76),250915000447,Exit Without Order,http://localhost:4850/#/menu?id=250915000447
+13:32:30,Imperial Kitchen(15),0005,sa (76),,Clear Lock Table,http://localhost:4850/#/menu?id=250915000447
+13:32:32,Imperial Kitchen(15),0005,sa (76),,WARNING Daily Close ?,http://localhost:4850/#/tables
+13:32:33,Imperial Kitchen(15),0005,sa (76),,Daily Close -> YES,http://localhost:4850/#/tables
+13:32:45,Imperial Kitchen(15),0005,sa (76),,Select Table TA1,http://localhost:4850/#/tables
+13:32:46,Imperial Kitchen(15),0005,sa (76),,New Order Imperial Kitchen(15) Cover : 4, Table : TA1(15),http://localhost:4850/#/tables
+13:32:46,Imperial Kitchen(15),0005,sa (76),000131,Go to Menu,http://localhost:4850/#/tables
+13:32:46,Imperial Kitchen(15),0005,sa (76),000131,Menu Lookup 0,http://localhost:4850/#/menu?id=000131
+13:34:20,Imperial Kitchen(15),0005,sa (76),000131,Menu Lookup 1,http://localhost:4850/#/menu?id=000131
+13:34:21,Imperial Kitchen(15),0005,sa (76),000131,Menu Lookup 3,http://localhost:4850/#/menu?id=000131
+13:34:22,Imperial Kitchen(15),0005,sa (76),000131,Add Menu PASSION CCNT DELIGHT(25) @20000.00,http://localhost:4850/#/menu?id=000131
+13:34:22,Imperial Kitchen(15),0005,sa (76),000131,Add Menu MANGGO KYOTO(24) @30000.00,http://localhost:4850/#/menu?id=000131
+13:34:22,Imperial Kitchen(15),0005,sa (76),000131,Add Menu STRAWBERRY MOJITO(26) @10000.00,http://localhost:4850/#/menu?id=000131
+13:34:26,Imperial Kitchen(15),0005,sa (76),000131,Add Qty 10 PASSION CCNT DELIGHT,http://localhost:4850/#/menu?id=000131
+13:34:31,Imperial Kitchen(15),0005,sa (76),000131,Add Qty 15 MANGGO KYOTO,http://localhost:4850/#/menu?id=000131
+13:34:34,Imperial Kitchen(15),0005,sa (76),000131,Add Qty 12 STRAWBERRY MOJITO,http://localhost:4850/#/menu?id=000131
+13:34:37,Imperial Kitchen(15),0005,sa (76),000131,Click BILL,http://localhost:4850/#/menu?id=000131
+13:34:48,Imperial Kitchen(15),0005,sa (76),000131,Apply Discount Group 10% POST ALL(1) @10.00%,http://localhost:4850/#/menu?id=000131
+13:34:50,Imperial Kitchen(15),0005,sa (76),000131,Click BILL,http://localhost:4850/#/menu?id=000131
+13:34:54,Imperial Kitchen(15),0005,sa (76),000131,Send Order & Print Queue,http://localhost:4850/#/menu?id=000131
+13:34:54,Imperial Kitchen(15),0005,sa (76),,Clear Lock Table,http://localhost:4850/#/menu?id=000131
+13:34:56,Imperial Kitchen(15),0005,sa (76),250916000458,Go to Menu,http://localhost:4850/#/tables
+13:34:56,Imperial Kitchen(15),0005,sa (76),250916000458,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000458
+13:34:58,Imperial Kitchen(15),0005,sa (76),250916000458,Click BILL,http://localhost:4850/#/menu?id=250916000458
+13:37:06,Imperial Kitchen(15),0005,sa (76),250916000458,Click BILL,http://localhost:4850/#/menu?id=250916000458
+13:37:29,Imperial Kitchen(15),0005,sa (76),250916000458,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000458
+13:37:34,Imperial Kitchen(15),0005,sa (76),250916000458,menu/transferItemsGroup,http://localhost:4850/#/menu?id=250916000458
+13:39:10,Imperial Kitchen(15),0005,sa (76),250916000458,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000458
+13:39:25,Imperial Kitchen(15),0005,sa (76),,Clear Lock Table,http://localhost:4850/#/menu?id=250916000458
+13:39:26,Imperial Kitchen(15),0005,sa (76),,Select Table TA2,http://localhost:4850/#/tables
+13:39:27,Imperial Kitchen(15),0005,sa (76),,New Order Imperial Kitchen(15) Cover : 4, Table : TA2(4),http://localhost:4850/#/tables
+13:39:27,Imperial Kitchen(15),0005,sa (76),000132,Go to Menu,http://localhost:4850/#/tables
+13:39:27,Imperial Kitchen(15),0005,sa (76),000132,Menu Lookup 0,http://localhost:4850/#/menu?id=000132
+13:39:29,Imperial Kitchen(15),0005,sa (76),,Clear Lock Table,http://localhost:4850/#/menu?id=000132
+13:39:32,Imperial Kitchen(15),0005,sa (76),000132,Go to Menu,http://localhost:4850/#/tables
+13:39:32,Imperial Kitchen(15),0005,sa (76),000132,Menu Lookup 0,http://localhost:4850/#/menu?id=000132
+13:39:33,Imperial Kitchen(15),0005,sa (76),000132,Menu Lookup 1,http://localhost:4850/#/menu?id=000132
+13:39:34,Imperial Kitchen(15),0005,sa (76),000132,Menu Lookup 5,http://localhost:4850/#/menu?id=000132
+13:39:35,Imperial Kitchen(15),0005,sa (76),000132,Add Menu TAHU GRG LADA GRM(23) @36900.00,http://localhost:4850/#/menu?id=000132
+13:39:35,Imperial Kitchen(15),0005,sa (76),000132,Add Menu TAHU GRG TELUR ASIN(22) @48900.00,http://localhost:4850/#/menu?id=000132
+13:39:36,Imperial Kitchen(15),0005,sa (76),000132,Add Menu SYP AYM GRG BWG PTH(21) @43900.00,http://localhost:4850/#/menu?id=000132
+13:39:37,Imperial Kitchen(15),0005,sa (76),000132,Send Order & Print Queue,http://localhost:4850/#/menu?id=000132
+13:39:37,Imperial Kitchen(15),0005,sa (76),,Clear Lock Table,http://localhost:4850/#/menu?id=000132
+13:39:39,Imperial Kitchen(15),0005,sa (76),250916000458,Go to Menu,http://localhost:4850/#/tables
+13:39:39,Imperial Kitchen(15),0005,sa (76),250916000458,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000458
+13:39:43,Imperial Kitchen(15),0005,sa (76),250916000458,Merge table with TA2 ?,http://localhost:4850/#/menu?id=250916000458
+13:39:44,Imperial Kitchen(15),0005,sa (76),250916000458,ERROR Merge to table :TA2,http://localhost:4850/#/menu?id=250916000458
+13:40:03,Imperial Kitchen(15),0005,sa (76),,Clear Lock Table,http://localhost:4850/#/menu?id=250916000458
+13:40:04,Imperial Kitchen(15),0005,sa (76),250916000459,Go to Menu,http://localhost:4850/#/tables
+13:40:04,Imperial Kitchen(15),0005,sa (76),250916000459,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000459
+13:40:14,Imperial Kitchen(15),0005,sa (76),250916000459,Popup transfer Log,http://localhost:4850/#/menu?id=250916000459
+13:40:18,Imperial Kitchen(15),0005,sa (76),250916000459,Popup transfer Log,http://localhost:4850/#/menu?id=250916000459
+14:07:48,Imperial Kitchen(15),0005,sa (76),,Clear Lock Table,http://localhost:4850/#/menu?id=250916000459
+14:07:49,Imperial Kitchen(15),0005,sa (76),,Select Table TA3,http://localhost:4850/#/tables
+14:07:50,Imperial Kitchen(15),0005,sa (76),,New Order Imperial Kitchen(15) Cover : 4, Table : TA3(3),http://localhost:4850/#/tables
+14:07:50,Imperial Kitchen(15),0005,sa (76),000133,Go to Menu,http://localhost:4850/#/tables
+14:07:50,Imperial Kitchen(15),0005,sa (76),000133,Menu Lookup 0,http://localhost:4850/#/menu?id=000133
+14:07:51,Imperial Kitchen(15),0005,sa (76),000133,Menu Lookup 1,http://localhost:4850/#/menu?id=000133
+14:07:52,Imperial Kitchen(15),0005,sa (76),000133,Menu Lookup 3,http://localhost:4850/#/menu?id=000133
+14:07:53,Imperial Kitchen(15),0005,sa (76),000133,Add Menu MANGGO KYOTO(24) @30000.00,http://localhost:4850/#/menu?id=000133
+14:07:53,Imperial Kitchen(15),0005,sa (76),000133,Add Menu PASSION CCNT DELIGHT(25) @20000.00,http://localhost:4850/#/menu?id=000133
+14:07:54,Imperial Kitchen(15),0005,sa (76),000133,Send Order & Print Queue,http://localhost:4850/#/menu?id=000133
+14:07:54,Imperial Kitchen(15),0005,sa (76),,Clear Lock Table,http://localhost:4850/#/menu?id=000133
+14:07:57,Imperial Kitchen(15),0005,sa (76),250916000460,Go to Menu,http://localhost:4850/#/tables
+14:07:57,Imperial Kitchen(15),0005,sa (76),250916000460,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000460
+14:08:03,Imperial Kitchen(15),0005,sa (76),250916000460,Merge table with TA2 ?,http://localhost:4850/#/menu?id=250916000460
+14:08:04,Imperial Kitchen(15),0005,sa (76),,Clear Lock Table,http://localhost:4850/#/menu?id=250916000460
+14:08:04,Imperial Kitchen(15),0005,sa (76),250916000460,Merge to table :TA2,http://localhost:4850/#/menu?id=250916000460
+14:08:06,Imperial Kitchen(15),0005,sa (76),250916000459,Go to Menu,http://localhost:4850/#/tables
+14:08:06,Imperial Kitchen(15),0005,sa (76),250916000459,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000459
+14:08:09,Imperial Kitchen(15),0005,sa (76),250916000459,Popup transfer Log,http://localhost:4850/#/menu?id=250916000459
+14:08:22,Imperial Kitchen(15),0005,sa (76),250916000459,Popup transfer Log,http://localhost:4850/#/menu?id=250916000459
+14:08:26,Imperial Kitchen(15),0005,sa (76),250916000459,menu/transferItemsGroup,http://localhost:4850/#/menu?id=250916000459
+14:08:30,Imperial Kitchen(15),0005,sa (76),250916000459,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000459
+14:08:44,Imperial Kitchen(15),0005,sa (76),250916000459,menu/transferItemsGroup,http://localhost:4850/#/menu?id=250916000459
+14:14:58,Imperial Kitchen(15),0005,sa (76),250916000459,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000459
+14:14:59,Imperial Kitchen(15),0005,sa (76),,Clear Lock Table,http://localhost:4850/#/menu?id=250916000459
+14:15:01,Imperial Kitchen(15),0005,sa (76),,Select Table TA3,http://localhost:4850/#/tables
+14:15:02,Imperial Kitchen(15),0005,sa (76),,New Order Imperial Kitchen(15) Cover : 4, Table : TA3(3),http://localhost:4850/#/tables
+14:15:02,Imperial Kitchen(15),0005,sa (76),000134,Go to Menu,http://localhost:4850/#/tables
+14:15:02,Imperial Kitchen(15),0005,sa (76),000134,Menu Lookup 0,http://localhost:4850/#/menu?id=000134
+14:15:03,Imperial Kitchen(15),0005,sa (76),000134,Menu Lookup 1,http://localhost:4850/#/menu?id=000134
+14:15:03,Imperial Kitchen(15),0005,sa (76),000134,Menu Lookup 3,http://localhost:4850/#/menu?id=000134
+14:15:04,Imperial Kitchen(15),0005,sa (76),000134,Add Menu STRAWBERRY MOJITO(26) @10000.00,http://localhost:4850/#/menu?id=000134
+14:15:04,Imperial Kitchen(15),0005,sa (76),000134,Add Menu PASSION CCNT DELIGHT(25) @20000.00,http://localhost:4850/#/menu?id=000134
+14:15:05,Imperial Kitchen(15),0005,sa (76),000134,Add Menu MANGGO KYOTO(24) @30000.00,http://localhost:4850/#/menu?id=000134
+14:15:07,Imperial Kitchen(15),0005,sa (76),000134,Add Qty 25 STRAWBERRY MOJITO,http://localhost:4850/#/menu?id=000134
+14:15:10,Imperial Kitchen(15),0005,sa (76),000134,Add Qty 5 PASSION CCNT DELIGHT,http://localhost:4850/#/menu?id=000134
+14:15:13,Imperial Kitchen(15),0005,sa (76),000134,Add Qty 4 MANGGO KYOTO,http://localhost:4850/#/menu?id=000134
+14:15:13,Imperial Kitchen(15),0005,sa (76),000134,Add Menu PASSION CCNT DELIGHT(25) @20000.00,http://localhost:4850/#/menu?id=000134
+14:15:14,Imperial Kitchen(15),0005,sa (76),000134,Add Menu MANGGO KYOTO(24) @30000.00,http://localhost:4850/#/menu?id=000134
+14:15:22,Imperial Kitchen(15),0005,sa (76),000134,Click MODIFIER : Bar Info,http://localhost:4850/#/menu?id=000134
+14:15:25,Imperial Kitchen(15),0005,sa (76),000134,Add Modifier undefined(2) @undefined,http://localhost:4850/#/menu?id=000134
+14:15:29,Imperial Kitchen(15),0005,sa (76),000134,Add Modifier undefined(2) @undefined,http://localhost:4850/#/menu?id=000134
+14:15:32,Imperial Kitchen(15),0005,sa (76),000134,Apply Discount Group 10% POST ALL(1) @10.00%,http://localhost:4850/#/menu?id=000134
+14:15:34,Imperial Kitchen(15),0005,sa (76),000134,Send Order & Print Queue,http://localhost:4850/#/menu?id=000134
+14:15:34,Imperial Kitchen(15),0005,sa (76),,Clear Lock Table,http://localhost:4850/#/menu?id=000134
+14:15:36,Imperial Kitchen(15),0005,sa (76),250916000461,Go to Menu,http://localhost:4850/#/tables
+14:15:36,Imperial Kitchen(15),0005,sa (76),250916000461,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000461
+14:15:40,Imperial Kitchen(15),0005,sa (76),250916000461,menu/transferItemsGroup,http://localhost:4850/#/menu?id=250916000461
+14:31:35,Imperial Kitchen(15),0005,sa (76),250916000461,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000461
+14:31:40,Imperial Kitchen(15),0005,sa (76),250916000461,menu/transferItemsGroup,http://localhost:4850/#/menu?id=250916000461
+14:59:07,Imperial Kitchen(15),0005,sa (76),250916000461,fnTransferItems,http://localhost:4850/#/menu/transferItemsGroup?id=250916000461
+15:26:09,Imperial Kitchen(15),0005,sa (76),250916000461,fnTransferItems,http://localhost:4850/#/menu/transferItemsGroup?id=250916000461
+15:26:09,Imperial Kitchen(15),0005,sa (76),250916000461,ERROR fnTransferItems,http://localhost:4850/#/menu/transferItemsGroup?id=250916000461
+15:26:46,Imperial Kitchen(15),0005,sa (76),250916000461,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000461
+15:26:47,Imperial Kitchen(15),0005,sa (76),,Clear Lock Table,http://localhost:4850/#/menu?id=250916000461
+15:26:48,Imperial Kitchen(15),0005,sa (76),250916000462,Go to Menu,http://localhost:4850/#/tables
+15:26:48,Imperial Kitchen(15),0005,sa (76),250916000462,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000462
+15:26:52,Imperial Kitchen(15),0005,sa (76),,Clear Lock Table,http://localhost:4850/#/menu?id=250916000462
+15:26:53,Imperial Kitchen(15),0005,sa (76),250916000459,Go to Menu,http://localhost:4850/#/tables
+15:26:53,Imperial Kitchen(15),0005,sa (76),250916000459,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000459
+15:26:56,Imperial Kitchen(15),0005,sa (76),250916000459,menu/transferItemsGroup,http://localhost:4850/#/menu?id=250916000459
+15:27:03,Imperial Kitchen(15),0005,sa (76),250916000459,fnTransferItems,http://localhost:4850/#/menu/transferItemsGroup?id=250916000459
+15:27:15,Imperial Kitchen(15),0005,sa (76),250916000459,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000459
+15:27:16,Imperial Kitchen(15),0005,sa (76),,Clear Lock Table,http://localhost:4850/#/menu?id=250916000459
+15:27:18,Imperial Kitchen(15),0005,sa (76),250916000462,Go to Menu,http://localhost:4850/#/tables
+15:27:18,Imperial Kitchen(15),0005,sa (76),250916000462,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000462
+15:34:07,Imperial Kitchen(15),0005,sa (76),,Clear Lock Table,http://localhost:4850/#/menu?id=250916000462
+15:34:08,Imperial Kitchen(15),0005,sa (76),250916000459,Go to Menu,http://localhost:4850/#/tables
+15:34:08,Imperial Kitchen(15),0005,sa (76),250916000459,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000459
+15:34:14,Imperial Kitchen(15),0005,sa (76),250916000459,menu/transferItemsGroup,http://localhost:4850/#/menu?id=250916000459
+15:34:20,Imperial Kitchen(15),0005,sa (76),250916000459,fnTransferItems,http://localhost:4850/#/menu/transferItemsGroup?id=250916000459
+15:34:23,Imperial Kitchen(15),0005,sa (76),250916000459,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000459
+15:34:23,Imperial Kitchen(15),0005,sa (76),,Clear Lock Table,http://localhost:4850/#/menu?id=250916000459
+15:34:25,Imperial Kitchen(15),0005,sa (76),250916000463,Go to Menu,http://localhost:4850/#/tables
+15:34:26,Imperial Kitchen(15),0005,sa (76),250916000463,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000463
+15:34:27,Imperial Kitchen(15),0005,sa (76),,Clear Lock Table,http://localhost:4850/#/menu?id=250916000463
+15:34:28,Imperial Kitchen(15),0005,sa (76),250916000459,Go to Menu,http://localhost:4850/#/tables
+15:34:28,Imperial Kitchen(15),0005,sa (76),250916000459,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000459
+15:36:16,Imperial Kitchen(15),0005,sa (76),250916000459,menu/transferItemsGroup,http://localhost:4850/#/menu?id=250916000459
+15:36:20,Imperial Kitchen(15),0005,sa (76),250916000459,fnTransferItems,http://localhost:4850/#/menu/transferItemsGroup?id=250916000459
+15:36:25,Imperial Kitchen(15),0005,sa (76),250916000459,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000459
+15:39:25,Imperial Kitchen(15),0005,sa (76),250916000459,menu/transferItemsGroup,http://localhost:4850/#/menu?id=250916000459
+15:39:30,Imperial Kitchen(15),0005,sa (76),250916000459,fnTransferItems,http://localhost:4850/#/menu/transferItemsGroup?id=250916000459
+15:39:30,Imperial Kitchen(15),0005,sa (76),250916000459,ERROR fnTransferItems,http://localhost:4850/#/menu/transferItemsGroup?id=250916000459
+15:41:34,Imperial Kitchen(15),0005,sa (76),250916000459,fnTransferItems,http://localhost:4850/#/menu/transferItemsGroup?id=250916000459
+15:42:08,Imperial Kitchen(15),0005,sa (76),250916000459,fnTransferItems,http://localhost:4850/#/menu/transferItemsGroup?id=250916000459
+15:43:04,Imperial Kitchen(15),0005,sa (76),250916000459,fnTransferItems,http://localhost:4850/#/menu/transferItemsGroup?id=250916000459
+15:47:08,Imperial Kitchen(15),0005,sa (76),250916000459,fnTransferItems,http://localhost:4850/#/menu/transferItemsGroup?id=250916000459
+15:48:37,Imperial Kitchen(15),0005,sa (76),250916000459,fnTransferItems,http://localhost:4850/#/menu/transferItemsGroup?id=250916000459
+15:52:49,Imperial Kitchen(15),0005,sa (76),250916000459,fnTransferItems,http://localhost:4850/#/menu/transferItemsGroup?id=250916000459
+15:52:51,Imperial Kitchen(15),0005,sa (76),250916000459,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000459
+15:52:52,Imperial Kitchen(15),0005,sa (76),,Clear Lock Table,http://localhost:4850/#/menu?id=250916000459
+15:52:54,Imperial Kitchen(15),0005,sa (76),250916000465,Go to Menu,http://localhost:4850/#/tables
+15:52:54,Imperial Kitchen(15),0005,sa (76),250916000465,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000465
+15:53:01,Imperial Kitchen(15),0005,sa (76),,Clear Lock Table,http://localhost:4850/#/menu?id=250916000465
+15:53:10,Imperial Kitchen(15),0005,sa (76),,Select Table TA1,http://localhost:4850/#/tables
+15:53:11,Imperial Kitchen(15),0005,sa (76),,New Order Imperial Kitchen(15) Cover : 4, Table : TA1(15),http://localhost:4850/#/tables
+15:53:11,Imperial Kitchen(15),0005,sa (76),000135,Go to Menu,http://localhost:4850/#/tables
+15:53:11,Imperial Kitchen(15),0005,sa (76),000135,Menu Lookup 0,http://localhost:4850/#/menu?id=000135
+15:53:12,Imperial Kitchen(15),0005,sa (76),000135,Menu Lookup 1,http://localhost:4850/#/menu?id=000135
+15:53:13,Imperial Kitchen(15),0005,sa (76),000135,Menu Lookup 3,http://localhost:4850/#/menu?id=000135
+15:53:14,Imperial Kitchen(15),0005,sa (76),000135,Add Menu MANGGO KYOTO(24) @30000.00,http://localhost:4850/#/menu?id=000135
+15:53:14,Imperial Kitchen(15),0005,sa (76),000135,Add Menu PASSION CCNT DELIGHT(25) @20000.00,http://localhost:4850/#/menu?id=000135
+15:53:14,Imperial Kitchen(15),0005,sa (76),000135,Add Menu STRAWBERRY MOJITO(26) @10000.00,http://localhost:4850/#/menu?id=000135
+15:53:19,Imperial Kitchen(15),0005,sa (76),000135,Add Qty 10 MANGGO KYOTO,http://localhost:4850/#/menu?id=000135
+15:53:21,Imperial Kitchen(15),0005,sa (76),000135,Add Qty 50 PASSION CCNT DELIGHT,http://localhost:4850/#/menu?id=000135
+15:53:23,Imperial Kitchen(15),0005,sa (76),000135,Add Qty 40 STRAWBERRY MOJITO,http://localhost:4850/#/menu?id=000135
+15:53:26,Imperial Kitchen(15),0005,sa (76),000135,Send Order & Print Queue,http://localhost:4850/#/menu?id=000135
+15:53:26,Imperial Kitchen(15),0005,sa (76),,Clear Lock Table,http://localhost:4850/#/menu?id=000135
+15:53:27,Imperial Kitchen(15),0005,sa (76),250916000466,Go to Menu,http://localhost:4850/#/tables
+15:53:27,Imperial Kitchen(15),0005,sa (76),250916000466,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000466
+15:53:36,Imperial Kitchen(15),0005,sa (76),250916000466,menu/transferItemsGroup,http://localhost:4850/#/menu?id=250916000466
+15:53:46,Imperial Kitchen(15),0005,sa (76),250916000466,fnTransferItems,http://localhost:4850/#/menu/transferItemsGroup?id=250916000466
+15:53:54,Imperial Kitchen(15),0005,sa (76),250916000466,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000466
+15:53:55,Imperial Kitchen(15),0005,sa (76),,Clear Lock Table,http://localhost:4850/#/menu?id=250916000466
+15:53:57,Imperial Kitchen(15),0005,sa (76),250916000467,Go to Menu,http://localhost:4850/#/tables
+15:53:57,Imperial Kitchen(15),0005,sa (76),250916000467,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000467
+15:54:01,Imperial Kitchen(15),0005,sa (76),,Clear Lock Table,http://localhost:4850/#/menu?id=250916000467
+15:54:03,Imperial Kitchen(15),0005,sa (76),250916000466,Go to Menu,http://localhost:4850/#/tables
+15:54:03,Imperial Kitchen(15),0005,sa (76),250916000466,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000466
+15:58:55,Imperial Kitchen(15),0005,sa (76),250916000466,menu/transferItemsGroup,http://localhost:4850/#/menu?id=250916000466
+15:59:03,Imperial Kitchen(15),0005,sa (76),250916000466,fnTransferItems,http://localhost:4850/#/menu/transferItemsGroup?id=250916000466
+15:59:04,Imperial Kitchen(15),0005,sa (76),250916000466,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000466
+15:59:05,Imperial Kitchen(15),0005,sa (76),,Clear Lock Table,http://localhost:4850/#/menu?id=250916000466
+15:59:06,Imperial Kitchen(15),0005,sa (76),250916000468,Go to Menu,http://localhost:4850/#/tables
+15:59:06,Imperial Kitchen(15),0005,sa (76),250916000468,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000468
+16:01:52,Imperial Kitchen(15),0005,sa (76),,Clear Lock Table,http://localhost:4850/#/menu?id=250916000468
+16:01:53,Imperial Kitchen(15),0005,sa (76),,Select Table TA1,http://localhost:4850/#/tables
+16:01:54,Imperial Kitchen(15),0005,sa (76),,New Order Imperial Kitchen(15) Cover : 4, Table : TA1(15),http://localhost:4850/#/tables
+16:01:54,Imperial Kitchen(15),0005,sa (76),000136,Go to Menu,http://localhost:4850/#/tables
+16:01:54,Imperial Kitchen(15),0005,sa (76),000136,Menu Lookup 0,http://localhost:4850/#/menu?id=000136
+16:01:55,Imperial Kitchen(15),0005,sa (76),000136,Menu Lookup 1,http://localhost:4850/#/menu?id=000136
+16:01:56,Imperial Kitchen(15),0005,sa (76),000136,Menu Lookup 3,http://localhost:4850/#/menu?id=000136
+16:01:56,Imperial Kitchen(15),0005,sa (76),000136,Add Menu MANGGO KYOTO(24) @30000.00,http://localhost:4850/#/menu?id=000136
+16:01:57,Imperial Kitchen(15),0005,sa (76),000136,Add Menu PASSION CCNT DELIGHT(25) @20000.00,http://localhost:4850/#/menu?id=000136
+16:01:57,Imperial Kitchen(15),0005,sa (76),000136,Add Menu STRAWBERRY MOJITO(26) @10000.00,http://localhost:4850/#/menu?id=000136
+16:02:03,Imperial Kitchen(15),0005,sa (76),000136,Add Qty 15 MANGGO KYOTO,http://localhost:4850/#/menu?id=000136
+16:02:07,Imperial Kitchen(15),0005,sa (76),000136,Add Qty 20 PASSION CCNT DELIGHT,http://localhost:4850/#/menu?id=000136
+16:02:10,Imperial Kitchen(15),0005,sa (76),000136,Add Qty 20 STRAWBERRY MOJITO,http://localhost:4850/#/menu?id=000136
+16:02:13,Imperial Kitchen(15),0005,sa (76),000136,Add Qty 20 MANGGO KYOTO,http://localhost:4850/#/menu?id=000136
+16:02:15,Imperial Kitchen(15),0005,sa (76),000136,Send Order & Print Queue,http://localhost:4850/#/menu?id=000136
+16:02:15,Imperial Kitchen(15),0005,sa (76),,Clear Lock Table,http://localhost:4850/#/menu?id=000136
+16:02:16,Imperial Kitchen(15),0005,sa (76),250916000469,Go to Menu,http://localhost:4850/#/tables
+16:02:16,Imperial Kitchen(15),0005,sa (76),250916000469,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000469
+16:02:19,Imperial Kitchen(15),0005,sa (76),250916000469,menu/transferItemsGroup,http://localhost:4850/#/menu?id=250916000469
+16:02:40,Imperial Kitchen(15),0005,sa (76),250916000469,fnTransferItems,http://localhost:4850/#/menu/transferItemsGroup?id=250916000469
+16:04:51,Imperial Kitchen(15),0005,sa (76),250916000469,fnTransferItems,http://localhost:4850/#/menu/transferItemsGroup?id=250916000469
+16:16:50,Imperial Kitchen(15),0005,sa (76),250916000469,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000469
+16:16:51,Imperial Kitchen(15),0005,sa (76),,Clear Lock Table,http://localhost:4850/#/menu?id=250916000469
+16:17:04,Imperial Kitchen(15),0005,sa (76),,Select Table TA1,http://localhost:4850/#/tables
+16:17:05,Imperial Kitchen(15),0005,sa (76),,New Order Imperial Kitchen(15) Cover : 4, Table : TA1(15),http://localhost:4850/#/tables
+16:17:05,Imperial Kitchen(15),0005,sa (76),000137,Go to Menu,http://localhost:4850/#/tables
+16:17:05,Imperial Kitchen(15),0005,sa (76),000137,Menu Lookup 0,http://localhost:4850/#/menu?id=000137
+16:17:07,Imperial Kitchen(15),0005,sa (76),000137,Menu Lookup 1,http://localhost:4850/#/menu?id=000137
+16:17:07,Imperial Kitchen(15),0005,sa (76),000137,Menu Lookup 3,http://localhost:4850/#/menu?id=000137
+16:17:08,Imperial Kitchen(15),0005,sa (76),000137,Add Menu PASSION CCNT DELIGHT(25) @20000.00,http://localhost:4850/#/menu?id=000137
+16:17:08,Imperial Kitchen(15),0005,sa (76),000137,Add Menu PASSION CCNT DELIGHT(25) @20000.00,http://localhost:4850/#/menu?id=000137
+16:17:09,Imperial Kitchen(15),0005,sa (76),000137,Add Menu MANGGO KYOTO(24) @30000.00,http://localhost:4850/#/menu?id=000137
+16:17:09,Imperial Kitchen(15),0005,sa (76),000137,Add Menu STRAWBERRY MOJITO(26) @10000.00,http://localhost:4850/#/menu?id=000137
+16:17:13,Imperial Kitchen(15),0005,sa (76),000137,Add Qty 18 PASSION CCNT DELIGHT,http://localhost:4850/#/menu?id=000137
+16:17:15,Imperial Kitchen(15),0005,sa (76),000137,Add Qty 10 PASSION CCNT DELIGHT,http://localhost:4850/#/menu?id=000137
+16:17:18,Imperial Kitchen(15),0005,sa (76),000137,Add Qty 20 MANGGO KYOTO,http://localhost:4850/#/menu?id=000137
+16:17:20,Imperial Kitchen(15),0005,sa (76),000137,Add Qty 20 STRAWBERRY MOJITO,http://localhost:4850/#/menu?id=000137
+16:17:21,Imperial Kitchen(15),0005,sa (76),000137,Send Order & Print Queue,http://localhost:4850/#/menu?id=000137
+16:17:21,Imperial Kitchen(15),0005,sa (76),,Clear Lock Table,http://localhost:4850/#/menu?id=000137
+16:17:23,Imperial Kitchen(15),0005,sa (76),250916000472,Go to Menu,http://localhost:4850/#/tables
+16:17:23,Imperial Kitchen(15),0005,sa (76),250916000472,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000472
+16:17:25,Imperial Kitchen(15),0005,sa (76),250916000472,menu/transferItemsGroup,http://localhost:4850/#/menu?id=250916000472
+16:17:32,Imperial Kitchen(15),0005,sa (76),250916000472,fnTransferItems,http://localhost:4850/#/menu/transferItemsGroup?id=250916000472
+16:17:33,Imperial Kitchen(15),0005,sa (76),250916000472,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000472
+16:17:35,Imperial Kitchen(15),0005,sa (76),,Clear Lock Table,http://localhost:4850/#/menu?id=250916000472
+16:17:36,Imperial Kitchen(15),0005,sa (76),250916000473,Go to Menu,http://localhost:4850/#/tables
+16:17:36,Imperial Kitchen(15),0005,sa (76),250916000473,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000473
+16:17:42,Imperial Kitchen(15),0005,sa (76),,Clear Lock Table,http://localhost:4850/#/menu?id=250916000473
+16:17:44,Imperial Kitchen(15),0005,sa (76),250916000472,Go to Menu,http://localhost:4850/#/tables
+16:17:44,Imperial Kitchen(15),0005,sa (76),250916000472,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000472
+16:17:46,Imperial Kitchen(15),0005,sa (76),250916000472,Apply Discount Group 10% POST ALL(1) @10.00%,http://localhost:4850/#/menu?id=250916000472
+16:17:49,Imperial Kitchen(15),0005,sa (76),250916000472,Send Order & Print Queue,http://localhost:4850/#/menu?id=250916000472
+16:17:49,Imperial Kitchen(15),0005,sa (76),,Clear Lock Table,http://localhost:4850/#/menu?id=250916000472
+16:17:50,Imperial Kitchen(15),0005,sa (76),250916000472,Go to Menu,http://localhost:4850/#/tables
+16:17:50,Imperial Kitchen(15),0005,sa (76),250916000472,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000472
+16:17:59,Imperial Kitchen(15),0005,sa (76),250916000472,menu/transferItemsGroup,http://localhost:4850/#/menu?id=250916000472
+16:18:08,Imperial Kitchen(15),0005,sa (76),250916000472,fnTransferItems,http://localhost:4850/#/menu/transferItemsGroup?id=250916000472
+16:18:09,Imperial Kitchen(15),0005,sa (76),250916000472,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000472
+16:18:11,Imperial Kitchen(15),0005,sa (76),,Clear Lock Table,http://localhost:4850/#/menu?id=250916000472
+16:18:12,Imperial Kitchen(15),0005,sa (76),250916000473,Go to Menu,http://localhost:4850/#/tables
+16:18:12,Imperial Kitchen(15),0005,sa (76),250916000473,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000473
+16:18:52,Imperial Kitchen(15),0005,sa (76),,Clear Lock Table,http://localhost:4850/#/menu?id=250916000473
+16:18:53,Imperial Kitchen(15),0005,sa (76),250916000472,Go to Menu,http://localhost:4850/#/tables
+16:18:53,Imperial Kitchen(15),0005,sa (76),250916000472,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000472
+16:39:46,Imperial Kitchen(15),0005,sa (76),250916000472,menu/transferItemsGroup,http://localhost:4850/#/menu?id=250916000472
+16:39:52,Imperial Kitchen(15),0005,sa (76),250916000472,fnTransferItems,http://localhost:4850/#/menu/transferItemsGroup?id=250916000472
+16:39:52,Imperial Kitchen(15),0005,sa (76),250916000472,ERROR fnTransferItems,http://localhost:4850/#/menu/transferItemsGroup?id=250916000472
+16:40:29,Imperial Kitchen(15),0005,sa (76),250916000472,fnTransferItems,http://localhost:4850/#/menu/transferItemsGroup?id=250916000472
+16:45:52,Imperial Kitchen(15),0005,sa (76),250916000472,fnTransferItems,http://localhost:4850/#/menu/transferItemsGroup?id=250916000472
+16:46:23,Imperial Kitchen(15),0005,sa (76),250916000472,fnTransferItems,http://localhost:4850/#/menu/transferItemsGroup?id=250916000472
+16:48:46,Imperial Kitchen(15),0005,sa (76),250916000472,fnTransferItems,http://localhost:4850/#/menu/transferItemsGroup?id=250916000472
+16:48:53,Imperial Kitchen(15),0005,sa (76),250916000472,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000472
+16:48:58,Imperial Kitchen(15),0005,sa (76),,Clear Lock Table,http://localhost:4850/#/menu?id=250916000472
+16:48:59,Imperial Kitchen(15),0005,sa (76),250916000472,Go to Menu,http://localhost:4850/#/tables
+16:48:59,Imperial Kitchen(15),0005,sa (76),250916000472,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000472
+16:56:09,Imperial Kitchen(15),0005,sa (76),250916000472,menu/transferItemsGroup,http://localhost:4850/#/menu?id=250916000472
+16:56:17,Imperial Kitchen(15),0005,sa (76),250916000472,fnTransferItems,http://localhost:4850/#/menu/transferItemsGroup?id=250916000472
+17:00:42,Imperial Kitchen(15),0005,sa (76),250916000472,fnTransferItems,http://localhost:4850/#/menu/transferItemsGroup?id=250916000472
+17:01:03,Imperial Kitchen(15),0005,sa (76),250916000472,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000472
+17:01:15,Imperial Kitchen(15),0005,sa (76),,Clear Lock Table,http://localhost:4850/#/menu?id=250916000472
+17:01:17,Imperial Kitchen(15),0005,sa (76),,Select Table TA1,http://localhost:4850/#/tables
+17:01:18,Imperial Kitchen(15),0005,sa (76),,New Order Imperial Kitchen(15) Cover : 4, Table : TA1(15),http://localhost:4850/#/tables
+17:01:18,Imperial Kitchen(15),0005,sa (76),000138,Go to Menu,http://localhost:4850/#/tables
+17:01:18,Imperial Kitchen(15),0005,sa (76),000138,Menu Lookup 0,http://localhost:4850/#/menu?id=000138
+17:01:19,Imperial Kitchen(15),0005,sa (76),000138,Menu Lookup 1,http://localhost:4850/#/menu?id=000138
+17:01:20,Imperial Kitchen(15),0005,sa (76),000138,Menu Lookup 3,http://localhost:4850/#/menu?id=000138
+17:01:20,Imperial Kitchen(15),0005,sa (76),000138,Add Menu PASSION CCNT DELIGHT(25) @20000.00,http://localhost:4850/#/menu?id=000138
+17:01:21,Imperial Kitchen(15),0005,sa (76),000138,Add Menu MANGGO KYOTO(24) @30000.00,http://localhost:4850/#/menu?id=000138
+17:01:21,Imperial Kitchen(15),0005,sa (76),000138,Add Menu STRAWBERRY MOJITO(26) @10000.00,http://localhost:4850/#/menu?id=000138
+17:01:24,Imperial Kitchen(15),0005,sa (76),000138,Add Qty 12 PASSION CCNT DELIGHT,http://localhost:4850/#/menu?id=000138
+17:01:27,Imperial Kitchen(15),0005,sa (76),000138,Add Qty 14 MANGGO KYOTO,http://localhost:4850/#/menu?id=000138
+17:01:29,Imperial Kitchen(15),0005,sa (76),000138,Add Qty 21 STRAWBERRY MOJITO,http://localhost:4850/#/menu?id=000138
+17:02:33,Imperial Kitchen(15),0005,sa (76),000138,Send Order & Print Queue,http://localhost:4850/#/menu?id=000138
+17:02:33,Imperial Kitchen(15),0005,sa (76),,Clear Lock Table,http://localhost:4850/#/menu?id=000138
+17:02:35,Imperial Kitchen(15),0005,sa (76),250916000475,Go to Menu,http://localhost:4850/#/tables
+17:02:35,Imperial Kitchen(15),0005,sa (76),250916000475,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000475
+17:02:55,Imperial Kitchen(15),0005,sa (76),250916000475,menu/transferItemsGroup,http://localhost:4850/#/menu?id=250916000475
+17:03:04,Imperial Kitchen(15),0005,sa (76),250916000475,fnTransferItems,http://localhost:4850/#/menu/transferItemsGroup?id=250916000475
+17:03:11,Imperial Kitchen(15),0005,sa (76),250916000475,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000475
+17:03:16,Imperial Kitchen(15),0005,sa (76),,Clear Lock Table,http://localhost:4850/#/menu?id=250916000475
+17:03:17,Imperial Kitchen(15),0005,sa (76),250916000476,Go to Menu,http://localhost:4850/#/tables
+17:03:17,Imperial Kitchen(15),0005,sa (76),250916000476,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000476
+17:14:27,Imperial Kitchen(15),0005,sa (76),250916000476,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000476
+17:16:47,Imperial Kitchen(15),0005,sa (76),250916000476,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000476
+17:18:05,Imperial Kitchen(15),0005,sa (76),,Clear Lock Table,http://localhost:4850/#/menu?id=250916000476
+17:18:07,Imperial Kitchen(15),0005,sa (76),250916000476,Go to Menu,http://localhost:4850/#/tables
+17:18:07,Imperial Kitchen(15),0005,sa (76),250916000476,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000476
+17:18:11,Imperial Kitchen(15),0005,sa (76),,Clear Lock Table,http://localhost:4850/#/menu?id=250916000476
+17:18:12,Imperial Kitchen(15),0005,sa (76),250916000475,Go to Menu,http://localhost:4850/#/tables
+17:18:12,Imperial Kitchen(15),0005,sa (76),250916000475,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000475
+17:22:22,Imperial Kitchen(15),0005,sa (76),,Clear Lock Table,http://localhost:4850/#/menu?id=250916000475
+17:22:24,Imperial Kitchen(15),0005,sa (76),250916000476,Go to Menu,http://localhost:4850/#/tables
+17:22:24,Imperial Kitchen(15),0005,sa (76),250916000476,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000476
+17:23:12,Imperial Kitchen(15),0005,sa (76),250916000476,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000476
+17:23:43,Imperial Kitchen(15),0005,sa (76),250916000476,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000476
+17:25:16,Imperial Kitchen(15),0005,sa (76),250916000476,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000476
+17:25:18,Imperial Kitchen(15),0005,sa (76),,Clear Lock Table,http://localhost:4850/#/menu?id=250916000476
+17:25:20,Imperial Kitchen(15),0005,sa (76),250916000475,Go to Menu,http://localhost:4850/#/tables
+17:25:20,Imperial Kitchen(15),0005,sa (76),250916000475,Menu Lookup 0,http://localhost:4850/#/menu?id=250916000475
+17:25:22,Imperial Kitchen(15),0005,sa (76),250916000475,Click BILL,http://localhost:4850/#/menu?id=250916000475
+17:25:29,Imperial Kitchen(15),0005,sa (76),250916000475,Click BILL,http://localhost:4850/#/menu?id=250916000475
+17:25:32,Imperial Kitchen(15),0005,sa (76),250916000475,Add Payment BNI CREDIT ,http://localhost:4850/#/payment?id=250916000475
+17:25:34,Imperial Kitchen(15),0005,sa (76),250916000475,Submit Payment,http://localhost:4850/#/payment?id=250916000475
+17:25:36,Imperial Kitchen(15),0005,sa (76),250916000475,Finish Payment,http://localhost:4850/#/payment?id=250916000475
+17:25:36,Imperial Kitchen(15),0005,sa (76),250916000475,CLOSE PAYMENT,http://localhost:4850/#/payment?id=250916000475
+17:25:36,Imperial Kitchen(15),0005,sa (76),250916000475,CLOSED payment without action,http://localhost:4850/#/tables

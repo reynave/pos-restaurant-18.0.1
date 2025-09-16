@@ -153,9 +153,7 @@ async function cart(cartId = '', subgroup = 0) {
         }
     });
 
-
-    let [discountGroup] = await db.query(`  
-        
+    const verOLD = ` 
         SELECT a.* FROM (
   
             SELECT d.name,
@@ -168,9 +166,31 @@ async function cart(cartId = '', subgroup = 0) {
             GROUP BY m.applyDiscount,   d.maxDiscount
  
             ) AS a 
-        WHERE a.amount < 0
-
-    `);
+        WHERE a.amount < 0  
+    `;
+    const q912 = `
+    SELECT a.*
+FROM (
+   SELECT 
+       d.name,
+       m.applyDiscount, 
+       MAX(i.qty) AS qty, 
+       d.maxDiscount,
+       SUM(m.price) * MAX(i.qty) AS amount,
+       0 AS discAmount,
+       d.maxDiscount + (SUM(m.price) * MAX(i.qty)) AS def
+   FROM cart_item_modifier AS m 
+   JOIN cart_item AS i ON i.id = m.cartItemId
+   LEFT JOIN discount AS d ON d.id = m.applyDiscount
+   WHERE m.applyDiscount != 0 
+     AND m.cartId = '${cartId}' 
+     AND m.presence = 1 
+     AND m.void = 0
+   GROUP BY m.applyDiscount, d.maxDiscount, d.name
+) AS a 
+WHERE a.amount < 0;
+`;
+    let [discountGroup] = await db.query(q912);
     let fixDiscountGroup = 0;
 
     discountGroup = [...discountGroup, ...discountAmount];

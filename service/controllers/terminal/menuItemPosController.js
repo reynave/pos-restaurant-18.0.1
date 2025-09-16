@@ -30,7 +30,7 @@ exports.getMenuItem = async (req, res) => {
           const padded = base64 + '='.repeat((4 - base64.length % 4) % 4);
           const decodedStr = Buffer.from(padded, 'base64').toString('utf-8');
           decodedToken = JSON.parse(decodedStr);
-        
+
         } else {
           decodedToken = {};
         }
@@ -861,7 +861,7 @@ exports.addToCart = async (req, res) => {
   }
 };
 
- 
+
 exports.updateCover = async (req, res) => {
   // const { id, name, position, email } = req.body;
   const userId = headerUserId(req);
@@ -949,7 +949,7 @@ exports.clearLockTable = async (req, res) => {
           updateDate = '${today()}',
           updateBy = ${userId}
       WHERE  id = '${cartId}' `;
-    
+
     const [result] = await db.query(q);
     if (result.affectedRows === 0) {
       results.push({ status: 'not found' });
@@ -1111,7 +1111,7 @@ exports.addToItemModifier_DEL = async (req, res) => {
                 if (result.affectedRows === 0) {
                   results.push({ status: 'not found', query: q, });
                 } else {
-                  results.push({ status: cartItem['id']+' + '+modifier['id']+' updated', query: q, });
+                  results.push({ status: cartItem['id'] + ' + ' + modifier['id'] + ' updated', query: q, });
                 }
                 const q2 =
                   `SELECT SUM(price) AS 'total' 
@@ -1781,11 +1781,11 @@ exports.printQueue = async (req, res) => {
   try {
 
     const { items } = await printQueueInternal(db, sendOrder, userId);
- 
-    res.status(201).json({ 
+
+    res.status(201).json({
       items
     });
- 
+
 
   } catch (err) {
     console.error(err);
@@ -1802,7 +1802,7 @@ exports.sendOrder = async (req, res) => {
 
   const inputDate = today();
   const results = [];
-  const { insertId:sendOrder } = await autoNumber('sendOrder');
+  const { insertId: sendOrder } = await autoNumber('sendOrder');
   let tableMapStatusId = 12;
   try {
 
@@ -1810,17 +1810,17 @@ exports.sendOrder = async (req, res) => {
       SELECT id, tableMapStatusId, sendOrder 
       FROM cart
       WHERE id = ${cartId}
-    `;  
+    `;
     const [dbCart] = await db.query(qcart);
     if (dbCart.length > 0) {
-      if (dbCart[0]['tableMapStatusId'] >= 13 ) {
+      if (dbCart[0]['tableMapStatusId'] >= 13) {
         tableMapStatusId = dbCart[0]['tableMapStatusId'];
       }
     }
 
     if (tableSendOrder == 0) {
       const { insertId } = await autoNumber('cart');
-   
+
       const q2 = `
       UPDATE cart SET
         id =  '${insertId}', 
@@ -1831,7 +1831,7 @@ exports.sendOrder = async (req, res) => {
         lockBy = ''
       WHERE id = ${cartId} and sendOrder = 0`;
       await db.query(q2);
-     
+
       const q3 = `
       UPDATE cart_item SET
         cartId =  '${insertId}'
@@ -1842,7 +1842,7 @@ exports.sendOrder = async (req, res) => {
       UPDATE cart_item_modifier SET
         cartId =  '${insertId}'
       WHERE cartId = ${cartId}`;
-      await db.query(q4); 
+      await db.query(q4);
 
       cartId = insertId;
     }
@@ -1856,7 +1856,7 @@ exports.sendOrder = async (req, res) => {
       updateBy = ${userId}
     WHERE id = ${cartId}  `;
     await db.query(q1);
-  
+
     const q = `
     UPDATE cart_item SET
       sendOrder = '${sendOrder}', 
@@ -1864,16 +1864,16 @@ exports.sendOrder = async (req, res) => {
       updateBy = ${userId}
     WHERE cartId = ${cartId}  and presence = 1 and void = 0 and sendOrder = '' `;
     await db.query(q);
-   
+
     const q2 = `
     UPDATE cart_item_modifier SET
       sendOrder =  '${sendOrder}', 
       updateDate = '${today()}',
       updateBy = ${userId}
     WHERE cartId = ${cartId}  and presence = 1 and void = 0 and sendOrder = ''`;
-     const [result2] = await db.query(q2);
-     
-    if (result2.affectedRows !== 0 ) {
+    const [result2] = await db.query(q2);
+
+    if (result2.affectedRows !== 0) {
       const q3 =
         `INSERT INTO send_order (
         presence, inputDate, updateDate,  
@@ -1887,13 +1887,13 @@ exports.sendOrder = async (req, res) => {
       )`;
       await db.query(q3);
     }
- 
- const { items } = await printQueueInternal(db, sendOrder, userId);
+
+    const { items } = await printQueueInternal(db, sendOrder, userId);
 
     res.status(201).json({
-      error: false, 
+      error: false,
       sendOrder: sendOrder,
-      printQueue : items,
+      printQueue: items,
       message: 'cart_item close Order',
     });
 
@@ -2128,37 +2128,43 @@ exports.transferItemsGroup = async (req, res) => {
   try {
     const cartId = req.query.id;
     let totalItem = 0;
-    const q = `
-      SELECT t1.* ,  m.name  ,t1.total as 'totalReset'
-      FROM (
-        SELECT  c.price,   c.menuId, COUNT(c.menuId) AS 'total' , sum(c.ta) as 'ta'
-        FROM cart_item AS c
-        JOIN menu AS m ON m.id = c.menuId
-        WHERE c.cartId = '${cartId}' AND c.presence = 1 AND c.void  = 0  AND c.sendOrder != ''
-        GROUP BY  c.menuId, c.price, c.ta
-        ORDER BY MAX(c.inputDate) ASC
-      ) AS t1
-      JOIN menu AS m ON m.id = t1.menuId 
+    const q = ` 
+SELECT c.id, c.price,   c.menuId,  c.qty  AS 'total' , c.qty  AS 'totalReset', m.name
+FROM cart_item AS c
+JOIN menu AS m ON m.id = c.menuId
+WHERE c.cartId = '${cartId}' AND c.presence = 1 AND c.void  = 0  AND c.sendOrder != ''
+ORDER BY c.inputDate ASC 
+ 
     `;
-    const [formattedRowsOri] = await db.query(q);
+    const [headerRow] = await db.query(q);
 
-    const formattedRows = [];
-    let i = 0;
-    for (const row of formattedRowsOri) {
-      let getIndexById = formattedRows.findIndex((obj) => obj.menuId === row.menuId);
+    const m = ` 
+      SELECT c.id, c.cartItemId, concat(c.note, m.descs) AS 'note' FROM cart_item_modifier AS c
+        LEFT JOIN modifier AS m ON m.id = c.modifierId
+        WHERE c.cartId = '${cartId}' 
+      AND c.presence = 1 AND c.void  = 0  AND c.sendOrder != ''
+      AND c.applyDiscount = 0 AND c.menuTaxScId = 0
+      union
 
-      if (getIndexById > -1) {
-        formattedRows[getIndexById]['totalAmount'] += parseInt(row.totalAmount);
-        formattedRows[getIndexById]['ta'] = parseInt(row.ta) + parseInt(formattedRows[getIndexById]['ta']);
-        formattedRows[getIndexById]['total'] += parseInt(row.total);
-      } else {
-        formattedRows.push(row);
+      SELECT c.id, c.cartItemId, CONCAT(d.name) AS 'note' 
+        FROM cart_item_modifier AS c
+        LEFT JOIN discount AS d ON d.id = c.applyDiscount
+      WHERE c.cartId = '${cartId}'  
+      AND c.presence = 1 AND c.void  = 0  AND c.sendOrder != ''
+      AND c.applyDiscount != 0 AND c.menuTaxScId = 0
+   `;
+    const [modifierRows] = await db.query(m);
+
+
+    // bisa buatkan loop gabung for headerRow dan modifierRows
+    for (const header of headerRow) {
+      header['modifier'] = [];
+      for (const modifier of modifierRows) {
+        if (header.id === modifier.cartItemId) {
+          header['modifier'].push(modifier);
+        }
       }
-
     }
-
-
-
 
     const q2 = `
       SELECT * FROM cart WHERE id = '${cartId}' and presence = 1;
@@ -2169,7 +2175,7 @@ exports.transferItemsGroup = async (req, res) => {
     res.json({
       error: false,
       table: table[0],
-      items: formattedRows,
+      items: headerRow,
     });
 
   } catch (err) {
@@ -2211,8 +2217,6 @@ exports.transferTable = async (req, res) => {
       cartId = insertId;
 
 
-
-
       const [newOrder] = await db.query(
         `INSERT INTO cart (
           presence, inputDate,   outletTableMapId, 
@@ -2248,78 +2252,85 @@ exports.transferTable = async (req, res) => {
 
     // CARD Detail 
     for (const emp of itemsTransfer) {
-      const { menuId, price, total } = emp;
+      const { id, total, totalOriginal, modifier, menuId } = emp;
 
-      if (!menuId) {
-        results.push({ menuId, status: 'failed', reason: 'menuId Missing fields' });
+      if (!id) {
+        results.push({ id, status: 'failed', reason: 'id Missing fields' });
         continue;
       }
-      const l1 =
-        `SELECT * FROM cart_item 
-        WHERE cartId = '${cart['id']}' AND menuId = ${menuId} AND price = ${price} 
-        ORDER BY id desc 
-        LIMIT ${total}`;
 
-      const [cartDb] = await db.query(l1);
-
-
-      // PRINTER KITCHEN CHANGE BILL
-      const q0 = `
-        UPDATE print_queue SET 
-          cartId = '${cartId}',  
-          updateDate = '${today()}',
-          updateBy = ${userId}
-        WHERE cartId = '${cart['id']}' AND menuId = ${menuId} `;
-      const [result] = await db.query(q0);
-      if (result.affectedRows === 0) {
+      
+      // START :: TRANSFER ITEM
+      const q02 = `
+        INSERT INTO cart_item (
+          cartId, subgroup, qty, menuId, adjustItemsId, ta, price, closedPrice, sendOrder, void,
+          menuCategoryId, menuDepartmentId, presence, inputDate, inputBy, updateDate, updateBy
+        )
+        SELECT
+          '${cartId}', subgroup, ${total}, menuId, adjustItemsId, ta, price, closedPrice, sendOrder, void,
+          menuCategoryId, menuDepartmentId, presence, inputDate, ${userId}, '${today()}', ${userId}
+        FROM cart_item
+        WHERE id = ${id}`;
+      const [resultq02] = await db.query(q02);
+      let newCartItemId = null;
+      if (resultq02.affectedRows === 0) {
         results.push({ status: 'not found' });
       } else {
-        results.push({ status: 'PRINTER KITCHEN CHANGE BILL updated' });
+        newCartItemId = resultq02.insertId;
+        results.push({ status: 'cart_item INSERT TRANSFER', newCartItemId });
       }
-      // END >> PRINTER KITCHEN CHANGE BILL
 
+      if (newCartItemId != null) {
 
-
-      for (const emp2 of cartDb) {
-
-        const { id } = emp2;
-        const q0 = `
-          UPDATE cart_item SET 
-            cartId = '${cartId}', 
-            subgroup = 1, 
-            updateDate = '${today()}',
-            updateBy = ${userId}
-          WHERE id = ${id}`;
-
-        const [result] = await db.query(q0);
-        if (result.affectedRows === 0) {
-          results.push({ id, status: 'not found' });
+        const q13 = `
+        INSERT INTO cart_item_modifier (
+          cartId, cartItemId, menuSetMenuId, menuSetQty, menuSetAdjustItemsId,
+          modifierId, applyDiscount, menuTaxScId, scRate, scTaxInclude, scStatus,
+          taxRate, taxStatus, note, remark, price, priceIncluded, sendOrder, void,
+          presence, inputDate, inputBy, updateDate, updateBy
+        )
+        SELECT
+          '${cartId}', ${newCartItemId}, menuSetMenuId, menuSetQty, menuSetAdjustItemsId,
+          modifierId, applyDiscount, menuTaxScId, scRate, scTaxInclude, scStatus,
+          taxRate, taxStatus, note, remark, price, priceIncluded, sendOrder, void,
+          presence, inputDate, ${userId}, '${today()}', ${userId}
+        FROM cart_item_modifier
+        WHERE cartItemId = ${id}
+      `;
+        const [m1] = await db.query(q13);
+        if (m1.affectedRows === 0) {
+          results.push({ status: 'not found' });
         } else {
-          results.push({ id, status: 'updated' });
+          results.push({ status: 'cart_item_modifier INSERT TRANSFER' });
         }
 
-        const q1 = `
-        UPDATE cart_item_modifier SET 
-          cartId = '${cartId}',  
+        // END :: TRANSFER ITEM
+
+
+        // REMOVE OLD ITEM   
+        const q03 = `
+        UPDATE cart_item
+        SET 
+          qty = ${totalOriginal - total},  
+          presence =  ${(totalOriginal - total) <= 0 ? 0 : 1},
           updateDate = '${today()}',
           updateBy = ${userId}
-        WHERE cartItemId = ${id}`;
-        const [result2] = await db.query(q1);
-        if (result2.affectedRows === 0) {
-          results.push({ id, status: 'not found' });
+        WHERE id = ${id}`;
+        const [resultq03] = await db.query(q03);
+        if (resultq03.affectedRows === 0) {
+          results.push({ status: 'not found' });
         } else {
-          results.push({ id, status: 'updated' });
+          results.push({ status: 'cart_item REMOVE OLD ITEM' });
         }
-
 
         const [cart_transfer_items] = await db.query(
           `INSERT INTO cart_transfer_items (
-                presence, inputDate,  outletTableMapId, outletTableMapIdNew,
-                cartItemId, cartId, cartIdNew, dailyCheckId,
-                inputBy, updateBy
+            presence, inputDate,  outletTableMapId, outletTableMapIdNew,
+            cartItemId, cartId, cartIdNew, dailyCheckId,
+            inputBy
                ) 
         VALUES (1, '${inputDate}',  ${cart['outletTableMapId']},  ${table['outletTableMapId']}, 
-             ${id}, '${cart['id']}' ,'${cartId}',  '${dailyCheckId}', ${userId}, ${userId})`
+             ${id}, '${cart['id']}' ,'${cartId}',  '${dailyCheckId}', ${userId} )`
         );
         if (cart_transfer_items.affectedRows === 0) {
           results.push({ status: 'not found' });
@@ -2327,8 +2338,72 @@ exports.transferTable = async (req, res) => {
           results.push({ status: 'cart_transfer_items INSERT' });
         }
 
-      }
 
+
+        // PRINTER MOVE TABLE  
+
+        /*
+       {  
+        "tableName":"TA1",
+        "dateTime":"2025-09-16 16:17:21",
+        "date":"2025-09-16",
+        "time":"16:17:21",
+        "cartItemId":1,
+        "qty":18,
+        "descs":"PASSION CCNT DELIGHT",
+        "modifier":""
+      }
+      */
+
+        const m8 = `
+          SELECT * FROM print_queue
+          WHERE cartItemId = '${id}' and menuId = ${menuId}`;
+        const [printQueue] = await db.query(m8);
+
+        let messageOld = printQueue[0]['message'] ? JSON.parse(printQueue[0]['message']) : {};
+       
+        messageOld['qty'] = (totalOriginal - total) <= 0 ? 0 : (totalOriginal - total);
+
+        // UPDATE PRINTER KITCHEN OLD ITEM
+        const q01 = `
+        UPDATE print_queue SET 
+          rushPrinting = 0, 
+          message = '${JSON.stringify(messageOld)}',
+          updateDate = '${today()}',
+          updateBy = ${userId}
+        WHERE cartItemId = '${id}' and menuId = ${menuId}`;
+        const [resultq01] = await db.query(q01);
+        if (resultq01.affectedRows === 0) {
+          results.push({ status: 'not found' });
+        } else {
+          results.push({ status: 'PRINTER KITCHEN CHANGE BILL updated' });
+        }
+
+
+        let messageNew = printQueue[0]['message'] ? JSON.parse(printQueue[0]['message']) : {};
+        messageNew['qty'] = total;
+        // INSERT NEW PRINT QUEUE
+        const insertPrintQueue = `
+          INSERT INTO print_queue (
+            cartId, cartItemId, menuId, rushPrinting, message, updateDate, updateBy,
+            dailyCheckId, so, printerId, consoleError, 
+            status, inputDate, inputBy
+          ) VALUES (
+            '${cartId}', '${id}', ${menuId}, 0, '${JSON.stringify(messageNew)}', '${today()}', ${userId},
+            '${dailyCheckId}', '${printQueue[0]['so']}', ${printQueue[0]['printerId']}, '${printQueue[0]['consoleError']}',
+             ${printQueue[0]['status']}, '${today()}', ${userId}
+          )
+        `;
+        const [insertResult] = await db.query(insertPrintQueue);
+        if (insertResult.affectedRows === 0) {
+          results.push({ status: 'not found (insert)' });
+        } else {
+          results.push({ status: 'PRINTER KITCHEN CHANGE BILL inserted' });
+        }
+      
+        // END >> PRINTER KITCHEN CHANGE BILL
+
+      }
 
     }
 
@@ -2675,15 +2750,14 @@ exports.mergerCheck = async (req, res) => {
         cartId, cartIdNew, 
         outletTableMapId, outletTableMapIdNew, 
         cover1, cover2,  coverNew, 
-        dailyCheckId,
-        updateBy
+        dailyCheckId
       )
       VALUES (
         1, '${inputDate}', ${userId}, 
         '${cartId}',  '${newTable['cardId']}',
         '${table['outletTableMapId']}', '${newTable['outletTableMapId']}', 
         ${table['cover']}, ${newTable['cover']}, ${table['cover'] + newTable['cover']},
-        '${dailyCheckId}', ${userId}
+        '${dailyCheckId}'
       )`;
     const [resultlog] = await db.query(q);
 
