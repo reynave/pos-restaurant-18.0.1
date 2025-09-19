@@ -7,29 +7,29 @@ const ejs = require('ejs');
 const path = require('path');
 
 exports.cart = async (req, res) => {
-  let totalItem = 0;
-  const results = [];
+  let totalItem = 0; 
   let closePayment = 0;
+  const userId = headerUserId(req);
   try {
-    const cartId = req.query.id;
-    const dailyCheckId = req.query.dailyCheckId;
+    const cartId = req.query.id; 
 
     const data = await cart(cartId);
     const [cartData] = await db.query(`
-       SELECT  c.* , e.name as inputBy from cart as c
-       left join employee as e on e.id = c.inputBy 
+       SELECT  c.* , e.name as inputBy 
+       from cart as c
+      left JOIN employee AS e ON e.id = c.closeBy
        where c.presence = 1 and c.id = '${cartId}' 
-    `);
-
+    `); 
+     
     const [groups] = await db.query(`
       SELECT subgroup, COUNT(id) AS 'qty'
       FROM cart_item 
       WHERE  presence= 1 AND  void = 0 AND    cartId = '${cartId}'
       GROUP BY subgroup
-    `);
+    `); 
+    
     res.json({
-      data: data,
-      results: results,
+      data: data, 
       closePayment: data['unpaid'],
       cart: cartData[0],
       groups: groups,
@@ -41,140 +41,7 @@ exports.cart = async (req, res) => {
   }
 };
 
-
-exports.cart_DEL = async (req, res) => {
-  let totalItem = 0;
-  const results = [];
-  let closePayment = 0;
-  try {
-    const cartId = req.query.id;
-    const dailyCheckId = req.query.dailyCheckId;
-
-    const data = await cart(cartId);
-    const [cartData] = await db.query(`
-       SELECT  c.* , e.name as inputBy from cart as c
-       left join employee as e on e.id = c.inputBy 
-       where c.presence = 1 and c.id = '${cartId}'
-
-    `);
-    if (data['unpaid'] == 0) {
-      console.log("FINISH");
-      const q = `UPDATE cart
-            SET
-              endDate = '${today()}',
-              updateDate = '${today()}',
-          --    close = 1,
-          --    tableMapStatusId = 20,
-              totalAmount  = ${data['subTotal']},
-              grandTotal = ${data['grandTotal']},
-              changePayment =  ${data['change']},
-              totalTips = ${data['tips']},
-              totalItem  = ${data['totalItem']}
-          WHERE id = '${cartId}' and close = 0`;
-      const [result] = await db.query(q);
-
-      if (result.affectedRows === 0) {
-        results.push({ status: 'cart not found / Payment closed' });
-      } else {
-        closePayment = 1;
-        results.push({ status: 'cart close payment updated' });
-      }
-
-
-      const q2 = `
-        SELECT sum( p.openDrawer) AS 'openDrawer', SUM(c.paid) AS 'totalPaid'
-        FROM cart_payment AS c
-        JOIN check_payment_type AS p ON p.id = c.checkPaymentTypeId
-        WHERE c.cartId = '${cartId}'
-        AND c.presence = 1   
-      `;
-      const [openDrawer] = await db.query(q2);
-
-      if (openDrawer[0]['openDrawer'] >= 1) {
-        let change = parseInt(openDrawer[0]['totalPaid']) - parseInt(data['grandTotal']);
-        change = Math.abs(change);
-        const q = `UPDATE cart
-            SET 
-              changePayment = ${change}
-          WHERE id = '${cartId}' `;
-        const [result2] = await db.query(q);
-
-        if (result2.affectedRows === 0) {
-          results.push({ status: 'cart not found / Payment closed' });
-        } else {
-          closePayment = 1;
-          results.push({ status: 'cart changePayment payment updated' });
-        }
-
-        const q5 = ` 
-        SELECT p.openDrawer, c.paid
-          FROM cart_payment AS c
-          JOIN check_payment_type AS p ON p.id = c.checkPaymentTypeId
-          WHERE c.cartId = '${cartId}'
-          AND c.presence = 1 AND  p.openDrawer = 1;   
-        `;
-        const [cartPayment] = await db.query(q5);
-
-        for (const row of cartPayment) {
-          const q3 = `INSERT INTO 
-          daily_cash_balance(
-            presence, inputDate, updateDate, 
-            cartId, dailyCheckId, cashIn)
-        value(1, '${today()}', '${today()}' , '${cartId}', '${dailyCheckId}',  ${row['paid']} ) `;
-          const [result3] = await db.query(q3);
-
-          if (result3.affectedRows === 0) {
-            results.push({ status: 'cart not found / Payment closed' });
-          } else {
-            closePayment = 1;
-            results.push({ status: 'cart changePayment payment updated' });
-          }
-        }
-
-
-
-        const q3 = `INSERT INTO 
-          daily_cash_balance(
-            presence, inputDate, updateDate, 
-            cartId, dailyCheckId, cashOut)
-        value(1, '${today()}', '${today()}' , '${cartId}', '${dailyCheckId}',  ${change} ) `;
-        const [result3] = await db.query(q3);
-
-        if (result3.affectedRows === 0) {
-          results.push({ status: 'Cart not found / Payment closed' });
-        } else {
-          closePayment = 1;
-          results.push({ status: 'cart changePayment payment updated' });
-        }
-
-      }
-
-    }
-
-
-    const [groups] = await db.query(`
-      SELECT subgroup, COUNT(id) AS 'qty'
-      FROM cart_item 
-      WHERE  presence= 1 AND  void = 0 AND    cartId = '${cartId}'
-      GROUP BY subgroup
-    `);
-
-
-
-
-    res.json({
-      data: data,
-      results: results,
-      closePayment: data['unpaid'] == 0 ? 1 : 0,
-      cart: cartData[0],
-      groups: groups,
-    });
-
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Database error' });
-  }
-};
+ 
 
 exports.paymentGroup = async (req, res) => {
   try {

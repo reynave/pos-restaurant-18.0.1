@@ -137,20 +137,23 @@ async function cart(cartId = '', subgroup = 0) {
     });
 
     const ds = ` SELECT  d.name,
-            m.applyDiscount, count(m.id) AS 'qty', SUM(i.price ) AS 'subTotal', 0 as 'maxDiscount',  
-           (SUM(i.price )  - d.discAmount)  * -1 as 'amount', d.discAmount, 0 as 'def'
+            m.applyDiscount,  sum(i.qty), SUM(i.price * i.qty ) AS 'subTotal', 0 as 'maxDiscount',  
+          0  as 'amount', d.discAmount, 0 as 'def'
         FROM cart_item_modifier AS m 
         LEFT JOIN cart_item AS i ON i.id = m.cartItemId
         LEFT JOIN discount AS d ON d.id = m.applyDiscount
         WHERE m.applyDiscount != 0 AND m.cartId = '${cartId}'
         AND m.presence = 1 AND m.void = 0  AND d.discAmount > 0
         GROUP BY  m.applyDiscount, d.discAmount `;
+     
     const [discountAmount] = await db.query(ds)
 
     discountAmount.forEach(el => {
-        if (el['amount'] > 0) {
-            el['amount'] = el['amount'] - el['discAmount'];
-        }
+        el['subTotal'] = parseInt(el['subTotal']);
+
+        el['amount'] =    el['subTotal']  -  el['discAmount'] >  el['discAmount'] ? el['discAmount'] : el['discAmount']- el['subTotal']  ;
+        el['amount'] = el['amount'] * -1;
+        
     });
 
     const verOLD = ` 
@@ -174,11 +177,11 @@ FROM (
    SELECT 
        d.name,
        m.applyDiscount, 
-       MAX(i.qty) AS qty, 
+       sum(i.qty) AS qty, 
        d.maxDiscount,
-       SUM(m.price) * MAX(i.qty) AS amount,
+       SUM(m.price) * sum(i.qty) AS amount,
        0 AS discAmount,
-       d.maxDiscount + (SUM(m.price) * MAX(i.qty)) AS def
+       d.maxDiscount + (SUM(m.price) * sum(i.qty)) AS def
    FROM cart_item_modifier AS m 
    JOIN cart_item AS i ON i.id = m.cartItemId
    LEFT JOIN discount AS d ON d.id = m.applyDiscount
@@ -536,10 +539,9 @@ async function scUpdate(cartItem = 0) {
         FROM cart_item 
         WHERE id = ${cartItem} AND presence =1 AND void = 0 
     `;
-    console.log(m1)
+  
     const [itemPriceDb] = await db.query(m1);
-    console.log('itemPriceDb', itemPriceDb)
-
+     
     let itemPrice = 0;
     // bagaimana jika itemPriceDb kosong
     if (!itemPriceDb || itemPriceDb.length === 0) {

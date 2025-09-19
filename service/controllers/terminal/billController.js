@@ -159,7 +159,7 @@ exports.printing2 = async (req, res) => {
 exports.printing = async (req, res) => {
 
   const api = req.query.api == 'true' ? true : false;
-
+  const userId = headerUserId(req); 
   try {
 
     const templateSource = fs.readFileSync("public/template/bill.hbs", "utf8");
@@ -181,9 +181,11 @@ exports.printing = async (req, res) => {
       FROM cart AS c
       JOIN outlet AS o ON o.id = c.outletId
       JOIN outlet_table_map AS t ON t.id = c.outletTableMapId
-      JOIN employee AS e ON e.id = c.inputBy
+          left JOIN employee AS e ON e.id = c.closeBy
       WHERE c.presence = 1 AND  c.id = '${cartId}'
     `);
+
+    
 
     const formattedRows = transaction.map(row => ({
       ...row,
@@ -191,8 +193,9 @@ exports.printing = async (req, res) => {
 
       startDate: formatDateTime(row.startDate),
       endDate: row.close == 0 ? '' : formatDateTime(row.endDate),
-
+     
     }));
+
 
     const [outlet] = await db.query(`
      SELECT  * 
@@ -206,20 +209,15 @@ exports.printing = async (req, res) => {
         transaction: formattedRows[0],
         company: outlet[0],
         subgroup: subgroup,
-        function: [
-          { 'formatCurrency(value, symbol=null)': `return string` },
-          { 'formatLine(leftText, rightText, lineLength = 50)': `return string` },
-          { 'centerText(str, lineLength = 50)': `return string` },
-        ]
+
       });
     } else {
       const jsonData = {
         data: data,
         transaction: formattedRows[0],
         company: outlet[0],
-        formatCurrency,
-        formatLine,
-        centerText
+        subgroup: subgroup,
+
       };
       const result = template(jsonData);
       res.setHeader('Content-Type', 'application/json');
@@ -321,9 +319,9 @@ exports.billUpdate = async (req, res) => {
 
     const q3 =
       `INSERT INTO bill (
-        presence, inputDate, updateDate, 
-        cartId, no,
-        inputBy, updateBy
+          presence, inputDate, updateDate, 
+          cartId, no,
+          inputBy, updateBy
       )
       VALUES (
         1, '${today()}', '${today()}',
@@ -338,8 +336,14 @@ exports.billUpdate = async (req, res) => {
     }
 
 
+    let date = new Date();
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+
+
     const q2 = `UPDATE cart
       SET
+        paymentId = '${hours * 100 + minutes}',
         billNo =  ${item[0]['total']}, 
         tableMapStatusId = 13, 
         updateDate = '${today()}',
@@ -367,11 +371,11 @@ exports.billUpdate = async (req, res) => {
         where id = '${cartId}'   and  presence = 1 and void = 0
         order by inputDate Desc
       `;
-      console.log(a1);
+    console.log(a1);
     const [cartTable] = await db.query(a1);
 
 
-    res.json({ 
+    res.json({
       billNo: item[0]['total'],
       // emptySendOrderTotal : so[0]['total'], 
       tableSendOrder: cartTable[0]['sendOrder'],
@@ -486,18 +490,18 @@ exports.createPayment = async (req, res) => {
   let cartId = req.body['id'];
   const terminalId = req.body['terminalId'];
   const userId = headerUserId(req);
- 
+
   try {
-    const { insertId:sendOrder } = await autoNumber('sendOrder');
+    const { insertId: sendOrder } = await autoNumber('sendOrder');
     const [tableSendOrder] = await db.query(`
       SELECT  sendOrder FROM cart
       where id = '${cartId}'   and  presence = 1 and void = 0
       order by inputDate Desc
     `);
- 
+
     if (tableSendOrder[0]['sendOrder'] == 0) {
       const { insertId } = await autoNumber('cart');
-   
+
       const q2 = `
       UPDATE cart SET
         id =  '${insertId}', 
@@ -507,7 +511,7 @@ exports.createPayment = async (req, res) => {
         lockBy = '${terminalId}'
       WHERE id = ${cartId} and sendOrder = 0`;
       await db.query(q2);
-     
+
       const q3 = `
       UPDATE cart_item SET
         cartId =  '${insertId}'
@@ -518,13 +522,13 @@ exports.createPayment = async (req, res) => {
       UPDATE cart_item_modifier SET
         cartId =  '${insertId}'
       WHERE cartId = ${cartId}`;
-      await db.query(q4); 
-      
+      await db.query(q4);
+
       cartId = insertId;
     }
- 
-    
-  
+
+
+
     const q = `
     UPDATE cart_item SET
       sendOrder = '${sendOrder}', 
@@ -532,16 +536,16 @@ exports.createPayment = async (req, res) => {
       updateBy = ${userId}
     WHERE cartId = ${cartId}  and presence = 1 and void = 0 and sendOrder = '' `;
     await db.query(q);
-   
+
     const q2 = `
     UPDATE cart_item_modifier SET
       sendOrder =  '${sendOrder}', 
       updateDate = '${today()}',
       updateBy = ${userId}
     WHERE cartId = ${cartId}  and presence = 1 and void = 0 and sendOrder = ''`;
-     const [result2] = await db.query(q2);
-     
-    if (result2.affectedRows !== 0 ) {
+    const [result2] = await db.query(q2);
+
+    if (result2.affectedRows !== 0) {
       const q3 =
         `INSERT INTO send_order (
         presence, inputDate, updateDate,  
@@ -555,9 +559,9 @@ exports.createPayment = async (req, res) => {
       )`;
       await db.query(q3);
     }
- 
+
     await printQueueInternal(db, sendOrder, userId);
- 
+
 
 
     res.json({

@@ -254,377 +254,6 @@ exports.selectMenuSet = async (req, res) => {
 }
 
 
-exports.cart_DEL = async (req, res) => {
-  const i = 1;
-  try {
-    const cartId = req.query.id;
-    let totalItem = 0;
-    const q = `
-      SELECT t1.* , (t1.total * t1.price) as 'totalAmount', m.name , 0 as 'checkBox', '' as modifier, 
-      0 as totalModifier, m.modifierGroupId, m.discountGroupId
-      FROM (
-        SELECT  c.price,   c.menuId, COUNT(c.menuId) AS 'total' , sum(c.ta) as 'ta'
-        FROM cart_item AS c
-        JOIN menu AS m ON m.id = c.menuId
-        WHERE c.cartId = '${cartId}' AND c.presence = 1 AND c.void  = 0 AND c.sendOrder = ''
-        GROUP BY  c.menuId, c.price, c.ta
-        ORDER BY MAX(c.inputDate) ASC
-      ) AS t1
-      JOIN menu AS m ON m.id = t1.menuId 
-    `;
-
-    const [formattedRowsOri] = await db.query(q);
-
-    const formattedRows = [];
-    let i = 0;
-    for (const row of formattedRowsOri) {
-      let getIndexById = formattedRows.findIndex((obj) => obj.menuId === row.menuId);
-
-      if (getIndexById > -1) {
-        formattedRows[getIndexById]['totalAmount'] += parseInt(row.totalAmount);
-        formattedRows[getIndexById]['ta'] = parseInt(row.ta) + parseInt(formattedRows[getIndexById]['ta']);
-        formattedRows[getIndexById]['total'] += parseInt(row.total);
-      } else {
-        formattedRows.push(row);
-      }
-
-    }
-
-    let totalAmount = 0;
-    let n = 0;
-    for (const row of formattedRows) {
-      // MODIFIER 
-      const s = `
-  
-        --  CUSTOM NOTES
-          SELECT COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price, 1 as 'modifier', '' as remark
-          FROM (
-            SELECT r.menuTaxScId AS 'modifierId', r.note AS descl, r.price
-            FROM cart_item  AS i
-            RIGHT JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
-          WHERE i.menuId = ${row['menuId']}
-              AND i.cartId = '${cartId}' AND i.void = 0 AND i.presence = 1
-              AND i.sendOrder = '' AND r.sendOrder = ''
-              AND r.presence = 1 AND i.void = 0 AND r.modifierId = 0 AND r.note != ''
-          ) AS t1
-          GROUP BY t1.descl, t1.price 
-        UNION
-
-
-        -- MODIFIER
-       SELECT COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price, 1 as 'modifier', t1.remark   
-        FROM (
-          SELECT r.modifierId, m.descl, r.price , r.remark
-            FROM cart_item  AS i 
-            RIGHT JOIN cart_item_modifier AS r ON r.cartItemId = i.id
-            JOIN modifier AS m ON m.id = r.modifierId 
-          WHERE i.menuId = ${row['menuId']}  
-            AND i.cartId = '${cartId}' AND i.void = 0 AND i.presence = 1
-            AND i.sendOrder = ''  
-            AND r.presence = 1 AND i.void = 0   
-        ) AS t1
-        GROUP BY t1.descl, t1.price, t1.remark   
-        UNION
-
- 
-
-        -- discount
-        SELECT 
-          COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price, 1 as 'modifier', t1.remark
-          FROM ( 
-            SELECT r.modifierId,   r.price, r.applyDiscount, d.name AS 'descl' , r.remark
-              FROM cart_item  AS i
-              JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
-              JOIN discount AS d ON d.id = r.applyDiscount
-            WHERE i.menuId = ${row['menuId']} 
-                AND i.cartId = '${cartId}' AND i.void = 0 AND i.presence = 1  
-                AND i.sendOrder = '' AND r.sendOrder = ''
-                AND r.presence = 1 AND i.void = 0 
-          ) AS t1
-        GROUP BY t1.descl, t1.price , t1.remark   
-
-
-        UNION
-
-      --  SC
-         SELECT
-          COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price, 0 as 'modifier', t1.remark
-          FROM (
-            SELECT r.menuTaxScId AS 'modifierId', t.scNote AS descl, r.price, r.scRate, r.remark
-              FROM cart_item  AS i
-              RIGHT JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
-              JOIN menu_tax_sc AS t ON t.id = r.menuTaxScId
-            WHERE i.menuId = ${row['menuId']} 
-                AND i.cartId = '${cartId}' AND i.void = 0 AND i.presence = 1
-                AND i.sendOrder = '' AND r.sendOrder = ''
-                AND r.presence = 1 AND i.void = 0 AND r.scRate != 0
-          ) AS t1
-          GROUP BY t1.descl, t1.price, t1.remark
-
-        UNION 
-
-
-      --  TAX
-         SELECT
-          COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price, 0 as 'modifier', t1.remark
-          FROM (
-            SELECT r.menuTaxScId AS 'modifierId', t.taxNote AS descl, r.price, r.taxRate, r.remark
-              FROM cart_item  AS i
-              RIGHT JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
-              JOIN menu_tax_sc AS t ON t.id = r.menuTaxScId
-            WHERE i.menuId = ${row['menuId']}
-                AND i.cartId = '${cartId}' AND i.void = 0 AND i.presence = 1
-                AND i.sendOrder = '' AND r.sendOrder = ''
-                AND r.presence = 1 AND i.void = 0 AND r.taxRate != 0
-          ) AS t1
-          GROUP BY t1.descl, t1.price, t1.remark
-
-        
-      `;
-
-
-      const [modifier] = await db.query(s);
-      row.modifier = modifier;
-      let totalAmountModifier = 0;
-      modifier.forEach(el => {
-        totalAmountModifier += parseInt(el['totalAmount']);
-        formattedRows[n]['totalAmount'] += parseInt(el['totalAmount']);
-
-      });
-
-
-      n++;
-    }
-
-    let temp = 0;
-
-    for (let i = 0; i < formattedRows.length; i++) {
-      totalAmount += formattedRows[i]['totalAmount'];
-      let temp = 0;
-      for (let n = 0; n < formattedRows[i]['modifier'].length; n++) {
-        temp += formattedRows[i]['modifier'][n]['modifier'];
-      }
-      formattedRows[i]['totalModifier'] = temp;
-    }
-
-
-    const [sendOrder] = await db.query(`
-      SELECT 
-        ROW_NUMBER() OVER (ORDER BY sendOrder ASC) AS no,
-        sendOrder AS id,
-        COUNT(sendOrder) AS totalMenu
-      FROM cart_item
-      WHERE cartId = '${cartId}' AND  presence =1 AND void = 0 AND sendOrder != ''
-      GROUP BY sendOrder
-      ORDER BY sendOrder DESC;
-    `);
-    totalItem = 0;
-    formattedRows.forEach(element => {
-      totalItem += element['total'];
-    });
-
-
-    const q2 = `
-     SELECT c.*, t.tableName, c.startDate, c.overDue,
-       TIMESTAMPDIFF(MINUTE,  c.overDue, NOW())  AS overTime, s.name AS 'status'
-     FROM cart  AS c
-      JOIN outlet_table_map AS t ON t.id = c.outletTableMapId
-      left join outlet_table_map_status as s on s.id = c.tableMapStatusId
-      WHERE c.id = '${cartId}' 
-      AND c.presence = 1;
-    `;
-
-    const [table] = await db.query(q2);
-
-    const tableRow = await mapUpdateByName(db, table);
-
-
-    res.json({
-      table: tableRow,
-      items: formattedRows,
-      sendOrder: sendOrder,
-      totalAmount: totalAmount,
-      totalItem: totalItem,
-      get: req.query,
-    });
-
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Database error' });
-  }
-};
-
-exports.cartOrdered = async (req, res) => {
-  const i = 1;
-  try {
-    const cartId = req.query.id;
-    let totalItem = 0;
-    const q = `
-      SELECT t1.* , (t1.total * t1.price) as 'totalAmount', m.name , 0 as 'checkBox', 
-      '' as modifier, 0 as 'totalModifier', m.discountGroupId
-      FROM (
-        SELECT   c.price, c.menuId, COUNT(c.menuId) AS 'total' , sum(c.ta) as 'ta'
-        FROM cart_item AS c
-        JOIN menu AS m ON m.id = c.menuId
-        WHERE c.cartId = '${cartId}' AND c.presence = 1 AND c.void  = 0 AND c.sendOrder != ''
-        GROUP BY  c.menuId, c.price, c.ta
-        ORDER BY MAX(c.inputDate) ASC
-      ) AS t1
-      JOIN menu AS m ON m.id = t1.menuId 
-    `;
-    const [formattedRowsOri] = await db.query(q);
-
-    const formattedRows = [];
-    let i = 0;
-    for (const row of formattedRowsOri) {
-      let getIndexById = formattedRows.findIndex((obj) => obj.menuId === row.menuId);
-
-      if (getIndexById > -1) {
-        formattedRows[getIndexById]['totalAmount'] += parseInt(row.totalAmount);
-        formattedRows[getIndexById]['ta'] = parseInt(row.ta) + parseInt(formattedRows[getIndexById]['ta']);
-        formattedRows[getIndexById]['total'] += parseInt(row.total);
-      } else {
-        formattedRows.push(row);
-      }
-
-    }
-
-
-
-    let totalAmount = 0;
-    let n = 0;
-    for (const row of formattedRows) {
-
-      const s = `
-
-        --  CUSTOM NOTES
-          SELECT COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price, 1 as 'modifier'
-          FROM (
-            SELECT r.menuTaxScId AS 'modifierId', r.note AS descl, r.price
-            FROM cart_item  AS i
-            RIGHT JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
-          WHERE i.menuId = ${row['menuId']}
-              AND i.cartId = '${cartId}' AND i.void = 0 AND i.presence = 1
-              AND i.sendOrder != '' AND r.sendOrder != ''
-              AND r.presence = 1 AND i.void = 0 AND r.modifierId = 0 AND r.note != ''
-          ) AS t1
-          GROUP BY t1.descl, t1.price 
- UNION 
-
--- MODIFIER
-       SELECT COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price, 1 as 'modifier'
-        FROM (
-          SELECT r.modifierId, m.descl, r.price
-          FROM cart_item  AS i 
-          right JOIN cart_item_modifier AS r ON r.cartItemId = i.id
-          JOIN modifier AS m ON m.id = r.modifierId 
-          WHERE i.menuId = ${row['menuId']}  
-          AND i.cartId = '${cartId}' AND i.void = 0 AND i.presence = 1
-          AND i.sendOrder != ''  
-          AND r.presence = 1 AND i.void = 0   
-        ) AS t1
-        GROUP BY t1.descl, t1.price
-
-
-        UNION 
--- DISCOUNT TYPE
-         SELECT COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price,  1 as 'modifier'
-        FROM ( SELECT r.modifierId,   r.price, r.applyDiscount, d.name AS 'descl'
-          FROM cart_item  AS i
-            JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
-           JOIN discount AS d ON d.id = r.applyDiscount
-          WHERE i.menuId = ${row['menuId']} 
-          AND i.cartId = '${cartId}' AND i.void = 0 AND i.presence = 1  
-           AND i.sendOrder != ''  
-          AND r.presence = 1 AND i.void = 0 
-      ) AS t1
-        GROUP BY t1.descl, t1.price    
-
-        UNION 
-       --  SC
-         SELECT
-          COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price, 0 as 'modifier'
-          FROM (
-            SELECT r.menuTaxScId AS 'modifierId', t.scNote AS descl, r.price, r.scRate
-              FROM cart_item  AS i
-              RIGHT JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
-              JOIN menu_tax_sc AS t ON t.id = r.menuTaxScId
-            WHERE i.menuId = ${row['menuId']} 
-                AND i.cartId = '${cartId}' AND i.void = 0 AND i.presence = 1
-                AND i.sendOrder != '' AND r.sendOrder != ''
-                AND r.presence = 1 AND i.void = 0 AND r.scRate != 0
-          ) AS t1
-          GROUP BY t1.descl, t1.price
-
-        UNION 
-
-
-      --  TAX
-         SELECT
-          COUNT(t1.descl) AS 'total', t1.descl, SUM(t1.price) AS 'totalAmount', t1.price, 0 as 'modifier'
-          FROM (
-            SELECT r.menuTaxScId AS 'modifierId', t.taxNote AS descl, r.price, r.taxRate
-              FROM cart_item  AS i
-              RIGHT JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
-              JOIN menu_tax_sc AS t ON t.id = r.menuTaxScId
-            WHERE i.menuId = ${row['menuId']}
-                AND i.cartId = '${cartId}' AND i.void = 0 AND i.presence = 1
-                AND i.sendOrder != '' AND r.sendOrder != ''
-                AND r.presence = 1 AND i.void = 0 AND r.taxRate != 0
-          ) AS t1
-          GROUP BY t1.descl, t1.price
-
-
-      `;
-
-      const [modifier] = await db.query(s);
-      row.modifier = modifier; // tambahkan hasil ke properti maps 
-
-      let totalAmountModifier = 0;
-      modifier.forEach(el => {
-        totalAmountModifier += parseInt(el['totalAmount']);
-        formattedRows[n]['totalAmount'] += parseInt(el['totalAmount']);
-      });
-
-
-      n++;
-    }
-
-
-
-
-
-    let temp = 0;
-
-
-    for (let i = 0; i < formattedRows.length; i++) {
-      totalAmount += formattedRows[i]['totalAmount'];
-      let temp = 0;
-      for (let n = 0; n < formattedRows[i]['modifier'].length; n++) {
-        temp += formattedRows[i]['modifier'][n]['modifier'];
-      }
-
-      formattedRows[i]['totalModifier'] = temp;
-    }
-
-    totalItem = 0;
-    formattedRows.forEach(element => {
-      totalItem += element['total'];
-    });
-    res.json({
-      error: false,
-      temp: temp,
-      items: formattedRows,
-      totalAmount: totalAmount,
-      totalItem: totalItem,
-      get: req.query
-    });
-
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Database error' });
-  }
-};
 
 exports.addToCart = async (req, res) => {
   const menu = req.body['menu'];
@@ -849,6 +478,13 @@ exports.addToCart = async (req, res) => {
 
     }
 
+    const q1 = `
+      UPDATE cart SET
+        paymentId = '', 
+        updateDate = '${today()}',
+        updateBy = ${userId}
+      WHERE id = '${cartId}'  `;
+    await db.query(q1);
 
     res.status(201).json({
       error: false,
@@ -936,7 +572,7 @@ exports.lockTable = async (req, res) => {
 
 exports.clearLockTable = async (req, res) => {
   const userId = headerUserId(req);
-  const cartId = req.body['cartId'];
+  const terminalId = req.body['terminalId'];
 
 
   const results = [];
@@ -948,13 +584,13 @@ exports.clearLockTable = async (req, res) => {
           lockBy = '', 
           updateDate = '${today()}',
           updateBy = ${userId}
-      WHERE  id = '${cartId}' `;
-
+      WHERE  lockBy = '${terminalId}' `;
+    console.log(q)
     const [result] = await db.query(q);
     if (result.affectedRows === 0) {
       results.push({ status: 'not found' });
     } else {
-      results.push({ status: 'UPDATE updated' });
+      results.push({ status: 'clearLockTable UPDATE updated' });
     }
 
     res.status(201).json({
@@ -969,422 +605,9 @@ exports.clearLockTable = async (req, res) => {
   }
 };
 
-exports.voidItem_DEL = async (req, res) => {
-  // const { id, name, position, email } = req.body;
-  const userId = headerUserId(req);
-  const data = req.body['cart'];
-  const cartId = req.body['cartId'];
+ 
 
-  const inputDate = today();
-  const results = [];
-
-  try {
-    for (const emp of data) {
-      const { id, price, checkBox } = emp;
-
-      if (!id) {
-        results.push({ id, status: 'failed', reason: 'Missing fields' });
-        continue;
-      }
-
-      if (checkBox == 1) {
-        const q = `UPDATE cart_item
-            SET
-              void = 1,
-              presence = 0,
-              updateDate = '${today()}',
-              updateBy = ${userId}
-          WHERE id = ${id}  and cartId = '${cartId}' and sendOrder = '' `;
-        const [result] = await db.query(q);
-        if (result.affectedRows === 0) {
-          results.push({ id, status: 'not found' });
-        } else {
-          results.push({ id, status: 'cart_item updated' });
-        }
-
-
-
-      }
-    }
-
-    const q2 = `
-          SELECT id, cartId, presence , void 
-          FROM cart_item
-          WHERE cartId = '${cartId}' and presence = 0 and void = 1`;
-    const [result2] = await db.query(q2);
-
-
-    if (result2.length > 0) {
-      for (const row of result2) {
-        const q = `UPDATE cart_item_modifier
-            SET
-              void = 1,
-              presence = 0,
-              updateDate = '${today()}',
-              updateBy = ${userId}
-          WHERE  cartItemId = '${row['id']}'`;
-        const [result] = await db.query(q);
-
-        if (result.affectedRows === 0) {
-          results.push({ status: 'not found' });
-        } else {
-          results.push({ status: 'cart_item_modifier updated' });
-        }
-      }
-
-
-
-
-    }
-
-    res.json({
-      message: 'Batch update completed',
-      results: results
-    });
-
-
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Database update error', details: err.message });
-  }
-};
-
-exports.addToItemModifier_DEL = async (req, res) => {
-  const data = req.body['cart'];
-  const userId = headerUserId(req);
-  const modifiers = req.body['modifiers'];
-  const cartId = req.body['cartId'];
-
-  const results = [];
-
-  try {
-
-    for (const emp of data) {
-      const { menuId, checkBox, price, modifierGroupId, name } = emp;
-
-      if (!menuId) {
-        results.push({ menuId, status: 'failed', reason: 'Missing fields' });
-        continue;
-      }
-
-      if (checkBox == 1) {
-        const q2 = `
-          SELECT id FROM cart_item 
-          WHERE  cartId = '${cartId}' AND presence = 1 AND void = 0
-          AND price = ${price} AND menuId = ${menuId}  and sendOrder = ''
-        `;
-        const [cartItems] = await db.query(q2);
-
-
-        for (const cartItem of cartItems) {
-
-          for (const modifier of modifiers) {
-
-            const q3 = `
-            SELECT count(id) as 'total'
-              FROM cart_item_modifier
-            WHERE
-            cartId = '${cartId}' and
-            cartItemId = ${cartItem['id']} and
-            modifierId = ${modifier['id']} and
-            presence = 1 and void = 0
-          `;
-            const [isDouble] = await db.query(q3);
-            if (isDouble[0]['total'] == 0) {
-              if (modifier['modifierGroupId'] == modifierGroupId) {
-
-                const q =
-                  `INSERT INTO cart_item_modifier (
-                presence, inputDate, updateDate, void,
-                cartId, cartItemId, modifierId,
-                note, price,
-                inputBy, updateBy
-              )
-              VALUES (
-                1, '${today()}', '${today()}',  0,
-                '${cartId}',  ${cartItem['id']}, ${modifier['id']},
-                '', ${modifier['price']},
-                ${userId}, ${userId}
-            )`;
-                const [result] = await db.query(q);
-
-                if (result.affectedRows === 0) {
-                  results.push({ status: 'not found', query: q, });
-                } else {
-                  results.push({ status: cartItem['id'] + ' + ' + modifier['id'] + ' updated', query: q, });
-                }
-                const q2 =
-                  `SELECT SUM(price) AS 'total' 
-                  FROM cart_item_modifier
-                  WHERE cartItemId = ${cartItem['id']}
-                  AND presence =1 AND void = 0 and menuTaxScId = 0
-                `;
-                const [totalAmountModifier] = await db.query(q2);
-
-
-                const m1 = `
-                  SELECT price + ${parseInt(totalAmountModifier[0]['total'])} as 'price' 
-                  FROM cart_item 
-                  WHERE id = ${cartItem['id']} AND presence =1 AND void = 0  
-                `;
-                const [itemPrice] = await db.query(m1);
-
-                const taxScUpdateRest = await taxScUpdate(cartItem['id']);
-
-
-              } else {
-                results.push({ status: `${name} didnt match with failed Modifier Group Id` });
-              }
-            } else {
-              results.push({ status: 'Cannot double' });
-            }
-
-          }
-        }
-      }
-    }
-
-    res.status(201).json({
-      error: false,
-      message: 'cart created',
-      results: results
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: true, note: 'Database insert error' });
-  }
-};
-
-exports.addDiscountGroup_DEL = async (req, res) => {
-  const userId = headerUserId(req);
-  const cart = req.body['cart'];
-  const cartOrdered = req.body['cartOrdered'];
-  const remark = req.body['remark'];
-
-  const discountGroup = req.body['discountGroup'];
-  const cartId = req.body['cartId'];
-
-  const results = [];
-
-  try {
-
-    for (const emp of cart) {
-      const { menuId, checkBox, price, discountGroupId, name } = emp;
-
-      if (!menuId) {
-        results.push({ menuId, status: 'failed', reason: 'Missing fields' });
-        continue;
-      }
-
-      if (checkBox == 1) {
-        const q2 = `
-          SELECT id FROM cart_item 
-          WHERE  cartId = '${cartId}' AND presence = 1 AND void = 0
-          AND price = ${price} AND menuId = ${menuId} and sendOrder = ''
-        `;
-        const [cartItems] = await db.query(q2);
-
-        for (const cartItem of cartItems) {
-
-          if ((discountGroup['discountGroupId'] == discountGroupId) || discountGroup['allDiscountGroup'] == 1) {
-
-
-
-            const t1 = `
-          SELECT SUM(t1.totalAmount)  AS 'totalAmount' 
-          FROM (
-            SELECT  SUM(price) AS 'totalAmount'
-            FROM cart_item_modifier
-            WHERE
-              cartId = '${cartId}' and
-              cartItemId = ${cartItem['id']} AND 
-              presence = 1 and void = 0
-               AND menuTaxScId = 0
-            UNION
-
-            SELECT SUM(price)AS 'totalAmount' 
-            FROM cart_item WHERE 
-              cartId = '${cartId}' and
-              id = ${cartItem['id']} AND 
-              presence = 1 and void = 0
-          ) AS t1
-          `;
-            const [queryT1] = await db.query(t1);
-            const totalAmount = parseInt(queryT1[0]['totalAmount']);
-
-            if (parseInt(discountGroup['discAmount']) > 0) {
-              discAmount = 0;
-              // discAmount = parseInt(discountGroup['discAmount']) * -1;
-              // if (totalAmount + discAmount <= 0) {
-              //   discAmount = totalAmount * -1;
-              // }
-              const q = `
-                  INSERT INTO cart_item_modifier (
-                    presence, inputDate, updateDate, void,
-                    cartId, cartItemId, modifierId,
-                    applyDiscount, price, remark,
-                    inputBy, updateBy
-                  )
-                  VALUES (
-                    1, '${today()}', '${today()}',  0,
-                    '${cartId}',  ${cartItem['id']}, 0,
-                    ${discountGroup['id']}, ${discAmount}, '${remark}',
-                    ${userId}, ${userId}
-                )`;
-              const [result] = await db.query(q);
-              if (result.affectedRows === 0) {
-                results.push({ status: 'not found', query: q, });
-              } else {
-                results.push({ status: 'discRate updated', query: q, });
-              }
-            } else {
-              discAmount = (totalAmount * (parseFloat(discountGroup['discRate']) / 100)) * -1;
-              const q = `
-                  INSERT INTO cart_item_modifier (
-                    presence, inputDate, updateDate, void,
-                    cartId, cartItemId, modifierId,
-                    applyDiscount, price, remark
-                  )
-                  VALUES (
-                    1, '${today()}', '${today()}',  0,
-                    '${cartId}',  ${cartItem['id']}, 0,
-                    ${discountGroup['id']}, ${discAmount}, '${remark}'
-                )`;
-              const [result] = await db.query(q);
-              if (result.affectedRows === 0) {
-                results.push({ status: 'not found', query: q, });
-              } else {
-                results.push({ status: 'discRate updated', query: q, });
-              }
-            }
-
-
-            // const  taxScUpdateRest  = await taxScUpdate(cartItem['id'], totalAmount); 
-
-            if (discountGroup['postDiscountSC'] == 1) {
-              const taxScUpdateRest = await scUpdate(cartItem['id']);
-            }
-
-            if (discountGroup['postDiscountTax'] == 1) {
-              const taxScUpdateRest = await taxUpdate(cartItem['id']);
-            }
-
-          } else {
-            results.push({ status: `ERROR ${discountGroup['discountGroup']} was not match menu ${name}` });
-          }
-        }
-      }
-    }
-
-    for (const emp of cartOrdered) {
-      const { menuId, checkBox, price, discountGroupId, name } = emp;
-
-      if (!menuId) {
-        results.push({ menuId, status: 'failed', reason: 'Missing fields' });
-        continue;
-      }
-
-      if (checkBox == 1) {
-
-        if ((discountGroup['discountGroupId'] == discountGroupId) || discountGroup['allDiscountGroup'] == 1) {
-          const q2 = `
-            SELECT id FROM cart_item 
-            WHERE  cartId = '${cartId}' AND presence = 1 AND void = 0
-            AND price = ${price} AND menuId = ${menuId} and sendOrder != ''
-          `;
-          const [cartItems] = await db.query(q2);
-
-          for (const cartItem of cartItems) {
-            const t1 = `
-          SELECT SUM(t1.totalAmount)  AS 'totalAmount' 
-          FROM (
-            SELECT  SUM(price) AS 'totalAmount'
-            FROM cart_item_modifier
-            WHERE
-              cartId = '${cartId}' and
-              cartItemId = ${cartItem['id']} AND 
-              presence = 1 and void = 0
-               AND menuTaxScId = 0
-            UNION
-
-            SELECT SUM(price)AS 'totalAmount' 
-            FROM cart_item WHERE 
-              cartId = '${cartId}' and
-              id = ${cartItem['id']} AND 
-              presence = 1 and void = 0
-          ) AS t1
-          `;
-            const [queryT1] = await db.query(t1);
-            const totalAmount = parseInt(queryT1[0]['totalAmount']);
-
-
-            if (parseInt(discountGroup['discAmount']) > 0) {
-              discAmount = parseInt(discountGroup['discAmount']) * -1;
-              if (totalAmount + discAmount <= 0) {
-                discAmount = totalAmount * -1;
-              }
-            } else {
-              discAmount = (totalAmount * (parseFloat(discountGroup['discRate']) / 100)) * -1;
-
-            }
-
-
-            const q =
-              `INSERT INTO cart_item_modifier (
-                presence, inputDate, updateDate, void,
-                cartId, cartItemId, modifierId,
-                applyDiscount, price, remark,
-                inputBy, updateBy
-              )
-              VALUES (
-                1, '${today()}', '${today()}',  0,
-                '${cartId}',  ${cartItem['id']}, 0,
-                ${discountGroup['id']}, ${discAmount}, '${remark}',
-                ${userId}, ${userId}
-            )`;
-
-            const [result] = await db.query(q);
-
-            if (result.affectedRows === 0) {
-              results.push({ status: 'not found', query: q, });
-            } else {
-              results.push({ status: 'updated', query: q, });
-            }
-
-            // const  taxScUpdateRest  = await taxScUpdate(cartItem['id'], totalAmount);
-
-
-            //const taxScUpdateRest = await taxScUpdate(cartItem['id']);
-
-            if (discountGroup['postDiscountSC'] == 1) {
-              const taxScUpdateRest = await scUpdate(cartItem['id']);
-            }
-
-            if (discountGroup['postDiscountTax'] == 1) {
-              const taxScUpdateRest = await taxUpdate(cartItem['id']);
-            }
-
-            // } else {
-            //   results.push({ status: 'cannot double' });
-            // }
-          }
-        } else {
-          results.push({ status: `ERROR ${discountGroup['discountGroup']} was not match menu ${name}` });
-        }
-      }
-    }
-
-
-    res.status(201).json({
-      error: false,
-      message: 'cart created',
-      results: results
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: true, note: 'Database insert error' });
-  }
-};
+ 
 
 exports.cartDetail = async (req, res) => {
   const cartId = req.query.id;
@@ -1798,8 +1021,7 @@ exports.sendOrder = async (req, res) => {
   const userId = headerUserId(req);
   let cartId = req.body['cartId'];
   const tableSendOrder = req.body['tableSendOrder'];
-
-
+ 
   const inputDate = today();
   const results = [];
   const { insertId: sendOrder } = await autoNumber('sendOrder');
@@ -1874,6 +1096,16 @@ exports.sendOrder = async (req, res) => {
     const [result2] = await db.query(q2);
 
     if (result2.affectedRows !== 0) {
+
+
+      const q1 = `
+      UPDATE cart SET
+        paymentId = '', 
+        updateDate = '${today()}',
+        updateBy = ${userId}
+      WHERE id = ${cartId}  `;
+      await db.query(q1);
+
       const q3 =
         `INSERT INTO send_order (
         presence, inputDate, updateDate,  
@@ -2237,7 +1469,7 @@ exports.transferTable = async (req, res) => {
     else {
       const q0 = `
           UPDATE cart SET 
-            tableMapStatusId = '${cart['tableMapStatusId']},',  
+            tableMapStatusId = '${cart['tableMapStatusId']}',  
             updateDate = '${today()}',
             updateBy = ${userId}
           WHERE id = ${cartId}`;
@@ -2497,29 +1729,26 @@ exports.transferLog = async (req, res) => {
 };
 
 exports.takeOut = async (req, res) => {
-  const cart = req.body['cart'];
-  const cartOrdered = req.body['cartOrdered'];
-  const userId = headerUserId(req);
-  const cartId = req.body['cartId'];
-
-  const inputDate = today();
+  const cart = req.body['cart']; 
+  const userId = headerUserId(req); 
   const results = [];
   try {
 
     for (const emp of cart) {
-      const { menuId, ta } = emp;
+      const { id, menuId, ta } = emp;
 
       if (!menuId) {
         results.push({ id, status: 'failed', reason: 'Missing fields' });
         continue;
       }
-
+      
+      const intTa = parseInt(ta) > 0 ? 0 : 1;
       const q = `UPDATE cart_item
             SET
-              ta = ${parseInt(ta) > 0 ? 0 : 1}, 
+              ta = ${intTa}, 
               updateDate = '${today()}',
               updateBy = ${userId}
-          WHERE menuId = ${menuId}  and cartId = '${cartId}' and sendOrder = '' `;
+          WHERE id = ${id} `;
       const [result] = await db.query(q);
       if (result.affectedRows === 0) {
         results.push({ status: 'not found' });
@@ -2527,77 +1756,27 @@ exports.takeOut = async (req, res) => {
         results.push({ status: 'cart_item updated' });
       }
 
-    }
-    const q2 = `SELECT id, ta FROM  cart_item 
-      WHERE  cartId = '${cartId}' and sendOrder = '' AND presence = 1 AND void = 0 `;
-    const [result] = await db.query(q2);
-    for (const data of result) {
-
-      const q = `UPDATE cart_item_modifier
-            SET
-              void = ${parseInt(data['ta'])}, 
-              updateDate = '${today()}',
-              updateBy = ${userId}
-          WHERE cartItemId = ${data['id']}  and scStatus  = 1  `;
-
-
-
-      const [result] = await db.query(q);
-      if (result.affectedRows === 0) {
+       const q2 = `UPDATE cart_item_modifier
+          SET
+            void =  ${intTa}, 
+            updateDate = '${today()}',
+            updateBy = ${userId}
+        WHERE cartItemId = ${id}  and scStatus  = 1  `;
+ 
+      const [result2] = await db.query(q2);
+      if (result2.affectedRows === 0) {
         results.push({ status: 'not found' });
       } else {
         results.push({ status: 'cart_item_modifier updated' });
       }
+ 
+                   
+      const taxScUpdateRest = await taxUpdate(id);
+               
 
+      
     }
-
-    // CARD SEND ORDER
-    for (const emp of cartOrdered) {
-      const { menuId, ta } = emp;
-
-      if (!menuId) {
-        results.push({ id, status: 'failed', reason: 'Missing fields' });
-        continue;
-      }
-
-      const q = `UPDATE cart_item
-            SET
-              ta = ${parseInt(ta) > 0 ? 0 : 1}, 
-              updateDate = '${today()}',
-              updateBy = ${userId}
-          WHERE menuId = ${menuId}  and cartId = '${cartId}' and sendOrder != '' `;
-      const [result] = await db.query(q);
-      if (result.affectedRows === 0) {
-        results.push({ status: 'not found' });
-      } else {
-        results.push({ status: 'cart_item updated' });
-      }
-
-    }
-    const q3 = `SELECT id, ta FROM  cart_item 
-      WHERE  cartId = '${cartId}' and sendOrder != '' AND presence = 1 AND void = 0 `;
-    const [result3] = await db.query(q3);
-    for (const data of result3) {
-
-      const q = `UPDATE cart_item_modifier
-            SET
-              void = ${parseInt(data['ta'])}, 
-              updateDate = '${today()}',
-              updateBy = ${userId}
-          WHERE cartItemId = ${data['id']}  and scStatus  = 1  `;
-
-
-
-      const [result3] = await db.query(q);
-      if (result.affectedRows === 0) {
-        results.push({ status: 'not found' });
-      } else {
-        results.push({ status: 'cart_item_modifier updated' });
-      }
-
-    }
-
-
+     
 
 
     res.json({

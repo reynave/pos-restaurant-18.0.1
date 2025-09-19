@@ -15,8 +15,7 @@ router.post('/updateQty', c.updateQty);
 //router.get('/cart', menuItemPos.cart);
 router.get('/menuLookUp', menuItemPos.menuLookUp);
 router.get('/selectMenuSet', menuItemPos.selectMenuSet);
-
-router.get('/cartOrdered', menuItemPos.cartOrdered);
+ 
 
 router.post('/addToCart', menuItemPos.addToCart);
 
