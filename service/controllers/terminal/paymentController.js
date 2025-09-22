@@ -12,27 +12,25 @@ exports.cart = async (req, res) => {
   const userId = headerUserId(req);
   try {
     const cartId = req.query.id; 
-
     const data = await cart(cartId);
     const [cartData] = await db.query(`
        SELECT  c.* , e.name as inputBy 
        from cart as c
-      left JOIN employee AS e ON e.id = c.closeBy
+       left JOIN employee AS e ON e.id = c.closeBy
        where c.presence = 1 and c.id = '${cartId}' 
     `); 
-     
     const [groups] = await db.query(`
-      SELECT subgroup, COUNT(id) AS 'qty'
-      FROM cart_item 
-      WHERE  presence= 1 AND  void = 0 AND    cartId = '${cartId}'
-      GROUP BY subgroup
+      SELECT   subgroup
+      FROM cart_item_group
+      Where cartId = '${cartId}'
+      GROUP BY subgroup 
+      order by subgroup asc
     `); 
-    
     res.json({
       data: data, 
       closePayment: data['unpaid'],
       cart: cartData[0],
-      groups: groups,
+      groups: [{subgroup : 1},...groups],
     });
 
   } catch (err) {

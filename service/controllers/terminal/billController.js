@@ -164,12 +164,9 @@ exports.printing = async (req, res) => {
 
     const templateSource = fs.readFileSync("public/template/bill.hbs", "utf8");
     const template = Handlebars.compile(templateSource);
-
-
-
+  
     const cartId = req.query.id;
-    const subgroup = !req.query.subgroup ? 1 : req.query.subgroup;
-
+    const subgroup = !req.query.subgroup ? 1 : req.query.subgroup; 
     const data = await cart(cartId, subgroup);
 
 
@@ -184,18 +181,15 @@ exports.printing = async (req, res) => {
           left JOIN employee AS e ON e.id = c.closeBy
       WHERE c.presence = 1 AND  c.id = '${cartId}'
     `);
-
-
-
+  
     const formattedRows = transaction.map(row => ({
       ...row,
-      bill: row.id + (subgroup > 1 ? ('.' + subgroup) : ''),
-
+      bill: row.id + (subgroup > 1 ? ('.' + subgroup) : ''), 
       startDate: formatDateTime(row.startDate),
-      endDate: row.close == 0 ? '' : formatDateTime(row.endDate),
-
+      endDate: row.close == 0 ? '' : formatDateTime(row.endDate), 
     }));
 
+ 
 
     const [outlet] = await db.query(`
      SELECT  * 
@@ -425,8 +419,7 @@ exports.ipPrint = async (req, res) => {
 }
 
 exports.splitBill = async (req, res) => {
-  const subgroup = req.query.subgroup || 1;
-  const parentGroup = req.query.parentGroup || 0;
+  const subgroup = req.query.subgroup || 1; 
   try {
     const cartId = req.query.id;
     const q = `
@@ -438,7 +431,28 @@ exports.splitBill = async (req, res) => {
       ORDER BY i.inputDate ASC;
     `;
     const [items] = await db.query(q);
+    console.log(q)
 
+
+    const q5 = `
+      SELECT  g.cartItemId AS 'id' ,  g.qty as 'total'
+      FROM cart_item_group AS g 
+      WHERE g.cartId = '${cartId}';
+    `; 
+    const [usedItem] = await db.query(q5);
+
+    // bisa buatkan code untuk qty dari items - qty dari itemsTransfer
+    const itemsMap = new Map();
+    items.forEach(item => {
+      itemsMap.set(item.id, item);
+    });
+
+    usedItem.forEach(item => {
+      const originalItem = itemsMap.get(item.id);
+      if (originalItem) {
+        originalItem.total -= item.total;
+      }
+    });
 
 
     const q2 = `
@@ -447,25 +461,12 @@ exports.splitBill = async (req, res) => {
       FROM cart_item_group AS g
       JOIN cart_item AS c ON c.id = g.cartItemId
       JOIN menu AS m ON m.id = c.menuId
-      WHERE g.cartId = '${cartId}' AND g.subgroup = '${subgroup}' AND g.parentGroup = '${parentGroup}'
+      WHERE g.cartId = '${cartId}' AND g.subgroup = '${subgroup}'  
       AND g.presence = 1
       ORDER BY g.inputDate ASC;
     `;
+   // console.log(q2)
     const [itemsTransfer] = await db.query(q2);
-
-    // bisa buatkan code untuk qty dari items - qty dari itemsTransfer
-    const itemsMap = new Map();
-    items.forEach(item => {
-      itemsMap.set(item.id, item);
-    });
-
-    itemsTransfer.forEach(item => {
-      const originalItem = itemsMap.get(item.id);
-      if (originalItem) {
-        originalItem.total -= item.total;
-      }
-    });
-
 
 
     res.json({
@@ -482,8 +483,7 @@ exports.splitBill = async (req, res) => {
 };
 
 exports.updateGroup = async (req, res) => {
-  const cartId = req.body['id'];
-  const parentGroup = req.body['parentGroup'];
+  const cartId = req.body['id']; 
   const subgroup = req.body['subgroup'];
   const qty = req.body['qty'];
   const itemTransfer = req.body['itemTransfer'];
@@ -493,7 +493,7 @@ exports.updateGroup = async (req, res) => {
 
     const [cartItemGroup] = await db.query(`
       SELECT * FROM cart_item_group
-      WHERE cartId = '${cartId}' AND parentGroup = ${parentGroup} AND subgroup = ${subgroup} and cartItemId = '${itemTransfer['id']}'
+      WHERE cartId = '${cartId}' AND subgroup = ${subgroup} and cartItemId = '${itemTransfer['id']}'
     `);
 
     if (cartItemGroup.length > 0) {
@@ -501,7 +501,7 @@ exports.updateGroup = async (req, res) => {
           qty = ${qty},
           updateDate = '${today()}',
           updateBy = '${userId}'
-        WHERE cartId = '${cartId}' AND parentGroup = ${parentGroup} AND subgroup = ${subgroup} and cartItemId = '${itemTransfer['id']}' 
+        WHERE cartId = '${cartId}' AND subgroup = ${subgroup} and cartItemId = '${itemTransfer['id']}'
       `;
       const [result] = await db.query(q); 
       if (result.affectedRows === 0) {
@@ -512,10 +512,10 @@ exports.updateGroup = async (req, res) => {
     } else {
       const q =
         `INSERT INTO cart_item_group (
-          cartId, cartItemId, parentGroup,  subgroup, qty,
+          cartId, cartItemId,   subgroup, qty,
           presence, inputDate, inputBy) 
         VALUES ( 
-          '${cartId}', '${itemTransfer['id']}', ${parentGroup}, ${subgroup}, ${qty},
+          '${cartId}', '${itemTransfer['id']}', ${subgroup}, ${qty},
           1, '${today()}', '${userId}' 
         )`;
       const [result] = await db.query(q);
@@ -541,8 +541,7 @@ exports.updateGroup = async (req, res) => {
 
 exports.resetGroup = async (req, res) => {
   const id = req.body['id'];
-  const item = req.body['item'];
-  const parentGroup = req.body['parentGroup'];
+  const item = req.body['item']; 
   const subgroup = req.body['subgroup'];
 
   const results = [];
@@ -550,8 +549,7 @@ exports.resetGroup = async (req, res) => {
     const q = `
       DELETE FROM cart_item_group 
       WHERE cartItemId = '${item['id']}' 
-        AND subgroup = ${subgroup} 
-        AND parentGroup = ${parentGroup}
+        AND subgroup = ${subgroup}  
         AND cartId = '${id}'
        
     `;
