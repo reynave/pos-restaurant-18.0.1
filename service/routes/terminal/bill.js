@@ -15,6 +15,9 @@ router.post('/copyBill', bill.copyBill);
 router.post('/billUpdate', bill.billUpdate);
 router.get('/splitBill', bill.splitBill);   
 router.post('/updateGroup', bill.updateGroup);   
+router.post('/resetGroup', bill.resetGroup);   
+
+
 router.post('/createPayment', bill.createPayment);   
 
 module.exports = router;

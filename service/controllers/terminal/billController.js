@@ -159,7 +159,7 @@ exports.printing2 = async (req, res) => {
 exports.printing = async (req, res) => {
 
   const api = req.query.api == 'true' ? true : false;
-  const userId = headerUserId(req); 
+  const userId = headerUserId(req);
   try {
 
     const templateSource = fs.readFileSync("public/template/bill.hbs", "utf8");
@@ -185,7 +185,7 @@ exports.printing = async (req, res) => {
       WHERE c.presence = 1 AND  c.id = '${cartId}'
     `);
 
-    
+
 
     const formattedRows = transaction.map(row => ({
       ...row,
@@ -193,7 +193,7 @@ exports.printing = async (req, res) => {
 
       startDate: formatDateTime(row.startDate),
       endDate: row.close == 0 ? '' : formatDateTime(row.endDate),
-     
+
     }));
 
 
@@ -425,25 +425,54 @@ exports.ipPrint = async (req, res) => {
 }
 
 exports.splitBill = async (req, res) => {
-
+  const subgroup = req.query.subgroup || 1;
+  const parentGroup = req.query.parentGroup || 0;
   try {
     const cartId = req.query.id;
     const q = `
      SELECT i.id, i.subgroup, i.price, i.sendOrder, i.inputDate, 
-      m.name AS 'menu'
+      m.name AS 'menu', i.qty as 'total', i.qty as 'totalReset'
       FROM cart_item AS i
       JOIN menu AS m ON m.id = i.menuId
       WHERE i.cartId = '${cartId}' AND i.presence = 1 AND i.void = 0 
       ORDER BY i.inputDate ASC;
     `;
     const [items] = await db.query(q);
-    let subgroup = [1, 2, 3, 4]
+
+
+
+    const q2 = `
+     SELECT  g.cartItemId AS 'id' , c.price, g.qty AS 'total', g.qty AS 'totalOriginal', 1 as 'isTransfer',
+      c.menuId, m.name AS 'menu'
+      FROM cart_item_group AS g
+      JOIN cart_item AS c ON c.id = g.cartItemId
+      JOIN menu AS m ON m.id = c.menuId
+      WHERE g.cartId = '${cartId}' AND g.subgroup = '${subgroup}' AND g.parentGroup = '${parentGroup}'
+      AND g.presence = 1
+      ORDER BY g.inputDate ASC;
+    `;
+    const [itemsTransfer] = await db.query(q2);
+
+    // bisa buatkan code untuk qty dari items - qty dari itemsTransfer
+    const itemsMap = new Map();
+    items.forEach(item => {
+      itemsMap.set(item.id, item);
+    });
+
+    itemsTransfer.forEach(item => {
+      const originalItem = itemsMap.get(item.id);
+      if (originalItem) {
+        originalItem.total -= item.total;
+      }
+    });
+
 
 
     res.json({
       subgroup: subgroup,
       error: false,
       items: items,
+      itemsTransfer: itemsTransfer,
     });
 
   } catch (err) {
@@ -453,18 +482,79 @@ exports.splitBill = async (req, res) => {
 };
 
 exports.updateGroup = async (req, res) => {
+  const cartId = req.body['id'];
+  const parentGroup = req.body['parentGroup'];
+  const subgroup = req.body['subgroup'];
+  const qty = req.body['qty'];
+  const itemTransfer = req.body['itemTransfer'];
+  const userId = headerUserId(req);
+  const results = [];
+  try {
+
+    const [cartItemGroup] = await db.query(`
+      SELECT * FROM cart_item_group
+      WHERE cartId = '${cartId}' AND parentGroup = ${parentGroup} AND subgroup = ${subgroup} and cartItemId = '${itemTransfer['id']}'
+    `);
+
+    if (cartItemGroup.length > 0) {
+      const q = `update cart_item_group set
+          qty = ${qty},
+          updateDate = '${today()}',
+          updateBy = '${userId}'
+        WHERE cartId = '${cartId}' AND parentGroup = ${parentGroup} AND subgroup = ${subgroup} and cartItemId = '${itemTransfer['id']}' 
+      `;
+      const [result] = await db.query(q); 
+      if (result.affectedRows === 0) {
+        results.push({ status: 'not found' });
+      } else {
+        results.push({ status: 'updated' });
+      }
+    } else {
+      const q =
+        `INSERT INTO cart_item_group (
+          cartId, cartItemId, parentGroup,  subgroup, qty,
+          presence, inputDate, inputBy) 
+        VALUES ( 
+          '${cartId}', '${itemTransfer['id']}', ${parentGroup}, ${subgroup}, ${qty},
+          1, '${today()}', '${userId}' 
+        )`;
+      const [result] = await db.query(q);
+      if (result.affectedRows === 0) {
+        results.push({ status: 'not found' });
+      } else {
+        results.push({ status: 'updated' });
+      }
+    }
+
+ 
+
+    res.json({
+      error: false,
+      get: req.query
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+}
+
+exports.resetGroup = async (req, res) => {
   const id = req.body['id'];
-  const group = req.body['group'];
+  const item = req.body['item'];
+  const parentGroup = req.body['parentGroup'];
+  const subgroup = req.body['subgroup'];
 
   const results = [];
   try {
     const q = `
-            UPDATE cart_item
-               SET    
-                  subgroup = '${group}', 
-                  updateDate = '${today()}'
-            WHERE id = ${id}
-         `;
+      DELETE FROM cart_item_group 
+      WHERE cartItemId = '${item['id']}' 
+        AND subgroup = ${subgroup} 
+        AND parentGroup = ${parentGroup}
+        AND cartId = '${id}'
+       
+    `;
 
     const [result] = await db.query(q);
 
@@ -484,6 +574,7 @@ exports.updateGroup = async (req, res) => {
     res.status(500).json({ error: 'Database error' });
   }
 }
+
 
 
 exports.createPayment = async (req, res) => {
@@ -574,3 +665,5 @@ exports.createPayment = async (req, res) => {
     res.status(500).json({ error: 'Database error' });
   }
 }
+
+
