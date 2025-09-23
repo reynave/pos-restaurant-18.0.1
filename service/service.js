@@ -23,6 +23,7 @@ const items = require('./routes/terminal/items');
 const printingPos = require('./routes/terminal/printing');
 const userLog = require('./routes/terminal/userLog');
 const printQueue = require('./routes/terminal/printQueue');
+const cashier = require('./routes/terminal/cashier');
 
 const IsAuth = require('./helpers/IsAuth');
 app.use((req, res, next) => {
@@ -108,6 +109,8 @@ app.use(process.env.PREFIX + process.env.TERMINAL + 'items', IsAuth.validateToke
 app.use(process.env.PREFIX + process.env.TERMINAL + 'printing', printingPos);
 app.use(process.env.PREFIX + process.env.TERMINAL + 'log', userLog);
 app.use(process.env.PREFIX + process.env.TERMINAL + 'printQueue', IsAuth.validateToken, printQueue);
+app.use(process.env.PREFIX + process.env.TERMINAL + 'cashier', IsAuth.validateToken, cashier);
+
   
 app.use('/', (req, res) => {
     const data = {

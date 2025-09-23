@@ -160,7 +160,7 @@ exports.printing = async (req, res) => {
 
   const api = req.query.api == 'true' ? true : false;
   const userId = headerUserId(req);
-  try {
+  //try {
 
     const templateSource = fs.readFileSync("public/template/bill.hbs", "utf8");
     const template = Handlebars.compile(templateSource);
@@ -169,8 +169,7 @@ exports.printing = async (req, res) => {
     const subgroup = !req.query.subgroup ? 1 : req.query.subgroup; 
     const data = await cart(cartId, subgroup);
 
-
-    const [transaction] = await db.query(`
+  const q1 = `
      SELECT 
          c.id   , c.id as 'bill', c.void,  c.dailyCheckId, c.cover, c.outletId, c.billNo,
         o.name AS 'outlet', c.startDate, c.endDate , 
@@ -180,7 +179,22 @@ exports.printing = async (req, res) => {
       JOIN outlet_table_map AS t ON t.id = c.outletTableMapId
           left JOIN employee AS e ON e.id = c.closeBy
       WHERE c.presence = 1 AND  c.id = '${cartId}'
-    `);
+    `;
+
+    const q2 = ` 
+      SELECT 
+c.id   , c.id as 'bill', c.void,  c.dailyCheckId, c.cover, c.outletId, c.billNo,
+  o.name AS 'outlet', c.startDate, c.endDate , 
+  c.close,  'UAT PERSON' as 'servedBy' , e.name as 'employeeName'
+FROM cart AS c
+JOIN outlet AS o ON o.id = c.outletId
+    left JOIN employee AS e ON e.id = c.closeBy
+WHERE c.presence = 1 AND  c.id = '${cartId}'
+    `;
+
+
+    console.log(q2);
+    const [transaction] = await db.query(q2);
   
     const formattedRows = transaction.map(row => ({
       ...row,
@@ -189,8 +203,7 @@ exports.printing = async (req, res) => {
       endDate: row.close == 0 ? '' : formatDateTime(row.endDate), 
     }));
 
- 
-
+  
     const [outlet] = await db.query(`
      SELECT  * 
       FROM outlet  
@@ -218,10 +231,10 @@ exports.printing = async (req, res) => {
       res.send(result);
     }
 
-  } catch (err) {
-    console.error('Render error:', err);
-    res.status(500).send('Gagal render HTML');
-  }
+  // } catch (err) {
+  //   console.error('Render error:', err);
+  //   res.status(500).send('Failed to render HTML');
+  // }
 };
 
 

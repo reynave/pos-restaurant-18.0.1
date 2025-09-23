@@ -105,10 +105,14 @@ exports.signin = async (req, res) => {
             results.push({ status: 'employee_token insert' });
         }
 
+
+        const [outlet] = await db.query(`SELECT id, posMode FROM outlet   WHERE  id = ${outletId}`);
+
         res.status(200).json({
             message: 'Login successful',
             dailyCheck: dailyCheck,
             token: tokenjwt,
+            outlet : outlet,
             printer: {
                 con: 'ip',
                 address: '10.51.122.20',

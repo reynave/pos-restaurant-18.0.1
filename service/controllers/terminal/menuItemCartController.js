@@ -1,26 +1,41 @@
 const db = require('../../config/db');
-const { headerUserId, mapUpdateByName, today, sanitizeText } = require('../../helpers/global'); 
-const {   scUpdate, taxUpdate } = require('../../helpers/bill'); 
+const { headerUserId, mapUpdateByName, today, sanitizeText } = require('../../helpers/global');
+const { scUpdate, taxUpdate } = require('../../helpers/bill');
 
 const { logger } = require('./userLogController');
 
 exports.cart = async (req, res) => {
    const i = 1;
-     const userId = headerUserId(req);
+   const userId = headerUserId(req);
+   const posMode = req.query.posMode || 'table'; // counter / table
    try {
       const cartId = req.query.id;
+      let qm = '';
+      if(posMode === 'table'){
+         qm = `
+         SELECT c.*, t.tableName, c.startDate, c.overDue,
+            TIMESTAMPDIFF(MINUTE,  c.overDue, NOW())  AS overTime, s.name AS 'status', 
+            t.outletFloorPlandId, f.desc1 AS 'floorName'
+         FROM cart  AS c
+            JOIN outlet_table_map AS t ON t.id = c.outletTableMapId
+            left join outlet_table_map_status as s on s.id = c.tableMapStatusId
+            left join outlet_floor_plan as f on f.id = t.outletFloorPlandId
+         WHERE c.id = '${cartId}' AND c.presence = 1
+         `;
+      } else {
 
-      const q2 = `
-      SELECT c.*, t.tableName, c.startDate, c.overDue,
-           TIMESTAMPDIFF(MINUTE,  c.overDue, NOW())  AS overTime, s.name AS 'status', 
-           t.outletFloorPlandId, f.desc1 AS 'floorName'
-      FROM cart  AS c
-          JOIN outlet_table_map AS t ON t.id = c.outletTableMapId
-          left join outlet_table_map_status as s on s.id = c.tableMapStatusId
-          left join outlet_floor_plan as f on f.id = t.outletFloorPlandId
-      WHERE c.id = '${cartId}' AND c.presence = 1
-      `;
-      const [table] = await db.query(q2);
+         qm = `
+         SELECT c.*,  'Counter' AS 'tableName' , c.startDate, c.overDue,
+         TIMESTAMPDIFF(MINUTE,  c.overDue, NOW())  AS overTime, s.name AS 'status'
+
+         FROM cart  AS c 
+         left join outlet_table_map_status as s on s.id = c.tableMapStatusId 
+         WHERE c.id = '${cartId}' AND c.presence = 1
+         `;
+      }
+
+      const [table] = await db.query(qm); 
+
       const tableRow = await mapUpdateByName(db, table);
 
 
@@ -121,19 +136,19 @@ exports.cart = async (req, res) => {
       });
 
 
-     
+
 
       // function to calculate total amount and total items
       let totalAmount = 0;
       let totalItem = 0;
 
-       // buatkan function untuk menghitung total dari total + modifier
+      // buatkan function untuk menghitung total dari total + modifier
       const calculateGrandTotal = (item) => {
          const modifierTotal = item.modifier.reduce((acc, curr) => acc + curr.totalAmount, 0);
          return item.totalAmount + modifierTotal;
       };
       items.forEach(item => {
-         item.grandTotalAmount = calculateGrandTotal(item) 
+         item.grandTotalAmount = calculateGrandTotal(item)
       });
 
       // function to calculate total amount and total items
@@ -143,7 +158,7 @@ exports.cart = async (req, res) => {
       });
 
 
-      if(tableRow[0]['close'] == 0 && userId !== null){
+      if (tableRow[0]['close'] == 0 && userId !== null) {
          tableRow[0]['closeBy'] = userId;
 
          const q = `UPDATE cart
@@ -151,13 +166,13 @@ exports.cart = async (req, res) => {
                        closeBy = '${userId}'
                       
           WHERE id = '${cartId}' and close = 0`;
-          await db.query(q);
-      }
+         await db.query(q);
+      } 
 
       // End of calculation
       res.json({
          table: tableRow,
-         items: items, 
+         items: items,
          totalAmount: totalAmount,
          totalItem: totalItem,
       });
@@ -237,7 +252,7 @@ exports.updateQty = async (req, res) => {
             results.push({ status: 'not found' });
          } else {
             results.push({ status: 'UPDATE', query: q });
-             const q1 = `
+            const q1 = `
                UPDATE cart SET
                   paymentId = '', 
                   updateDate = '${today()}',
@@ -266,6 +281,7 @@ exports.voidItem = async (req, res) => {
    const userId = headerUserId(req);
    const cart = req.body['cart'];
    const cartId = req.body['cartId'];
+   const posMode = req.body['posMode'];
 
    const inputDate = today();
    const results = [];
@@ -280,7 +296,7 @@ exports.voidItem = async (req, res) => {
               presence = 0,
               updateDate = '${today()}',
               updateBy = ${userId}
-          WHERE id = ${id}  and cartId = '${cartId}' and sendOrder = '' `;
+            WHERE id = ${id}  and cartId = '${cartId}' ${posMode != 'cashier' ? 'and sendOrder = "" ' : ''} `;
             const [result] = await db.query(q);
             if (result.affectedRows === 0) {
                results.push({ id, status: 'not found' });
@@ -306,50 +322,24 @@ exports.voidItem = async (req, res) => {
                } else {
                   results.push({ id: mod['id'], status: 'cart_item_modifier updated', query: q });
 
-                    const q1 = `
+                  const q1 = `
                            UPDATE cart SET
                               paymentId = '', 
                               updateDate = '${today()}',
                               updateBy = ${userId}
                            WHERE id = '${cartId}'  `;
-                        await db.query(q1);
+                  await db.query(q1);
                }
             }
 
          }
 
-          await scUpdate(id); 
-          await taxUpdate(id);
+         await scUpdate(id);
+         await taxUpdate(id);
 
       }
 
-      // const q2 = `
-      // SELECT id, cartId, presence , void 
-      // FROM cart_item
-      // WHERE cartId = '${cartId}' and presence = 0 and void = 1 `;
-      // const [result2] = await db.query(q2);
-      // if (result2.length > 0) {
-      //    for (const row of result2) {
-      //       const q = `UPDATE cart_item_modifier
-      //       SET
-      //         void = 1,
-      //         presence = 0,
-      //         updateDate = '${today()}',
-      //         updateBy = ${userId}
-      //     WHERE  cartItemId = '${row['id']}'`;
-      //       const [result] = await db.query(q);
-
-      //       if (result.affectedRows === 0) {
-      //          results.push({ status: 'not found' });
-      //       } else {
-      //          results.push({ status: 'cart_item_modifier updated' });
-      //       }
-      //    }
-      // }
-
- 
-
-
+       
       res.json({
          message: 'Batch update completed',
          results: results
@@ -413,7 +403,7 @@ exports.addToItemModifier = async (req, res) => {
                         results.push({ status: 'not found', query: q, });
                      } else {
                         results.push({ status: 'updated', query: q, });
-                         const q1 = `
+                        const q1 = `
                            UPDATE cart SET
                               paymentId = '', 
                               updateDate = '${today()}',
@@ -426,7 +416,7 @@ exports.addToItemModifier = async (req, res) => {
                   }
                }
             }
-            
+
 
 
          }
@@ -473,13 +463,13 @@ exports.addCustomNotes = async (req, res) => {
             results.push({ status: 'cart_item_modifier insert', });
          }
 
-          const q1 = `
+         const q1 = `
             UPDATE cart SET
               paymentId = '', 
               updateDate = '${today()}',
               updateBy = ${userId}
             WHERE id = '${cartId}'  `;
-          await db.query(q1);
+         await db.query(q1);
       }
 
       res.status(201).json({
@@ -598,13 +588,13 @@ exports.addDiscountGroup = async (req, res) => {
          }
       }
 
-       const q1 = `
+      const q1 = `
             UPDATE cart SET
               paymentId = '', 
               updateDate = '${today()}',
               updateBy = ${userId}
             WHERE id = '${cartId}'  `;
-          await db.query(q1);
+      await db.query(q1);
 
       res.status(201).json({
          error: false,
