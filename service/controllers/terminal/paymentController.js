@@ -1,36 +1,39 @@
 const db = require('../../config/db');
-const { headerUserId, today, formatDateOnly } = require('../../helpers/global');
+const { headerUserId, today, formatDateOnly, formatDateTime } = require('../../helpers/global');
 const { autoNumber } = require('../../helpers/autoNumber');
 const { cart } = require('../../helpers/bill');
 
 const ejs = require('ejs');
 const path = require('path');
+const fs = require('fs');
+const Handlebars = require("handlebars");
+require("../../helpers/handlebarsFunction")(Handlebars);
 
 exports.cart = async (req, res) => {
-  let totalItem = 0; 
+  let totalItem = 0;
   let closePayment = 0;
   const userId = headerUserId(req);
   try {
-    const cartId = req.query.id; 
+    const cartId = req.query.id;
     const data = await cart(cartId);
     const [cartData] = await db.query(`
        SELECT  c.* , e.name as inputBy 
        from cart as c
        left JOIN employee AS e ON e.id = c.closeBy
        where c.presence = 1 and c.id = '${cartId}' 
-    `); 
+    `);
     const [groups] = await db.query(`
       SELECT   subgroup
       FROM cart_item_group
       Where cartId = '${cartId}'
       GROUP BY subgroup 
       order by subgroup asc
-    `); 
+    `);
     res.json({
-      data: data, 
+      data: data,
       closePayment: data['unpaid'],
       cart: cartData[0],
-      groups: [{subgroup : 1},...groups],
+      groups: [{ subgroup: 1 }, ...groups],
     });
 
   } catch (err) {
@@ -38,8 +41,6 @@ exports.cart = async (req, res) => {
     res.status(500).json({ error: 'Database error' });
   }
 };
-
- 
 
 exports.paymentGroup = async (req, res) => {
   try {
@@ -107,11 +108,9 @@ exports.paid = async (req, res) => {
     let closePayment = 0;
 
 
-    if(cartPayment[0]['paid'] >= cartPayment[0]['grandTotal']) closePayment = 1;
+    if (cartPayment[0]['paid'] >= cartPayment[0]['grandTotal']) closePayment = 1;
 
     if (closePayment == 1) {
-   
-
       console.log("FINISH");
       const data = await cart(cartId);
       const q = `UPDATE cart
@@ -207,14 +206,102 @@ exports.paid = async (req, res) => {
 
     }
 
+    const text = 'text test saja';
+     const [selectOutlet] = await db.query(`
+        SELECT  outletTableMapId 
+        FROM cart  
+        WHERE id = '${cartId}'
+      `); 
+    try {
 
+      let subgroup = 1;
+      const data = await cart(cartId, subgroup);
+
+
+      let q = '';
+     
+
+      if (selectOutlet[0]['outletTableMapId'] != 0) { 
+        // TABLE
+        q = `
+        SELECT 
+            c.id   , c.id as 'bill', c.void,  c.dailyCheckId, c.cover, c.outletId, c.billNo,
+          o.name AS 'outlet', c.startDate, c.endDate , 
+          c.close,   t.tableName, t.tableNameExt, 'UAT PERSON' as 'servedBy' , e.name as 'employeeName'
+        FROM cart AS c
+        JOIN outlet AS o ON o.id = c.outletId
+        JOIN outlet_table_map AS t ON t.id = c.outletTableMapId
+            left JOIN employee AS e ON e.id = c.closeBy
+        WHERE c.presence = 1 AND  c.id = '${cartId}'
+      `;
+      }
+      else { 
+        // CASHIER
+        q = ` 
+        SELECT 
+        c.id   , c.id as 'bill', c.void,  c.dailyCheckId, c.cover, c.outletId, c.billNo,
+        o.name AS 'outlet', c.startDate, c.endDate , 
+        c.close,  'UAT PERSON' as 'servedBy' , e.name as 'employeeName'
+        FROM cart AS c
+        JOIN outlet AS o ON o.id = c.outletId
+          left JOIN employee AS e ON e.id = c.closeBy
+        WHERE c.presence = 1 AND  c.id = '${cartId}'
+      `; 
+      }
+      console.log(q);
+      const [transaction] = await db.query(q);
+
+      const formattedRows = transaction.map(row => ({
+        ...row,
+        bill: row.id + (subgroup > 1 ? ('.' + subgroup) : ''),
+        startDate: formatDateTime(row.startDate),
+        endDate: row.close == 0 ? '' : formatDateTime(row.endDate),
+      }));
+
+      const [outlet] = await db.query(`
+     SELECT  * 
+      FROM outlet  
+      WHERE id = '${formattedRows[0]['outletId']}'
+    `);
+      // Baca template Handlebars
+      const templateSource = fs.readFileSync(path.join(__dirname, '../../public/template/bill.hbs'), "utf8");
+      const template = Handlebars.compile(templateSource);
+
+      // Siapkan data untuk template
+      // Pastikan variabel data, formattedRows, outlet, subgroup sudah didefinisikan sebelumnya
+      const jsonData = {
+        data: data,
+        transaction: formattedRows[0],
+        company: outlet ? outlet[0] : {},
+        subgroup: subgroup,
+      };
+      const result = template(jsonData);
+
+      // Buat folder export jika belum ada
+      const dateFolder = formatDateOnly(new Date()); // formatDateOnly harus return YYYY-MM-DD
+      const exportDir = path.join(__dirname, '../../public/exports', dateFolder);
+      if (!fs.existsSync(exportDir)) {
+        fs.mkdirSync(exportDir, { recursive: true });
+      }
+
+      // Tulis hasil render ke file txt
+      fs.writeFileSync(
+        path.join(exportDir, `${cartId}.txt`), result
+      );
+      results.push({ status: 'TXT exported', file: `${dateFolder}/${cartId}.txt` });
+    } catch (txtErr) {
+      console.error('TXT export error:', txtErr);
+      results.push({ status: 'TXT export failed', error: txtErr.message });
+    }
 
 
     res.json({
       error: false,
+      outletTableMapId : selectOutlet[0]['outletTableMapId'],
       closePayment: closePayment,
-      cartPayment : cartPayment[0],
+      cartPayment: cartPayment[0],
       items: formattedRows,
+      results: results,
     });
 
   } catch (err) {

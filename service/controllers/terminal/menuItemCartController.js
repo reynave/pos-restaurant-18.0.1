@@ -339,6 +339,30 @@ exports.voidItem = async (req, res) => {
 
       }
 
+
+
+
+
+      const q = `SELECT 
+            m.id, m.cartId, m.cartItemId, c.presence, c.void
+         FROM cart_item_modifier AS m
+         LEFT JOIN cart_item AS c ON c.id = m.cartItemId 
+         WHERE 
+            c.presence = 1 AND c.void = 0`;
+      const [result] = await db.query(q);
+      for (const row of result) {
+          // buatkan query update
+         const q1 = `UPDATE cart_item_modifier
+            SET
+              presence = 0,  
+              void = 1,
+               updateDate = '${today()}',
+               updateBy = ${userId}
+            WHERE  cartItemId = ${row['cartItemId']}  and  menuTaxScId = 0 `;
+         await db.query(q1); 
+
+      }
+
        
       res.json({
          message: 'Batch update completed',

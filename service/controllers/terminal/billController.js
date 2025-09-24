@@ -168,33 +168,41 @@ exports.printing = async (req, res) => {
     const cartId = req.query.id;
     const subgroup = !req.query.subgroup ? 1 : req.query.subgroup; 
     const data = await cart(cartId, subgroup);
+    let q = '';
+    const [selectOutlet] = await db.query(`
+            SELECT  outletTableMapId 
+            FROM cart  
+            WHERE id = '${cartId}'
+          `); 
 
-  const q1 = `
-     SELECT 
-         c.id   , c.id as 'bill', c.void,  c.dailyCheckId, c.cover, c.outletId, c.billNo,
+    if (selectOutlet[0]['outletTableMapId'] != 0) { 
+      q = `
+      SELECT 
+          c.id   , c.id as 'bill', c.void,  c.dailyCheckId, c.cover, c.outletId, c.billNo,
+          o.name AS 'outlet', c.startDate, c.endDate , 
+          c.close,   t.tableName, t.tableNameExt, 'UAT PERSON' as 'servedBy' , e.name as 'employeeName'
+        FROM cart AS c
+        JOIN outlet AS o ON o.id = c.outletId
+        JOIN outlet_table_map AS t ON t.id = c.outletTableMapId
+            left JOIN employee AS e ON e.id = c.closeBy
+        WHERE c.presence = 1 AND  c.id = '${cartId}'
+      `;
+    }else{
+        
+      q = ` 
+          SELECT 
+      c.id   , c.id as 'bill', c.void,  c.dailyCheckId, c.cover, c.outletId, c.billNo,
         o.name AS 'outlet', c.startDate, c.endDate , 
-        c.close,   t.tableName, t.tableNameExt, 'UAT PERSON' as 'servedBy' , e.name as 'employeeName'
+        c.close,  'UAT PERSON' as 'servedBy' , e.name as 'employeeName'
       FROM cart AS c
       JOIN outlet AS o ON o.id = c.outletId
-      JOIN outlet_table_map AS t ON t.id = c.outletTableMapId
           left JOIN employee AS e ON e.id = c.closeBy
       WHERE c.presence = 1 AND  c.id = '${cartId}'
-    `;
+      `;
+    }
 
-    const q2 = ` 
-      SELECT 
-c.id   , c.id as 'bill', c.void,  c.dailyCheckId, c.cover, c.outletId, c.billNo,
-  o.name AS 'outlet', c.startDate, c.endDate , 
-  c.close,  'UAT PERSON' as 'servedBy' , e.name as 'employeeName'
-FROM cart AS c
-JOIN outlet AS o ON o.id = c.outletId
-    left JOIN employee AS e ON e.id = c.closeBy
-WHERE c.presence = 1 AND  c.id = '${cartId}'
-    `;
-
-
-    console.log(q2);
-    const [transaction] = await db.query(q2);
+    console.log(q);
+    const [transaction] = await db.query(q);
   
     const formattedRows = transaction.map(row => ({
       ...row,
