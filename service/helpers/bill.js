@@ -126,7 +126,7 @@ async function cart(cartId = '', subgroup = 0) {
             JOIN cart_item AS i ON i.id = m.cartItemId
             WHERE m.presence= 1 AND m.void = 0     
              ${subgroup == 0 ? '' : ' AND i.subgroup = ' + subgroup} 
-            AND m.cartId = '${cartId}'  AND m.menuTaxScId != 0 AND m.scStatus != 0
+            AND m.cartId = '${cartId}'  AND m.menuTaxScId != 0 AND m.scStatus != 0 and i.presence = 1
             GROUP BY m.menuTaxScId 
         )AS t1
         JOIN menu_tax_sc AS a ON a.id = t1.menuTaxScId
@@ -140,7 +140,7 @@ async function cart(cartId = '', subgroup = 0) {
             JOIN cart_item AS i ON i.id = m.cartItemId
             WHERE m.presence= 1 AND m.void = 0 
             ${subgroup == 0 ? '' : ' AND i.subgroup = ' + subgroup} 
-            AND  m.cartId = '${cartId}' AND m.menuTaxScId != 0 AND m.taxStatus != 0
+            AND  m.cartId = '${cartId}' AND m.menuTaxScId != 0 AND m.taxStatus != 0 and i.presence = 1
             GROUP BY menuTaxScId 
         )AS t1
         JOIN menu_tax_sc AS a ON a.id = t1.menuTaxScId
@@ -680,7 +680,7 @@ async function taxUpdate(cartItem = 0) {
         WHERE cartItemId = ${cartItem}
         AND presence =1 AND void = 0 and menuTaxScId = 0
     `;
-   const [totalAmountModifier] = await db.query(q2);
+   const [totalAmountModifierData] = await db.query(q2);
 
    const t1 = `
     SELECT c.menuId , m.menuTaxScId, t.scTaxIncluded
@@ -689,12 +689,16 @@ async function taxUpdate(cartItem = 0) {
         JOIN menu_tax_sc AS t ON t.id = m.menuTaxScId
         WHERE c.id = ${cartItem};
     `;
-   const [menuQuery] = await db.query(q2);
+   const [menuQuery] = await db.query(t1);
    const scTaxIncluded = menuQuery[0]['scTaxIncluded'];
+
+
+   const totalAmountModifier = parseInt(totalAmountModifierData[0]['total']);
+
 
    const m1 = `
         -- m1
-        SELECT price + ${parseInt(totalAmountModifier[0]['total'])} as 'price' 
+        SELECT price + ${totalAmountModifier} as 'price' 
         FROM cart_item 
         WHERE id = ${cartItem} AND presence =1 AND void = 0 
     `;
