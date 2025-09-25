@@ -7,6 +7,7 @@
 /bazel-out
 /public/exports
 /public/output
+/public/userLog
 
 # Node
 /node_modules

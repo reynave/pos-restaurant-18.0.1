@@ -200,8 +200,7 @@ exports.printing = async (req, res) => {
       WHERE c.presence = 1 AND  c.id = '${cartId}'
       `;
     }
-
-    console.log(q);
+ 
     const [transaction] = await db.query(q);
   
     const formattedRows = transaction.map(row => ({
