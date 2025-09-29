@@ -68,7 +68,10 @@ async function sendToPrinterDummy(data) {
 }
 
 async function printQueueInternal(db, sendOrder, userId) {
-   const q1 = `SELECT c.qty , c.cartId, c.sendOrder,  c.menuId , c.id AS 'cartItemId',    m.descs,   m.printerGroupId,  
+  const printResults = [];
+   const q1 = `SELECT 
+        c.qty , c.cartId, c.sendOrder,  c.menuId , c.id AS 'cartItemId',    
+        m.descs,   m.printerGroupId,  
         b.tableName, '' as modifier,  a.dailyCheckId
       FROM cart_item AS c
       JOIN cart AS a ON c.cartId = a.id
@@ -124,13 +127,17 @@ async function printQueueInternal(db, sendOrder, userId) {
         const message = {
           tableName: row['tableName'],
           dateTime: today(),
-          date: date,
-          time: time,
+        
           cartItemId: row['cartItemId'],
           qty : row['qty'],
           descs: row['descs'],
           modifier: row['modifier'],
+          printerId : rexv['id'],
+          printerName : rexv['name'],
+          ipAddress : rexv['ipAddress'],
+          port : rexv['port']
         };
+        printResults.push(message);
 
         const q11 = `
             INSERT INTO print_queue (
@@ -158,6 +165,8 @@ async function printQueueInternal(db, sendOrder, userId) {
 
   return {
     items: items, 
+    printResults : printResults,
+    message: 'Print queue processed',
     // tambahkan data lain jika perlu
   };
 }

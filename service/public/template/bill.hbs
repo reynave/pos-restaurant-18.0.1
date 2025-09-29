@@ -1,53 +1,54 @@
-{{center company.name 50}}
-{{center company.company 50}}
-{{center company.address 50}}
-{{center company.street 50}}
-{{center company.city 50}} 
-{{center (concat "Telp :" company.tel) 50}}
+{{center company.name 33}}
+{{center company.company 33}}
+{{center company.address 33}}
+{{center company.street 33}}
+{{center company.city 33}} 
+{{center (concat "Telp :" company.tel) 33}}
 
-{{center (concat "BILL " transaction.bill "." transaction.billNo) 50}}
- 
-{{formatLine "CASHIER" transaction.employeeName 50}}
-{{formatLine "START DATE" transaction.startDate 50}}
-{{formatLine "END DATE" transaction.endDate 50}}
-{{formatLine "TABLE" transaction.tableName 50}}
-{{formatLine "COVER" (formatCurrency transaction.cover) 50}}
+{{#if (eq copyBill.total 1)}}
+{{center "[ COPY BILL ]" 33}}
+{{/if}}
+{{formatLine "BILL" transaction.bill 33}}
+{{formatLine "CASHIER" transaction.employeeName 33}}
+{{formatLine "START DATE" transaction.startDate 33}}
+{{formatLine "END DATE" transaction.endDate 33}}
+{{#if transaction.tableName}}
+{{formatLine "TABLE" transaction.tableName 33}}
+{{/if}}
+{{formatLine "COVER" (formatCurrency transaction.cover) 33}}
+{{#if (gt transaction.subgroup 1)}}
+{{formatLine "GROUP" transaction.subgroup 33}}
+{{/if}}
 
 {{#each data.cart}}
-{{formatLine (concat this.total "X " this.name) (formatCurrency this.totalAmount) 50}}
+{{formatLine (concat this.total "X " this.name) (formatCurrency this.totalAmount) 33}}
     {{#if this.modifier}}
         {{#each this.modifier}}
             {{#unless (eq this.type "APPLY_DISCOUNT")}}
-{{formatLine (concat "   + " this.descl) (formatCurrency this.price) 50}}
+{{formatLine (concat "   + " this.descl) (formatCurrency this.price) 33}}
             {{/unless}}
         {{/each}}
     {{/if}}
 {{/each}}
 
-{{formatLine "          ITEM TOTAL" (formatCurrency data.itemTotal) 50}}
-
+{{formatLine " ITEM TOTAL" (formatCurrency data.itemTotal) 33}}
 {{#if data.discountGroup}}
     {{#each data.discountGroup}}
-{{formatLine (concat "          " this.name) (formatCurrency this.amount) 50}}
+{{formatLine (concat "   " this.name) (formatCurrency this.amount) 33}}
     {{/each}}
 {{/if}}
-
-{{formatLine "          SUB TOTAL" (formatCurrency data.subTotal) 50}}
-
+{{formatLine " SUB TOTAL" (formatCurrency data.subTotal) 33}}
 {{#each data.taxSc}}
-{{formatLine (concat "                            " this.name) (formatCurrency this.totalAmount) 50}}
+{{formatLine (concat " " this.name) (formatCurrency this.totalAmount) 33}}
 {{/each}}
-
-{{formatLine "                        GRAND TOTAL" (formatCurrency data.grandTotal) 50}}
-
+{{formatLine " GRAND TOTAL" (formatCurrency data.grandTotal) 33}}
 {{#if (eq transaction.close 1)}}
---------------------------------------------------
-    {{#each data.cartPayment}}
-{{formatLine (concat "                    " this.name) (formatCurrency this.paid) 50}}
+{{repeat "-" 33}}
+{{#each data.cartPayment}}
+{{formatLine (concat " " this.name) (formatCurrency this.paid) 33}}
     {{/each}}
-{{formatLine "                    CHANGE " (concat "(" (formatCurrency data.change) ")") 50}}
+{{formatLine " CHANGE " (concat "(" (formatCurrency data.change) ")") 33}}
 {{/if}}
-
 {{#if (eq transaction.close 1)}}
-{{center "[ CLOSED BILL ]" 50}}
+{{center "[ CLOSED BILL ]" 33}}
 {{/if}}

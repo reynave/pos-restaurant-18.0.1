@@ -205,10 +205,19 @@ exports.printing = async (req, res) => {
   
     const formattedRows = transaction.map(row => ({
       ...row,
-      bill: row.id + (subgroup > 1 ? ('.' + subgroup) : ''), 
+      bill: row.id, 
+      subgroup : subgroup,
       startDate: formatDateTime(row.startDate),
       endDate: row.close == 0 ? '' : formatDateTime(row.endDate), 
     }));
+
+
+      const [copyBill] = await db.query(`
+     SELECT  count(id) as 'total',  MAX(inputDate) as 'inputDate'
+      FROM cart_copy_bill  
+      WHERE cartId = '${cartId}' order by inputDate Desc
+    `);
+
 
   
     const [outlet] = await db.query(`
@@ -223,6 +232,7 @@ exports.printing = async (req, res) => {
         transaction: formattedRows[0],
         company: outlet[0],
         subgroup: subgroup,
+        copyBill : copyBill.length > 0 ? copyBill[0] : 0,
 
       });
     } else {
@@ -231,6 +241,7 @@ exports.printing = async (req, res) => {
         transaction: formattedRows[0],
         company: outlet[0],
         subgroup: subgroup,
+        copyBill : copyBill.length > 0 ? copyBill[0] : 0,
 
       };
       const result = template(jsonData);

@@ -34,8 +34,18 @@ module.exports = (Handlebars) => {
         return a === b;
     });
 
-    Handlebars.registerHelper('breakEvery50', function(text) {
+    Handlebars.registerHelper('breakEvery50', function (text) {
         if (!text) return '';
         return text.replace(/(.{50})/g, '$1\n');
+    });
+
+    // Register 'gt' helper for Handlebars
+    Handlebars.registerHelper('gt', function (a, b) {
+        return a > b;
+    });
+
+    // function repeat
+    Handlebars.registerHelper('repeat', function (str, times) {
+        return str.repeat(times);
     });
 };

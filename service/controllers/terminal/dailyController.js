@@ -109,6 +109,16 @@ exports.dailyStart = async (req, res) => {
         `;
         const [dailySchedule] = await db.query(q);
 
+          const q2 = `UPDATE auto_number
+                    SET
+                        runningNumber = 0  
+                    WHERE name = 'counter' `;
+        const [result] = await db.query(q2);
+        if (result.affectedRows === 0) {
+            results.push({ status: 'not found' });
+        } else {
+            results.push({ status: 'daily_check set 0' });
+        }
 
         if (dailySchedule.length) {
             

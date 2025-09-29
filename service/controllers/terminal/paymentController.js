@@ -82,7 +82,8 @@ exports.paymentType = async (req, res) => {
 
 exports.paid = async (req, res) => {
   const cartId = req.query.id;
-  const grandTotal = req.query.grandTotal;
+    const grandTotal = req.query.grandTotal;
+    const dailyCheckId = req.query.dailyCheckId;
   const results = [];
   try {
     const [formattedRows] = await db.query(` 

@@ -1,10 +1,14 @@
 const db = require('../../config/db');
-const { headerUserId, mapUpdateByName, today, convertCustomDateTime, formatDateTime, parseTimeString, addTime } = require('../../helpers/global');
+const { headerUserId, mapUpdateByName, formatDateOnly, today, convertCustomDateTime, formatDateTime, parseTimeString, addTime } = require('../../helpers/global');
 const { autoNumber } = require('../../helpers/autoNumber');
 const { taxScUpdate, scUpdate, taxUpdate } = require('../../helpers/bill');
 const { printQueueInternal } = require('../../helpers/printer');
+const { csvFile, txtTableChecker } = require('../../helpers/exportToFile');
+
 
 const { logger } = require('./userLogController');
+const fs = require('fs');
+const path = require('path');
 
 exports.getMenuItem = async (req, res) => {
   let i = 1;
@@ -252,8 +256,6 @@ exports.selectMenuSet = async (req, res) => {
     res.status(500).json({ error: 'Database error' });
   }
 }
-
-
 
 exports.addToCart = async (req, res) => {
   const menu = req.body['menu'];
@@ -585,7 +587,7 @@ exports.clearLockTable = async (req, res) => {
           updateDate = '${today()}',
           updateBy = ${userId}
       WHERE  lockBy = '${terminalId}' `;
-    console.log(q)
+ 
     const [result] = await db.query(q);
     if (result.affectedRows === 0) {
       results.push({ status: 'not found' });
@@ -605,9 +607,9 @@ exports.clearLockTable = async (req, res) => {
   }
 };
 
- 
 
- 
+
+
 
 exports.cartDetail = async (req, res) => {
   const cartId = req.query.id;
@@ -1021,10 +1023,10 @@ exports.sendOrder = async (req, res) => {
   const userId = headerUserId(req);
   let cartId = req.body['cartId'];
   const tableSendOrder = req.body['tableSendOrder'];
- 
+
   const inputDate = today();
   const results = [];
-  const { insertId: sendOrder } = await autoNumber('sendOrder');
+  const { insertId: so } = await autoNumber('sendOrder');
   let tableMapStatusId = 12;
   try {
 
@@ -1081,7 +1083,7 @@ exports.sendOrder = async (req, res) => {
 
     const q = `
     UPDATE cart_item SET
-      sendOrder = '${sendOrder}', 
+      sendOrder = '${so}', 
       updateDate = '${today()}',
       updateBy = ${userId}
     WHERE cartId = ${cartId}  and presence = 1 and void = 0 and sendOrder = '' `;
@@ -1089,7 +1091,7 @@ exports.sendOrder = async (req, res) => {
 
     const q2 = `
     UPDATE cart_item_modifier SET
-      sendOrder =  '${sendOrder}', 
+      sendOrder =  '${so}', 
       updateDate = '${today()}',
       updateBy = ${userId}
     WHERE cartId = ${cartId}  and presence = 1 and void = 0 and sendOrder = ''`;
@@ -1114,19 +1116,48 @@ exports.sendOrder = async (req, res) => {
       )
       VALUES (
         1, '${today()}', '${today()}',
-        '${cartId}',  '${today()}', '${sendOrder}',
+        '${cartId}',  '${today()}', '${so}',
         ${userId}, ${userId}
       )`;
       await db.query(q3);
     }
 
-    const { items } = await printQueueInternal(db, sendOrder, userId);
+    const { printResults: printQueue } = await printQueueInternal(db, so, userId);
+
+    // Cetak printQueue ke file txt (JSON dan CSV)
+
+
+    csvFile(cartId, so, printQueue);
+
+
+const { sendOrder } = require('../../helpers/sendOrder');
+    const data = await sendOrder(so);
+
+    const qq = `
+        SELECT 
+            c.id , c.id as 'bill', c.void,  c.dailyCheckId, c.cover, c.outletId,
+            o.name AS 'outlet', c.startDate, c.endDate , 
+            c.close,   t.tableName, t.tableNameExt, 'UAT PERSON' as 'servedBy' 
+        FROM cart AS c
+        JOIN outlet AS o ON o.id = c.outletId
+        JOIN outlet_table_map AS t ON t.id = c.outletTableMapId
+        WHERE c.presence = 1 AND  c.id = '${cartId}'
+    `;
+    const [transactionq] = await db.query(qq);
+
+    const transaction = transactionq.map(row => ({
+      ...row,
+      startDate: formatDateTime(row.startDate),
+      endDate: row.close == 0 ? '' : formatDateTime(row.endDate),
+    }));
+
+    txtTableChecker(cartId, so, data['cart'], transaction[0]);
 
     res.status(201).json({
       error: false,
-      sendOrder: sendOrder,
-      printQueue: items,
-      message: 'cart_item close Order',
+      sendOrder: so,
+      printQueue: printQueue,
+      message: 'printQueue send Order',
     });
 
 
@@ -1491,7 +1522,7 @@ exports.transferTable = async (req, res) => {
         continue;
       }
 
-      
+
       // START :: TRANSFER ITEM
       const q02 = `
         INSERT INTO cart_item (
@@ -1593,7 +1624,7 @@ exports.transferTable = async (req, res) => {
         const [printQueue] = await db.query(m8);
 
         let messageOld = printQueue[0]['message'] ? JSON.parse(printQueue[0]['message']) : {};
-       
+
         messageOld['qty'] = (totalOriginal - total) <= 0 ? 0 : (totalOriginal - total);
 
         // UPDATE PRINTER KITCHEN OLD ITEM
@@ -1632,7 +1663,7 @@ exports.transferTable = async (req, res) => {
         } else {
           results.push({ status: 'PRINTER KITCHEN CHANGE BILL inserted' });
         }
-      
+
         // END >> PRINTER KITCHEN CHANGE BILL
 
       }
@@ -1729,8 +1760,8 @@ exports.transferLog = async (req, res) => {
 };
 
 exports.takeOut = async (req, res) => {
-  const cart = req.body['cart']; 
-  const userId = headerUserId(req); 
+  const cart = req.body['cart'];
+  const userId = headerUserId(req);
   const results = [];
   try {
 
@@ -1741,7 +1772,7 @@ exports.takeOut = async (req, res) => {
         results.push({ id, status: 'failed', reason: 'Missing fields' });
         continue;
       }
-      
+
       const intTa = parseInt(ta) > 0 ? 0 : 1;
       const q = `UPDATE cart_item
             SET
@@ -1756,27 +1787,27 @@ exports.takeOut = async (req, res) => {
         results.push({ status: 'cart_item updated' });
       }
 
-       const q2 = `UPDATE cart_item_modifier
+      const q2 = `UPDATE cart_item_modifier
           SET
             void =  ${intTa}, 
             updateDate = '${today()}',
             updateBy = ${userId}
         WHERE cartItemId = ${id}  and scStatus  = 1  `;
- 
+
       const [result2] = await db.query(q2);
       if (result2.affectedRows === 0) {
         results.push({ status: 'not found' });
       } else {
         results.push({ status: 'cart_item_modifier updated' });
       }
- 
-                   
-      const taxScUpdateRest = await taxUpdate(id);
-               
 
-      
+
+      const taxScUpdateRest = await taxUpdate(id);
+
+
+
     }
-     
+
 
 
     res.json({

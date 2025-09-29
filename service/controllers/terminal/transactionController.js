@@ -4,38 +4,19 @@ const { cart } = require('../../helpers/bill');
  
 exports.getAllData = async (req, res) => {
   const outletId = req.query.outletId;
+  const dailyCheckId = req.query.dailyCheckId;
 
   try { 
     const q = `
-    SELECT 
-        c.id,
-        c.outletId,
-        c.outletTableMapId,
-        c.tableMapStatusId,
-        c.presence,
-        c.close,
-        c.grandTotal,
-        -- tambahkan kolom lain dari cart jika perlu
-        o.name AS outlet, 
-        m.tableName, 
-        '' AS paymentType, 
-        s.name AS status,
-        COUNT(ci.id) AS 'totalItem',  
-        c.startDate,
-        c.endDate,
-        c.cover
-      FROM cart AS c
-      JOIN outlet AS o ON o.id = c.outletId 
-      JOIN outlet_table_map AS m ON m.id = c.outletTableMapId
-      LEFT JOIN outlet_table_map_status AS s ON s.id = c.tableMapStatusId
-      LEFT JOIN cart_item AS ci ON ci.cartId = c.id
-      WHERE c.presence = 1 AND c.close = 1 AND ci.sendOrder != ''  ${outletId ? ' AND c.outletId = ' + outletId : ''} 
-      GROUP BY 
-        c.id, c.outletId, c.outletTableMapId, c.tableMapStatusId, c.presence, c.close,
-        o.name, m.tableName, s.name, 
-        c.startDate,  c.grandTotal,
-        c.endDate, c.cover
-      ORDER BY c.id DESC   
+        SELECT 
+          c.id, c.startDate, c.endDate, c.outletId, c.cover,  t.tableName,
+          c.tableMapStatusId, s.name AS 'status', c.grandTotal,   e.name AS 'cashier'
+        FROM cart AS c
+        LEFT JOIN employee AS e  ON e.id = c.closeBy
+        LEFT JOIN outlet_table_map AS t ON  t.id = c.outletTableMapId
+        LEFT JOIN outlet_table_map_status AS s ON s.id = c.tableMapStatusId
+        WHERE c.presence = 1  AND c.close = 1
+             AND c.dailyCheckId = '${dailyCheckId}';
     `;
 
     const [formattedRows] = await db.query(q);
@@ -52,12 +33,9 @@ exports.getAllData = async (req, res) => {
       const [paymentType] = await db.query(s);
       row.paymentType = paymentType;
 
-    }
-
-
-    res.json({
-      error: false,
-      items: formattedRows,
+    } 
+    res.json({ 
+      items: formattedRows, 
     });
 
   } catch (err) {
