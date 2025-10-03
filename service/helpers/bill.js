@@ -1,7 +1,7 @@
 const db = require('../config/db'); // sesuaikan path kalau perlu 
 const { today } = require('./global');
 
-async function cart(cartId = '', subgroup = 0) {
+async function cart(cartId = '', subgroup = 0, isGrouping = 0) {
    let subTotal = 0;
    let grandTotal = 0;
    let totalItem = 0;
@@ -23,48 +23,50 @@ async function cart(cartId = '', subgroup = 0) {
 
 
    let itemCart = [];
-
-   if(subgroup == 1){
-      const q5 = `
+   if (isGrouping == 0) {
+      itemCart = formattedRows;
+   } else { 
+      if (subgroup == 1) {
+         const q5 = `
         SELECT  g.cartItemId AS 'id' ,  sum(g.qty) as 'total'
          FROM cart_item_group AS g 
          WHERE g.cartId = '${cartId}'
          GROUP BY g.cartItemId 
       `;
-      const [usedItem] = await db.query(q5);  
-     
-      // Kurangi qty item yang sudah dipakai di group
-      formattedRows.forEach(item => { 
-         const used = usedItem.find(used => used.id === item.id);
-         if (used) {
-            item.total -= used.total;
-            if(item.total < 0) item.total = 0;
-         }
-      }); 
-      
-       itemCart = formattedRows;
-   }
-   else{ 
-      const q5 = `
+         const [usedItem] = await db.query(q5);
+
+         // Kurangi qty item yang sudah dipakai di group
+         formattedRows.forEach(item => {
+            const used = usedItem.find(used => used.id === item.id);
+            if (used) {
+               item.total -= used.total;
+               if (item.total < 0) item.total = 0;
+            }
+         });
+
+         itemCart = formattedRows;
+      }
+      else {
+         const q5 = `
         SELECT  g.cartItemId AS 'id' ,  sum(g.qty) as 'total'
          FROM cart_item_group AS g 
          WHERE g.cartId = '${cartId}' and g.subgroup = ${subgroup}
          GROUP BY g.cartItemId 
       `;
-      const [usedItem] = await db.query(q5);  
- 
-      // Kurangi qty item yang sudah dipakai di group
-      formattedRows.forEach(item => { 
-         const used = usedItem.find(used => used.id === item.id);
-         if (used) {
-            item.total = parseInt(used.total);
-            itemCart.push(item);
-         }
-      });  
-      
-   }
+         const [usedItem] = await db.query(q5);
 
-      // qty * price
+         // Kurangi qty item yang sudah dipakai di group
+         formattedRows.forEach(item => {
+            const used = usedItem.find(used => used.id === item.id);
+            if (used) {
+               item.total = parseInt(used.total);
+               itemCart.push(item);
+            }
+         });
+
+      }
+   }
+   // qty * price
    itemCart.forEach(row => {
       row['totalAmount'] = row['price'] * row['total'];
    });
@@ -131,8 +133,7 @@ async function cart(cartId = '', subgroup = 0) {
         )AS t1
         JOIN menu_tax_sc AS a ON a.id = t1.menuTaxScId
     `);
-
-   const [tax] = await db.query(`
+   const taxq = `
         SELECT t1.* , 'SC' as 'TAX' , a.taxNote AS 'name' FROM (
             SELECT m.menuTaxScId,  SUM( i.qty) AS 'totalQty', 
             sum(m.price * i.qty) AS 'totalAmount'
@@ -144,7 +145,9 @@ async function cart(cartId = '', subgroup = 0) {
             GROUP BY menuTaxScId 
         )AS t1
         JOIN menu_tax_sc AS a ON a.id = t1.menuTaxScId
-    `);
+    `;
+    console.log(taxq);
+   const [tax] = await db.query(taxq);
 
    const taxSc = [];
 
@@ -205,21 +208,6 @@ async function cart(cartId = '', subgroup = 0) {
 
    });
 
-   const verOLD = ` 
-        SELECT a.* FROM (
-  
-            SELECT d.name,
-                m.applyDiscount, i.qty AS 'qty',   d.maxDiscount,
-            SUM(m.price) * i.qty AS 'amount' ,  0 as  discAmount , d.maxDiscount+(SUM(m.price)*i.qty) AS 'def'
-            FROM cart_item_modifier AS m 
-            JOIN cart_item AS i ON i.id = m.cartItemId
-            LEFT JOIN discount AS d ON d.id = m.applyDiscount
-            WHERE m.applyDiscount != 0 AND m.cartId = '${cartId}' AND m.presence = 1 AND m.void =0
-            GROUP BY m.applyDiscount,   d.maxDiscount
- 
-            ) AS a 
-        WHERE a.amount < 0  
-    `;
    const q912 = `
     SELECT a.*
 FROM (
@@ -277,8 +265,11 @@ WHERE a.amount < 0;
     `);
 
 
+   // bisa buatkan foreach untuk array Items, jika total = 0 maka hapus dari array
+   const filteredItems = items.filter(item => item.total > 0);
+
    return {
-      cart: items,
+      cart: filteredItems,
       billVersion: billVersion[0] ? billVersion[0]['no'] : 0,
       itemTotal: itemTotal,
       fixDiscountGroup: fixDiscountGroup,

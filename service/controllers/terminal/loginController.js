@@ -115,9 +115,9 @@ exports.signin = async (req, res) => {
             outlet : outlet,
             printer: {
                 con: 'ip',
-                address: '10.51.122.20',
+                address: '192.168.1.31',
                 port: 9100,
-                name: 'ESC/POS (Epson-style)'
+                name: 'ESC/POS (Epson-style) Static'
             }
         });
 

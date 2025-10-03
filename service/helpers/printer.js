@@ -1,7 +1,7 @@
 const net = require('net');
-const printerIp = '10.51.122.20'; // Ganti dengan IP printer kamu
-const printerPort = 9100;
-const cutCommand = '\x1B\x69';
+const escpos = require('escpos');
+escpos.Network = require('escpos-network');
+
 const {  today  } = require('./global');
 
 // Fungsi reusable untuk mencetak ke printer ESC/POS via IP
@@ -11,7 +11,8 @@ const printToPrinter = (message, printerIp = '10.51.122.20', printerPort = 9100)
     const cut = "\x1B\x69"; // ESC i = cut paper (Epson-style)
     client.connect(printerPort, printerIp, () => {
       console.log(`Connected to printer at ${printerIp}:${printerPort}`);
-      client.write(message+cut);
+      console.log("Message:", message);
+      client.write(message);
       client.end();
     });
 
@@ -24,6 +25,36 @@ const printToPrinter = (message, printerIp = '10.51.122.20', printerPort = 9100)
     });
   });
 };
+
+async function printerEsc(message, printerData) {
+  const printerIp = printerData?.address || 'IP not found';
+  const printerPort = printerData?.port || 9100; 
+
+  return new Promise((resolve) => {
+    try {
+      const device = new escpos.Network(printerIp, printerPort);
+      const printer = new escpos.Printer(device); 
+      console.log("printerEsc | Connecting to printer at", message, printerData);
+      device.open(function (err) {
+        if (err) {
+          console.error('❌ Error saat membuka koneksi:', err);
+          return resolve(false);
+        }
+        printer
+          .size(0, 0)  
+          .text(message)  
+          .cut()
+          .close(() => {
+            console.log('Printing completed successfully!');
+            resolve(true);
+          });
+      });
+    } catch (err) {
+      console.error('X Error saat mencetak:', err);
+      resolve(false);
+    }
+  });
+}
 
 
 async function sendToPrinter(data) {
@@ -173,5 +204,5 @@ async function printQueueInternal(db, sendOrder, userId) {
 
 
 module.exports = {
-  printToPrinter, sendToPrinter, sendToPrinterDummy, printQueueInternal
+  printToPrinter, sendToPrinter, sendToPrinterDummy, printQueueInternal, printerEsc
 };

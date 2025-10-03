@@ -16,10 +16,12 @@
 {{formatLine "TABLE" transaction.tableName 33}}
 {{/if}}
 {{formatLine "COVER" (formatCurrency transaction.cover) 33}}
-{{#if (gt transaction.subgroup 1)}}
+{{#if (gt transaction.subgroup 0)}}
 {{formatLine "GROUP" transaction.subgroup 33}}
 {{/if}}
 
+
+ 
 {{#each data.cart}}
 {{formatLine (concat this.total "X " this.name) (formatCurrency this.totalAmount) 33}}
     {{#if this.modifier}}
@@ -38,10 +40,14 @@
     {{/each}}
 {{/if}}
 {{formatLine " SUB TOTAL" (formatCurrency data.subTotal) 33}}
+
 {{#each data.taxSc}}
 {{formatLine (concat " " this.name) (formatCurrency this.totalAmount) 33}}
 {{/each}}
+
 {{formatLine " GRAND TOTAL" (formatCurrency data.grandTotal) 33}}
+
+
 {{#if (eq transaction.close 1)}}
 {{repeat "-" 33}}
 {{#each data.cartPayment}}
@@ -52,3 +58,6 @@
 {{#if (eq transaction.close 1)}}
 {{center "[ CLOSED BILL ]" 33}}
 {{/if}}
+
+
+

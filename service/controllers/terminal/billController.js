@@ -160,14 +160,17 @@ exports.printing = async (req, res) => {
 
   const api = req.query.api == 'true' ? true : false;
   const userId = headerUserId(req);
-  //try {
+
+    const isGrouping = req.query.totalGroup > 1 ? 1 : 0;
+    const cartId = req.query.id;
+    const subgroup = !req.query.subgroup ? 1 : req.query.subgroup; 
+   try {
 
     const templateSource = fs.readFileSync("public/template/bill.hbs", "utf8");
     const template = Handlebars.compile(templateSource);
-  
-    const cartId = req.query.id;
-    const subgroup = !req.query.subgroup ? 1 : req.query.subgroup; 
-    const data = await cart(cartId, subgroup);
+
+    const data = await cart(cartId, subgroup, isGrouping);
+
     let q = '';
     const [selectOutlet] = await db.query(`
             SELECT  outletTableMapId 
@@ -206,7 +209,7 @@ exports.printing = async (req, res) => {
     const formattedRows = transaction.map(row => ({
       ...row,
       bill: row.id, 
-      subgroup : subgroup,
+      subgroup : subgroup, 
       startDate: formatDateTime(row.startDate),
       endDate: row.close == 0 ? '' : formatDateTime(row.endDate), 
     }));
@@ -238,6 +241,7 @@ exports.printing = async (req, res) => {
     } else {
       const jsonData = {
         data: data,
+        isGrouping : isGrouping,
         transaction: formattedRows[0],
         company: outlet[0],
         subgroup: subgroup,
@@ -249,10 +253,10 @@ exports.printing = async (req, res) => {
       res.send(result);
     }
 
-  // } catch (err) {
-  //   console.error('Render error:', err);
-  //   res.status(500).send('Failed to render HTML');
-  // }
+  } catch (err) {
+    console.error('Render error:', err);
+    res.status(500).send('Failed to render HTML');
+  }
 };
 
 
@@ -546,7 +550,7 @@ exports.updateGroup = async (req, res) => {
           cartId, cartItemId,   subgroup, qty,
           presence, inputDate, inputBy) 
         VALUES ( 
-          '${cartId}', '${itemTransfer['id']}', ${subgroup}, ${qty},
+          '${cartId}', '${itemTransfer['id']}', ${subgroup}, ${qty > itemTransfer['total'] ? itemTransfer['total'] : qty},
           1, '${today()}', '${userId}' 
         )`;
       const [result] = await db.query(q);

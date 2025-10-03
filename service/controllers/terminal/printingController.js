@@ -4,7 +4,7 @@ const { formatDateTime, formatCurrency, formatLine, centerText } = require('../.
 const { cart } = require('../../helpers/bill');
 const { sendOrder } = require('../../helpers/sendOrder');
 
-const { printToPrinter } = require('../../helpers/printer'); // arahkan ke path file yg kamu punya
+const { printToPrinter, printerEsc } = require('../../helpers/printer'); // arahkan ke path file yg kamu punya
 
 const fs = require('fs');
 const path = require('path');
@@ -152,11 +152,13 @@ exports.print = async (req, res) => {
   console.log(printer)
   try {
     const message =  req.body.message;
-
+    console.log(message[0]['html'])
     // Panggil fungsi printToPrinter
-    const result = await printToPrinter(message, printer.address, printer.port);
+ //   const result1 = await printToPrinter(message, printer.address, printer.port);
 
-    console.log(result);
+    const result = await printerEsc(message[0]['html'], printer);
+
+   // console.log(result);
     res.json({ success: true, message: 'Printed successfully', detail: result });
 
   } catch (err) {

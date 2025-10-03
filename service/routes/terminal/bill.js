@@ -5,7 +5,7 @@ const bill = require('../../controllers/terminal/billController');
 // table/*
 router.get('/', bill.getData);  
 router.get('/printing', bill.printing); 
-router.get('/printing2', bill.printing2); 
+//router.get('/printing2', bill.printing2); 
   
 router.post('/ipPrint', bill.ipPrint);  
 

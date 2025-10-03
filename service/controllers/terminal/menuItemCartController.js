@@ -303,6 +303,20 @@ exports.voidItem = async (req, res) => {
             } else {
                results.push({ id, status: 'cart_item updated' });
             }
+
+
+              const q2 = `
+                  DELETE FROM cart_item_group 
+                  WHERE cartItemId = '${id}'  
+                    AND cartId = '${cartId}' 
+                `; 
+                const [result2] = await db.query(q2);
+
+                if (result2.affectedRows === 0) {
+                  results.push({ status: 'not found' });
+                } else {
+                  results.push({ status: 'Delete cart_item_group' });
+                }
          }
 
          // loop untuk modifier

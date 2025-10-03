@@ -15,7 +15,9 @@ exports.cart = async (req, res) => {
   const userId = headerUserId(req);
   try {
     const cartId = req.query.id;
-    const data = await cart(cartId);
+    const isGrouping = req.query.isGrouping || 0;
+    const data = await cart(cartId); 
+    
     const [cartData] = await db.query(`
        SELECT  c.* , e.name as inputBy 
        from cart as c
