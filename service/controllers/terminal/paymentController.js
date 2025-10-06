@@ -1,7 +1,7 @@
 const db = require('../../config/db');
 const { headerUserId, today, formatDateOnly, formatDateTime } = require('../../helpers/global');
 const { autoNumber } = require('../../helpers/autoNumber');
-const { cart } = require('../../helpers/bill');
+const { cart, cartGrouping } = require('../../helpers/bill');
 
 const ejs = require('ejs');
 const path = require('path');
@@ -36,6 +36,89 @@ exports.cart = async (req, res) => {
       closePayment: data['unpaid'],
       cart: cartData[0],
       groups: [{ subgroup: 1 }, ...groups],
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+};
+ 
+
+exports.bill = async (req, res) => {
+  let totalItem = 0;
+  let closePayment = 0;
+  const userId = headerUserId(req);
+  try {
+    const cartId = req.query.id;
+    const isGrouping = req.query.isGrouping || 0;
+
+    // Ambil semua data grouping yang ada di cart_item_group
+    const [groupRows] = await db.query(`
+      SELECT subgroup
+      FROM cart_item_group
+      WHERE cartId = '${cartId}'
+      GROUP BY subgroup
+      ORDER BY subgroup ASC
+    `);
+    // Pastikan selalu ada subgroup 1 
+    const subgroups = [1, ...groupRows.map(row => row.subgroup).filter(sg => sg !== 1)];
+    // Ambil data untuk semua subgroup
+    const dataArr = [];
+    for (const subgroup of subgroups) {
+      const data = await cartGrouping(cartId, subgroup);
+      dataArr.push({ subgroup, data });
+    }
+    // dataArr sekarang berisi semua hasil cartGrouping per subgroup
+    // Jika ingin mengirim semua ke client:
+    const data = dataArr;
+    
+    const [cartData] = await db.query(`
+       SELECT  c.* , e.name as inputBy 
+       from cart as c
+       left JOIN employee AS e ON e.id = c.closeBy
+       where c.presence = 1 and c.id = '${cartId}' 
+    `);
+    
+    const summary = {
+      itemTotal: 0,
+      discount: 0,
+      sc: 0,
+      tax: 0,
+      total: 0
+    }
+
+    data.forEach(element => {
+      summary.itemTotal += element.data.itemTotal || 0;
+      summary.discount += element.data.discount || 0;
+      summary.sc += element.data.sc || 0;
+      summary.tax += element.data.tax || 0;
+      summary.total += element.data.total || 0;
+
+    });
+     let paid = 0;
+       const [cartPayment] = await db.query(`
+            SELECT  c.id, p.name,  c.paid, c.tips, c.submit
+            FROM  cart_payment as c
+            JOIN check_payment_type AS p ON p.id = c.checkPaymentTypeId
+            WHERE c.presence= 1   and c.cartId = '${cartId}' and c.submit = 1
+            ORDER BY c.id 
+        `);
+       let tips = 0;
+       cartPayment.forEach(element => {
+          paid += element['paid'];
+          tips += element['tips'];
+       });
+  
+     
+    res.json({
+      data: data,
+      //closePayment: data['unpaid'],
+      cart: cartData[0],
+     cartPayment :cartPayment,
+     paid : paid,
+      summary : summary,
+      groups:subgroups,
     });
 
   } catch (err) {

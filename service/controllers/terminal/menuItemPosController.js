@@ -1068,8 +1068,16 @@ exports.sendOrder = async (req, res) => {
       WHERE cartId = ${cartId}`;
       await db.query(q4);
 
+
+       const q6 = `
+    UPDATE cart_item_group SET
+      cartId =  '${insertId}'
+    WHERE cartId = ${cartId}`;
+    await db.query(q6);
+
       cartId = insertId;
     }
+
 
 
 

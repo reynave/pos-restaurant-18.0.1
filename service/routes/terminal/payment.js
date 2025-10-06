@@ -4,6 +4,8 @@ const payment = require('../../controllers/terminal/paymentController');
   
 // table/*
 router.get('/cart', payment.cart);  
+router.get('/bill', payment.bill);  
+
 router.post('/submit', payment.submit);  
 
 router.get('/paymentType', payment.paymentType);   
