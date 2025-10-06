@@ -73,12 +73,19 @@ exports.bill = async (req, res) => {
     // Jika ingin mengirim semua ke client:
     const data = dataArr;
     
-    const [cartData] = await db.query(`
+    let [cartData] = await db.query(`
        SELECT  c.* , e.name as inputBy 
        from cart as c
        left JOIN employee AS e ON e.id = c.closeBy
        where c.presence = 1 and c.id = '${cartId}' 
     `);
+
+     cartData = cartData.map(row => ({
+      ...row,
+      bill: row.id,  
+      startDate: formatDateTime(row.startDate),
+      endDate: row.close == 0 ? '' : formatDateTime(row.endDate), 
+    }));
     
     const summary = {
       itemTotal: 0,
@@ -96,29 +103,51 @@ exports.bill = async (req, res) => {
       summary.total += element.data.total || 0;
 
     });
-     let paid = 0;
-       const [cartPayment] = await db.query(`
-            SELECT  c.id, p.name,  c.paid, c.tips, c.submit
-            FROM  cart_payment as c
-            JOIN check_payment_type AS p ON p.id = c.checkPaymentTypeId
-            WHERE c.presence= 1   and c.cartId = '${cartId}' and c.submit = 1
-            ORDER BY c.id 
-        `);
-       let tips = 0;
-       cartPayment.forEach(element => {
-          paid += element['paid'];
-          tips += element['tips'];
-       });
-  
+    let paid = 0;
+    const [cartPayment] = await db.query(`
+          SELECT  c.id, p.name,  c.paid, c.tips, c.submit
+          FROM  cart_payment as c
+          JOIN check_payment_type AS p ON p.id = c.checkPaymentTypeId
+          WHERE c.presence= 1   and c.cartId = '${cartId}' and c.submit = 1
+          ORDER BY c.id 
+      `);
+    let tips = 0;
+    cartPayment.forEach(element => {
+      paid += element['paid'];
+      tips += element['tips'];
+    });
+
+    const [outlet] = await db.query(`
+        SELECT  * 
+        FROM outlet  
+        WHERE id = '${cartData[0]['outletId']}'
+      `);
+      let result = '';
+      const templateSource = fs.readFileSync("public/template/bill.hbs", "utf8");
+      for (let i = 0; i < 3; i++) {
+      
+        const template = Handlebars.compile(templateSource);
+        const jsonData = {
+          data: data,
+          transaction: cartData[0],
+          company: outlet[0],
+          // subgroup: subgroup,
+          // copyBill : copyBill.length > 0 ? copyBill[0] : 0,
+          copyIndex: i + 1 // jika ingin tahu urutan ke berapa
+        };
+        result += template(jsonData);
+      }
+      
      
     res.json({
       data: data,
       //closePayment: data['unpaid'],
       cart: cartData[0],
-     cartPayment :cartPayment,
-     paid : paid,
+      cartPayment :cartPayment,
+      paid : paid,
       summary : summary,
       groups:subgroups,
+      htmlBill : result
     });
 
   } catch (err) {

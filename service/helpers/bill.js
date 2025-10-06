@@ -465,7 +465,7 @@ async function cartGrouping(cartId = '', subgroup = 0) {
       element['modifier'].forEach(row => {
          if (row['type'] == 'APPLY_DISCOUNT' && parseInt(row['price']) < 0) {
             discountGroup.push(row);
-            discount += parseInt(row['price']);
+            discount += parseInt(row['totalAmount']);
          }
          if (row['type'] == 'APPLY_DISCOUNT' && parseInt(row['discAmount']) < 0) {
 
@@ -494,8 +494,28 @@ async function cartGrouping(cartId = '', subgroup = 0) {
    });
 
 
+   // bisa buatkan foreach untuk array scGroup, jika rateOrDiscount  sama, maka jumlahkan totalAmount 
+   // di dalam array baru yang isi nya hanya descl dan totalAmount 
+   const scGroupSummary = [];
+   scGroup.forEach(row => {
+      const existing = scGroupSummary.find(item => item.descl === row.descl);
+      if (existing) {
+         existing.totalAmount += row.totalAmount;
+      } else {
+         scGroupSummary.push({ descl: row.descl, totalAmount: row.totalAmount });
+      }
+   });
 
-
+   // buatkan juga untuk taxGroup
+   const taxGroupSummary = [];
+   taxGroup.forEach(row => {
+      const existing = taxGroupSummary.find(item => item.descl === row.descl);
+      if (existing) {
+         existing.totalAmount += row.totalAmount;
+      } else {
+         taxGroupSummary.push({ descl: row.descl, totalAmount: row.totalAmount });
+      }
+   });
 
    const [billVersion] = await db.query(`   
         SELECT no  FROM  bill WHERE cartId = '${cartId}' ORDER BY no DESC LIMIT 1
@@ -516,12 +536,9 @@ async function cartGrouping(cartId = '', subgroup = 0) {
 
    map.forEach(val => result.push(val));
    discountAmounGroup = result;
-
-
-
+ 
    discountAmount = 0;
-   discountAmounGroup.forEach(element => {
-
+   discountAmounGroup.forEach(element => { 
       element['discount'] = element['totalItemPrice'] + element['discAmount'] <= 0 ? element['totalItemPrice'] * -1 : element['discAmount'];
       discountAmount += element['discount'];
    });
@@ -533,12 +550,13 @@ async function cartGrouping(cartId = '', subgroup = 0) {
       cart: items,
       billVersion: billVersion[0] ? billVersion[0]['no'] : 0,
 
-    /*  discountAmounGroup: discountAmounGroup,
+      discountAmounGroup: discountAmounGroup,
       discountGroup: discountGroup,
 
       scGroup: scGroup,
+      scGroupSummary: scGroupSummary,
       taxGroup: taxGroup,
-*/
+      taxGroupSummary: taxGroupSummary,
 
 
       itemTotal: itemTotal,
@@ -549,7 +567,7 @@ async function cartGrouping(cartId = '', subgroup = 0) {
       total: subTotal + sc + tax,
 
 
-      whereCartId: whereCartId,
+      //whereCartId: whereCartId,
 
 
    }
