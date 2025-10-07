@@ -79,12 +79,18 @@ exports.bill = async (req, res) => {
        left JOIN employee AS e ON e.id = c.closeBy
        where c.presence = 1 and c.id = '${cartId}' 
     `);
+     let [employeeData] = await db.query(`
+       SELECT id, name , username
+       from  employee 
+       where presence = 1 and id = '${userId}' 
+    `);
 
      cartData = cartData.map(row => ({
       ...row,
       bill: row.id,  
       startDate: formatDateTime(row.startDate),
       endDate: row.close == 0 ? '' : formatDateTime(row.endDate), 
+      employeeName : employeeData[0] ? employeeData[0]['name'] : 'POST/GET Request required',
     }));
     
     const summary = {
@@ -92,17 +98,22 @@ exports.bill = async (req, res) => {
       discount: 0,
       sc: 0,
       tax: 0,
-      total: 0
+      total: 0,
+      grandTotal : 0,
     }
 
     data.forEach(element => {
       summary.itemTotal += element.data.itemTotal || 0;
       summary.discount += element.data.discount || 0;
+
       summary.sc += element.data.sc || 0;
       summary.tax += element.data.tax || 0;
-      summary.total += element.data.total || 0;
-
+      summary.grandTotal += element.data.total || 0;
+     
     });
+ 
+
+
     let paid = 0;
     const [cartPayment] = await db.query(`
           SELECT  c.id, p.name,  c.paid, c.tips, c.submit
@@ -124,24 +135,36 @@ exports.bill = async (req, res) => {
       `);
       let result = '';
       const templateSource = fs.readFileSync("public/template/bill.hbs", "utf8");
-      for (let i = 0; i < 3; i++) {
+      for (let i = 0; i < subgroups.length; i++) {
       
         const template = Handlebars.compile(templateSource);
         const jsonData = {
-          data: data,
+          line : 33,
+          data: data[i]['data'],
           transaction: cartData[0],
           company: outlet[0],
           // subgroup: subgroup,
           // copyBill : copyBill.length > 0 ? copyBill[0] : 0,
-          copyIndex: i + 1 // jika ingin tahu urutan ke berapa
+          group: subgroups[i],
+          totalGroup : subgroups.length,
         };
+      
         result += template(jsonData);
       }
-      
-     
+      const templatePayment = fs.readFileSync("public/template/billPaid.hbs", "utf8");
+      const templatePay = Handlebars.compile(templatePayment);
+      const jsonPayment = {
+        line : 33,
+        summary : summary,
+        cartPayment : cartPayment, 
+        unpaid : summary.grandTotal - paid,
+        change : cartData[0]['changePayment'] || 0,
+      };
+      console.log(jsonPayment);
+      result += templatePay(jsonPayment);
+
     res.json({
-      data: data,
-      //closePayment: data['unpaid'],
+      data: data, 
       cart: cartData[0],
       cartPayment :cartPayment,
       paid : paid,

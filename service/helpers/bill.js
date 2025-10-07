@@ -157,7 +157,7 @@ async function cart(cartId = '') {
         )AS t1
         JOIN menu_tax_sc AS a ON a.id = t1.menuTaxScId
     `;
-   console.log(taxq);
+
    const [tax] = await db.query(taxq);
 
    const taxSc = [];
@@ -449,8 +449,8 @@ async function cartGrouping(cartId = '', subgroup = 0) {
          .map(detail => ({ ...detail, totalAmount: detail.price * header.total, total: header.total })); // Add qty from header to each modifier
       return { ...header, modifier: itemModifier };
    });
-   let discountGroup = [];
-   let discountAmounGroup = [];
+   let discountPercentGroup = [];
+   let discountAmountGroup = [];
 
    let discountAmount = 0;
 
@@ -464,7 +464,7 @@ async function cartGrouping(cartId = '', subgroup = 0) {
 
       element['modifier'].forEach(row => {
          if (row['type'] == 'APPLY_DISCOUNT' && parseInt(row['price']) < 0) {
-            discountGroup.push(row);
+            discountPercentGroup.push(row);
             discount += parseInt(row['totalAmount']);
          }
          if (row['type'] == 'APPLY_DISCOUNT' && parseInt(row['discAmount']) < 0) {
@@ -475,7 +475,7 @@ async function cartGrouping(cartId = '', subgroup = 0) {
                discAmount: parseInt(row['discAmount']),
                totalItemPrice: parseInt(element['totalAmount'])
             }
-            discountAmounGroup.push(temp);
+            discountAmountGroup.push(temp);
          }
 
 
@@ -517,6 +517,33 @@ async function cartGrouping(cartId = '', subgroup = 0) {
       }
    });
 
+   // bisa buatkan untuk discountPercentGroup
+   const discountPercentGroupSummary = [];
+   discountPercentGroup.forEach(row => {
+      const existing = discountPercentGroupSummary.find(item => item.rateOrDiscount === row.rateOrDiscount);   
+      if (existing) {
+         existing.totalAmount += row.totalAmount;
+         existing.totalItem += row.total;
+      } else {
+         discountPercentGroupSummary.push({ rateOrDiscount: row.rateOrDiscount, name: row.descl, totalAmount: row.totalAmount, totalItem: row.total });
+      }
+   });
+   discountPercentGroup = discountPercentGroupSummary;
+
+   // bisa buatkan untuk discountAmountGroup sama seperti di atas, hanya saja berdasarkan id
+   const discountAmountGroupSummary = [];
+   discountAmountGroup.forEach(row => {
+      const existing = discountAmountGroupSummary.find(item => item.id === row.id);
+      if (existing) {
+         existing.discAmount += row.discAmount;
+         existing.totalItemPrice += row.totalItemPrice;
+      } else {
+         discountAmountGroupSummary.push({ id: row.id, name: row.name, discAmount: row.discAmount, totalItemPrice: row.totalItemPrice });
+      }
+   });
+   discountAmountGroup = discountAmountGroupSummary;
+
+
    const [billVersion] = await db.query(`   
         SELECT no  FROM  bill WHERE cartId = '${cartId}' ORDER BY no DESC LIMIT 1
     `);
@@ -525,7 +552,7 @@ async function cartGrouping(cartId = '', subgroup = 0) {
    const result = [];
    const map = new Map();
 
-   discountAmounGroup.forEach(item => {
+   discountAmountGroup.forEach(item => {
       if (map.has(item.id)) {
          map.get(item.id).totalItemPrice += item.totalItemPrice;
       } else {
@@ -535,23 +562,23 @@ async function cartGrouping(cartId = '', subgroup = 0) {
    });
 
    map.forEach(val => result.push(val));
-   discountAmounGroup = result;
+   discountAmountGroup = result;
  
    discountAmount = 0;
-   discountAmounGroup.forEach(element => { 
+   discountAmountGroup.forEach(element => { 
       element['discount'] = element['totalItemPrice'] + element['discAmount'] <= 0 ? element['totalItemPrice'] * -1 : element['discAmount'];
       discountAmount += element['discount'];
    });
 
    discount = discount + discountAmount;
    subTotal = itemTotal + discount;
-   return {
+   return { 
       groups: subgroup,
       cart: items,
       billVersion: billVersion[0] ? billVersion[0]['no'] : 0,
 
-      discountAmounGroup: discountAmounGroup,
-      discountGroup: discountGroup,
+      discountAmountGroup: discountAmountGroup,
+      discountPercentGroup: discountPercentGroup,
 
       scGroup: scGroup,
       scGroupSummary: scGroupSummary,
@@ -718,7 +745,7 @@ async function cart_DEL(cartId = '', subgroup = 0, isGrouping = 0) {
         )AS t1
         JOIN menu_tax_sc AS a ON a.id = t1.menuTaxScId
     `;
-   console.log(taxq);
+
    const [tax] = await db.query(taxq);
 
    const taxSc = [];
@@ -1131,8 +1158,86 @@ async function taxScUpdate(cartItem = 0) {
    };
 }
 
-
+// versi static no 7 
+// Doc https://docs.google.com/spreadsheets/d/1PwaWb7-uEJ-bTzDbkgKmH-vcuIoJSJmezfw-ZuJBvZQ/edit?usp=sharing 
 async function scUpdate(cartItem = 0) {
+   let scAmount = 0;
+   let taxAmount = 0;
+
+   const q2 = ` 
+        SELECT IFNULL(SUM(price),0) AS 'total' 
+        FROM cart_item_modifier
+        WHERE cartItemId = ${cartItem}
+        AND presence =1 AND void = 0 and menuTaxScId = 0
+    `;
+   const [totalAmountModifier] = await db.query(q2);
+
+
+   const m1 = `
+        -- Harga item + modifier non taxsc - (discount)
+        SELECT price + ${parseInt(totalAmountModifier[0]['total'])} as 'price' 
+        FROM cart_item 
+        WHERE id = ${cartItem} AND presence =1 AND void = 0 
+    `;
+
+   const [itemPriceDb] = await db.query(m1);
+
+   let itemPrice = 0;
+   // bagaimana jika itemPriceDb kosong
+   if (!itemPriceDb || itemPriceDb.length === 0) {
+      console.log('CANNOT FIND ITEM PRICE, itemPriceDb is empty');
+   } else {
+      itemPrice = itemPriceDb[0]['price'];
+ 
+      const results = [];
+      const scQ =
+      `SELECT id, scRate
+         FROM cart_item_modifier
+      WHERE cartItemId = ${cartItem}
+         AND presence =1 AND void = 0   and scStatus = 1
+      `;
+      const [scRow] = await db.query(scQ);
+ 
+
+      if (scRow.length > 0) {
+         scAmount = itemPrice * (parseFloat(scRow[0]['scRate']) / 100);
+      }
+
+       
+      const a = `
+      SELECT c.id, c.menuId, m.name, m.menuTaxScId, t.taxStatus, t.scStatus
+         FROM cart_item  AS c
+         JOIN menu AS m ON m.id = c.menuId
+         JOIN menu_tax_sc AS t ON t.id = m.menuTaxScId
+      WHERE c.id = ${cartItem} `;
+      const [menu] = await db.query(a);
+
+      // UPDATE SC
+      if (scAmount != 0 && menu[0]['scStatus'] == 1) {
+         const q2 = `UPDATE cart_item_modifier
+                  SET
+                    price = ${scAmount}, 
+                    updateDate = '${today()}'
+                WHERE id = ${scRow[0]['id']}`;
+         const [result2] = await db.query(q2);
+         if (result2.affectedRows === 0) {
+            results.push({ status: 'not found' });
+         } else {
+            results.push({ status: 'SC cart_item_modifier Update' });
+         }
+
+      }
+   }
+
+
+   return {
+      error: false,
+      scAmount: scAmount, 
+   };
+}
+
+// Versi 1 
+async function scUpdateDinamic(cartItem = 0) {
    let scAmount = 0;
    let taxAmount = 0;
 
@@ -1232,8 +1337,108 @@ async function scUpdate(cartItem = 0) {
    };
 }
 
-
 async function taxUpdate(cartItem = 0) {
+   let scAmount = 0;
+   let taxAmount = 0;
+
+   const q2 = `
+        --  q2
+        SELECT IFNULL(SUM(price),0) AS 'total' 
+        FROM cart_item_modifier
+        WHERE cartItemId = ${cartItem}
+        AND presence =1 AND void = 0 and menuTaxScId = 0 AND applyDiscount = 0
+    `;
+   const [totalAmountModifierData] = await db.query(q2);
+
+   const t1 = `
+    SELECT c.menuId , m.menuTaxScId, t.scTaxIncluded
+        FROM cart_item AS c
+        JOIN menu AS m ON m.id = c.menuId
+        JOIN menu_tax_sc AS t ON t.id = m.menuTaxScId
+        WHERE c.id = ${cartItem};
+    `;
+   const [menuQuery] = await db.query(t1);
+ 
+
+   const totalAmountModifier = parseInt(totalAmountModifierData[0]['total']);
+
+
+   const m1 = `
+        -- m1
+        SELECT price + ${totalAmountModifier} as 'price' 
+        FROM cart_item 
+        WHERE id = ${cartItem} AND presence =1 AND void = 0 
+    `;
+
+   const [itemPriceDb] = await db.query(m1);
+
+   let itemPrice = 0;
+   // bagaimana jika itemPriceDb kosong
+   if (!itemPriceDb || itemPriceDb.length === 0) {
+      console.log('itemPriceDb is empty');
+   } else {
+      itemPrice = itemPriceDb[0]['price'];
+ 
+
+      const results = [];
+      const sqlSc =
+         ` 
+         SELECT SUM( price) AS 'price'
+            FROM cart_item_modifier
+         WHERE cartItemId = ${cartItem}
+            AND presence =1 AND void = 0   and scStatus = 1  
+        `;
+      const [scRow] = await db.query(sqlSc);
+      scAmount = (parseFloat(scRow[0]['price']) || 0);
+
+      const taxQ =
+         `SELECT id, taxRate
+              FROM cart_item_modifier
+              WHERE cartItemId = ${cartItem}
+              AND presence =1 AND void = 0   and taxStatus = 1
+            `;
+      const [taxRow] = await db.query(taxQ);
+
+     
+      if (taxRow.length > 0) { 
+         const taxRate = parseFloat(taxRow[0]['taxRate']) / 100;
+         taxAmount = (itemPrice + scAmount) * taxRate;
+         console.log({ 'itemPrice':itemPrice, 'scAmount':scAmount, 'taxRate': taxRate, 'taxAmount': taxAmount });
+      }
+
+      const a = `
+      SELECT c.id, c.menuId, m.name, m.menuTaxScId, t.taxStatus, t.scStatus
+         FROM cart_item  AS c
+         JOIN menu AS m ON m.id = c.menuId
+         JOIN menu_tax_sc AS t ON t.id = m.menuTaxScId
+      WHERE c.id = ${cartItem} `;
+      const [menu] = await db.query(a);
+
+
+      // UPDATE TAX
+      if (taxAmount != 0 && menu[0]['taxStatus'] == 1) {
+         const q2 = `UPDATE cart_item_modifier
+                  SET
+                    price = ${taxAmount}, 
+                    updateDate = '${today()}'
+                WHERE id = ${taxRow[0]['id']}`;
+         const [result2] = await db.query(q2);
+         if (result2.affectedRows === 0) {
+            results.push({ status: 'not found' });
+         } else {
+            results.push({ status: 'SC cart_item_modifier Update' });
+         }
+      }
+   }
+   return {
+      error: false,
+      taxAmount: taxAmount
+   };
+}
+
+
+// ver 1 dynamic tax
+async function taxUpdateDinamic(cartItem = 0) {
    let scAmount = 0;
    let taxAmount = 0;
 

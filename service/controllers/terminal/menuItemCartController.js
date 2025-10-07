@@ -559,7 +559,7 @@ exports.addDiscountGroup = async (req, res) => {
                      cartItemId = ${id} AND 
                      presence = 1 and void = 0
                         AND menuTaxScId = 0
-                     UNION
+                      UNION ALL
 
                      SELECT SUM(price)AS 'totalAmount' 
                      FROM cart_item WHERE  
@@ -612,13 +612,15 @@ exports.addDiscountGroup = async (req, res) => {
                   }
                }
 
-               if (discountGroup['postDiscountSC'] == 1) {
-                  const taxScUpdateRest = await scUpdate(id);
-               }
+               // if (discountGroup['postDiscountSC'] == 1) {
+               const scUpdateRest = await scUpdate(id);
+              // }
 
-               if (discountGroup['postDiscountTax'] == 1) {
-                  const taxScUpdateRest = await taxUpdate(id);
-               }
+              // if (discountGroup['postDiscountTax'] == 1) {
+                  const taxUpdateRest = await taxUpdate(id);
+               //}
+
+              
 
             } else {
                results.push({ status: `ERROR ${discountGroup['discountGroup']} was not match menu ${name}` });

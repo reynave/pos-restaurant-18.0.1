@@ -1,0 +1,9 @@
+{{formatLine " GRAND TOTAL " (formatCurrency summary.grandTotal) 33}}
+{{#each cartPayment}}
+{{formatLine (concat "  - " this.name) (formatCurrency this.paid) 33}}
+{{/each}}
+{{formatLine " UNPAID " (concat "(" (formatCurrency unpaid) ")") 33}}
+{{formatLine " CHANGE " (concat "(" (formatCurrency change) ")") 33}}
+{{#if (eq transaction.close 1)}}
+{{center "[ CLOSED BILL ]" 33}}
+{{/if}}
