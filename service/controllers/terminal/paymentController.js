@@ -16,8 +16,8 @@ exports.cart = async (req, res) => {
   try {
     const cartId = req.query.id;
     const isGrouping = req.query.isGrouping || 0;
-    const data = await cart(cartId); 
-    
+    const data = await cart(cartId);
+
     const [cartData] = await db.query(`
        SELECT  c.* , e.name as inputBy 
        from cart as c
@@ -43,7 +43,7 @@ exports.cart = async (req, res) => {
     res.status(500).json({ error: 'Database error' });
   }
 };
- 
+
 
 exports.bill = async (req, res) => {
   let totalItem = 0;
@@ -72,34 +72,34 @@ exports.bill = async (req, res) => {
     // dataArr sekarang berisi semua hasil cartGrouping per subgroup
     // Jika ingin mengirim semua ke client:
     const data = dataArr;
-    
+
     let [cartData] = await db.query(`
        SELECT  c.* , e.name as inputBy 
        from cart as c
        left JOIN employee AS e ON e.id = c.closeBy
        where c.presence = 1 and c.id = '${cartId}' 
     `);
-     let [employeeData] = await db.query(`
+    let [employeeData] = await db.query(`
        SELECT id, name , username
        from  employee 
        where presence = 1 and id = '${userId}' 
     `);
 
-     cartData = cartData.map(row => ({
+    cartData = cartData.map(row => ({
       ...row,
-      bill: row.id,  
+      bill: row.id,
       startDate: formatDateTime(row.startDate),
-      endDate: row.close == 0 ? '' : formatDateTime(row.endDate), 
-      employeeName : employeeData[0] ? employeeData[0]['name'] : 'POST/GET Request required',
+      endDate: row.close == 0 ? '' : formatDateTime(row.endDate),
+      employeeName: employeeData[0] ? employeeData[0]['name'] : 'POST/GET Request required',
     }));
-    
+
     const summary = {
       itemTotal: 0,
       discount: 0,
       sc: 0,
       tax: 0,
       total: 0,
-      grandTotal : 0,
+      grandTotal: 0,
     }
 
     data.forEach(element => {
@@ -109,9 +109,9 @@ exports.bill = async (req, res) => {
       summary.sc += element.data.sc || 0;
       summary.tax += element.data.tax || 0;
       summary.grandTotal += element.data.total || 0;
-     
+
     });
- 
+
 
 
     let paid = 0;
@@ -133,44 +133,44 @@ exports.bill = async (req, res) => {
         FROM outlet  
         WHERE id = '${cartData[0]['outletId']}'
       `);
-      let result = '';
-      const templateSource = fs.readFileSync("public/template/bill.hbs", "utf8");
-      for (let i = 0; i < subgroups.length; i++) {
-      
-        const template = Handlebars.compile(templateSource);
-        const jsonData = {
-          line : 33,
-          data: data[i]['data'],
-          transaction: cartData[0],
-          company: outlet[0],
-          // subgroup: subgroup,
-          // copyBill : copyBill.length > 0 ? copyBill[0] : 0,
-          group: subgroups[i],
-          totalGroup : subgroups.length,
-        };
-      
-        result += template(jsonData);
-      }
-      const templatePayment = fs.readFileSync("public/template/billPaid.hbs", "utf8");
-      const templatePay = Handlebars.compile(templatePayment);
-      const jsonPayment = {
-        line : 33,
-        summary : summary,
-        cartPayment : cartPayment, 
-        unpaid : summary.grandTotal - paid,
-        change : cartData[0]['changePayment'] || 0,
+    let result = '';
+    const templateSource = fs.readFileSync("public/template/bill.hbs", "utf8");
+    for (let i = 0; i < subgroups.length; i++) {
+
+      const template = Handlebars.compile(templateSource);
+      const jsonData = {
+        line: 33,
+        data: data[i]['data'],
+        transaction: cartData[0],
+        company: outlet[0],
+        // subgroup: subgroup,
+        // copyBill : copyBill.length > 0 ? copyBill[0] : 0,
+        group: subgroups[i],
+        totalGroup: subgroups.length,
       };
-      console.log(jsonPayment);
-      result += templatePay(jsonPayment);
+
+      result += template(jsonData);
+    }
+    const templatePayment = fs.readFileSync("public/template/billPaid.hbs", "utf8");
+    const templatePay = Handlebars.compile(templatePayment);
+    const jsonPayment = {
+      line: 33,
+      summary: summary,
+      cartPayment: cartPayment,
+      unpaid: ( summary.grandTotal - paid ) < 0 ? 0 : (summary.grandTotal - paid),
+      change: cartData[0]['changePayment'] || 0,
+    };
+  
+    result += templatePay(jsonPayment);
 
     res.json({
-      data: data, 
+      data: data,
       cart: cartData[0],
-      cartPayment :cartPayment,
-      paid : paid,
-      summary : summary,
-      groups:subgroups,
-      htmlBill : result
+      cartPayment: cartPayment,
+      paid: paid,
+      summary: summary,
+      groups: subgroups,
+      htmlBill: result
     });
 
   } catch (err) {
@@ -219,8 +219,8 @@ exports.paymentType = async (req, res) => {
 
 exports.paid = async (req, res) => {
   const cartId = req.query.id;
-    const grandTotal = req.query.grandTotal;
-    const dailyCheckId = req.query.dailyCheckId;
+  const grandTotal = req.query.grandTotal;
+  const dailyCheckId = req.query.dailyCheckId;
   const results = [];
   try {
     const [formattedRows] = await db.query(` 
@@ -249,7 +249,7 @@ exports.paid = async (req, res) => {
     if (cartPayment[0]['paid'] >= cartPayment[0]['grandTotal']) closePayment = 1;
 
     if (closePayment == 1) {
-      console.log("FINISH");
+    
       const data = await cart(cartId);
       const q = `UPDATE cart
             SET
@@ -351,20 +351,19 @@ exports.paid = async (req, res) => {
         WHERE id = '${cartId}'
       `);
 
-     const [selectSubgroup] = await db.query(`
+    const [selectSubgroup] = await db.query(`
       SELECT g.subgroup
       FROM cart_item_group AS g
       WHERE cartId = '${cartId}'
       GROUP BY g.subgroup;
       `);
 
-  let subgroupArr = [1, ...selectSubgroup.map(item => item.subgroup)];
-    await exportTxtBill(cartId, selectOutlet, results, subgroupArr);
+    // let subgroupArr = [1, ...selectSubgroup.map(item => item.subgroup)];
+    // await exportTxtBill(cartId, selectOutlet, results, subgroupArr);
 
 
     res.json({
       error: false,
-      subgroupArr : subgroupArr,
       outletTableMapId: selectOutlet[0]['outletTableMapId'],
       closePayment: closePayment,
       cartPayment: cartPayment[0],
@@ -471,7 +470,7 @@ exports.updateRow = async (req, res) => {
         updateBy = ${userId}
     WHERE  id = ${item['id']} and submit = 0 `;
     const [result] = await db.query(q);
-    console.log(q)
+ 
 
     if (result.affectedRows === 0) {
       results.push({ status: 'not found' });
@@ -578,8 +577,7 @@ exports.addPaid = async (req, res) => {
       const q = `UPDATE cart_payment
                 SET
                   paid = ${paid}, 
-                  tips = ${tips}, 
-                  
+                  tips = ${tips},  
                   submit = 1,
                   updateDate = '${today()}',
                   updateBy = ${userId}
@@ -675,81 +673,40 @@ exports.printing = async (req, res) => {
     res.status(500).send('Gagal render HTML');
   }
 };
- 
-async function exportTxtBill(cartId, selectOutlet, results, subgroupArr) {
+
+exports.createTxt = async (req, res) => {
+  const cartId = req.body.id;
+  const htmlBill = req.body.htmlBill;
   try {
    
-    for (const subgroup of subgroupArr) {
-      const data = await cart(cartId, subgroup);
 
-      let q = '';
-      if (selectOutlet[0]['outletTableMapId'] != 0) {
-      // TABLE
-      q = `
-        SELECT 
-        c.id   , c.id as 'bill', c.void,  c.dailyCheckId, c.cover, c.outletId, c.billNo,
-        o.name AS 'outlet', c.startDate, c.endDate , 
-        c.close,   t.tableName, t.tableNameExt, 'UAT PERSON' as 'servedBy' , e.name as 'employeeName'
-        FROM cart AS c
-        JOIN outlet AS o ON o.id = c.outletId
-        JOIN outlet_table_map AS t ON t.id = c.outletTableMapId
-        left JOIN employee AS e ON e.id = c.closeBy
-        WHERE c.presence = 1 AND  c.id = '${cartId}'
-      `;
-      }
-      else {
-      // CASHIER
-      q = ` 
-        SELECT 
-        c.id   , c.id as 'bill', c.void,  c.dailyCheckId, c.cover, c.outletId, c.billNo,
-        o.name AS 'outlet', c.startDate, c.endDate , 
-        c.close,  'UAT PERSON' as 'servedBy' , e.name as 'employeeName'
-        FROM cart AS c
-        JOIN outlet AS o ON o.id = c.outletId
-        left JOIN employee AS e ON e.id = c.closeBy
-        WHERE c.presence = 1 AND  c.id = '${cartId}'
-      `;
-      }
+    await exportTxtBill(cartId, htmlBill , 'billClosed');
+    res.json({ message: 'Create TXT initiated ' +cartId});
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: true, note: err });
+  }
+}
 
-      const [transaction] = await db.query(q);
-      const formattedRows = transaction.map(row => ({
-      ...row,
-      bill: row.id + (subgroup > 1 ? ('.' + subgroup) : ''),
-      startDate: formatDateTime(row.startDate),
-      endDate: row.close == 0 ? '' : formatDateTime(row.endDate),
-      }));
+async function exportTxtBill(cartId, htmlBill, folder = 'logs') {
+  const results = [];
+  try {
 
-      const [outlet] = await db.query(`
-      SELECT  * 
-      FROM outlet  
-      WHERE id = '${formattedRows[0]['outletId']}'
-      `);
-      // Baca template Handlebars
-      const templateSource = fs.readFileSync(path.join(__dirname, '../../public/template/bill.hbs'), "utf8");
-      const template = Handlebars.compile(templateSource);
+    const result = htmlBill; //template(jsonData);
 
-      // Siapkan data untuk template
-      const jsonData = {
-      data: data,
-      transaction: formattedRows[0],
-      company: outlet ? outlet[0] : {},
-      subgroup: subgroup,
-      };
-      const result = template(jsonData);
-
-      // Buat folder export jika belum ada
-      const dateFolder = formatDateOnly(new Date());
-      const exportDir = path.join(__dirname, '../../public/output/bill', dateFolder);
-      if (!fs.existsSync(exportDir)) {
+    // Buat folder export jika belum ada
+    const dateFolder = formatDateOnly(new Date());
+    const exportDir = path.join(__dirname, '../../public/output/'+folder, dateFolder);
+    if (!fs.existsSync(exportDir)) {
       fs.mkdirSync(exportDir, { recursive: true });
-      }
-
-      // Tulis hasil render ke file txt
-      fs.writeFileSync(
-      path.join(exportDir, `${cartId}${subgroup > 1 ? '.' + subgroup : ''}.txt`), result
-      );
-      results.push({ status: 'TXT exported', file: `${dateFolder}/${cartId}${subgroup > 1 ? '.' + subgroup : ''}.txt` });
     }
+
+    // Tulis hasil render ke file txt
+    fs.writeFileSync(
+      path.join(exportDir, `${cartId}.txt`), result
+    );
+    results.push({ status: 'TXT exported', file: `${dateFolder}/${cartId}.txt` });
+
   } catch (txtErr) {
     console.error('TXT export error:', txtErr);
     results.push({ status: 'TXT export failed', error: txtErr.message });

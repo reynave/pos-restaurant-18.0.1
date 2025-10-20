@@ -46,8 +46,7 @@ exports.getMenuItem = async (req, res) => {
     employeeAuthLevelId = decodedToken['employeeAuthLevelId'] || 0;
 
     try {
-      header = JSON.parse(req.headers['x-terminal']);
-      //   console.log(header);
+      header = JSON.parse(req.headers['x-terminal']); 
       const [terminal] = await db.query(`SELECT priceNo FROM terminal WHERE terminalId = ${header['terminalId']}`);
       if (terminal[0]['priceNo'] != 0) {
         i = terminal[0]['priceNo'];
@@ -72,7 +71,7 @@ exports.getMenuItem = async (req, res) => {
         SELECT 
           m.id, m.name, m.price${i} as 'price' , m.adjustItemsId, m.qty, m.menuSet, m.menuSetMinQty,
           m.menuDepartmentId, m.menuCategoryId, m.menuTaxScId,
-          t.desc, t.taxRate, t.taxNote, t.taxStatus, t.scTaxIncluded,
+          t.desc, t.taxRate, t.taxNote, t.taxStatus, t.scTaxIncluded, m.openPrice,
             CASE 
               WHEN t.taxStatus = 2 THEN m.price${i} - (m.price${i} / (1+ (t.taxRate/100) ))
               WHEN t.taxStatus = 1 THEN m.price${i}*(t.taxRate/100)
@@ -113,6 +112,7 @@ exports.getMenuItem = async (req, res) => {
     const [items] = await db.query(q);
 
     items.forEach(el => {
+      el['price'] = parseInt(el['price']) || 0;
       if (el['adjustItemsId'] == '') {
         el['qty'] = 99999999
       }
@@ -177,7 +177,7 @@ exports.getMenuItem = async (req, res) => {
         SELECT d.* , 'AllLevel' as 'totalLevel'
           FROM discount AS d
           left JOIN discount_group AS g ON g.id  = d.discountGroupId
-        WHERE d.presence = 1 AND d.allDiscountGroup = 1 and d.allLevel = 1
+        WHERE d.presence = 1 AND d.allDiscountGroup = 1 and d.allLevel = 1 and d.status = 1
       `;
       const [discount] = await db.query(q5);
 
@@ -189,7 +189,7 @@ exports.getMenuItem = async (req, res) => {
           FROM discount AS d
           LEFT JOIN discount_group AS g ON g.id  = d.discountGroupId
           jOIN discount_level AS l ON l.discountId = d.id
-          WHERE d.presence = 1 AND d.allDiscountGroup = 1 AND d.allLevel = 0  
+          WHERE d.presence = 1 AND d.allDiscountGroup = 1 AND d.allLevel = 0  and d.status = 1
           AND (${levelDiscount})
         GROUP BY d.id
         ) AS t1 
@@ -263,6 +263,11 @@ exports.addToCart = async (req, res) => {
   const userId = headerUserId(req);
   let inputDate = today();
   const results = [];
+  const openPrice = req.body['openPrice'] || 0;
+
+  if(openPrice == 1){
+    menu['price'] = parseInt(req.body['price']) || 0;
+  }
   try {
 
     //let price = parseInt(menu['price']) + parseInt(menu['taxAmount']) + parseInt(menu['scAmount']);
@@ -1075,6 +1080,34 @@ exports.sendOrder = async (req, res) => {
     WHERE cartId = ${cartId}`;
     await db.query(q6);
 
+
+// ADD payment record
+
+      const [checkPaymentType] = await db.query(`
+        SELECT * FROM check_payment_type WHERE setDefault = 1 and presence = 1 order by name asc;
+      `);
+ 
+      if(checkPaymentType.length > 0){
+        for(const row of checkPaymentType){
+          const q12 = `
+            INSERT INTO cart_payment (
+                presence, inputDate,  updateDate,
+                cartId,  checkPaymentTypeId, paid, tips,
+                inputBy, updateBy
+                  ) 
+              VALUES (
+                1, '${today()}',  '${today()}',
+                '${insertId}',  ${row['id']}, 0, 0, 
+                ${userId}, ${userId}
+              )`;
+            await db.query(q12);
+        }
+      }
+  
+
+
+     
+
       cartId = insertId;
     }
 
@@ -1327,23 +1360,17 @@ exports.menuLookUp = async (req, res) => {
       WHERE m.presence = 1 and m.parentId = ${parentId}
       ORDER BY m.sorting ASC
     `;
-
     const [rows] = await db.query(q);
-
-
 
     const q2 = `
       SELECT id, parentId,  name 
       FROM menu_lookup 
       WHERE presence = 1 and id = ${parentId} 
     `;
-
     const [lookUpHeader] = await db.query(q2);
 
-
-
     res.status(201).json({
-      error: false,
+      error: false, 
       parent: lookUpHeader,
       //  lookUpHeader: parentId == 0 ? 'Menu' : lookUpHeader[0]['name'],
       //  parentId: parentId == 0 ? 0 : parseInt(lookUpHeader[0]['parentId']),

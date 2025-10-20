@@ -192,7 +192,7 @@ exports.newOrder = async (req, res) => {
     WHERE  o.presence = 1 AND o.id = ${model['outletTableMapId']} AND c.presence = 1 AND c.void = 0
     AND c.tableMapStatusId != 20 AND c.dailyCheckId = '${dailyCheckId}';
     `;
-    console.log(q);
+ 
     const [rows] = await db.query(q);
     const total = rows[0]?.total || 0; // gunakan optional chaining biar aman
     const { insertId } = await autoNumber('order');
@@ -209,8 +209,7 @@ exports.newOrder = async (req, res) => {
     // Format hasil
     let overDue = updatedDate.toLocaleString(process.env.TO_LOCALE_STRING).replace('T', ' ').substring(0, 19);
     overDue = convertCustomDateTime(overDue.toString())
-    console.log(overDue); // Output: 2025-07-22 17:03:38
-
+ 
     if (total == 0) {
       const a = `INSERT INTO cart (
           presence, inputDate, tableMapStatusId, outletTableMapId, 
@@ -225,13 +224,15 @@ exports.newOrder = async (req, res) => {
           '${terminalId}',
           '${inputDate}', '${inputDate}' , '${overDue}', 
           ${userId}, ${userId})`;
-      console.log(a)
+      
       const [newOrder] = await db.query(a);
       if (newOrder.affectedRows === 0) {
         results.push({ status: 'not found' });
       } else {
         results.push({ status: 'updated' });
       }
+ 
+
       res.status(201).json({
         error: false,
         cardId: insertId,

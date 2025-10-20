@@ -34,7 +34,7 @@ async function printerEsc(message, printerData) {
     try {
       const device = new escpos.Network(printerIp, printerPort);
       const printer = new escpos.Printer(device); 
-      console.log("printerEsc | Connecting to printer at", message, printerData);
+   
       device.open(function (err) {
         if (err) {
           console.error('❌ Error saat membuka koneksi:', err);

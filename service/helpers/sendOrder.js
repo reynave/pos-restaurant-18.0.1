@@ -12,7 +12,7 @@ async function sendOrder(so = '', subgroup = 0) {
         AND c.presence = 1 AND c.void  = 0
         ORDER BY c.id ASC
        `;
-       console.log(q);
+ 
     const [formattedRows] = await db.query(q);
 
     for (const row of formattedRows) {

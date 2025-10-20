@@ -302,9 +302,7 @@ exports.voidItem = async (req, res) => {
                results.push({ id, status: 'not found' });
             } else {
                results.push({ id, status: 'cart_item updated' });
-            }
-
-
+            } 
               const q2 = `
                   DELETE FROM cart_item_group 
                   WHERE cartItemId = '${id}'  
@@ -319,8 +317,6 @@ exports.voidItem = async (req, res) => {
                 }
          }
 
-         // loop untuk modifier
-         console.log(modifier);
          for (const mod of modifier) {
             if (mod['checkBox'] == 1) {
                const q = `UPDATE cart_item_modifier
@@ -330,6 +326,7 @@ exports.voidItem = async (req, res) => {
                         updateDate = '${today()}',
                         updateBy = ${userId}
                      WHERE id = ${mod['id']} and menuTaxScId = 0`;
+           
                const [result] = await db.query(q);
                if (result.affectedRows === 0) {
                   results.push({ id: mod['id'], status: 'not found' });
@@ -362,7 +359,7 @@ exports.voidItem = async (req, res) => {
          FROM cart_item_modifier AS m
          LEFT JOIN cart_item AS c ON c.id = m.cartItemId 
          WHERE 
-            c.presence = 1 AND c.void = 0`;
+            c.presence = 0 AND c.void = 1`;
       const [result] = await db.query(q);
       for (const row of result) {
           // buatkan query update
@@ -372,7 +369,7 @@ exports.voidItem = async (req, res) => {
               void = 1,
                updateDate = '${today()}',
                updateBy = ${userId}
-            WHERE  cartItemId = ${row['cartItemId']}  and  menuTaxScId = 0 `;
+            WHERE  cartItemId = ${row['cartItemId']} `;
          await db.query(q1); 
 
       }
@@ -531,7 +528,7 @@ exports.addDiscountGroup = async (req, res) => {
    const cartId = req.body['cartId'];
 
    const results = [];
-
+   console.log("addDiscountGroup");
    try {
 
       for (const emp of cart) {
@@ -571,6 +568,7 @@ exports.addDiscountGroup = async (req, res) => {
                const totalAmount = parseInt(queryT1[0]['totalAmount']);
 
                if (parseInt(discountGroup['discAmount']) > 0) {
+                   // DISCOUNT AMOUNT  ex 50.000
                   let discAmount = 0;
                   const q = `
                   INSERT INTO cart_item_modifier (
@@ -592,6 +590,7 @@ exports.addDiscountGroup = async (req, res) => {
                      results.push({ status: 'discAmount updated', query: q, });
                   }
                } else {
+               // DISCOUNT PERCENTAGE ex 10%  
                   let discAmount = (totalAmount * (parseFloat(discountGroup['discRate']) / 100)) * -1;
                   const q = `
                   INSERT INTO cart_item_modifier (
@@ -617,7 +616,7 @@ exports.addDiscountGroup = async (req, res) => {
               // }
 
               // if (discountGroup['postDiscountTax'] == 1) {
-                  const taxUpdateRest = await taxUpdate(id);
+               const taxUpdateRest = await taxUpdate(id);
                //}
 
               

@@ -124,7 +124,7 @@ exports.kitchen = async (req, res) => {
 exports.test = async (req, res) => {
   const note = req.body.note || 'Test print from server';
   const printer = req.body.printer;
-  console.log(printer)
+ 
   try {
     const message = `
 *** TEST PRINT ***
@@ -136,7 +136,7 @@ Thank you.
     // Panggil fungsi printToPrinter
     const result = await printToPrinter(message, printer.address, printer.port);
 
-    console.log(result);
+ 
     res.json({ success: true, message: 'Printed successfully', detail: result });
 
   } catch (err) {
@@ -149,16 +149,13 @@ Thank you.
 exports.print = async (req, res) => {
   const note = req.body.note || 'Test print from server';
   const printer = req.body.printer;
-  console.log(printer)
+ 
   try {
-    const message =  req.body.message;
-    console.log(message[0]['html'])
-    // Panggil fungsi printToPrinter
- //   const result1 = await printToPrinter(message, printer.address, printer.port);
+    const message =  req.body.message;  
 
-    const result = await printerEsc(message[0]['html'], printer);
+    const result = await printerEsc(message, printer);
 
-   // console.log(result);
+ 
     res.json({ success: true, message: 'Printed successfully', detail: result });
 
   } catch (err) {

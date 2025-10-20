@@ -17,6 +17,8 @@ router.get('/splitBill', bill.splitBill);
 router.post('/updateGroup', bill.updateGroup);   
 router.post('/resetGroup', bill.resetGroup);   
 
+router.post('/createTxtBill', bill.createTxtBill);   
+
 
 router.post('/createPayment', bill.createPayment);   
 

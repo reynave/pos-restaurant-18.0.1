@@ -69,7 +69,7 @@ exports.tableCheckerDetail = async (req, res) => {
             JOIN outlet_table_map AS t ON t.id = c.outletTableMapId
             WHERE c.presence = 1 AND  c.id = '${cartId[0].cartId}'
         `
-        console.log(qq);
+   
         const [transactionq] = await db.query(qq);
 
         const transaction = transactionq.map(row => ({

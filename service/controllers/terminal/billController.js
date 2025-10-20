@@ -1,8 +1,10 @@
 const db = require('../../config/db');
 const net = require('net');
-const { headerUserId, today, formatDateTime, formatCurrency, formatLine, centerText } = require('../../helpers/global');
+const { headerUserId, today, formatDateTime, formatDateOnly, formatCurrency, formatLine, centerText } = require('../../helpers/global');
 const { autoNumber } = require('../../helpers/autoNumber');
 const { cart } = require('../../helpers/bill');
+const { exportTxt } = require('../../helpers/exportToFile');
+
 const { printQueueInternal } = require('../../helpers/printer');
 const Handlebars = require("handlebars");
 
@@ -161,10 +163,10 @@ exports.printing = async (req, res) => {
   const api = req.query.api == 'true' ? true : false;
   const userId = headerUserId(req);
 
-    const isGrouping = req.query.totalGroup > 1 ? 1 : 0;
-    const cartId = req.query.id;
-    const subgroup = !req.query.subgroup ? 1 : req.query.subgroup; 
-   try {
+  const isGrouping = req.query.totalGroup > 1 ? 1 : 0;
+  const cartId = req.query.id;
+  const subgroup = !req.query.subgroup ? 1 : req.query.subgroup;
+  try {
 
     const templateSource = fs.readFileSync("public/template/bill.hbs", "utf8");
     const template = Handlebars.compile(templateSource);
@@ -176,9 +178,9 @@ exports.printing = async (req, res) => {
             SELECT  outletTableMapId 
             FROM cart  
             WHERE id = '${cartId}'
-          `); 
+          `);
 
-    if (selectOutlet[0]['outletTableMapId'] != 0) { 
+    if (selectOutlet[0]['outletTableMapId'] != 0) {
       q = `
       SELECT 
           c.id   , c.id as 'bill', c.void,  c.dailyCheckId, c.cover, c.outletId, c.billNo,
@@ -190,8 +192,8 @@ exports.printing = async (req, res) => {
             left JOIN employee AS e ON e.id = c.closeBy
         WHERE c.presence = 1 AND  c.id = '${cartId}'
       `;
-    }else{
-        
+    } else {
+
       q = ` 
           SELECT 
       c.id   , c.id as 'bill', c.void,  c.dailyCheckId, c.cover, c.outletId, c.billNo,
@@ -203,26 +205,26 @@ exports.printing = async (req, res) => {
       WHERE c.presence = 1 AND  c.id = '${cartId}'
       `;
     }
- 
+
     const [transaction] = await db.query(q);
-  
+
     const formattedRows = transaction.map(row => ({
       ...row,
-      bill: row.id, 
-      subgroup : subgroup, 
+      bill: row.id,
+      subgroup: subgroup,
       startDate: formatDateTime(row.startDate),
-      endDate: row.close == 0 ? '' : formatDateTime(row.endDate), 
+      endDate: row.close == 0 ? '' : formatDateTime(row.endDate),
     }));
 
 
-      const [copyBill] = await db.query(`
+    const [copyBill] = await db.query(`
      SELECT  count(id) as 'total',  MAX(inputDate) as 'inputDate'
       FROM cart_copy_bill  
       WHERE cartId = '${cartId}' order by inputDate Desc
     `);
 
 
-  
+
     const [outlet] = await db.query(`
      SELECT  * 
       FROM outlet  
@@ -235,17 +237,17 @@ exports.printing = async (req, res) => {
         transaction: formattedRows[0],
         company: outlet[0],
         subgroup: subgroup,
-        copyBill : copyBill.length > 0 ? copyBill[0] : 0,
+        copyBill: copyBill.length > 0 ? copyBill[0] : 0,
 
       });
     } else {
       const jsonData = {
         data: data,
-        isGrouping : isGrouping,
+        isGrouping: isGrouping,
         transaction: formattedRows[0],
         company: outlet[0],
         subgroup: subgroup,
-        copyBill : copyBill.length > 0 ? copyBill[0] : 0,
+        copyBill: copyBill.length > 0 ? copyBill[0] : 0,
 
       };
       const result = template(jsonData);
@@ -337,6 +339,7 @@ exports.copyBill = async (req, res) => {
 
 exports.billUpdate = async (req, res) => {
   const cartId = req.body['id'];
+  const htmlBill = req.body['htmlBill'];
   const results = [];
   const userId = headerUserId(req);
   try {
@@ -379,7 +382,6 @@ exports.billUpdate = async (req, res) => {
         updateBy = ${userId}
       WHERE  id = '${cartId}'`;
 
-    console.log(q2);
     const [result2] = await db.query(q2);
 
     if (result2.affectedRows === 0) {
@@ -400,13 +402,13 @@ exports.billUpdate = async (req, res) => {
         where id = '${cartId}'   and  presence = 1 and void = 0
         order by inputDate Desc
       `;
-    console.log(a1);
+
     const [cartTable] = await db.query(a1);
 
+    let billNo = item[0]['total'];
 
     res.json({
-      billNo: item[0]['total'],
-      // emptySendOrderTotal : so[0]['total'], 
+      billNo: billNo,
       tableSendOrder: cartTable[0]['sendOrder'],
     });
 
@@ -415,7 +417,30 @@ exports.billUpdate = async (req, res) => {
     res.status(500).json({ error: 'Database error' });
   }
 }
+async function exportTxtBill(cartId, htmlBill, folder = 'logs') {
+  const results = [];
+  try {
 
+    const result = htmlBill; //template(jsonData);
+
+    // Buat folder export jika belum ada
+    const dateFolder = formatDateOnly(new Date());
+    const exportDir = path.join(__dirname, '../../public/output/' + folder, dateFolder);
+    if (!fs.existsSync(exportDir)) {
+      fs.mkdirSync(exportDir, { recursive: true });
+    }
+
+    // Tulis hasil render ke file txt
+    fs.writeFileSync(
+      path.join(exportDir, `${cartId}.txt`), result
+    );
+    results.push({ status: 'TXT exported', file: `${dateFolder}/${cartId}.txt` });
+
+  } catch (txtErr) {
+    console.error('TXT export error:', txtErr);
+    results.push({ status: 'TXT export failed', error: txtErr.message });
+  }
+}
 
 
 exports.ipPrint = async (req, res) => {
@@ -454,7 +479,7 @@ exports.ipPrint = async (req, res) => {
 }
 
 exports.splitBill = async (req, res) => {
-  const subgroup = req.query.subgroup || 1; 
+  const subgroup = req.query.subgroup || 1;
   try {
     const cartId = req.query.id;
     const q = `
@@ -466,14 +491,13 @@ exports.splitBill = async (req, res) => {
       ORDER BY i.inputDate ASC;
     `;
     const [items] = await db.query(q);
-    console.log(q)
 
 
     const q5 = `
       SELECT  g.cartItemId AS 'id' ,  g.qty as 'total'
       FROM cart_item_group AS g 
       WHERE g.cartId = '${cartId}';
-    `; 
+    `;
     const [usedItem] = await db.query(q5);
 
     // bisa buatkan code untuk qty dari items - qty dari itemsTransfer
@@ -500,7 +524,6 @@ exports.splitBill = async (req, res) => {
       AND g.presence = 1
       ORDER BY g.inputDate ASC;
     `;
-   // console.log(q2)
     const [itemsTransfer] = await db.query(q2);
 
 
@@ -518,7 +541,7 @@ exports.splitBill = async (req, res) => {
 };
 
 exports.updateGroup = async (req, res) => {
-  const cartId = req.body['id']; 
+  const cartId = req.body['id'];
   const subgroup = req.body['subgroup'];
   const qty = req.body['qty'];
   const itemTransfer = req.body['itemTransfer'];
@@ -538,7 +561,7 @@ exports.updateGroup = async (req, res) => {
           updateBy = '${userId}'
         WHERE cartId = '${cartId}' AND subgroup = ${subgroup} and cartItemId = '${itemTransfer['id']}'
       `;
-      const [result] = await db.query(q); 
+      const [result] = await db.query(q);
       if (result.affectedRows === 0) {
         results.push({ status: 'not found' });
       } else {
@@ -561,7 +584,7 @@ exports.updateGroup = async (req, res) => {
       }
     }
 
- 
+
 
     res.json({
       error: false,
@@ -576,7 +599,7 @@ exports.updateGroup = async (req, res) => {
 
 exports.resetGroup = async (req, res) => {
   const id = req.body['id'];
-  const item = req.body['item']; 
+  const item = req.body['item'];
   const subgroup = req.body['subgroup'];
 
   const results = [];
@@ -648,6 +671,36 @@ exports.createPayment = async (req, res) => {
       WHERE cartId = ${cartId}`;
       await db.query(q4);
 
+
+      const q6 = `
+          UPDATE cart_item_group SET
+            cartId =  '${insertId}'
+          WHERE cartId = ${cartId}`;
+      await db.query(q6);
+
+      const [checkPaymentType] = await db.query(`
+        SELECT * FROM check_payment_type WHERE setDefault = 1 and presence = 1 order by name asc;
+      `);
+      if (checkPaymentType.length > 0) {
+        for (const row of checkPaymentType) {
+          const q12 = `
+            INSERT INTO cart_payment (
+                presence, inputDate,  updateDate,
+                cartId,  checkPaymentTypeId, paid, tips,
+                inputBy, updateBy
+                  ) 
+              VALUES (
+                1, '${today()}',  '${today()}',
+                '${insertId}',  ${row['id']}, 0, 0, 
+                ${userId}, ${userId}
+              )`;
+          await db.query(q12);
+        }
+      }
+
+
+
+
       cartId = insertId;
     }
 
@@ -687,7 +740,6 @@ exports.createPayment = async (req, res) => {
     await printQueueInternal(db, sendOrder, userId);
 
 
-
     res.json({
       error: false,
       id: cartId
@@ -697,6 +749,31 @@ exports.createPayment = async (req, res) => {
     console.error(err);
     res.status(500).json({ error: 'Database error' });
   }
+}
+
+exports.createTxtBill = async (req, res) => {
+  const cartId = req.body['cartId'];
+  const htmlBill = req.body['htmlBill'];
+
+  const [cart] = await db.query(`
+      SELECT id, billNo FROM cart
+      WHERE id = '${cartId}'
+  `);
+
+
+  let billNo = cart[0]['billNo'] || 'x';
+  // exportTxt
+  try {
+    await exportTxtBill(cartId + '.' + billNo, htmlBill, 'bill');
+    console.log('exportTxt SUCCESS', cartId);
+    res.json({
+      note: 'exportTxt SUCCESS', cartId,
+    });
+  } catch (err) {
+    console.error('Error exporting TXT bill:', err);
+    res.status(500).json({ error: 'Error exporting TXT bill:', err });
+  }
+
 }
 
 

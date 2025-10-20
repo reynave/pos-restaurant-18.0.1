@@ -52,7 +52,7 @@ exports.template = async (req, res) => {
   itemDetail['modifier'] = itemDetail['modifier'].replace(new RegExp(`(.{${n}})`, 'g'), '$1\n');
   itemDetail['descs'] = itemDetail['descs'].replace(new RegExp(`(.{${n}})`, 'g'), '$1\n');
   
-  console.log(itemDetail);
+ 
   const rushPrinting = req.body.rushPrinting; 
 
   if (!itemDetail) {
@@ -82,8 +82,7 @@ exports.fnReprint = async (req, res) => {
   const item = req.body['item'];
   const results = [];
   try {
-    const id = item['id'];
-    console.log(item['id']);
+    const id = item['id']; 
 
     const [result] = await db.query(`
         UPDATE print_queue SET  
@@ -115,8 +114,7 @@ exports.fnRushPrint = async (req, res) => {
   const item = req.body['item'];
   const results = [];
   try {
-    const id = item['id'];
-    console.log(item['id']);
+    const id = item['id']; 
 
     const [result] = await db.query(`
         UPDATE print_queue SET  
