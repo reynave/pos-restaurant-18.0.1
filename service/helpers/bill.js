@@ -439,9 +439,9 @@ async function cartGrouping(cartId = '', subgroup = 0) {
 
             const temp = {
                id: row['rateOrDiscount'],
-               name: row['descl'],
-               discAmount: parseInt(row['discAmount']),
-               totalItemPrice: parseInt(element['totalAmount'])
+               name: row['descl'], 
+               discAmount: Math.abs(parseInt(row['discAmount']) || 0),
+               totalItemPrice: Math.abs(parseInt(element['totalAmount']) || 0)
             }
             discountAmountGroup.push(temp);
          }
@@ -502,11 +502,17 @@ async function cartGrouping(cartId = '', subgroup = 0) {
    const discountAmountGroupSummary = [];
    discountAmountGroup.forEach(row => {
       const existing = discountAmountGroupSummary.find(item => item.id === row.id);
-      if (existing) {
-         existing.discAmount += row.discAmount;
+   
+
+      if (existing) { 
          existing.totalItemPrice += row.totalItemPrice;
       } else {
-         discountAmountGroupSummary.push({ id: row.id, name: row.name, discAmount: row.discAmount, totalItemPrice: row.totalItemPrice });
+         discountAmountGroupSummary.push({ 
+            id: row.id,
+            name: row.name,
+            discAmount: row.discAmount,
+            totalItemPrice: row.totalItemPrice
+         }); 
       }
    });
    discountAmountGroup = discountAmountGroupSummary;
@@ -534,12 +540,46 @@ async function cartGrouping(cartId = '', subgroup = 0) {
  
    discountAmount = 0;
    discountAmountGroup.forEach(element => { 
-      element['discount'] = element['totalItemPrice'] + element['discAmount'] <= 0 ? element['totalItemPrice'] * -1 : element['discAmount'];
-      discountAmount += element['discount'];
-   });
+     // element['discount'] = element['totalItemPrice'] + element['discAmount'] <= 0 ? element['totalItemPrice'] * -1 : element['discAmount'];
+     // discountAmount += element['discount'];
 
-   discount = discount + discountAmount;
-   subTotal = itemTotal + discount;
+      let subTotal = parseInt(element['totalItemPrice']) + discount; 
+ 
+      let discAmount = parseInt(element['discAmount']) ;
+
+      console.log('subTotal : ',subTotal, ' discount % : ',discount, ' totalItemPrice : ',element['totalItemPrice'], 'discAmount :',element['discAmount']); 
+      console.log(' '); 
+      
+      
+      let amount = 0; 
+
+      if ( subTotal > element['discAmount'] ) {
+         amount = parseInt(element['discAmount']);
+      }else{
+         // DISCAMOUNT < SUBTOTAL 
+         //       amount = parseInt(element['discAmount']);
+         amount = subTotal; 
+      }
+ 
+      element['discount'] = amount; 
+      element['name'] = element['name'];
+      discountAmount += amount * -1;
+      // string saja
+      element['discAmount'] =  discountAmount; 
+   }); 
+   
+   discountTotal =  discount  +  discountAmount; 
+   subTotal = itemTotal + discountTotal;
+
+
+
+   scGroupSummary[0]['totalAmount'] = Math.round(subTotal * (scGroup[0]['rateOrDiscount']/100));
+   // NEW update SC  based on subtotal
+   sc = scGroupSummary[0]['totalAmount'];
+   // NEW TAX based on subtotal + sc
+   taxGroupSummary[0]['totalAmount'] =Math.round( (itemTotal + sc) *  (taxGroup[0]['rateOrDiscount']/100));
+   tax = taxGroupSummary[0]['totalAmount'];
+
    return { 
       groups: subgroup,
       cart: items,
@@ -555,15 +595,11 @@ async function cartGrouping(cartId = '', subgroup = 0) {
 
 
       itemTotal: itemTotal,
-      discount: discount,
+      discount: discountTotal,
       subTotal: subTotal,
       sc: sc,
       tax: tax,
-      total: subTotal + sc + tax,
-
-
-      //whereCartId: whereCartId,
-
+      total: subTotal + sc + tax, 
 
    }
 }

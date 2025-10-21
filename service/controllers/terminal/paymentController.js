@@ -97,8 +97,7 @@ exports.bill = async (req, res) => {
       itemTotal: 0,
       discount: 0,
       sc: 0,
-      tax: 0,
-      total: 0,
+      tax: 0, 
       grandTotal: 0,
     }
 
@@ -219,7 +218,7 @@ exports.paymentType = async (req, res) => {
 
 exports.paid = async (req, res) => {
   const cartId = req.query.id;
-  const grandTotal = req.query.grandTotal;
+  
   const dailyCheckId = req.query.dailyCheckId;
   const results = [];
   try {
@@ -231,6 +230,13 @@ exports.paid = async (req, res) => {
       ORDER BY  p.inputDate ASC
     `);
 
+      const c = `
+      SELECT  grandTotal
+      FROM cart
+      WHERE presence = 1 and id =  '${cartId}' `;
+
+    const [grandTotalRow] = await db.query(c);
+    let   grandTotal = grandTotalRow[0]['grandTotal'];
 
     const qq = `
       SELECT 
@@ -239,7 +245,7 @@ exports.paid = async (req, res) => {
         (${grandTotal} - COALESCE(SUM(paid), 0)) AS 'unpaid'
       FROM cart_payment 
       WHERE presence = 1 and  submit = 1 and cartId =  '${cartId}' `;
-
+      console.log(qq)
     const [cartPayment] = await db.query(qq);
 
 
@@ -257,8 +263,7 @@ exports.paid = async (req, res) => {
               updateDate = '${today()}',
               close = 1,
               tableMapStatusId = 20,
-              totalAmount  = ${data['subTotal']},
-              grandTotal = ${data['grandTotal']},
+              totalAmount  = ${data['subTotal']}, 
               changePayment =  ${data['change']},
               totalTips = ${data['tips']},
               totalItem  = ${data['totalItem']}

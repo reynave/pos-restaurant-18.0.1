@@ -340,6 +340,8 @@ exports.copyBill = async (req, res) => {
 exports.billUpdate = async (req, res) => {
   const cartId = req.body['id'];
   const htmlBill = req.body['htmlBill'];
+  const summary = req.body['summary'];
+  const groups = req.body['groups'];
   const results = [];
   const userId = headerUserId(req);
   try {
@@ -376,8 +378,16 @@ exports.billUpdate = async (req, res) => {
     const q2 = `UPDATE cart
       SET
         paymentId = '${hours * 100 + minutes}',
-        billNo =  ${item[0]['total']}, 
+        billNo =  ${item[0]['total'] + 1}, 
         tableMapStatusId = 13, 
+        grandTotal  =  ${summary.grandTotal},
+
+        summaryItemTotal = ${summary.itemTotal},
+        summaryDiscount = ${summary.discount},
+        summarySc = ${summary.sc},
+        summaryTax = ${summary.tax},
+        summaryTotalGroup = ${groups},
+
         updateDate = '${today()}',
         updateBy = ${userId}
       WHERE  id = '${cartId}'`;
