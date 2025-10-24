@@ -1,24 +1,26 @@
 const db = require('../../config/db');
-const { today, formatDateOnly } = require('../../helpers/global');
+const { today, formatDateOnly, headerUserId } = require('../../helpers/global');
 const { cart } = require('../../helpers/bill');
  
 exports.getAllData = async (req, res) => {
   const outletId = req.query.outletId;
   const dailyCheckId = req.query.dailyCheckId;
-
+  const startDate = req.query.startDate || '';
+  const endDate = req.query.endDate || '';
   try { 
     const q = `
-        SELECT 
-          c.id, c.startDate, c.endDate, c.outletId, c.cover,  t.tableName,
-          c.tableMapStatusId, s.name AS 'status', c.grandTotal,   e.name AS 'cashier'
-        FROM cart AS c
-        LEFT JOIN employee AS e  ON e.id = c.closeBy
-        LEFT JOIN outlet_table_map AS t ON  t.id = c.outletTableMapId
-        LEFT JOIN outlet_table_map_status AS s ON s.id = c.tableMapStatusId
-        WHERE c.presence = 1  AND c.close = 1
-             AND c.dailyCheckId = '${dailyCheckId}';
+      SELECT 
+        c.id, c.startDate, c.endDate, c.outletId, c.cover,  t.tableName,
+        c.tableMapStatusId, s.name AS 'status', s.id as 'statusId',  c.grandTotal,   e.name AS 'cashier'
+      FROM cart AS c
+      LEFT JOIN employee AS e  ON e.id = c.closeBy
+      LEFT JOIN outlet_table_map AS t ON  t.id = c.outletTableMapId
+      LEFT JOIN outlet_table_map_status AS s ON s.id = c.tableMapStatusId
+      WHERE c.presence = 1  AND c.close = 1 AND s.id = 20
+      ${startDate != '' ? '--':''} AND c.dailyCheckId = '${dailyCheckId}'
+      ${startDate != '' ? '':'--'}    AND (c.startDate >= '${startDate}' AND c.endDate <= '${endDate} 23:59:55');
     `;
-
+ 
     const [formattedRows] = await db.query(q);
 
     for (const row of formattedRows) {
@@ -226,3 +228,54 @@ exports.addCopyBill = async (req, res) => {
   }
 };
 
+
+exports.void = async (req, res) => {
+  const userId = headerUserId(req); 
+  const cartId = req.body['id'];
+  const results = [];
+
+  try {
+
+     const q = `UPDATE cart
+        SET
+          printBill = 0,
+          paymentId = '',
+          close = 0,
+          tableMapStatusId = 18,
+          updateBy = ${userId},
+          updateDate = '${today()}'
+      WHERE id = '${cartId}' `;
+    const [result] = await db.query(q); 
+ 
+    if (result.affectedRows === 0) {
+      results.push({ cartId, status: 'void not found' });
+    } else {
+      results.push({ cartId, status: 'void update' });
+    }
+
+
+     const q3 = `UPDATE cart_payment
+        SET
+          presence = 0,
+          void = 1, 
+          updateBy = ${userId},
+          updateDate = '${today()}'
+      WHERE cartId = '${cartId}' `;
+    const [result3] = await db.query(q3); 
+ 
+    if (result3.affectedRows === 0) {
+      results.push({ cartId, status: 'void not found' });
+    } else {
+      results.push({ cartId, status: 'void update' });
+    }
+
+    res.json({
+      error: false,
+      id: cartId,
+      results: results,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: true, note: 'Database insert error' });
+  }
+};

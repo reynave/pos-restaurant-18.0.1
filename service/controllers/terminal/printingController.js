@@ -4,7 +4,7 @@ const { formatDateTime, formatCurrency, formatLine, centerText } = require('../.
 const { cart } = require('../../helpers/bill');
 const { sendOrder } = require('../../helpers/sendOrder');
 
-const { printToPrinter, printerEsc } = require('../../helpers/printer'); // arahkan ke path file yg kamu punya
+const { printToPrinter, printerEsc, openCashDrawer } = require('../../helpers/printer'); // arahkan ke path file yg kamu punya
 
 const fs = require('fs');
 const path = require('path');
@@ -156,7 +156,12 @@ exports.print = async (req, res) => {
     const result = await printerEsc(message, printer);
 
  
-    res.json({ success: true, message: 'Printed successfully', detail: result });
+    if(result === true){
+      res.json({ success: true, message: 'Printed successfully', detail: result });
+    }else{
+      res.status(500).json({ error: 'Failed to print', detail: 'Printer ESC command failed', printer:printer });
+    }
+   
 
   } catch (err) {
     console.error('Print error:', err);
@@ -164,3 +169,13 @@ exports.print = async (req, res) => {
   }
 };
 
+exports.cashDrawer = async (req, res) => {
+  const printer = req.body.printer;
+  try {
+    const result = await openCashDrawer(printer.address, printer.port);
+    res.json(result);
+  } catch (err) {
+    console.error('Open cash drawer error:', err);
+    res.status(500).json({ success: false, message: 'Failed to open cash drawer', error: err.message });
+  }
+};

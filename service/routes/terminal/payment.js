@@ -14,6 +14,8 @@ router.get('/paymentGroup', payment.paymentGroup);
 
 router.get('/paid', payment.paid);  
 
+router.post('/markPrintBill', payment.markPrintBill);  
+
 
 router.post('/addPayment', payment.addPayment);  
 router.post('/deletePayment', payment.deletePayment);  

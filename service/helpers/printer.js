@@ -25,6 +25,29 @@ const printToPrinter = (message, printerIp = '10.51.122.20', printerPort = 9100)
     });
   });
 };
+// bisa buatkan function open cash drawer juga ya
+async function openCashDrawer(printerIp, printerPort) {
+  try {
+    return await new Promise((resolve, reject) => {
+      const client = new net.Socket();
+      const openDrawerCmd = Buffer.from([0x1B, 0x70, 0x00, 0x19, 0xFA]); // ESC p 0 25 250
+      client.connect(printerPort, printerIp, () => {
+        console.log(`Connected to printer at ${printerIp}:${printerPort} to open cash drawer`);
+        client.write(openDrawerCmd);
+        client.end();
+      });
+      client.on('close', () => {
+        resolve({ success: true, message: 'Cash drawer opened and connection closed' });
+      });
+      client.on('error', (err) => {
+        reject({ success: false, message: 'Error opening cash drawer', error: err.message });
+      });
+    });
+  } catch (error) {
+    console.error('Error in openCashDrawer:', error);
+    return { success: false, message: 'Exception occurred while opening cash drawer', error: error.message };
+  }
+};
 
 async function printerEsc(message, printerData) {
   const printerIp = printerData?.address || 'IP not found';
@@ -37,7 +60,7 @@ async function printerEsc(message, printerData) {
    
       device.open(function (err) {
         if (err) {
-          console.error('❌ Error saat membuka koneksi:', err);
+            console.error('❌ Error while opening connection:', err);
           return resolve(false);
         }
         printer
@@ -204,5 +227,5 @@ async function printQueueInternal(db, sendOrder, userId) {
 
 
 module.exports = {
-  printToPrinter, sendToPrinter, sendToPrinterDummy, printQueueInternal, printerEsc
+  printToPrinter, sendToPrinter, sendToPrinterDummy, printQueueInternal, printerEsc, openCashDrawer
 };

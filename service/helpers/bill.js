@@ -225,7 +225,7 @@ async function cart(cartId = '') {
 
 
    // HERE
-   let newSC = subTotal * (taxSc[0]['rate'] / 100);
+   let newSC = subTotal * ((taxSc[0]?.['rate'] || 0) / 100);
    taxSc[0]['totalAmount'] = Math.round(newSC);
 
 

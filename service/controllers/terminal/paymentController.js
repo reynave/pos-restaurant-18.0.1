@@ -372,7 +372,7 @@ exports.paid = async (req, res) => {
       outletTableMapId: selectOutlet[0]['outletTableMapId'],
       closePayment: closePayment,
       cartPayment: cartPayment[0],
-      items: formattedRows,
+      items: formattedRows, 
       results: results,
     });
 
@@ -381,6 +381,28 @@ exports.paid = async (req, res) => {
     res.status(500).json({ error: 'Database error' });
   }
 };
+
+exports.markPrintBill = async (req, res) => {
+  const cartId = req.body.id;
+  try {
+    const q = `UPDATE cart
+        SET
+          printBill = 1,
+          updateDate = '${today()}'
+      WHERE id = '${cartId}' `;
+    const [result] = await db.query(q); 
+    if (result.affectedRows === 0) {
+      res.status(404).json({ error: 'Cart not found' });
+    } else {
+      res.json({ message: 'Cart printBill updated' });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+};
+
+
 
 exports.addPayment = async (req, res) => {
   const cartId = req.body['cartId'];

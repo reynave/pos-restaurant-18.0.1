@@ -319,14 +319,14 @@ exports.voidItem = async (req, res) => {
 
          for (const mod of modifier) {
             if (mod['checkBox'] == 1) {
-               const q = `UPDATE cart_item_modifier
-                     SET
+                  const q = `UPDATE cart_item_modifier
+                      SET
                         void = 1,
                         presence = 0,
                         updateDate = '${today()}',
                         updateBy = ${userId}
-                     WHERE id = ${mod['id']} and menuTaxScId = 0`;
-           
+                      WHERE id = ${mod['id']} AND menuTaxScId = 0 AND sendOrder = '' `;
+        
                const [result] = await db.query(q);
                if (result.affectedRows === 0) {
                   results.push({ id: mod['id'], status: 'not found' });
@@ -528,7 +528,7 @@ exports.addDiscountGroup = async (req, res) => {
    const cartId = req.body['cartId'];
 
    const results = [];
-   console.log("addDiscountGroup");
+ 
    try {
 
       for (const emp of cart) {

@@ -14,5 +14,7 @@ router.get('/kitchen', c.kitchen);
 router.post('/test', c.test);  
 router.post('/print', c.print);  
 
+router.post('/cashDrawer', c.cashDrawer);  
+
 
 module.exports = router;
