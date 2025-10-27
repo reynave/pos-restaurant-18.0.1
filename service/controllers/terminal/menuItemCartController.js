@@ -1,6 +1,6 @@
 const db = require('../../config/db');
 const { headerUserId, mapUpdateByName, today, sanitizeText } = require('../../helpers/global');
-const { scUpdate, taxUpdate } = require('../../helpers/bill');
+const { scUpdate, taxUpdate, discountMaxPerItem } = require('../../helpers/bill');
 
 const { logger } = require('./userLogController');
 
@@ -11,7 +11,7 @@ exports.cart = async (req, res) => {
    try {
       const cartId = req.query.id;
       let qm = '';
-      if(posMode === 'table'){
+      if (posMode === 'table') {
          qm = `
          SELECT c.*, t.tableName, c.startDate, c.overDue,
             TIMESTAMPDIFF(MINUTE,  c.overDue, NOW())  AS overTime, s.name AS 'status', 
@@ -34,7 +34,7 @@ exports.cart = async (req, res) => {
          `;
       }
 
-      const [table] = await db.query(qm); 
+      const [table] = await db.query(qm);
 
       const tableRow = await mapUpdateByName(db, table);
 
@@ -72,7 +72,7 @@ exports.cart = async (req, res) => {
       // DETAIL / MODIFIER 
       const s = ` 
     -- CUSTOM NOTES
-      SELECT 0 as 'allowVoid', r.id, i.id AS cartItemId, r.menuTaxScId AS modifierId, r.note AS descl, r.price, 
+      SELECT 0 as 'allowVoid', 0 as 'applyDiscount', r.id, i.id AS cartItemId, r.menuTaxScId AS modifierId, r.note AS descl, r.price, r.priceIncluded,
       NULL AS rateOrDiscount, NULL AS remark, 1 as 'modifier', 0 as 'checkBox', r.sendOrder, i.inputDate, i.inputBy, i.updateDate, i.updateBy
       FROM cart_item  AS i
       RIGHT JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
@@ -82,7 +82,7 @@ exports.cart = async (req, res) => {
       UNION
 
       -- MODIFIER
-      SELECT 0 as 'allowVoid', r.id, i.id AS cartItemId, r.modifierId, m.descl, r.price, 
+      SELECT 0 as 'allowVoid', 0 as 'applyDiscount', r.id, i.id AS cartItemId, r.modifierId, m.descl, r.price, r.priceIncluded,
       NULL AS rateOrDiscount, r.remark, 1 as 'modifier', 0 as 'checkBox', r.sendOrder, i.inputDate, i.inputBy, i.updateDate, i.updateBy
       FROM cart_item  AS i 
       RIGHT JOIN cart_item_modifier AS r ON r.cartItemId = i.id
@@ -93,7 +93,7 @@ exports.cart = async (req, res) => {
       UNION
 
       -- DISCOUNT
-      SELECT 1 as 'allowVoid', r.id,i.id AS cartItemId, r.modifierId, d.name AS descl, r.price,
+      SELECT 1 as 'allowVoid',1 as 'applyDiscount', r.id,i.id AS cartItemId, r.modifierId, d.name AS descl, r.price, r.priceIncluded,
        r.applyDiscount AS rateOrDiscount, r.remark, 1 as 'modifier', 0 as 'checkBox', r.sendOrder, i.inputDate, i.inputBy, i.updateDate, i.updateBy
       FROM cart_item  AS i
          JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
@@ -104,7 +104,7 @@ exports.cart = async (req, res) => {
       UNION
 
       -- SC
-      SELECT 0 as 'allowVoid', r.id, i.id AS cartItemId, r.menuTaxScId AS modifierId, t.scNote AS descl, r.price, 
+      SELECT 0 as 'allowVoid', 0 as 'applyDiscount',r.id, i.id AS cartItemId, r.menuTaxScId AS modifierId, t.scNote AS descl, r.price, r.priceIncluded,
       r.scRate AS rateOrDiscount, r.remark, 0 as 'modifier', 0 as 'checkBox', i.sendOrder, i.inputDate, i.inputBy, i.updateDate, i.updateBy
          FROM cart_item  AS i
          RIGHT JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
@@ -115,7 +115,7 @@ exports.cart = async (req, res) => {
       UNION 
 
       -- TAX
-      SELECT 0 as 'allowVoid', r.id, i.id AS cartItemId, r.menuTaxScId AS modifierId, t.taxNote AS descl, r.price, 
+      SELECT 0 as 'allowVoid',0 as 'applyDiscount', r.id, i.id AS cartItemId, r.menuTaxScId AS modifierId, t.taxNote AS descl, r.price, r.priceIncluded,
       r.taxRate AS rateOrDiscount, r.remark, 0 as 'modifier', 0 as 'checkBox', i.sendOrder, i.inputDate, i.inputBy, i.updateDate, i.updateBy
          FROM cart_item  AS i
          RIGHT JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
@@ -167,7 +167,7 @@ exports.cart = async (req, res) => {
                       
           WHERE id = '${cartId}' and close = 0`;
          await db.query(q);
-      } 
+      }
 
       // End of calculation
       res.json({
@@ -262,6 +262,8 @@ exports.updateQty = async (req, res) => {
          }
       }
 
+      await discountMaxPerItem(cartId);
+
       res.status(201).json({
          error: false,
          inputDate: inputDate,
@@ -302,31 +304,31 @@ exports.voidItem = async (req, res) => {
                results.push({ id, status: 'not found' });
             } else {
                results.push({ id, status: 'cart_item updated' });
-            } 
-              const q2 = `
+            }
+            const q2 = `
                   DELETE FROM cart_item_group 
                   WHERE cartItemId = '${id}'  
                     AND cartId = '${cartId}' 
-                `; 
-                const [result2] = await db.query(q2);
+                `;
+            const [result2] = await db.query(q2);
 
-                if (result2.affectedRows === 0) {
-                  results.push({ status: 'not found' });
-                } else {
-                  results.push({ status: 'Delete cart_item_group' });
-                }
+            if (result2.affectedRows === 0) {
+               results.push({ status: 'not found' });
+            } else {
+               results.push({ status: 'Delete cart_item_group' });
+            }
          }
 
          for (const mod of modifier) {
             if (mod['checkBox'] == 1) {
-                  const q = `UPDATE cart_item_modifier
+               const q = `UPDATE cart_item_modifier
                       SET
                         void = 1,
                         presence = 0,
                         updateDate = '${today()}',
                         updateBy = ${userId}
                       WHERE id = ${mod['id']} AND menuTaxScId = 0 AND sendOrder = '' `;
-        
+
                const [result] = await db.query(q);
                if (result.affectedRows === 0) {
                   results.push({ id: mod['id'], status: 'not found' });
@@ -362,7 +364,7 @@ exports.voidItem = async (req, res) => {
             c.presence = 0 AND c.void = 1`;
       const [result] = await db.query(q);
       for (const row of result) {
-          // buatkan query update
+         // buatkan query update
          const q1 = `UPDATE cart_item_modifier
             SET
               presence = 0,  
@@ -370,11 +372,11 @@ exports.voidItem = async (req, res) => {
                updateDate = '${today()}',
                updateBy = ${userId}
             WHERE  cartItemId = ${row['cartItemId']} `;
-         await db.query(q1); 
+         await db.query(q1);
 
       }
 
-       
+
       res.json({
          message: 'Batch update completed',
          results: results
@@ -528,7 +530,7 @@ exports.addDiscountGroup = async (req, res) => {
    const cartId = req.body['cartId'];
 
    const results = [];
- 
+
    try {
 
       for (const emp of cart) {
@@ -568,7 +570,7 @@ exports.addDiscountGroup = async (req, res) => {
                const totalAmount = parseInt(queryT1[0]['totalAmount']);
 
                if (parseInt(discountGroup['discAmount']) > 0) {
-                   // DISCOUNT AMOUNT  ex 50.000
+                  // DISCOUNT MAX AMOUNT  ex 50.000
                   let discAmount = 0;
                   const q = `
                   INSERT INTO cart_item_modifier (
@@ -590,7 +592,7 @@ exports.addDiscountGroup = async (req, res) => {
                      results.push({ status: 'discAmount updated', query: q, });
                   }
                } else {
-               // DISCOUNT PERCENTAGE ex 10%  
+                  // DISCOUNT PERCENTAGE ex 10%  
                   let discAmount = (totalAmount * (parseFloat(discountGroup['discRate']) / 100)) * -1;
                   const q = `
                   INSERT INTO cart_item_modifier (
@@ -613,19 +615,66 @@ exports.addDiscountGroup = async (req, res) => {
 
                // if (discountGroup['postDiscountSC'] == 1) {
                const scUpdateRest = await scUpdate(id);
-              // }
+               // }
 
-              // if (discountGroup['postDiscountTax'] == 1) {
+               // if (discountGroup['postDiscountTax'] == 1) {
                const taxUpdateRest = await taxUpdate(id);
                //}
 
-              
+
 
             } else {
                results.push({ status: `ERROR ${discountGroup['discountGroup']} was not match menu ${name}` });
             }
          }
       }
+ 
+      const restData = await discountMaxPerItem(cartId);
+      console.log(restData);
+      // upate discount max per item harus dibuat menjadi function sendiri
+
+//        const [totalItem] = await db.query(`
+//          SELECT SUM(qty * price) AS 'totalItem' 
+//          FROM cart_item WHERE cartId = '${cartId}'
+//          AND  presence = 1 AND void = 0
+//       `);
+//       const totalAmount = totalItem[0]['totalItem'];
+
+
+//       const a = `SELECT  d.id AS 'discountId', COUNT(d.id) AS 'totalDiscountMax'
+// from cart_item_modifier AS c
+// JOIN discount AS d ON d.id = c.applyDiscount
+// WHERE c.cartId = '${cartId}' AND c.presence = 1 AND c.void = 0
+// AND c.applyDiscount != 0 AND d.discAmount > 0
+// GROUP BY d.id
+// `;
+//       const [queryA] = await db.query(a);
+//       for (const rec of queryA) {
+//          const d = `SELECT c.id,  d.id AS 'discountId', i.price * i.qty AS 'totalItem',   i.qty,  
+//          d.discAmount,  (d.discAmount/ 2) / i.qty as discPerItem,
+//          ((i.price * i.qty ) / ${totalAmount} ) * 100, 
+//          (((i.price * i.qty ) / ${totalAmount} ) * 100) * (d.discAmount / 100) AS 'discountMaxPerItem x qty',
+//          ((((i.price * i.qty ) / ${totalAmount} ) * 100) * (d.discAmount / 100) ) / i.qty as 'discountMaxPerItem' 
+//          from cart_item_modifier AS c
+//          JOIN cart_item AS i ON i.id = c.cartItemId
+//          JOIN discount AS d ON d.id = c.applyDiscount
+//          WHERE c.cartId = '${cartId}' AND c.presence = 1 AND c.void = 0  AND i.presence = 1 AND i.void = 0
+//          AND c.applyDiscount != 0 AND d.discAmount > 0
+//          AND d.id = ${rec['discountId']}`;
+       
+//          const [queryD] = await db.query(d);
+
+//          for (const row of queryD) {
+//             const q2 = `
+//             -- here we update the priceIncluded to negative discountMaxPerItem
+//             UPDATE cart_item_modifier SET
+//                priceIncluded = ${parseInt(row['discountMaxPerItem']) * -1}
+//             WHERE id = ${row['id']}`;
+//             await db.query(q2);
+//          }
+
+//       }
+
 
       const q1 = `
             UPDATE cart SET
@@ -645,3 +694,36 @@ exports.addDiscountGroup = async (req, res) => {
       res.status(500).json({ error: true, note: 'Database insert error' });
    }
 };
+
+exports.changeTable = async (req, res) => {
+   const userId = headerUserId(req);
+   const cartId = req.body['cartId'];
+   const table = req.body['table'];
+   const newTable = req.body['newTable'];
+   const dailyCheckId = req.body['dailyCheckId'];
+   const results = [];
+
+   try {
+      const q = `
+         UPDATE cart SET
+            outletTableMapId = ${newTable['outletTableMapId']}, 
+            updateDate = '${today()}',
+            updateBy = ${userId}
+         WHERE id = '${cartId}'  `;
+      const [result] = await db.query(q);
+      if (result.affectedRows === 0) {
+         results.push({ status: 'not found' });
+      } else {
+         results.push({ status: 'Table changed successfully' });
+      }
+      res.status(201).json({
+         error: false,
+         results: results
+      });
+   }
+   catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Database update error', details: err.message });
+   }
+}
+

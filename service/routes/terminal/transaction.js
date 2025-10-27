@@ -9,7 +9,7 @@ router.get('/cart', transactionController.cart);
 
 router.get('/getCopyBill', transactionController.getCopyBill);
 router.post('/addCopyBill', transactionController.addCopyBill);
-router.post('/void', transactionController.void);
+router.post('/void', transactionController.void); 
 
 
 //router.post('/signin', loginController.newOrder);

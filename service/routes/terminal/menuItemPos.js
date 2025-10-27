@@ -50,11 +50,13 @@ router.post('/takeOutDetail', menuItemPos.takeOutDetail);
 router.post('/mergerCheck', menuItemPos.mergerCheck);
 
 
+router.get('/voidReason', menuItemPos.voidReason);
 router.get('/mergeLog', menuItemPos.mergeLog);
 router.post('/addCustomNotes', c.addCustomNotes);
 router.post('/addCustomNotesDetail', menuItemPos.addCustomNotesDetail);
+router.post('/changeTable', c.changeTable);
 
-
+router.post('/voidItemSo', menuItemPos.voidItemSo);
 
 router.get('/tableChecker', menuItemFunc.tableChecker);
 router.get('/tableCheckerDetail', menuItemFunc.tableCheckerDetail);

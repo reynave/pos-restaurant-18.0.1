@@ -46,6 +46,7 @@ exports.template = async (req, res) => {
   const templatePath = path.join(__dirname, '../../public/template/kitchen.hbs');
 
   const itemDetail = req.body.itemDetail;
+  const cartId = req.body.cartId;
   
 
   // didalam itemDetail ada modifier, saya mau setiap kelipatan 50 karakter \n
@@ -63,6 +64,7 @@ exports.template = async (req, res) => {
   try {
     
     itemDetail['rushPrinting'] = rushPrinting;  
+    itemDetail['cartId'] = cartId; // Add cartId to the template data
     const templateSource = fs.readFileSync(templatePath, 'utf8');
     const template = Handlebars.compile(templateSource);
     const result = template(itemDetail);

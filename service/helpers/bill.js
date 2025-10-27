@@ -1152,6 +1152,59 @@ async function taxUpdate(cartItem = 0) {
    };
 }
 
+async function discountMaxPerItem(cartId = '') {
+   try {
+      const [totalItem] = await db.query(`
+         SELECT SUM(qty * price) AS 'totalItem' 
+         FROM cart_item WHERE cartId = '${cartId}'
+         AND presence = 1 AND void = 0
+      `);
+
+      const totalAmount = totalItem[0]?.['totalItem'] || 0;
+
+      const a = `
+         SELECT d.id AS 'discountId', COUNT(d.id) AS 'totalDiscountMax'
+         FROM cart_item_modifier AS c
+         JOIN discount AS d ON d.id = c.applyDiscount
+         WHERE c.cartId = '${cartId}' AND c.presence = 1 AND c.void = 0
+         AND c.applyDiscount != 0 AND d.discAmount > 0
+         GROUP BY d.id
+      `;
+      const [queryA] = await db.query(a);
+
+      for (const rec of queryA) {
+         const d = `
+            SELECT c.id, d.id AS 'discountId', i.price * i.qty AS 'totalItem', i.qty,  
+            d.discAmount, (d.discAmount / 2) / i.qty as discPerItem,
+            ((i.price * i.qty) / ${totalAmount}) * 100, 
+            (((i.price * i.qty) / ${totalAmount}) * 100) * (d.discAmount / 100) AS 'discountMaxPerItem x qty',
+            ((((i.price * i.qty) / ${totalAmount}) * 100) * (d.discAmount / 100)) / i.qty as 'discountMaxPerItem' 
+            FROM cart_item_modifier AS c
+            JOIN cart_item AS i ON i.id = c.cartItemId
+            JOIN discount AS d ON d.id = c.applyDiscount
+            WHERE c.cartId = '${cartId}' AND c.presence = 1 AND c.void = 0 AND i.presence = 1 AND i.void = 0
+            AND c.applyDiscount != 0 AND d.discAmount > 0
+            AND d.id = ${rec['discountId']}
+         `;
+
+         const [queryD] = await db.query(d);
+
+         for (const row of queryD) {
+            const q2 = `
+               UPDATE cart_item_modifier SET
+               priceIncluded = ${parseInt(row['discountMaxPerItem']) * -1}
+               WHERE id = ${row['id']}
+            `;
+            await db.query(q2);
+         }
+      }
+
+      return { success: true, message: "Discounts updated successfully." };
+   } catch (error) {
+      console.error("Error in discountMaxPerItem:", error);
+      return { success: false, message: "An error occurred while updating discounts.", error };
+   }
+}
 
 // ver 1 dynamic tax
 async function taxUpdateDinamic(cartItem = 0) {
@@ -1279,5 +1332,5 @@ async function taxUpdateDinamic(cartItem = 0) {
 
 
 module.exports = {
-   cart, taxScUpdate, cartHistory, taxUpdate, scUpdate, cartGrouping
+   cart, taxScUpdate, cartHistory, taxUpdate, scUpdate, cartGrouping, discountMaxPerItem
 };

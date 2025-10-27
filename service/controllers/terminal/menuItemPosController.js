@@ -46,7 +46,7 @@ exports.getMenuItem = async (req, res) => {
     employeeAuthLevelId = decodedToken['employeeAuthLevelId'] || 0;
 
     try {
-      header = JSON.parse(req.headers['x-terminal']); 
+      header = JSON.parse(req.headers['x-terminal']);
       const [terminal] = await db.query(`SELECT priceNo FROM terminal WHERE terminalId = ${header['terminalId']}`);
       if (terminal[0]['priceNo'] != 0) {
         i = terminal[0]['priceNo'];
@@ -265,7 +265,7 @@ exports.addToCart = async (req, res) => {
   const results = [];
   const openPrice = req.body['openPrice'] || 0;
 
-  if(openPrice == 1){
+  if (openPrice == 1) {
     menu['price'] = parseInt(req.body['price']) || 0;
   }
   try {
@@ -592,7 +592,7 @@ exports.clearLockTable = async (req, res) => {
           updateDate = '${today()}',
           updateBy = ${userId}
       WHERE  lockBy = '${terminalId}' `;
- 
+
     const [result] = await db.query(q);
     if (result.affectedRows === 0) {
       results.push({ status: 'not found' });
@@ -612,8 +612,99 @@ exports.clearLockTable = async (req, res) => {
   }
 };
 
+exports.voidReason = async (req, res) => {
+  try {
+    const q = `
+      SELECT * from void_reason 
+      where status = 1 and presence = 1
+      order by name ASC
+    `;
+    const [items] = await db.query(q);
+    res.json({
+      items: items,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+};
+
+exports.voidItemSo = async (req, res) => {
+  // const { id, name, position, email } = req.body;
+  const userId = headerUserId(req);
+  const reason = req.body['reason'];
+  const itemsTransfer = req.body['itemsTransfer'];
+        const items = req.body['items'];
+      
+  const id = req.body['id'];
+
+  let inputDate = today();
+  const results = [];
+
+  try {
+    for (const item of items) {
+      const q = `UPDATE cart_item
+            SET
+              qty = ${item['total']}, 
+              updateDate = '${today()}',
+              updateBy = ${userId}
+          WHERE  id = '${item['id']}'  and cartId = '${id}' `;
+
+      const [result] = await db.query(q);
+      if (result.affectedRows === 0) {
+        results.push({ status: 'not found' });
+      } else {
+        results.push({ status: 'UPDATE QTY updated' });
+      } 
+    }
+
+    for (const item of itemsTransfer) { 
+        const q1 = `INSERT INTO cart_item_void_reason (
+            cartId, cartItemId, reason, qty,
+            presence, 
+            inputDate, updateDate,  
+            inputBy, updateBy
+        )
+        VALUES (
+          '${id}', ${item['id']}, '${reason}', ${item['total']},
+          1, 
+          '${today()}', '${today()}', 
+          ${userId}, ${userId}
+        )`;
+      const [result1] = await db.query(q1);
+      if (result1.affectedRows === 0) {
+        results.push({ status: 'not found' });
+      }
+      else {
+        results.push({ status: 'INSERT VOID REASON inserted' });
+      }
+    }
+
+    const q2 = `UPDATE cart_item
+            SET
+              presence = 0,
+              void = 1
+          WHERE   qty = 0  and cartId = '${id}' `;
+
+      const [result2] = await db.query(q2);
+      if (result2.affectedRows === 0) {
+        results.push({ status: 'not found' });
+      } else {
+        results.push({ status: 'UPDATE VOID updated' });
+      }
 
 
+
+    res.status(201).json({
+      results: results
+    });
+
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database update error', details: err.message });
+  }
+};
 
 
 exports.cartDetail = async (req, res) => {
@@ -1074,21 +1165,21 @@ exports.sendOrder = async (req, res) => {
       await db.query(q4);
 
 
-       const q6 = `
+      const q6 = `
     UPDATE cart_item_group SET
       cartId =  '${insertId}'
     WHERE cartId = ${cartId}`;
-    await db.query(q6);
+      await db.query(q6);
 
 
-// ADD payment record
+      // ADD payment record
 
       const [checkPaymentType] = await db.query(`
         SELECT * FROM check_payment_type WHERE setDefault = 1 and presence = 1 order by name asc;
       `);
- 
-      if(checkPaymentType.length > 0){
-        for(const row of checkPaymentType){
+
+      if (checkPaymentType.length > 0) {
+        for (const row of checkPaymentType) {
           const q12 = `
             INSERT INTO cart_payment (
                 presence, inputDate,  updateDate,
@@ -1100,13 +1191,13 @@ exports.sendOrder = async (req, res) => {
                 '${insertId}',  ${row['id']}, 0, 0, 
                 ${userId}, ${userId}
               )`;
-            await db.query(q12);
+          await db.query(q12);
         }
       }
-  
 
 
-     
+
+
 
       cartId = insertId;
     }
@@ -1171,7 +1262,7 @@ exports.sendOrder = async (req, res) => {
     csvFile(cartId, so, printQueue);
 
 
-const { sendOrder } = require('../../helpers/sendOrder');
+    const { sendOrder } = require('../../helpers/sendOrder');
     const data = await sendOrder(so);
 
     const qq = `
@@ -1370,7 +1461,7 @@ exports.menuLookUp = async (req, res) => {
     const [lookUpHeader] = await db.query(q2);
 
     res.status(201).json({
-      error: false, 
+      error: false,
       parent: lookUpHeader,
       //  lookUpHeader: parentId == 0 ? 'Menu' : lookUpHeader[0]['name'],
       //  parentId: parentId == 0 ? 0 : parseInt(lookUpHeader[0]['parentId']),
