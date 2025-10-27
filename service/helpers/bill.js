@@ -1175,9 +1175,9 @@ async function discountMaxPerItem(cartId = '') {
       for (const rec of queryA) {
          const d = `
             SELECT c.id, d.id AS 'discountId', i.price * i.qty AS 'totalItem', i.qty,  
-            d.discAmount, (d.discAmount / 2) / i.qty as discPerItem,
+            d.discAmount, 
             ((i.price * i.qty) / ${totalAmount}) * 100, 
-            (((i.price * i.qty) / ${totalAmount}) * 100) * (d.discAmount / 100) AS 'discountMaxPerItem x qty',
+            (((i.price * i.qty) / ${totalAmount}) * 100) * (d.discAmount / 100) AS 'discountMaxPerItemXqty',
             ((((i.price * i.qty) / ${totalAmount}) * 100) * (d.discAmount / 100)) / i.qty as 'discountMaxPerItem' 
             FROM cart_item_modifier AS c
             JOIN cart_item AS i ON i.id = c.cartItemId
@@ -1186,13 +1186,20 @@ async function discountMaxPerItem(cartId = '') {
             AND c.applyDiscount != 0 AND d.discAmount > 0
             AND d.id = ${rec['discountId']}
          `;
-
+         console.log(d)
          const [queryD] = await db.query(d);
 
          for (const row of queryD) {
+
+            let discountMaxPerItem = parseInt(row['discountMaxPerItem']);
+
+            if(  discountMaxPerItem > row['totalItem'] ) {
+               discountMaxPerItem = parseInt(row['totalItem']) / row['qty'];
+            }
+
             const q2 = `
                UPDATE cart_item_modifier SET
-               priceIncluded = ${parseInt(row['discountMaxPerItem']) * -1}
+               priceIncluded = ${discountMaxPerItem * -1}
                WHERE id = ${row['id']}
             `;
             await db.query(q2);
