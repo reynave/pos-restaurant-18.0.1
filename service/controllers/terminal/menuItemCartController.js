@@ -67,61 +67,49 @@ exports.cart = async (req, res) => {
       }
 
 
-
-
       // DETAIL / MODIFIER 
       const s = ` 
-    -- CUSTOM NOTES
-      SELECT 0 as 'allowVoid', 0 as 'applyDiscount', r.id, i.id AS cartItemId, r.menuTaxScId AS modifierId, r.note AS descl, r.price, r.priceIncluded,
-      NULL AS rateOrDiscount, NULL AS remark, 1 as 'modifier', 0 as 'checkBox', r.sendOrder, i.inputDate, i.inputBy, i.updateDate, i.updateBy
-      FROM cart_item  AS i
-      RIGHT JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
-      WHERE  i.cartId = '${cartId}' AND r.void = 0 AND r.presence = 1 
-      AND r.presence = 1 AND i.void = 0 AND r.modifierId = 0 AND r.note != ''
+         -- MODIFIER and CUSTOM NOTE
+         SELECT 0 as 'allowVoid', 0 as 'applyDiscount', r.id, i.id AS cartItemId, r.modifierId, CONCAT(m.descl,r.remark) AS 'descl',  
+         0 AS rateOrDiscount,   1 as 'modifier', 0 as 'checkBox', r.sendOrder, r.debit, r.credit ,  i.qty,
+         (r.debit - r.credit) * i.qty AS totalAmount
+         FROM cart_item  AS i 
+         RIGHT JOIN cart_item_modifier AS r ON r.cartItemId = i.id
+         JOIN modifier AS m ON m.id = r.modifierId 
+         WHERE  i.cartId = '${cartId}' AND r.void = 0 AND r.presence = 1 
+         AND r.presence = 1 AND i.void = 0   
 
-      UNION
 
-      -- MODIFIER
-      SELECT 0 as 'allowVoid', 0 as 'applyDiscount', r.id, i.id AS cartItemId, r.modifierId, m.descl, r.price, r.priceIncluded,
-      NULL AS rateOrDiscount, r.remark, 1 as 'modifier', 0 as 'checkBox', r.sendOrder, i.inputDate, i.inputBy, i.updateDate, i.updateBy
-      FROM cart_item  AS i 
-      RIGHT JOIN cart_item_modifier AS r ON r.cartItemId = i.id
-      JOIN modifier AS m ON m.id = r.modifierId 
-      WHERE  i.cartId = '${cartId}' AND r.void = 0 AND r.presence = 1 
-      AND r.presence = 1 AND i.void = 0   
+         UNION 
+         -- DISCOUNT
+         SELECT 1 as 'allowVoid', 1 as 'applyDiscount',  r.id, r.cartItemId, NULL AS  'modifierId', r.note AS  'descl', 
+         r.rate AS rateOrDiscount,   1 as 'modifier', 0 as 'checkBox', r.sendOrder, r.debit, r.credit , i.qty,
+         (r.debit - r.credit) * i.qty AS totalAmount
+         FROM cart_item AS i
+         JOIN cart_item_discount AS r ON r.cartItemId = i.id
+         WHERE  i.cartId = '${cartId}' AND r.void = 0 AND r.presence = 1 
+         AND r.presence = 1 AND i.void = 0   
 
-      UNION
 
-      -- DISCOUNT
-      SELECT 1 as 'allowVoid',1 as 'applyDiscount', r.id,i.id AS cartItemId, r.modifierId, d.name AS descl, r.price, r.priceIncluded,
-       r.applyDiscount AS rateOrDiscount, r.remark, 1 as 'modifier', 0 as 'checkBox', r.sendOrder, i.inputDate, i.inputBy, i.updateDate, i.updateBy
-      FROM cart_item  AS i
-         JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
-         JOIN discount AS d ON d.id = r.applyDiscount
-      WHERE  i.cartId = '${cartId}' AND r.void = 0 AND r.presence = 1 
-         AND r.presence = 1 AND i.void = 0 
-
-      UNION
-
-      -- SC
-      SELECT 0 as 'allowVoid', 0 as 'applyDiscount',r.id, i.id AS cartItemId, r.menuTaxScId AS modifierId, t.scNote AS descl, r.price, r.priceIncluded,
-      r.scRate AS rateOrDiscount, r.remark, 0 as 'modifier', 0 as 'checkBox', i.sendOrder, i.inputDate, i.inputBy, i.updateDate, i.updateBy
-         FROM cart_item  AS i
-         RIGHT JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
-         JOIN menu_tax_sc AS t ON t.id = r.menuTaxScId
-      WHERE  i.cartId = '${cartId}' AND r.void = 0 AND r.presence = 1 
-         AND r.presence = 1 AND i.void = 0 AND r.scRate != 0
-
-      UNION 
-
-      -- TAX
-      SELECT 0 as 'allowVoid',0 as 'applyDiscount', r.id, i.id AS cartItemId, r.menuTaxScId AS modifierId, t.taxNote AS descl, r.price, r.priceIncluded,
-      r.taxRate AS rateOrDiscount, r.remark, 0 as 'modifier', 0 as 'checkBox', i.sendOrder, i.inputDate, i.inputBy, i.updateDate, i.updateBy
-         FROM cart_item  AS i
-         RIGHT JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
-         JOIN menu_tax_sc AS t ON t.id = r.menuTaxScId
-      WHERE   i.cartId = '${cartId}' AND r.void = 0 AND r.presence = 1 
-         AND r.presence = 1 AND i.void = 0 AND r.taxRate != 0
+         UNION 
+         -- SC
+         SELECT 0 as 'allowVoid', 0 as 'applyDiscount',  r.id, r.cartItemId, NULL AS  'modifierId', r.note AS  'descl', 
+         r.rate AS rateOrDiscount,   0 as 'modifier', 0 as 'checkBox', r.sendOrder, r.debit, r.credit , i.qty,
+         (r.debit - r.credit) * i.qty AS totalAmount
+         FROM cart_item AS i
+         JOIN cart_item_sc AS r ON r.cartItemId = i.id
+         WHERE  i.cartId = '${cartId}' AND r.void = 0 AND r.presence = 1 
+         AND r.presence = 1 AND i.void = 0   
+ 
+         UNION 
+         -- TAX
+         SELECT 0 as 'allowVoid', 0 as 'applyDiscount',  r.id, r.cartItemId, NULL AS  'modifierId', r.note AS  'descl', 
+         r.rate  AS rateOrDiscount,  0 as 'modifier', 0 as 'checkBox', r.sendOrder, r.debit, r.credit , i.qty,
+         (r.debit - r.credit) * i.qty AS totalAmount
+         FROM cart_item AS i
+         JOIN cart_item_tax AS r ON r.cartItemId = i.id
+         WHERE  i.cartId = '${cartId}' AND r.void = 0 AND r.presence = 1 
+         AND r.presence = 1 AND i.void = 0
  
       `;
       const [modifier] = await db.query(s);
@@ -131,7 +119,7 @@ exports.cart = async (req, res) => {
       const items = formattedRows.map(header => {
          const itemModifier = modifier
             .filter(detail => detail.cartItemId === header.id)
-            .map(detail => ({ ...detail, totalAmount: detail.price * header.total, total: header.total })); // Add qty from header to each modifier
+            .map(detail => ({ ...detail, total: header.total })); // Add qty from header to each modifier
          return { ...header, modifier: itemModifier };
       });
 
@@ -158,22 +146,21 @@ exports.cart = async (req, res) => {
       });
 
 
-      if (tableRow[0]['close'] == 0 && userId !== null) {
-         tableRow[0]['closeBy'] = userId;
+      // if (tableRow[0]['close'] == 0 && userId !== null) {
+      //    tableRow[0]['closeBy'] = userId;
 
-         const q = `UPDATE cart
-                     SET
-                       closeBy = '${userId}'
+      //    const q = `UPDATE cart
+      //                SET
+      //                  closeBy = '${userId}'
                       
-          WHERE id = '${cartId}' and close = 0`;
-         await db.query(q);
-      }
+      //     WHERE id = '${cartId}' and close = 0`;
+      //    await db.query(q);
+      // }
 
       // End of calculation
       res.json({
          table: tableRow,
-         items: items,
-         totalAmount: totalAmount,
+         items: items, 
          totalItem: totalItem,
       });
 
@@ -569,56 +556,40 @@ exports.addDiscountGroup = async (req, res) => {
                const [queryT1] = await db.query(t1);
                const totalAmount = parseInt(queryT1[0]['totalAmount']);
 
+               let discAmount = 0;
                if (parseInt(discountGroup['discAmount']) > 0) {
                   // DISCOUNT MAX AMOUNT  ex 50.000
-                  let discAmount = 0;
-                  const q = `
-                  INSERT INTO cart_item_modifier (
-                    presence, inputDate, updateDate, void,
-                    cartId, cartItemId, modifierId,
-                    applyDiscount, price, remark,
-                    inputBy, updateBy
-                  )
-                  VALUES (
-                    1, '${today()}', '${today()}',  0,
-                    '${cartId}',  ${id}, 0,
-                    ${discountGroup['id']}, ${discAmount}, '${remark}',
-                    ${userId}, ${userId}
-                )`;
-                  const [result] = await db.query(q);
-                  if (result.affectedRows === 0) {
-                     results.push({ status: 'not found', query: q, });
-                  } else {
-                     results.push({ status: 'discAmount updated', query: q, });
-                  }
+                 
+                  discAmount = parseInt(discountGroup['discAmount']);
+                 
                } else {
                   // DISCOUNT PERCENTAGE ex 10%  
-                  let discAmount = (totalAmount * (parseFloat(discountGroup['discRate']) / 100)) * -1;
-                  const q = `
-                  INSERT INTO cart_item_modifier (
-                    presence, inputDate, updateDate, void,
-                    cartId, cartItemId, modifierId,
-                    applyDiscount, price, remark
-                  )
-                  VALUES (
-                    1, '${today()}', '${today()}',  0,
-                    '${cartId}',  ${id}, 0,
-                    ${discountGroup['id']}, ${discAmount}, '${remark}'
-                )`;
-                  const [result] = await db.query(q);
-                  if (result.affectedRows === 0) {
-                     results.push({ status: 'not found', query: q, });
-                  } else {
-                     results.push({ status: 'discRate updated', query: q, });
-                  }
+                  discAmount = (totalAmount * (parseFloat(discountGroup['discRate']) / 100));
                }
 
+               const q = `
+               INSERT INTO cart_item_discount (
+                  presence, inputDate, updateDate, void,
+                  cartId, cartItemId, discountId, note,
+                  rate, amount, 
+                  debit, credit,
+                  inputBy, updateBy
+               )
+               VALUES (
+                  1, '${today()}', '${today()}',  0,
+                  '${cartId}',  ${id},  ${discountGroup['id']},   '${discountGroup['name']}',  
+                  ${discountGroup['discRate']}, ${discountGroup['discAmount']},
+                  0, ${parseInt(discAmount)},
+                  ${userId}, ${userId}
+               )`;
+               await db.query(q);
+
                // if (discountGroup['postDiscountSC'] == 1) {
-               const scUpdateRest = await scUpdate(id);
+              // const scUpdateRest = await scUpdate(id);
                // }
 
                // if (discountGroup['postDiscountTax'] == 1) {
-               const taxUpdateRest = await taxUpdate(id);
+             // const taxUpdateRest = await taxUpdate(id);
                //}
 
 

@@ -23,3 +23,15 @@ COLLATE='utf16_bin'
 ENGINE=InnoDB
 AUTO_INCREMENT=4
 ;
+
+ALTER TABLE `cart_item_modifier`
+	ADD COLUMN `debit` INT NOT NULL DEFAULT 0 AFTER `remark`,
+	ADD COLUMN `credit` INT NOT NULL DEFAULT 0 AFTER `debit`;
+
+
+ALTER TABLE `cart_item`
+	ADD COLUMN `debit` INT(11) NOT NULL DEFAULT '0' AFTER `price`,
+	ADD COLUMN `credit` INT(11) NOT NULL DEFAULT '0' AFTER `debit`;
+
+ALTER TABLE `cart_item_modifier`
+	CHANGE COLUMN `remark` `remark` VARCHAR(250) NOT NULL DEFAULT '' COLLATE 'utf8mb4_general_ci' AFTER `note`;

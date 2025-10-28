@@ -9,7 +9,10 @@ const { csvFile, txtTableChecker } = require('../../helpers/exportToFile');
 const { logger } = require('./userLogController');
 const fs = require('fs');
 const path = require('path');
+const { table } = require('console');
 
+// LOOKUP 
+// http://localhost:3000/terminal/menuItemPos?menuLookupId=3&outletId=15
 exports.getMenuItem = async (req, res) => {
   let i = 1;
   let employeeAuthLevelId = 0;
@@ -215,6 +218,279 @@ exports.getMenuItem = async (req, res) => {
   }
 };
 
+exports.lookUpMenu = async (req, res) => {
+  let i = 1;
+  let employeeAuthLevelId = 0;
+  try {
+    let header;
+    let decodedToken = {};
+    let token = req.headers.authorization;
+
+    if (token && token.startsWith('Bearer ')) {
+      token = token.split(' ')[1];
+    }
+
+    try {
+      header = JSON.parse(req.headers['x-terminal']);
+      const [terminal] = await db.query(`SELECT priceNo FROM terminal WHERE terminalId = ${header['terminalId']}`);
+      if (terminal[0]['priceNo'] != 0) {
+        i = terminal[0]['priceNo'];
+      }
+    } catch (e) {
+      i = 1;
+    }
+
+    const menuLookupId = req.query.menuLookupId;
+    const outletId = req.query.outletId;
+
+    if (outletId) {
+      const [outlet] = await db.query(`SELECT id, priceNo FROM outlet WHERE id = ${outletId}`);
+      i = outlet[0]['priceNo'];
+    }
+
+
+
+
+    const q = `
+       
+        SELECT 
+          m.id, m.name, m.price${i} as 'price' , m.adjustItemsId, m.qty, m.menuSet, m.menuSetMinQty,
+          m.menuDepartmentId, m.menuCategoryId, m.menuTaxScId,
+          t.desc, t.taxRate, t.taxNote, t.taxStatus, t.scTaxIncluded, m.openPrice,
+            CASE 
+              WHEN t.taxStatus = 2 THEN m.price${i} - (m.price${i} / (1+ (t.taxRate/100) ))
+              WHEN t.taxStatus = 1 THEN m.price${i}*(t.taxRate/100)
+              ELSE  0
+            END AS 'taxAmount',  
+          t.scRate, t.scNote, t.scStatus,
+            CASE 
+              WHEN t.scStatus = 2 THEN m.price${i} - (m.price${i} / (1+ (t.scRate/100) ))
+              WHEN t.scStatus = 1 THEN m.price${i}*(t.scRate/100)
+              ELSE  0
+            END AS 'scAmount' ,
+
+              COALESCE(
+                (
+                SELECT SUM(ci.qty)
+                FROM cart_item ci
+                WHERE ci.presence = 1
+                    AND ci.adjustItemsId = m.adjustItemsId AND ci.menuId = m.id
+                ), 0
+            ) +
+            COALESCE(
+                (
+                SELECT SUM(cim.menuSetQty)
+                FROM cart_item_modifier cim
+                WHERE cim.presence = 1
+                    AND cim.menuSetadjustItemsId = m.adjustItemsId AND cim.menuSetmenuId = m.id
+                ), 0
+            ) AS usedQty
+        FROM menu AS m
+        LEFT JOIN menu_tax_sc AS t ON t.id = m.menuTaxScId
+        WHERE 
+          m.presence = 1 and m.menuLookupId = ${menuLookupId} and m.menuLookupId != 0 and 
+          m.startDate < NOW() AND m.endDate > NOW()
+    `;
+
+
+
+    const [itemsRow] = await db.query(q);
+
+
+    const items = [];
+
+    for (const row of itemsRow) {
+      let journal = [];
+      row['price'] = parseInt(row['price']) || 0;
+      if (row['adjustItemsId'] == '') {
+        row['qty'] = 99999999
+      }
+
+      // journal.push({
+      //   table: 'cart_item',
+      //   rate : 0, 
+      //   note : '',
+      //   debit: row['price'],
+      //   credit: 0
+      // });
+
+      journal.push({
+        table: 'cart_item_sc',
+        rate: row['scRate'],
+        note: row['scNote'],
+        debit: parseInt(row['scAmount']),
+        credit: 0
+      });
+      journal.push({
+        table: 'cart_item_tax',
+        rate: row['taxRate'],
+        note: row['taxNote'],
+        debit: ( parseInt(row['scAmount']) * (parseFloat(row['taxRate'])/100)) + parseInt(row['taxAmount']),
+        credit: 0
+      });
+
+
+      items.push({
+        ...row,
+        id: row['id'],
+        name: row['name'],
+        journal: journal,
+      });
+
+    }
+
+    res.json({
+      priceNo: i,
+      items: items,
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+};
+
+exports.discountGroup = async (req, res) => {
+  let i = 1;
+  let employeeAuthLevelId = 0;
+  try {
+    let header;
+    let decodedToken = {};
+    let token = req.headers.authorization;
+
+    if (token && token.startsWith('Bearer ')) {
+      token = token.split(' ')[1];
+    }
+
+    // Decode JWT payload safely
+    if (token) {
+      try {
+        // JWT format: header.payload.signature
+        const parts = token.split('.');
+        if (parts.length === 3) {
+          const payload = parts[1];
+          // Add padding if necessary
+          const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+          const padded = base64 + '='.repeat((4 - base64.length % 4) % 4);
+          const decodedStr = Buffer.from(padded, 'base64').toString('utf-8');
+          decodedToken = JSON.parse(decodedStr);
+
+        } else {
+          decodedToken = {};
+        }
+      } catch (e) {
+        console.error('Failed to decode authorization header:', e.message);
+        decodedToken = {};
+      }
+    }
+    employeeAuthLevelId = decodedToken['employeeAuthLevelId'] || 0;
+
+    try {
+      header = JSON.parse(req.headers['x-terminal']);
+      const [terminal] = await db.query(`SELECT priceNo FROM terminal WHERE terminalId = ${header['terminalId']}`);
+      if (terminal[0]['priceNo'] != 0) {
+        i = terminal[0]['priceNo'];
+      }
+    } catch (e) {
+      i = 1;
+    }
+
+
+
+    const levelDiscount = 'l.employeeAuthLevelId = ' + employeeAuthLevelId;
+    // DISCOUNT GROUP
+    const q0 = `SELECT id, name , '' as discount 
+    FROM discount_group 
+    WHERE presence = 1 ORDER BY name ASC`;
+    const [discountGroup] = await db.query(q0);
+
+    for (const row of discountGroup) {
+      const q1 = `
+        SELECT d.* 
+          FROM discount AS d
+          left JOIN discount_group AS g ON g.id  = d.discountGroupId
+          WHERE 
+            d.presence = 1 AND d.allLevel = 1 AND 
+            d.allDiscountGroup = 0 AND d.discountGroupId = ${row['id']} 
+      `;
+      const [discount] = await db.query(q1);
+
+      const q9 = `
+        SELECT d.* 
+          FROM discount AS d
+          left JOIN discount_group AS g ON g.id  = d.discountGroupId
+          WHERE 
+            d.presence = 1 AND d.allLevel = 0 AND 
+            d.allDiscountGroup = 0 AND d.discountGroupId = ${row['id']} 
+      `;
+      // const [discountMyLevel] = await db.query(q9);
+
+
+
+      const q51 = `
+        SELECT t1.* , t2.* 
+        FROM (
+          SELECT d.id, COUNT(d.id) 'totalLevel'
+          FROM discount AS d
+          LEFT JOIN discount_group AS g ON g.id  = d.discountGroupId
+          jOIN discount_level AS l ON l.discountId = d.id
+          WHERE d.presence = 1 AND d.allDiscountGroup = 0 AND d.allLevel = 0 AND d.discountGroupId = ${row['id']}   
+          AND (${levelDiscount})
+        GROUP BY d.id
+        ) AS t1 
+        JOIN discount AS t2 ON t2.id = t1.id
+      `;
+      const [discountMyLevel] = await db.query(q51);
+
+
+
+      row.discount = [...discount, ...discountMyLevel];
+    }
+
+    // ALL DISCOUNT GROUP
+    const q3 = `SELECT 0 as 'id', 'all Group' as 'name' , '' as discount `;
+    const [discountGroupAll] = await db.query(q3);
+
+    for (const row of discountGroupAll) {
+      const q5 = `
+        SELECT d.* , 'AllLevel' as 'totalLevel'
+          FROM discount AS d
+          left JOIN discount_group AS g ON g.id  = d.discountGroupId
+        WHERE d.presence = 1 AND d.allDiscountGroup = 1 and d.allLevel = 1 and d.status = 1
+      `;
+      const [discount] = await db.query(q5);
+
+
+      const q51 = `
+        SELECT t1.* , t2.* 
+        FROM (
+          SELECT d.id, COUNT(d.id) 'totalLevel'
+          FROM discount AS d
+          LEFT JOIN discount_group AS g ON g.id  = d.discountGroupId
+          jOIN discount_level AS l ON l.discountId = d.id
+          WHERE d.presence = 1 AND d.allDiscountGroup = 1 AND d.allLevel = 0  and d.status = 1
+          AND (${levelDiscount})
+        GROUP BY d.id
+        ) AS t1 
+        JOIN discount AS t2 ON t2.id = t1.id
+      `;
+      const [discountMyLevel] = await db.query(q51);
+
+
+      row.discount = [...discount, ...discountMyLevel];
+    }
+
+
+    res.json({
+      items: [...discountGroupAll, ...discountGroup],
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+};
+
 exports.selectMenuSet = async (req, res) => {
   const itemId = req.query.itemId;
 
@@ -266,6 +542,204 @@ exports.addToCart = async (req, res) => {
   const openPrice = req.body['openPrice'] || 0;
 
   if (openPrice == 1) {
+     menu['price'] = parseInt(req.body['price']) || 0;
+
+      menu['journal'] = [];
+ 
+      const q = `
+       SELECT 
+         m.id, m.name, ${menu['price']} as 'price', m.qty, m.menuSet, m.menuSetMinQty,
+         m.menuTaxScId,
+         t.desc, t.taxRate, t.taxNote, t.taxStatus, t.scTaxIncluded, m.openPrice,
+           CASE 
+             WHEN t.taxStatus = 2 THEN ${menu['price']} - (${menu['price']} / (1+ (t.taxRate/100) ))
+             WHEN t.taxStatus = 1 THEN ${menu['price']}*(t.taxRate/100)
+              ELSE  0
+            END AS 'taxAmount',  
+          t.scRate, t.scNote, t.scStatus,
+            CASE 
+              WHEN t.scStatus = 2 THEN ${menu['price']} - (${menu['price']} / (1+ (t.scRate/100) ))
+              WHEN t.scStatus = 1 THEN ${menu['price']}*(t.scRate/100)
+              ELSE  0
+            END AS 'scAmount' ,
+              COALESCE(
+                (
+                SELECT SUM(ci.qty)
+                FROM cart_item ci
+                WHERE ci.presence = 1
+                    AND ci.adjustItemsId = m.adjustItemsId AND ci.menuId = m.id
+                ), 0
+            ) +
+            COALESCE(
+                (
+                SELECT SUM(cim.menuSetQty)
+                FROM cart_item_modifier cim
+                WHERE cim.presence = 1
+                    AND cim.menuSetadjustItemsId = m.adjustItemsId AND cim.menuSetmenuId = m.id
+                ), 0
+            ) AS usedQty
+        FROM menu AS m
+        LEFT JOIN menu_tax_sc AS t ON t.id = m.menuTaxScId
+        WHERE 
+          m.presence = 1 and m.id =  ${menu['id']}
+      `; 
+      const [itemsRow] = await db.query(q);
+      menu['journal'].push({
+        table: 'cart_item_sc',
+        rate: itemsRow[0]['scRate'],
+        note: itemsRow[0]['scNote'],
+        debit: parseInt(itemsRow[0]['scAmount']),
+        credit: 0
+      });
+      menu['journal'].push({
+        table: 'cart_item_tax',
+        rate: itemsRow[0]['taxRate'],
+        note: itemsRow[0]['taxNote'],
+        debit: ( parseInt(itemsRow[0]['scAmount']) * (parseFloat(itemsRow[0]['taxRate'])/100)) + parseInt(itemsRow[0]['taxAmount']),
+        credit: 0
+      });
+      
+  }
+  try {
+
+    let q =
+      `INSERT INTO cart_item (presence, inputDate, updateDate, menuId, price, cartId,
+      menuDepartmentId, menuCategoryId, adjustItemsId, inputBy, updateBy,
+      debit, credit
+      )
+      VALUES (1, '${inputDate}', '${inputDate}',  ${menu['id']}, ${menu['price']}, '${cartId}',
+        ${menu['menuDepartmentId']}, ${menu['menuCategoryId']}, '${!menu['adjustItemsId'] ? '' : menu['adjustItemsId']}',
+        ${userId}, ${userId},
+        ${menu['price']}, 0
+      )`;
+
+    const [result] = await db.query(q);
+    const cartItemId = result.insertId;
+
+    if (result.affectedRows === 0) {
+      results.push({ cartItemId, status: 'not found' });
+    } else {
+      results.push({ cartItemId, status: 'cart_item insert' });
+    }
+
+    // console.log(menu, menu['journal']);
+    for (const row of menu['journal']) {
+      let q =
+        `INSERT INTO ${row['table']} (
+        presence, inputDate, updateDate,  cartId, cartItemId,
+        menuTaxScId, rate, note, 
+        debit, credit
+      )
+      VALUES (1, '${inputDate}', '${inputDate}',  '${cartId}', ${cartItemId},
+          ${menu['menuTaxScId']}, ${row['rate']}, '${row['note']}',
+          ${row['debit']}, ${row['credit']}
+      )`;
+      const [result] = await db.query(q);
+
+      if (result.affectedRows === 0) {
+        results.push({ status: 'journal not found' });
+      } else {
+        results.push({ status: 'journal insert' });
+      }
+    }
+
+
+
+    if (menu['menuSet'] == 'FIXED') {
+
+      const q6 = `
+      SELECT s.id , m.name , s.detailMenuId, m.adjustItemsId, m.id as 'menuId'
+        FROM menu_set as s
+      JOIN menu AS m ON m.id = s.detailMenuId
+      WHERE 
+        s.menuId = ${menu['id']}  
+      `;
+
+      const [result6] = await db.query(q6);
+      for (const row of result6) {
+        let q3 =
+          `INSERT INTO cart_item_modifier (
+            presence, inputDate, updateDate,  
+            cartId, cartItemId, note, menuSetMenuId, 
+            menuSetAdjustItemsId,
+            inputBy, updateBy
+          )
+          VALUES (
+            1, '${inputDate}', '${inputDate}', 
+            '${cartId}',  ${cartItemId} , '${row['name']}', '${row['detailMenuId']}',  
+            '${row['adjustItemsId']}', ${userId}, ${userId}
+          )`;
+        const [result3] = await db.query(q3);
+        if (result3.affectedRows === 0) {
+          results.push({ cartId, status: 'not found' });
+        } else {
+          results.push({ cartId, status: 'FIXED menu set insert' });
+        }
+      }
+
+    }
+    if (menu['menuSet'] == 'SELECT') {
+
+      const menuSet = req.body['menuSet'];
+      for (const row of menuSet) {
+
+        let q3 =
+          `INSERT INTO cart_item_modifier (
+            presence, inputDate, updateDate,  
+            cartId, cartItemId, note, menuSetMenuId,
+            menuSetAdjustItemsId,
+            inputBy, updateBy
+          )
+          VALUES (
+            1, '${inputDate}', '${inputDate}', 
+            '${cartId}',  ${cartItemId} , '${row['name']}', '${row['id']}',
+            '${row['adjustItemsId']}', ${userId}, ${userId}
+          )`;
+
+        if (row['select'] > 0) {
+          const [result3] = await db.query(q3);
+
+          if (result3.affectedRows === 0) {
+            results.push({ cartId, status: 'not found' });
+          } else {
+            results.push({ cartId, status: 'FIXED menu set insert' });
+          }
+
+
+        }
+
+      }
+
+    }
+
+    const q1 = `
+      UPDATE cart SET
+        paymentId = '', 
+        updateDate = '${today()}',
+        updateBy = ${userId}
+      WHERE id = '${cartId}'  `;
+    await db.query(q1);
+
+    res.status(201).json({
+      error: false,
+      db: results,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: true, note: 'Database insert error' });
+  }
+};
+
+
+exports.addToCart_verLama = async (req, res) => {
+  const menu = req.body['menu'];
+  const cartId = req.body['id'];
+  const userId = headerUserId(req);
+  let inputDate = today();
+  const results = [];
+  const openPrice = req.body['openPrice'] || 0;
+
+  if (openPrice == 1) {
     menu['price'] = parseInt(req.body['price']) || 0;
   }
   try {
@@ -283,11 +757,13 @@ exports.addToCart = async (req, res) => {
 
     let q =
       `INSERT INTO cart_item (presence, inputDate, updateDate, menuId, price, cartId,
-      menuDepartmentId, menuCategoryId, adjustItemsId, inputBy, updateBy
+      menuDepartmentId, menuCategoryId, adjustItemsId, inputBy, updateBy,
+      debit, credit
       )
       VALUES (1, '${inputDate}', '${inputDate}',  ${menu['id']}, ${menu['price']}, '${cartId}',
         ${menu['menuDepartmentId']}, ${menu['menuCategoryId']}, '${!menu['adjustItemsId'] ? '' : menu['adjustItemsId']}',
-        ${userId}, ${userId}
+        ${userId}, ${userId},
+        ${menu['price']}, 0
       )`;
 
     const [result] = await db.query(q);
@@ -300,123 +776,118 @@ exports.addToCart = async (req, res) => {
     }
 
 
-
-
-    let scAmount = menu['price'] * (menu['scRate'] / 100);
-
-
-
-    if (menu['scStatus'] == 1) {
-      let q2 =
-        `INSERT INTO cart_item_modifier (
-        presence, inputDate, updateDate,  
-        cartId, cartItemId, menuTaxScId, 
-        scRate, scStatus , price, priceIncluded,
-        inputBy, updateBy
-      )
-      VALUES (
-        1, '${inputDate}', '${inputDate}', 
-        '${cartId}',  ${cartItemId}, ${menu['menuTaxScId']}, 
-        ${menu['scRate']},  ${menu['scStatus']} , ${scAmount}, 0,
-        ${userId}, ${userId}
-      )`;
-      const [result2] = await db.query(q2);
-
-      if (result2.affectedRows === 0) {
-        results.push({ cartId, status: 'not found' });
-      } else {
-        results.push({ cartId, status: 'SC cart_item_modifier insert' });
-      }
-    }
-    else if (menu['scStatus'] == 2) {
-      let q2 =
-        `INSERT INTO cart_item_modifier (
-        presence, inputDate, updateDate,  
-        cartId, cartItemId, menuTaxScId, 
-        scRate, scStatus , 
-        price, priceIncluded,
-        inputBy, updateBy
-      )
-      VALUES (
-        1, '${inputDate}', '${inputDate}', 
-        '${cartId}',  ${cartItemId}, ${menu['menuTaxScId']}, 
-        ${menu['scRate']},  ${menu['scStatus']} , 0, ${menu['scAmount']},
-        ${userId}, ${userId}
-      )`;
-      const [result2] = await db.query(q2);
-
-      if (result2.affectedRows === 0) {
-        results.push({ cartId, status: 'not found' });
-      } else {
-        results.push({ cartId, status: 'SC cart_item_modifier insert' });
-      }
-    }
-
-    let scTaxIncd = 0;
-    // SC TAX INCLUDED
-    if (menu['scTaxIncluded'] == 1) {
-
-      scTaxIncd = scAmount * (menu['taxRate'] / 100);
-
-    }
-
-
-    // if (menu['scTaxIncluded'] == 0) {
-    //   taxAmount = (parseInt(menu['price'])) * (menu['taxRate'] / 100);
-    // }
-
-    let taxAmount = ((parseInt(menu['price']) + scAmount) * (menu['taxRate'] / 100)) + scTaxIncd;
-
-
-    if (menu['taxStatus'] == 1) {
-      let q3 =
-        `INSERT INTO cart_item_modifier (
-        presence, inputDate, updateDate,  
-        cartId, cartItemId, menuTaxScId,
-        taxRate, taxStatus,
-          price, priceIncluded,
-          inputBy, updateBy
-      )
-      VALUES (
-        1, '${inputDate}', '${inputDate}', 
-        '${cartId}',  ${cartItemId}, ${menu['menuTaxScId']},
-        ${menu['taxRate']},  ${menu['taxStatus']},
-          ${taxAmount}, 0,
-          ${userId}, ${userId}
-      )`;
-
-      const [result3] = await db.query(q3);
-
-      if (result3.affectedRows === 0) {
-        results.push({ cartId, status: 'not found' });
-      } else {
-        results.push({ cartId, status: 'TAX cart_item_modifier insert' });
-      }
-    }
-    else if (menu['taxStatus'] == 2) {
-      let q3 =
-        `INSERT INTO cart_item_modifier (
-        presence, inputDate, updateDate,  
-        cartId, cartItemId, menuTaxScId,
-        taxRate, taxStatus,  price, priceIncluded,
-        inputBy, updateBy 
-      )
-      VALUES (
-        1, '${inputDate}', '${inputDate}', 
-        '${cartId}',  ${cartItemId}, ${menu['menuTaxScId']},
-        ${menu['taxRate']},  ${menu['taxStatus']}, 0, ${menu['taxAmount']},
-        ${userId}, ${userId}
-      )`;
-
-      const [result3] = await db.query(q3);
-
-      if (result3.affectedRows === 0) {
-        results.push({ cartId, status: 'not found' });
-      } else {
-        results.push({ cartId, status: 'TAX cart_item_modifier insert' });
-      }
-    }
-
+    /*
+    
+        let scAmount = menu['price'] * (menu['scRate'] / 100);
+    
+    
+    
+        if (menu['scStatus'] == 1) {
+          let q2 =
+            `INSERT INTO cart_item_modifier (
+            presence, inputDate, updateDate,  
+            cartId, cartItemId, menuTaxScId, 
+            scRate, scStatus , price, priceIncluded,
+            inputBy, updateBy
+          )
+          VALUES (
+            1, '${inputDate}', '${inputDate}', 
+            '${cartId}',  ${cartItemId}, ${menu['menuTaxScId']}, 
+            ${menu['scRate']},  ${menu['scStatus']} , ${scAmount}, 0,
+            ${userId}, ${userId},
+            ${scAmount}, 0,
+          )`;
+          const [result2] = await db.query(q2);
+    
+          if (result2.affectedRows === 0) {
+            results.push({ cartId, status: 'not found' });
+          } else {
+            results.push({ cartId, status: 'SC cart_item_modifier insert' });
+          }
+        }
+        else if (menu['scStatus'] == 2) {
+          let q2 =
+            `INSERT INTO cart_item_modifier (
+            presence, inputDate, updateDate,  
+            cartId, cartItemId, menuTaxScId, 
+            scRate, scStatus , 
+            price, priceIncluded,
+            inputBy, updateBy
+          )
+          VALUES (
+            1, '${inputDate}', '${inputDate}', 
+            '${cartId}',  ${cartItemId}, ${menu['menuTaxScId']}, 
+            ${menu['scRate']},  ${menu['scStatus']} , 0, ${menu['scAmount']},
+            ${userId}, ${userId}
+          )`;
+          const [result2] = await db.query(q2);
+    
+          if (result2.affectedRows === 0) {
+            results.push({ cartId, status: 'not found' });
+          } else {
+            results.push({ cartId, status: 'SC cart_item_modifier insert' });
+          }
+        }
+    
+        let scTaxIncd = 0;
+        // SC TAX INCLUDED
+        if (menu['scTaxIncluded'] == 1) { 
+          scTaxIncd = scAmount * (menu['taxRate'] / 100); 
+        }
+      
+    
+        let taxAmount = ((parseInt(menu['price']) + scAmount) * (menu['taxRate'] / 100)) + scTaxIncd;
+    
+    
+        if (menu['taxStatus'] == 1) {
+          let q3 =
+            `INSERT INTO cart_item_modifier (
+            presence, inputDate, updateDate,  
+            cartId, cartItemId, menuTaxScId,
+            taxRate, taxStatus,
+              price, priceIncluded,
+              inputBy, updateBy
+          )
+          VALUES (
+            1, '${inputDate}', '${inputDate}', 
+            '${cartId}',  ${cartItemId}, ${menu['menuTaxScId']},
+            ${menu['taxRate']},  ${menu['taxStatus']},
+              ${taxAmount}, 0,
+              ${userId}, ${userId}
+          )`;
+    
+          const [result3] = await db.query(q3);
+    
+          if (result3.affectedRows === 0) {
+            results.push({ cartId, status: 'not found' });
+          } else {
+            results.push({ cartId, status: 'TAX cart_item_modifier insert' });
+          }
+        }
+        else if (menu['taxStatus'] == 2) {
+          let q3 =
+            `INSERT INTO cart_item_modifier (
+            presence, inputDate, updateDate,  
+            cartId, cartItemId, menuTaxScId,
+            taxRate, taxStatus,  price, priceIncluded,
+            inputBy, updateBy 
+          )
+          VALUES (
+            1, '${inputDate}', '${inputDate}', 
+            '${cartId}',  ${cartItemId}, ${menu['menuTaxScId']},
+            ${menu['taxRate']},  ${menu['taxStatus']}, 0, ${menu['taxAmount']},
+            ${userId}, ${userId}
+          )`;
+    
+          const [result3] = await db.query(q3);
+    
+          if (result3.affectedRows === 0) {
+            results.push({ cartId, status: 'not found' });
+          } else {
+            results.push({ cartId, status: 'TAX cart_item_modifier insert' });
+          }
+        }
+    */
 
     if (menu['menuSet'] == 'FIXED') {
 
@@ -634,8 +1105,8 @@ exports.voidItemSo = async (req, res) => {
   const userId = headerUserId(req);
   const reason = req.body['reason'];
   const itemsTransfer = req.body['itemsTransfer'];
-        const items = req.body['items'];
-      
+  const items = req.body['items'];
+
   const id = req.body['id'];
 
   let inputDate = today();
@@ -655,11 +1126,11 @@ exports.voidItemSo = async (req, res) => {
         results.push({ status: 'not found' });
       } else {
         results.push({ status: 'UPDATE QTY updated' });
-      } 
+      }
     }
 
-    for (const item of itemsTransfer) { 
-        const q1 = `INSERT INTO cart_item_void_reason (
+    for (const item of itemsTransfer) {
+      const q1 = `INSERT INTO cart_item_void_reason (
             cartId, cartItemId, reason, qty,
             presence, 
             inputDate, updateDate,  
@@ -686,12 +1157,12 @@ exports.voidItemSo = async (req, res) => {
               void = 1
           WHERE   qty = 0  and cartId = '${id}' `;
 
-      const [result2] = await db.query(q2);
-      if (result2.affectedRows === 0) {
-        results.push({ status: 'not found' });
-      } else {
-        results.push({ status: 'UPDATE VOID updated' });
-      }
+    const [result2] = await db.query(q2);
+    if (result2.affectedRows === 0) {
+      results.push({ status: 'not found' });
+    } else {
+      results.push({ status: 'UPDATE VOID updated' });
+    }
 
 
 
@@ -1166,10 +1637,28 @@ exports.sendOrder = async (req, res) => {
 
 
       const q6 = `
-    UPDATE cart_item_group SET
-      cartId =  '${insertId}'
-    WHERE cartId = ${cartId}`;
+      UPDATE cart_item_group SET
+        cartId =  '${insertId}'
+      WHERE cartId = ${cartId}`;
       await db.query(q6);
+
+       const q7 = `
+      UPDATE cart_item_discount SET
+        cartId =  '${insertId}'
+      WHERE cartId = ${cartId}`;
+      await db.query(q7);
+
+       const q8 = `
+      UPDATE cart_item_sc SET
+        cartId =  '${insertId}'
+      WHERE cartId = ${cartId}`;
+      await db.query(q8);
+
+       const q9 = `
+      UPDATE cart_item_tax SET
+        cartId =  '${insertId}'
+      WHERE cartId = ${cartId}`;
+      await db.query(q9);
 
 
       // ADD payment record
@@ -1220,6 +1709,33 @@ exports.sendOrder = async (req, res) => {
       updateBy = ${userId}
     WHERE cartId = ${cartId}  and presence = 1 and void = 0 and sendOrder = '' `;
     await db.query(q);
+
+
+     const q4 = `
+    UPDATE cart_item_discount SET
+      sendOrder =  '${so}', 
+      updateDate = '${today()}',
+      updateBy = ${userId}
+    WHERE cartId = ${cartId}  and presence = 1 and void = 0 and sendOrder = ''`;
+      await db.query(q4);
+
+     const q5 = `
+    UPDATE cart_item_sc SET
+      sendOrder =  '${so}', 
+      updateDate = '${today()}',
+      updateBy = ${userId}
+    WHERE cartId = ${cartId}  and presence = 1 and void = 0 and sendOrder = ''`;
+     await db.query(q5);
+
+
+     const q6 = `
+    UPDATE cart_item_tax SET
+      sendOrder =  '${so}', 
+      updateDate = '${today()}',
+      updateBy = ${userId}
+    WHERE cartId = ${cartId}  and presence = 1 and void = 0 and sendOrder = ''`;
+    await db.query(q6);
+
 
     const q2 = `
     UPDATE cart_item_modifier SET

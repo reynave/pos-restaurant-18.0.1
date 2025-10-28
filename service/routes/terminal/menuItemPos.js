@@ -7,6 +7,9 @@ const c = require('../../controllers/terminal/menuItemCartController');
 // terminal/*
 router.get('/', menuItemPos.getMenuItem);
 
+router.get('/lookUpMenu', menuItemPos.lookUpMenu); 
+router.get('/discountGroup', menuItemPos.discountGroup);
+
 
 
 router.get('/cart', c.cart);

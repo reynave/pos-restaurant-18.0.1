@@ -33,9 +33,9 @@ exports.cart = async (req, res) => {
     `);
     res.json({
       data: data,
-      closePayment: data['unpaid'],
-      cart: cartData[0],
-      groups: [{ subgroup: 1 }, ...groups],
+    //   closePayment: data['unpaid'],
+       cart: cartData[0],
+       groups: [{ subgroup: 1 }, ...groups],
     });
 
   } catch (err) {
