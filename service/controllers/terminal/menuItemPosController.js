@@ -325,7 +325,7 @@ exports.lookUpMenu = async (req, res) => {
         table: 'cart_item_tax',
         rate: row['taxRate'],
         note: row['taxNote'],
-        debit: ( parseInt(row['scAmount']) * (parseFloat(row['taxRate'])/100)) + parseInt(row['taxAmount']),
+        debit: (parseInt(row['scAmount']) * (parseFloat(row['taxRate']) / 100)) + parseInt(row['taxAmount']),
         credit: 0
       });
 
@@ -542,11 +542,11 @@ exports.addToCart = async (req, res) => {
   const openPrice = req.body['openPrice'] || 0;
 
   if (openPrice == 1) {
-     menu['price'] = parseInt(req.body['price']) || 0;
+    menu['price'] = parseInt(req.body['price']) || 0;
 
-      menu['journal'] = [];
- 
-      const q = `
+    menu['journal'] = [];
+
+    const q = `
        SELECT 
          m.id, m.name, ${menu['price']} as 'price', m.qty, m.menuSet, m.menuSetMinQty,
          m.menuTaxScId,
@@ -582,23 +582,23 @@ exports.addToCart = async (req, res) => {
         LEFT JOIN menu_tax_sc AS t ON t.id = m.menuTaxScId
         WHERE 
           m.presence = 1 and m.id =  ${menu['id']}
-      `; 
-      const [itemsRow] = await db.query(q);
-      menu['journal'].push({
-        table: 'cart_item_sc',
-        rate: itemsRow[0]['scRate'],
-        note: itemsRow[0]['scNote'],
-        debit: parseInt(itemsRow[0]['scAmount']),
-        credit: 0
-      });
-      menu['journal'].push({
-        table: 'cart_item_tax',
-        rate: itemsRow[0]['taxRate'],
-        note: itemsRow[0]['taxNote'],
-        debit: ( parseInt(itemsRow[0]['scAmount']) * (parseFloat(itemsRow[0]['taxRate'])/100)) + parseInt(itemsRow[0]['taxAmount']),
-        credit: 0
-      });
-      
+      `;
+    const [itemsRow] = await db.query(q);
+    menu['journal'].push({
+      table: 'cart_item_sc',
+      rate: itemsRow[0]['scRate'],
+      note: itemsRow[0]['scNote'],
+      debit: parseInt(itemsRow[0]['scAmount']),
+      credit: 0
+    });
+    menu['journal'].push({
+      table: 'cart_item_tax',
+      rate: itemsRow[0]['taxRate'],
+      note: itemsRow[0]['taxNote'],
+      debit: (parseInt(itemsRow[0]['scAmount']) * (parseFloat(itemsRow[0]['taxRate']) / 100)) + parseInt(itemsRow[0]['taxAmount']),
+      credit: 0
+    });
+
   }
   try {
 
@@ -1642,19 +1642,19 @@ exports.sendOrder = async (req, res) => {
       WHERE cartId = ${cartId}`;
       await db.query(q6);
 
-       const q7 = `
+      const q7 = `
       UPDATE cart_item_discount SET
         cartId =  '${insertId}'
       WHERE cartId = ${cartId}`;
       await db.query(q7);
 
-       const q8 = `
+      const q8 = `
       UPDATE cart_item_sc SET
         cartId =  '${insertId}'
       WHERE cartId = ${cartId}`;
       await db.query(q8);
 
-       const q9 = `
+      const q9 = `
       UPDATE cart_item_tax SET
         cartId =  '${insertId}'
       WHERE cartId = ${cartId}`;
@@ -1711,24 +1711,24 @@ exports.sendOrder = async (req, res) => {
     await db.query(q);
 
 
-     const q4 = `
+    const q4 = `
     UPDATE cart_item_discount SET
       sendOrder =  '${so}', 
       updateDate = '${today()}',
       updateBy = ${userId}
     WHERE cartId = ${cartId}  and presence = 1 and void = 0 and sendOrder = ''`;
-      await db.query(q4);
+    await db.query(q4);
 
-     const q5 = `
+    const q5 = `
     UPDATE cart_item_sc SET
       sendOrder =  '${so}', 
       updateDate = '${today()}',
       updateBy = ${userId}
     WHERE cartId = ${cartId}  and presence = 1 and void = 0 and sendOrder = ''`;
-     await db.query(q5);
+    await db.query(q5);
 
 
-     const q6 = `
+    const q6 = `
     UPDATE cart_item_tax SET
       sendOrder =  '${so}', 
       updateDate = '${today()}',
@@ -1839,35 +1839,37 @@ exports.exitWithoutOrder = async (req, res) => {
       results.push({ cartId, status: 'cart updated', });
     }
 
-
-    const q = `
-      UPDATE cart_item SET
-        void  = 1, 
-        updateDate = '${today()}',
-        updateBy = ${userId}
-      WHERE cartId = '${cartId}' and sendOrder = '' `;
-    const [result] = await db.query(q);
-    if (result.affectedRows === 0) {
-      results.push({ cartId, status: 'not found', });
-    } else {
-      results.push({ cartId, status: 'cart_item updated', });
+    const tablesVoid = [
+      'cart_item',
+      'cart_item_modifier',
+      'cart_item_discount',
+      'cart_item_sc',
+      'cart_item_tax',
+    ];
+    for (const table of tablesVoid) {
+      // const q = `
+      // UPDATE ${table} SET
+      //   void  = 1, 
+      //   presence = 0,
+      //   updateDate = '${today()}',
+      //   updateBy = ${userId}
+      // WHERE cartId = '${cartId}' and sendOrder = '' `;
+      // const [result] = await db.query(q);
+      // if (result.affectedRows === 0) {
+      //   results.push({ cartId, status: 'not found', });
+      // } else {
+      //   results.push({ cartId, status: 'cart_item updated', });
+      // }
+    
+      const q2 = `
+        DELETE FROM ${table}
+        WHERE cartId = '${cartId}' and sendOrder = '';
+      `;
+      console.log('Delete Query:', q2);
+      await db.query(q2);
     }
 
-
-    const a5 = `
-      UPDATE cart_item_modifier SET
-        void = 1,
-        updateDate = '${today()}',
-        updateBy = ${userId}
-      WHERE cartId = '${cartId}'  and sendOrder = '' `;
-    const [result5] = await db.query(a5);
-
-    if (result5.affectedRows === 0) {
-      results.push({ cartId, status: 'not found', });
-    } else {
-      results.push({ cartId, status: 'cart_item adjustItemsId = "DELETE"  updated', });
-    }
-
+   // await scUpdate2(cartId);
 
     res.status(201).json({
       error: false,

@@ -1,10 +1,13 @@
 TRUNCATE cart;
 TRUNCATE cart_item;
+TRUNCATE cart_item_sc;
+TRUNCATE cart_item_tax;
+TRUNCATE cart_item_discount;
 TRUNCATE cart_item_modifier;
 TRUNCATE cart_transfer_items; 
 TRUNCATE cart_item_group;
 TRUNCATE cart_payment;
-
+TRUNCATE cart_item_void_reason;
 TRUNCATE send_order; 
 TRUNCATE bill;
 TRUNCATE print_queue;
