@@ -1860,7 +1860,7 @@ exports.exitWithoutOrder = async (req, res) => {
       // } else {
       //   results.push({ cartId, status: 'cart_item updated', });
       // }
-    
+
       const q2 = `
         DELETE FROM ${table}
         WHERE cartId = '${cartId}' and sendOrder = '';
@@ -1869,7 +1869,7 @@ exports.exitWithoutOrder = async (req, res) => {
       await db.query(q2);
     }
 
-   // await scUpdate2(cartId);
+    // await scUpdate2(cartId);
 
     res.status(201).json({
       error: false,
@@ -1909,35 +1909,28 @@ exports.voidTransacton = async (req, res) => {
       results.push({ cartId, status: 'cart updated', });
     }
 
-
-    const q = `
-      UPDATE cart_item SET
+    const tablesVoid = [
+      'cart_item',
+      'cart_item_modifier',
+      'cart_item_discount',
+      'cart_item_sc',
+      'cart_item_tax',
+    ];
+    for (const table of tablesVoid) { 
+      const q = `
+      UPDATE ${table} SET
+        presence = 0,
         void  = 1, 
         updateDate = '${today()}',
         updateBy = ${userId}
       WHERE cartId = '${cartId}'  `;
-    const [result] = await db.query(q);
-    if (result.affectedRows === 0) {
-      results.push({ cartId, status: 'not found', });
-    } else {
-      results.push({ cartId, status: 'cart_item updated', });
+      const [result] = await db.query(q);
+      if (result.affectedRows === 0) {
+        results.push({ cartId, status: 'not found', });
+      } else {
+        results.push({ cartId, status: 'cart_item updated', });
+      }
     }
-
-
-    const a5 = `
-      UPDATE cart_item_modifier SET
-        void = 1,
-        updateDate = '${today()}',
-        updateBy = ${userId}
-      WHERE cartId = '${cartId}'   `;
-    const [result5] = await db.query(a5);
-
-    if (result5.affectedRows === 0) {
-      results.push({ cartId, status: 'not found', });
-    } else {
-      results.push({ cartId, status: 'cart_item adjustItemsId = "DELETE"  updated', });
-    }
-
 
 
 

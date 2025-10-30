@@ -35,12 +35,12 @@ async function cart(cartId = '') {
         WHERE c.cartId = '${cartId}' AND c.presence = 1 AND c.void  = 0 
         ORDER BY  c.inputDate ASC 
       `;
-   const formattedRows = await db.query(q);
+   const [formattedRows] = await db.query(q);
 
-   let itemCart = formattedRows;
+   let header = formattedRows;
 
-    const summaryFunction = await summary(cartId);
-   console.log(summaryFunction);
+   const summaryFunction = await summary(cartId);
+
    itemTotal = 0;
    subTotal = 0;
    summaryFunction.forEach(element => {
@@ -48,72 +48,67 @@ async function cart(cartId = '') {
       subTotal += parseInt(element.subTotal) || 0;
    });
 
-
-
-   // DETAIL / MODIFIER 
-   const s = ` 
- -- CUSTOM NOTES
- SELECT  'MODIFIER' as 'type',  r.id, i.id AS cartItemId, r.menuTaxScId AS modifierId, r.note AS descl, r.price, 
-   1 as 'modifier', 0 as 'checkBox', r.sendOrder, r.debit, r.credit 
- FROM cart_item  AS i
- RIGHT JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
- WHERE  i.cartId = '${cartId}' AND r.void = 0 AND r.presence = 1 
- AND r.presence = 1 AND i.void = 0 AND r.modifierId = 0 AND r.note != ''
-
- UNION
-
- -- MODIFIER
- SELECT  'MODIFIER' as 'type',  r.id, i.id AS cartItemId, r.modifierId, m.descl, r.price, 
-   1 as 'modifier', 0 as 'checkBox', r.sendOrder, r.debit, r.credit 
- FROM cart_item  AS i 
- RIGHT JOIN cart_item_modifier AS r ON r.cartItemId = i.id
- JOIN modifier AS m ON m.id = r.modifierId 
- WHERE  i.cartId = '${cartId}' AND r.void = 0 AND r.presence = 1 
- AND r.presence = 1 AND i.void = 0   
-
-  UNION 
--- DISCOUNT 
-SELECT 'DISCOUNT' AS  'type',  r.id,r.cartItemId, NULL AS  'modifierId', r.note AS  'descl', r.debit AS 'price' , 
-   1 as 'modifier', 0 as 'checkBox', r.sendOrder, r.debit, r.credit 
-FROM cart_item AS i
- JOIN cart_item_discount AS r ON r.cartItemId = i.id
-  WHERE  i.cartId = '${cartId}' AND r.void = 0 AND r.presence = 1 
- AND r.presence = 1 AND i.void = 0  
  
- 
-UNION
--- SC
-SELECT 'SC' AS  'type',  r.id,r.cartItemId, NULL AS  'modifierId', r.note AS  'descl', r.debit AS 'price' , 
-   1 as 'modifier', 0 as 'checkBox', r.sendOrder, r.debit, r.credit 
-FROM cart_item AS i
- JOIN cart_item_sc AS r ON r.cartItemId = i.id
-  WHERE  i.cartId = '${cartId}' AND r.void = 0 AND r.presence = 1 
- AND r.presence = 1 AND i.void = 0   
+ // DETAIL / MODIFIER 
+      const s = ` 
+         -- MODIFIER and CUSTOM NOTE
+         SELECT 'cart_item_modifier' as 'table', 0 as 'allowVoid', 0 as 'applyDiscount', r.id, i.id AS cartItemId, r.modifierId, CONCAT(m.descl,r.remark) AS 'descl',  
+         0 AS rateOrDiscount,   1 as 'modifier', 0 as 'checkBox', r.sendOrder, r.debit, r.credit ,  i.qty,
+         (r.debit - r.credit) * i.qty AS totalAmount
+         FROM cart_item  AS i 
+         RIGHT JOIN cart_item_modifier AS r ON r.cartItemId = i.id
+         JOIN modifier AS m ON m.id = r.modifierId 
+         WHERE  i.cartId = '${cartId}' AND r.void = 0 AND r.presence = 1 
+         AND r.presence = 1 AND i.void = 0   
 
-  
-UNION
--- TAX
- SELECT 'TAX' AS  'type',  r.id,r.cartItemId, NULL AS  'modifierId', r.note AS  'descl', r.debit AS 'price' , 
-   1 as 'modifier', 0 as 'checkBox', r.sendOrder, r.debit, r.credit 
-FROM cart_item AS i
- JOIN cart_item_tax AS r ON r.cartItemId = i.id
-  WHERE  i.cartId = '${cartId}' AND r.void = 0 AND r.presence = 1 
- AND r.presence = 1 AND i.void = 0   	   
-          `;
-   const [modifier] = await db.query(s);
+
+         UNION 
+         -- DISCOUNT
+         SELECT 'cart_item_discount' as 'table', 1 as 'allowVoid', 1 as 'applyDiscount',  r.id, r.cartItemId, NULL AS  'modifierId', r.note AS  'descl', 
+         r.rate AS rateOrDiscount,   1 as 'modifier', 0 as 'checkBox', r.sendOrder, r.debit, r.credit , i.qty,
+         (r.debit - r.credit) * i.qty AS totalAmount
+         FROM cart_item AS i
+         JOIN cart_item_discount AS r ON r.cartItemId = i.id
+         WHERE  i.cartId = '${cartId}' AND r.void = 0 AND r.presence = 1 
+         AND r.presence = 1 AND i.void = 0   
+
+
+         UNION 
+         -- SC
+         SELECT 'cart_item_sc' as 'table', 0 as 'allowVoid', 0 as 'applyDiscount',  r.id, r.cartItemId, NULL AS  'modifierId', r.note AS  'descl', 
+         r.rate AS rateOrDiscount,   0 as 'modifier', 0 as 'checkBox', r.sendOrder, r.debit, r.credit , i.qty,
+         (r.debit - r.credit) * i.qty AS totalAmount
+         FROM cart_item AS i
+         JOIN cart_item_sc AS r ON r.cartItemId = i.id
+         WHERE  i.cartId = '${cartId}' AND r.void = 0 AND r.presence = 1 
+         AND r.presence = 1 AND i.void = 0   
+ 
+         UNION 
+         -- TAX
+         SELECT 'cart_item_tax' as 'table', 0 as 'allowVoid', 0 as 'applyDiscount',  r.id, r.cartItemId, NULL AS  'modifierId', r.note AS  'descl', 
+         r.rate  AS rateOrDiscount,  0 as 'modifier', 0 as 'checkBox', r.sendOrder, r.debit, r.credit , i.qty,
+         (r.debit - r.credit) * i.qty AS totalAmount
+         FROM cart_item AS i
+         JOIN cart_item_tax AS r ON r.cartItemId = i.id
+         WHERE  i.cartId = '${cartId}' AND r.void = 0 AND r.presence = 1 
+         AND r.presence = 1 AND i.void = 0
+ 
+      `;
+      const [modifier] = await db.query(s);
 
 
    // Merge detail into header
-   const items = itemCart.map(header => {
+   const items = header.map(row => {
       const itemModifier = modifier
-         .filter(detail => detail.cartItemId === header.id)
-         .map(detail => ({ ...detail, totalAmount: (detail.debit - detail.credit) * header.total, total: header.total })); // Add qty from header to each modifier
-      return { ...header, modifier: itemModifier };
+         .filter(detail => detail.cartItemId === row.id)
+         .map(detail => ({ ...detail, totalAmount: (detail.debit - detail.credit) * row.total, total: row.total })); // Add qty from header to each modifier
+      return { ...row, modifier: itemModifier };
    });
+
+
    const [billVersion] = await db.query(`   
       SELECT no  FROM  bill WHERE cartId = '${cartId}' ORDER BY no DESC LIMIT 1
    `);
-
 
    const [scRow] = await db.query(`   
       SELECT sum( (r.debit - r.credit) * i.qty) AS 'totalAmount'
@@ -149,17 +144,18 @@ FROM cart_item AS i
    }
 
 
-  
-    
- 
+
+
+
    grandTotal = subTotal + sc + tax;
 
 
-   
 
 
-   
+
+
    return {
+ 
       cart: items,
       billVersion: billVersion[0] ? billVersion[0]['no'] : 0,
       // itemTotal: itemTotal,
@@ -179,7 +175,7 @@ FROM cart_item AS i
          tax: tax,
          grandTotal: grandTotal,
       },
-     summaryFunction :summaryFunction,
+      itemSummary: summaryFunction,
       // cartPayment: cartPayment,
       // unpaid: grandTotal - paid < 0 ? 0 : (grandTotal - paid),
       // change: grandTotal - paid < 0 ? (grandTotal - paid) * -1 : 0,
@@ -188,272 +184,8 @@ FROM cart_item AS i
    }
 }
 
-
-async function cart_ver1(cartId = '') {
-   let subTotal = 0;
-   let grandTotal = 0;
-   let totalItem = 0;
-   let isGrouping = 0;
-   let itemTotal = 0;
-   let subgroup = 1;
-
-   const [groups] = await db.query(`
-      SELECT   subgroup
-      FROM cart_item_group
-      Where cartId = '${cartId}'
-      GROUP BY subgroup 
-      order by subgroup asc
-      `);
-   if (groups.length > 0) {
-      isGrouping = 1;
-      //   subgroup = groups[0]['subgroup'];
-   }
-
-   const q = `
-       SELECT  c.id,  c.menuId, c.price, c.qty AS 'total', c.ta, 0 AS 'totalAmount', 
-         m.name, 0 AS 'checkBox', 
-        '' AS 'modifier',   m.modifierGroupId, m.discountGroupId, 
-        c.sendOrder, c.inputDate, c.inputBy, c.updateDate, c.updateBy, e.name AS 'employeeName',  '' as printerRows
-        FROM cart_item AS c
-        JOIN menu AS m ON m.id = c.menuId
-        left join employee as e on e.id = c.inputBy
-        WHERE c.cartId = '${cartId}' AND c.presence = 1 AND c.void  = 0 
-        ORDER BY  c.inputDate ASC 
-      `;
-   const [formattedRows] = await db.query(q);
-
-   let itemCart = formattedRows;
-
-   // qty * price
-   itemCart.forEach(row => {
-      row['totalAmount'] = row['price'] * row['total'];
-   });
-
-
-
-   // DETAIL / MODIFIER 
-   const s = ` 
-        -- CUSTOM NOTES
-          SELECT  'MODIFIER' as 'type',  r.id, i.id AS cartItemId, r.menuTaxScId AS modifierId, r.note AS descl, r.price, 
-          NULL AS rateOrDiscount, NULL AS remark, 1 as 'modifier', 0 as 'checkBox', r.sendOrder, i.inputDate, i.inputBy, i.updateDate, i.updateBy
-          FROM cart_item  AS i
-          RIGHT JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
-          WHERE  i.cartId = '${cartId}' AND r.void = 0 AND r.presence = 1 
-          AND r.presence = 1 AND i.void = 0 AND r.modifierId = 0 AND r.note != ''
-    
-          UNION
-    
-          -- MODIFIER
-          SELECT  'MODIFIER' as 'type',  r.id, i.id AS cartItemId, r.modifierId, m.descl, r.price, 
-          NULL AS rateOrDiscount, r.remark, 1 as 'modifier', 0 as 'checkBox', r.sendOrder, i.inputDate, i.inputBy, i.updateDate, i.updateBy
-          FROM cart_item  AS i 
-          RIGHT JOIN cart_item_modifier AS r ON r.cartItemId = i.id
-          JOIN modifier AS m ON m.id = r.modifierId 
-          WHERE  i.cartId = '${cartId}' AND r.void = 0 AND r.presence = 1 
-          AND r.presence = 1 AND i.void = 0   
-    
-          UNION
-    
-          -- DISCOUNT
-          SELECT 'APPLY_DISCOUNT' as 'type',  r.id,i.id AS cartItemId, r.modifierId, d.name AS descl, r.price,
-           r.applyDiscount AS rateOrDiscount, r.remark, 1 as 'modifier', 0 as 'checkBox', r.sendOrder, i.inputDate, i.inputBy, i.updateDate, i.updateBy
-          FROM cart_item  AS i
-             JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
-             JOIN discount AS d ON d.id = r.applyDiscount
-          WHERE  i.cartId = '${cartId}' AND r.void = 0 AND r.presence = 1 
-             AND r.presence = 1 AND i.void = 0  
-     
-          `;
-   const [modifier] = await db.query(s);
-
-
-   // Merge detail into header
-   const items = itemCart.map(header => {
-      const itemModifier = modifier
-         .filter(detail => detail.cartItemId === header.id)
-         .map(detail => ({ ...detail, totalAmount: detail.price * header.total, total: header.total })); // Add qty from header to each modifier
-      return { ...header, modifier: itemModifier };
-   });
-
-
-
-   const [sc] = await db.query(`
-        SELECT t1.*, 'SC' as 'type' , a.scNote AS 'name', a.scRate as 'rate' FROM (
-           SELECT m.menuTaxScId,  SUM( i.qty) AS 'totalQty', 
-            sum(m.price * i.qty) AS 'totalAmount'
-            FROM cart_item_modifier AS m
-            JOIN cart_item AS i ON i.id = m.cartItemId
-            WHERE m.presence= 1 AND m.void = 0      
-            AND m.cartId = '${cartId}'  AND m.menuTaxScId != 0 AND m.scStatus != 0 and i.presence = 1
-            GROUP BY m.menuTaxScId 
-        )AS t1
-        JOIN menu_tax_sc AS a ON a.id = t1.menuTaxScId
-    `);
-
-   const taxq = `
-        SELECT t1.* , 'TAX' as 'type' , a.taxNote AS 'name', a.taxRate as 'rate'  FROM (
-            SELECT m.menuTaxScId,  SUM( i.qty) AS 'totalQty', 
-            sum(m.price * i.qty) AS 'totalAmount'
-            FROM cart_item_modifier AS m
-            JOIN cart_item AS i ON i.id = m.cartItemId
-            WHERE m.presence= 1 AND m.void = 0  
-            AND  m.cartId = '${cartId}' AND m.menuTaxScId != 0 AND m.taxStatus != 0 and i.presence = 1
-            GROUP BY menuTaxScId 
-        )AS t1
-        JOIN menu_tax_sc AS a ON a.id = t1.menuTaxScId
-    `;
-   const [tax] = await db.query(taxq);
-
-   const taxSc = [];
-
-   sc.forEach(element => {
-      taxSc.push(element);
-   });
-   tax.forEach(element => {
-      taxSc.push(element);
-   });
-
-   items.forEach(element => {
-      //  subTotal += parseInt(element['totalAmount']);
-      totalItem += element['total'];
-      itemTotal += parseInt(element['totalAmount']);
-      element['modifier'].forEach(element => {
-         //   subTotal += parseInt(element['price']);
-         if (parseInt(element['price']) > 0) {
-            itemTotal += parseInt(element['price']);
-         }
-      });
-   });
-   grandTotal = 0;
-   taxSc.forEach(element => {
-      grandTotal += parseInt(element['totalAmount']);
-   });
-
-   let paid = 0;
-   const [cartPayment] = await db.query(`
-        SELECT  c.id, p.name,  c.paid, c.tips, c.submit
-        FROM  cart_payment as c
-        JOIN check_payment_type AS p ON p.id = c.checkPaymentTypeId
-        WHERE c.presence= 1   and c.cartId = '${cartId}' and c.submit = 1
-        ORDER BY c.id 
-    `);
-   let tips = 0;
-   cartPayment.forEach(element => {
-      paid += element['paid'];
-      tips += element['tips'];
-   });
-
-   const ds = ` SELECT  d.name,
-            m.applyDiscount,  sum(i.qty), SUM(i.price * i.qty ) AS 'subTotal', 0 as 'maxDiscount',  
-          0  as 'amount', d.discAmount, 0 as 'def'
-        FROM cart_item_modifier AS m 
-        LEFT JOIN cart_item AS i ON i.id = m.cartItemId
-        LEFT JOIN discount AS d ON d.id = m.applyDiscount
-        WHERE m.applyDiscount != 0 AND m.cartId = '${cartId}'
-        AND m.presence = 1 AND m.void = 0  AND d.discAmount > 0
-        GROUP BY  m.applyDiscount, d.discAmount `;
-
-   const [discountAmount] = await db.query(ds)
-
-   discountAmount.forEach(el => {
-      el['subTotal'] = parseInt(el['subTotal']);
-
-      if (el['discAmount'] > el['subTotal']) {
-         el['amount'] = el['subTotal'];
-      } else {
-         el['amount'] = el['discAmount'];
-      }
-
-      el['amount'] = el['amount'] * -1;
-
-   });
-
-   const q912 = `
-    SELECT a.*
-      FROM (
-         SELECT 
-            d.name,
-            m.applyDiscount,
-            sum(i.qty) AS qty,
-            d.maxDiscount,
-            SUM(m.price * i.qty) AS amount,
-            0 AS discAmount,
-            SUM( d.maxDiscount + ((m.price) * (i.qty))) AS def
-         FROM cart_item_modifier AS m 
-         JOIN cart_item AS i ON i.id = m.cartItemId
-         LEFT JOIN discount AS d ON d.id = m.applyDiscount
-         WHERE m.applyDiscount != 0 
-         AND m.cartId = '${cartId}' 
-         AND m.presence = 1 
-         AND m.void = 0
-         GROUP BY m.applyDiscount, d.maxDiscount, d.name
-      ) AS a 
-      WHERE a.amount < 0;
-`;
-   let [discountGroup] = await db.query(q912);
-   let fixDiscountGroup = 0;
-   discountGroup = [...discountGroup, ...discountAmount];
-
-   discountGroup.forEach(row => {
-      if (row['maxDiscount'] > 0 && (row['amount'] * -1) > row['maxDiscount']) {
-         row['amount'] = row['maxDiscount'] * -1;
-         row['name'] = row['name'] + '(Max: ' + Number(row['maxDiscount']).toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(/\./g, ',') + ')';
-      }
-   });
-
-   for (const d of discountGroup) {
-      fixDiscountGroup += parseInt(d['def']);
-   }
-   subTotal = itemTotal;
-   discountGroup.forEach(element => {
-      subTotal += parseInt(element['amount']);
-   });
-
-   grandTotal = subTotal;
-
-
-   // HERE
-   let newSC = subTotal * ((taxSc[0]?.['rate'] || 0) / 100);
-   taxSc[0]['totalAmount'] = Math.round(newSC);
-
-
-   let newTax = (itemTotal + newSC) * (taxSc[1]['rate'] / 100);
-   taxSc[1]['totalAmount'] = Math.round(newTax);
-
-
-
-   taxSc.forEach(element => {
-      grandTotal += parseInt(element['totalAmount']);
-   });
-
-
-   const [billVersion] = await db.query(`   
-        SELECT no  FROM  bill WHERE cartId = '${cartId}' ORDER BY no DESC LIMIT 1
-    `);
-
-   // bisa buatkan foreach untuk array Items, jika total = 0 maka hapus dari array
-   const filteredItems = items.filter(item => item.total > 0);
-
-   return {
-      cart: items,
-      billVersion: billVersion[0] ? billVersion[0]['no'] : 0,
-      itemTotal: itemTotal,
-      fixDiscountGroup: fixDiscountGroup,
-      discountGroup: discountGroup,
-      discountAmount: discountAmount,
-      subTotal: subTotal,
-      taxSc: taxSc,
-      grandTotal: grandTotal,
-
-      totalItem: totalItem,
-      cartPayment: cartPayment,
-      unpaid: grandTotal - paid < 0 ? 0 : (grandTotal - paid),
-      change: grandTotal - paid < 0 ? (grandTotal - paid) * -1 : 0,
-      tips: tips,
-      groups: groups
-   }
-}
-
+ 
+// UNTUK BILL ex : http://localhost:3000/terminal/payment/bill?id=251030000577
 async function cartGrouping(cartId = '', subgroup = 0) {
 
 
@@ -540,7 +272,7 @@ async function cartGrouping(cartId = '', subgroup = 0) {
    // DETAIL / MODIFIER 
    const s = ` 
         -- CUSTOM NOTES
-          SELECT  'MODIFIER' as 'type',  r.id, i.id AS cartItemId, r.menuTaxScId AS modifierId, r.note AS descl, r.price,
+          SELECT  'MODIFIER' as 'type',  r.id, i.id AS cartItemId, r.menuTaxScId AS modifierId, r.note AS descl, r.debit as price, r.debit, r.credit,
             0 AS 'discAmount', 0 AS 'maxDiscount', 
           NULL AS rateOrDiscount, NULL AS remark, 1 as 'modifier', 0 as 'checkBox', r.sendOrder
           FROM cart_item  AS i
@@ -551,7 +283,7 @@ async function cartGrouping(cartId = '', subgroup = 0) {
           UNION
     
           -- MODIFIER
-          SELECT  'MODIFIER' as 'type',  r.id, i.id AS cartItemId, r.modifierId, m.descl, r.price, 
+          SELECT  'MODIFIER' as 'type',  r.id, i.id AS cartItemId, r.modifierId, m.descl, r.debit as price,  r.debit, r.credit,
           0 AS 'discAmount', 0 AS 'maxDiscount',
           NULL AS rateOrDiscount, r.remark, 1 as 'modifier', 0 as 'checkBox', r.sendOrder
           FROM cart_item  AS i 
@@ -562,39 +294,41 @@ async function cartGrouping(cartId = '', subgroup = 0) {
     
       UNION 
           -- DISCOUNT
-          SELECT 'APPLY_DISCOUNT' as 'type',  r.id,i.id AS cartItemId, r.modifierId, d.name AS descl,   
-          r.price, d.discAmount * -1 AS 'discAmount', d.maxDiscount * -1 AS 'maxDiscount', 
-           r.applyDiscount AS rateOrDiscount, r.remark, 1 as 'modifier', 0 as 'checkBox', 
+           SELECT 'APPLY_DISCOUNT' as 'type',  r.id,i.id AS cartItemId, r.discountId AS  modifierId, d.name AS descl,  r.credit AS price,  r.debit, r.credit,
+          d.discAmount * -1 AS 'discAmount', d.maxDiscount * -1 AS 'maxDiscount',
+           r.rate AS rateOrDiscount, null as remark, 1 as 'modifier', 0 as 'checkBox',
            r.sendOrder
           FROM cart_item  AS i
-             JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
-             JOIN discount AS d ON d.id = r.applyDiscount
+             JOIN cart_item_discount AS r ON r.cartItemId = i.id
+             JOIN discount AS d ON d.id = r.discountId
           WHERE  i.cartId = '${cartId}' AND r.void = 0 AND r.presence = 1 
              AND r.presence = 1 AND i.void = 0   and ( ${whereCartId} )
 
       UNION
       -- SC
-      SELECT 'SC' as 'type', r.id, i.id AS cartItemId, r.menuTaxScId AS modifierId, t.scNote AS descl, r.price, 
+     SELECT 'SC' as 'type', r.id, i.id AS cartItemId, r.menuTaxScId AS modifierId, t.scNote AS descl, r.debit AS  price,  r.debit, r.credit,
         0 AS 'discAmount', 0 AS 'maxDiscount',
-      r.scRate AS rateOrDiscount, r.remark, 0 as 'modifier', 0 as 'checkBox', i.sendOrder
+      r.rate AS rateOrDiscount,  NULL AS remark, 0 as 'modifier', 0 as 'checkBox', i.sendOrder
          FROM cart_item  AS i
-         RIGHT JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
+         RIGHT JOIN cart_item_sc AS r ON r.cartItemId = i.id
          JOIN menu_tax_sc AS t ON t.id = r.menuTaxScId
       WHERE  i.cartId = '${cartId}' AND r.void = 0 AND r.presence = 1 
-         AND r.presence = 1 AND i.void = 0 AND r.scRate != 0
+         AND r.presence = 1 AND i.void = 0 AND r.rate != 0
 
       UNION 
 
       -- TAX
-          SELECT 'TAX' as 'type', r.id, i.id AS cartItemId, r.menuTaxScId AS modifierId, t.taxNote AS descl, r.price,
-        0 AS 'discAmount', 0 AS 'maxDiscount', 
-      r.taxRate AS rateOrDiscount, r.remark, 0 as 'modifier', 0 as 'checkBox', i.sendOrder
+          SELECT 'TAX' as 'type', r.id, i.id AS cartItemId, r.menuTaxScId AS modifierId, t.taxNote AS descl, r.debit AS price,  r.debit, r.credit,
+        0 AS 'discAmount', 0 AS 'maxDiscount',
+      r.rate AS rateOrDiscount, null as remark, 0 as 'modifier', 0 as 'checkBox', i.sendOrder
          FROM cart_item  AS i
-         RIGHT JOIN cart_item_modifier AS r ON r.cartItemId = i.id 
+         RIGHT JOIN cart_item_tax AS r ON r.cartItemId = i.id
          JOIN menu_tax_sc AS t ON t.id = r.menuTaxScId
       WHERE   i.cartId = '${cartId}' AND r.void = 0 AND r.presence = 1 
-         AND r.presence = 1 AND i.void = 0 AND r.taxRate != 0
+         AND r.presence = 1 AND i.void = 0 AND r.rate != 0
           `;
+
+          console.log(s);
    const [modifier] = await db.query(s);
 
 
@@ -605,189 +339,61 @@ async function cartGrouping(cartId = '', subgroup = 0) {
          .map(detail => ({ ...detail, totalAmount: detail.price * header.total, total: header.total })); // Add qty from header to each modifier
       return { ...header, modifier: itemModifier };
    });
-   let discountPercentGroup = [];
-   let discountAmountGroup = [];
-
-   let discountAmount = 0;
-
-   let scGroup = [];
-   let taxGroup = [];
 
 
+   const subgroupDiscount = [];
+   for (const row of items) {
+      const sdq = `
+      SELECT   d.discountId, d.note,   ${row.total}  as 'qty',   ${row.total} * d.credit AS 'discAmount'
+      FROM cart_item_discount AS d
+      JOIN cart_item AS i ON i.id = d.cartItemId 
+      WHERE i.cartId = '${cartId}' AND i.presence = 1 AND i.void = 0
+      AND d.presence = 1 AND d.void = 0
+      AND d.cartItemId = ${row.id}`;
+      const [subgroupDiscountRow] = await db.query(sdq); 
+      subgroupDiscount.push(...subgroupDiscountRow);
+   }
 
-   items.forEach(element => {
-      itemTotal += parseInt(element['totalAmount']);
-
-      element['modifier'].forEach(row => {
-         if (row['type'] == 'APPLY_DISCOUNT' && parseInt(row['price']) < 0) {
-            discountPercentGroup.push(row);
-            discount += parseInt(row['totalAmount']);
+   // AGGREGATE subgroupDiscount by discountId + note
+   const groupedSubgroupDiscount = (() => {
+      const map = new Map();
+      for (const it of subgroupDiscount) {
+         const key = `${it.discountId}||${it.note}`;
+         const qty = Number(it.qty) || 0;
+         const discAmount = Number(it.discAmount) || 0;
+         if (map.has(key)) {
+            const cur = map.get(key);
+            cur.qty += qty;
+            cur.discAmount += discAmount;
+         } else {
+            map.set(key, { discountId: it.discountId, note: it.note, qty, discAmount });
          }
-         if (row['type'] == 'APPLY_DISCOUNT' && parseInt(row['discAmount']) < 0) {
-
-            const temp = {
-               id: row['rateOrDiscount'],
-               name: row['descl'],
-               discAmount: Math.abs(parseInt(row['discAmount']) || 0),
-               totalItemPrice: Math.abs(parseInt(element['totalAmount']) || 0)
-            }
-            discountAmountGroup.push(temp);
-         }
-
-
-         if (row['type'] == 'SC') {
-            sc += parseInt(row['totalAmount']);
-            scGroup.push(row);
-         }
-
-         if (row['type'] == 'TAX') {
-            tax += parseInt(row['totalAmount']);
-            taxGroup.push(row);
-         }
-
-
-      });
-   });
-
-
-   // bisa buatkan foreach untuk array scGroup, jika rateOrDiscount  sama, maka jumlahkan totalAmount 
-   // di dalam array baru yang isi nya hanya descl dan totalAmount 
-   const scGroupSummary = [];
-   scGroup.forEach(row => {
-      const existing = scGroupSummary.find(item => item.descl === row.descl);
-      if (existing) {
-         existing.totalAmount += row.totalAmount;
-      } else {
-         scGroupSummary.push({ descl: row.descl, totalAmount: row.totalAmount });
       }
-   });
-
-   // buatkan juga untuk taxGroup
-   const taxGroupSummary = [];
-   taxGroup.forEach(row => {
-      const existing = taxGroupSummary.find(item => item.descl === row.descl);
-      if (existing) {
-         existing.totalAmount += row.totalAmount;
-      } else {
-         taxGroupSummary.push({ descl: row.descl, totalAmount: row.totalAmount });
-      }
-   });
-
-   // bisa buatkan untuk discountPercentGroup
-   const discountPercentGroupSummary = [];
-   discountPercentGroup.forEach(row => {
-      const existing = discountPercentGroupSummary.find(item => item.rateOrDiscount === row.rateOrDiscount);
-      if (existing) {
-         existing.totalAmount += row.totalAmount;
-         existing.totalItem += row.total;
-      } else {
-         discountPercentGroupSummary.push({ rateOrDiscount: row.rateOrDiscount, name: row.descl, totalAmount: row.totalAmount, totalItem: row.total });
-      }
-   });
-   discountPercentGroup = discountPercentGroupSummary;
-
-   // bisa buatkan untuk discountAmountGroup sama seperti di atas, hanya saja berdasarkan id
-   const discountAmountGroupSummary = [];
-   discountAmountGroup.forEach(row => {
-      const existing = discountAmountGroupSummary.find(item => item.id === row.id);
+      return Array.from(map.values());
+   })();
 
 
-      if (existing) {
-         existing.totalItemPrice += row.totalItemPrice;
-      } else {
-         discountAmountGroupSummary.push({
-            id: row.id,
-            name: row.name,
-            discAmount: row.discAmount,
-            totalItemPrice: row.totalItemPrice
-         });
-      }
-   });
-   discountAmountGroup = discountAmountGroupSummary;
-
-
+ 
    const [billVersion] = await db.query(`   
         SELECT no  FROM  bill WHERE cartId = '${cartId}' ORDER BY no DESC LIMIT 1
     `);
-
-
-   const result = [];
-   const map = new Map();
-
-   discountAmountGroup.forEach(item => {
-      if (map.has(item.id)) {
-         map.get(item.id).totalItemPrice += item.totalItemPrice;
-      } else {
-         // Clone object agar tidak mengubah referensi asli
-         map.set(item.id, { ...item });
-      }
-   });
-
-   map.forEach(val => result.push(val));
-   discountAmountGroup = result;
-
-   discountAmount = 0;
-   discountAmountGroup.forEach(element => {
-      // element['discount'] = element['totalItemPrice'] + element['discAmount'] <= 0 ? element['totalItemPrice'] * -1 : element['discAmount'];
-      // discountAmount += element['discount'];
-
-      let subTotal = parseInt(element['totalItemPrice']) + discount;
-
-      let discAmount = parseInt(element['discAmount']);
-
-      console.log('subTotal : ', subTotal, ' discount % : ', discount, ' totalItemPrice : ', element['totalItemPrice'], 'discAmount :', element['discAmount']);
-      console.log(' ');
-
-
-      let amount = 0;
-
-      if (subTotal > element['discAmount']) {
-         amount = parseInt(element['discAmount']);
-      } else {
-         // DISCAMOUNT < SUBTOTAL 
-         //       amount = parseInt(element['discAmount']);
-         amount = subTotal;
-      }
-
-      element['discount'] = amount;
-      element['name'] = element['name'];
-      discountAmount += amount * -1;
-      // string saja
-      element['discAmount'] = discountAmount;
-   });
-
-   discountTotal = discount + discountAmount;
-   subTotal = itemTotal + discountTotal;
-
-
-
-   scGroupSummary[0]['totalAmount'] = Math.round(subTotal * (scGroup[0]['rateOrDiscount'] / 100));
-   // NEW update SC  based on subtotal
-   sc = scGroupSummary[0]['totalAmount'];
-   // NEW TAX based on subtotal + sc
-   taxGroupSummary[0]['totalAmount'] = Math.round((itemTotal + sc) * (taxGroup[0]['rateOrDiscount'] / 100));
-   tax = taxGroupSummary[0]['totalAmount'];
-
+  
    return {
       groups: subgroup,
       cart: items,
       billVersion: billVersion[0] ? billVersion[0]['no'] : 0,
-
-      discountAmountGroup: discountAmountGroup,
-      discountPercentGroup: discountPercentGroup,
-
-      scGroup: scGroup,
-      scGroupSummary: scGroupSummary,
-      taxGroup: taxGroup,
-      taxGroupSummary: taxGroupSummary,
+      subgroupDiscount : subgroupDiscount,
+      groupedSubgroupDiscount : groupedSubgroupDiscount,
+      scGroup: [],
+      taxGroup: [],
 
 
-      itemTotal: itemTotal,
-      discount: discountTotal,
-      subTotal: subTotal,
-      sc: sc,
-      tax: tax,
-      total: subTotal + sc + tax,
+      itemTotal: 0,
+      discount: 0,
+      subTotal: 0,
+      sc: 0,
+      tax: 0,
+      total: 0,
 
    }
 }
@@ -1491,7 +1097,7 @@ async function discountMaxPerItem(cartId = '') {
                AND d.id = ${rec['discountId']}
             GROUP BY d.id
          `;
-         console.log('j', j);
+
          const [totalItem] = await db.query(j);
 
          // Total amount dari semua item yang dapat diskon ini
@@ -1510,7 +1116,7 @@ async function discountMaxPerItem(cartId = '') {
             WHERE c.cartId = '${cartId}' AND c.presence = 1 AND c.void = 0 AND i.presence = 1 AND i.void = 0
             AND  d.discAmount > 0
             AND d.id = ${rec['discountId']}
-         `; 
+         `;
          const [queryD] = await db.query(d);
 
          for (const row of queryD) {
@@ -1545,7 +1151,82 @@ async function discountMaxPerItem(cartId = '') {
          }
       }
 
+      // setelah semua di update, jalankan summary untuk mendapatkan subtotal terbaru
+
+      const x1 = `
+         SELECT  
+            t1.cartItemId, 
+            sum(t1.qty) AS 'qty',
+            sum(t1.debit-t1.credit) * sum(t1.qty) AS 'subTotal'
+
+         FROM (
+            SELECT i.cartId, i.id AS 'cartItemId', i.qty, i.debit, i.credit , i.inputDate
+            FROM cart_item AS i
+            WHERE i.cartId = '${cartId}' AND (i.debit  - i.credit != 0)
+            AND i.presence = 1 AND i.void = 0  
+            UNION
+
+            SELECT i.cartId, i.cartItemId, 0 AS 'qty', i.debit, i.credit  , i.inputDate
+            FROM cart_item_modifier AS i
+            WHERE i.cartId = '${cartId}'   AND (i.debit  - i.credit != 0)
+            AND i.presence = 1 AND i.void = 0  
+            UNION
+
+            SELECT i.cartId, i.cartItemId, 0 AS 'qty', i.debit, i.credit  , i.inputDate
+            FROM cart_item_discount AS i
+            WHERE i.cartId = '${cartId}'  AND (i.debit  - i.credit != 0)
+            AND i.presence = 1 AND i.void = 0   AND i.rate > 0 
+         )
+         AS t1
+         GROUP BY cartItemId
+         ORDER BY t1.cartItemId ASC;
+      `;
       
+      const [subTotalRow] = await db.query(x1);
+
+      for (const row of subTotalRow) {
+         let subTotal = parseInt(row['subTotal']);
+
+         const x2 = `
+            SELECT    
+               i.id, i.cartItemId, r.qty,  
+					i.credit AS 'discountMaxPerItem', 
+					r.qty *  i.credit AS 'discountMax'
+            FROM cart_item_discount AS i
+            join cart_item AS r ON r.id = i.cartItemId
+            WHERE i.cartId = '${cartId}'  AND (i.debit  - i.credit != 0)
+            AND i.presence = 1 AND i.void = 0 AND i.rate <= 0 
+            AND i.cartItemId = ${row['cartItemId']}
+				ORDER BY i.cartItemId ASC;
+         `;
+         const [discountMaxOriginal] = await db.query(x2);
+        // console.log(subTotal, discountMaxOriginal);
+       
+         
+         for (const discRow of discountMaxOriginal) {
+
+            let discountMax = parseInt(discRow['discountMax']);
+
+            console.log(discRow['id'], subTotal, discountMax);
+            if (subTotal < discountMax) {
+               discountMax = subTotal;
+            }
+            const u = `
+               UPDATE cart_item_discount SET
+               credit = ${Math.abs(discountMax) / discRow['qty']}
+               WHERE id = ${discRow['id']}
+            `;
+            
+            subTotal = subTotal - discountMax;
+            
+          
+
+            await db.query(u);
+             
+         }
+
+      }
+ 
 
       return { success: true, message: "Discounts updated successfully." };
    } catch (error) {
@@ -1556,7 +1237,7 @@ async function discountMaxPerItem(cartId = '') {
 
 
 async function summary(cartId = '') {
-   try{
+   try {
       const q = `
          SELECT t1.cartItemId, 
          sum(t1.debit) * sum(t1.qty) AS 'itemTotal' ,
@@ -1584,29 +1265,30 @@ async function summary(cartId = '') {
          GROUP BY cartItemId
          ORDER BY t1.cartItemId ASC;
       `;
-      const  result = await db.query(q);
-    
+
+      const result = await db.query(q);
+
 
       // result[0] convert to array
       const cartItems = Array.isArray(result[0]) ? result[0] : [];
 
-     cartItems.forEach(element => {
+      cartItems.forEach(element => {
          element['itemTotal'] = parseInt(element['itemTotal']);
          element['subTotal'] = parseInt(element['subTotal']);
-     });
+      });
 
 
       return cartItems;
-   } catch (error){
+   } catch (error) {
       console.error("Error in taxScUpdate2:", error);
-      return  []; 
+      return [];
    }
 }
 
 async function scTaxUpdate2(cartId = '') {
-   try{
+   try {
       const summaryFunction = await summary(cartId);
-      console.log(summaryFunction);
+
       for (const rec of summaryFunction) {
          const s = `
             SELECT s.* , i.qty
@@ -1615,12 +1297,12 @@ async function scTaxUpdate2(cartId = '') {
             WHERE s.cartItemId = ${rec.cartItemId} 
             AND s.cartId = '${cartId}'
             AND s.presence = 1 AND s.void = 0 
-         `; 
+         `;
          const [scRows] = await db.query(s);
-    
+
          for (const scRow of scRows) {
             let newScAmount = Math.round((rec.subTotal / scRow['qty']) * (scRow['rate'] / 100));
-           
+
             const u = `
                UPDATE cart_item_sc SET 
                debit = ${newScAmount < 0 ? 0 : newScAmount},
@@ -1628,7 +1310,7 @@ async function scTaxUpdate2(cartId = '') {
                updateDate = '${today()}'
                WHERE id = ${scRow['id']}
             `;
-       
+
             await db.query(u);
          }
 
@@ -1641,8 +1323,8 @@ async function scTaxUpdate2(cartId = '') {
             WHERE s.cartItemId = ${rec.cartItemId} 
             AND s.cartId = '${cartId}'
             AND s.presence = 1 AND s.void = 0 
-         `; 
-         const [taxRows] = await db.query(t); 
+         `;
+         const [taxRows] = await db.query(t);
          for (const taxRow of taxRows) {
 
             const s = ` 
@@ -1654,34 +1336,34 @@ async function scTaxUpdate2(cartId = '') {
             `;
             const [scTotalData] = await db.query(s);
             let scTotal = parseInt(scTotalData[0]['scTotal'] || 0) / taxRow['qty'];
-            let newTaxAmount  = Math.round( ( (rec.itemTotal  / taxRow['qty']) + scTotal ) * (taxRow['rate'] / 100) );
-           
+            let newTaxAmount = Math.round(((rec.itemTotal / taxRow['qty']) + scTotal) * (taxRow['rate'] / 100));
+
             const u = `
                UPDATE cart_item_tax SET 
                debit = ${newTaxAmount < 0 ? 0 : newTaxAmount},
                credit = 0,
                updateDate = '${today()}'
                WHERE id = ${taxRow['id']}
-            `; 
+            `;
             await db.query(u);
-            
+
          }
-         
+
 
       }
-      
-     // const [cartItems] = await summary(cartId);
-     // console.log('taxScUpdate2 cartItems : ', cartItems);
+
+      // const [cartItems] = await summary(cartId);
+      // console.log('taxScUpdate2 cartItems : ', cartItems);
       return { success: true, message: "Tax and SC updated successfully." };
-   } catch (error){
+   } catch (error) {
       console.error("Error in taxScUpdate2:", error);
-      return { success: false, message: "An error occurred while updating Tax and SC.", error }; 
+      return { success: false, message: "An error occurred while updating Tax and SC.", error };
    }
 }
 
 
 module.exports = {
-   cart, taxScUpdate, cartHistory, taxUpdate, scUpdate, cartGrouping, 
+   cart, taxScUpdate, cartHistory, taxUpdate, scUpdate, cartGrouping,
    discountMaxPerItem,
    scTaxUpdate2, summary
 };

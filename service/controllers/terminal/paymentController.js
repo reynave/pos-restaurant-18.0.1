@@ -33,7 +33,7 @@ exports.cart = async (req, res) => {
     `);
     res.json({
       data: data,
-    //   closePayment: data['unpaid'],
+      closePayment: data['unpaid'],
        cart: cartData[0],
        groups: [{ subgroup: 1 }, ...groups],
     });
