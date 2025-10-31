@@ -114,6 +114,13 @@ exports.cart = async (req, res) => {
       `;
       const [modifier] = await db.query(s);
 
+      modifier.forEach(element => {
+         // tolong buat float hanya 2 digit di belakang koma
+         element.totalAmount = parseFloat(element.totalAmount).toFixed(2);
+         element.totalAmount = parseInt(Math.ceil(parseFloat(element.totalAmount)) || 0);
+         
+      });
+
 
       // Merge detail into header
       const items = formattedRows.map(header => {
@@ -145,18 +152,7 @@ exports.cart = async (req, res) => {
          totalItem += item.total;
       });
 
-
-      // if (tableRow[0]['close'] == 0 && userId !== null) {
-      //    tableRow[0]['closeBy'] = userId;
-
-      //    const q = `UPDATE cart
-      //                SET
-      //                  closeBy = '${userId}'
-                      
-      //     WHERE id = '${cartId}' and close = 0`;
-      //    await db.query(q);
-      // }
-
+ 
       // End of calculation
       res.json({
          table: tableRow,

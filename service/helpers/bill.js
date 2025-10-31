@@ -96,7 +96,13 @@ async function cart(cartId = '') {
       `;
       const [modifier] = await db.query(s);
 
-
+ modifier.forEach(element => {
+         // tolong buat float hanya 2 digit di belakang koma
+         element.totalAmount = parseFloat(element.totalAmount).toFixed(2);
+         element.totalAmount = parseInt(Math.ceil(parseFloat(element.totalAmount)) || 0);
+         
+      });
+      
    // Merge detail into header
    const items = header.map(row => {
       const itemModifier = modifier
@@ -401,6 +407,13 @@ async function cartGrouping(cartId = '', subgroup = 0) {
       }
       return Array.from(map.values());
    })();
+
+   groupedSubgroupDiscount.forEach(element => {
+      // tolong buat float hanya 2 digit di belakang koma
+      element.totalAmount = parseFloat(element.totalAmount).toFixed(2);
+
+      element.totalAmount = parseInt(Math.ceil(parseFloat(element.totalAmount)) || 0);
+   });
  
  
 
@@ -1220,8 +1233,8 @@ async function discountMaxPerItem(cartId = '') {
          for (const row of queryD) {
             let discoutAmountItem = 0;
 
-            if (parseInt(row['discountMaxPerItemXqty']) >= row['totalItem']) {
-               discoutAmountItem = parseInt(row['totalItem']) / row['qty'];
+            if (parseFloat(row['discountMaxPerItemXqty']) >= row['totalItem']) {
+               discoutAmountItem = parseFloat(row['totalItem']) / row['qty'];
 
                // update lagi jika ada discount percent
                /*
@@ -1235,7 +1248,7 @@ async function discountMaxPerItem(cartId = '') {
                */
 
             } else {
-               discoutAmountItem = parseInt(row['discountMaxPerItem']);
+               discoutAmountItem = parseFloat(row['discountMaxPerItem']);
 
             }
 
@@ -1283,7 +1296,7 @@ async function discountMaxPerItem(cartId = '') {
       const [subTotalRow] = await db.query(x1);
 
       for (const row of subTotalRow) {
-         let subTotal = parseInt(row['subTotal']);
+         let subTotal = parseFloat(row['subTotal']);
 
          const x2 = `
             SELECT    
@@ -1303,7 +1316,7 @@ async function discountMaxPerItem(cartId = '') {
          
          for (const discRow of discountMaxOriginal) {
 
-            let discountMax = parseInt(discRow['discountMax']);
+            let discountMax = parseFloat(discRow['discountMax']);
 
  
             if (subTotal < discountMax) {

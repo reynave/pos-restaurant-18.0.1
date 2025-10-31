@@ -35,3 +35,7 @@ ALTER TABLE `cart_item`
 
 ALTER TABLE `cart_item_modifier`
 	CHANGE COLUMN `remark` `remark` VARCHAR(250) NOT NULL DEFAULT '' COLLATE 'utf8mb4_general_ci' AFTER `note`;
+	
+ALTER TABLE `cart_item_discount`
+	CHANGE COLUMN `debit` `debit` FLOAT NOT NULL DEFAULT 0 AFTER `status`,
+	CHANGE COLUMN `credit` `credit` FLOAT NOT NULL DEFAULT 0 AFTER `debit`;
