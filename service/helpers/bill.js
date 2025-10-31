@@ -328,7 +328,7 @@ async function cartGrouping(cartId = '', subgroup = 0) {
          AND r.presence = 1 AND i.void = 0 AND r.rate != 0
           `;
 
-          console.log(s);
+        
    const [modifier] = await db.query(s);
 
 
@@ -342,16 +342,42 @@ async function cartGrouping(cartId = '', subgroup = 0) {
 
 
    const subgroupDiscount = [];
+   const scGroup = [];
+   const taxGroup = []; 
    for (const row of items) {
-      const sdq = `
-      SELECT   d.discountId, d.note,   ${row.total}  as 'qty',   ${row.total} * d.credit AS 'discAmount'
+      const dgg = `
+      SELECT   d.discountId, d.note,   ${row.total}  as 'qty',   ${row.total} * d.credit AS 'totalAmount'
       FROM cart_item_discount AS d
       JOIN cart_item AS i ON i.id = d.cartItemId 
       WHERE i.cartId = '${cartId}' AND i.presence = 1 AND i.void = 0
       AND d.presence = 1 AND d.void = 0
       AND d.cartItemId = ${row.id}`;
-      const [subgroupDiscountRow] = await db.query(sdq); 
+      const [subgroupDiscountRow] = await db.query(dgg); 
       subgroupDiscount.push(...subgroupDiscountRow);
+
+
+      const scq = `
+      SELECT   d.menuTaxScId, d.note,  ${row.total}   as 'qty',   ${row.total} * d.debit AS 'totalAmount'
+      FROM cart_item_sc AS d
+      JOIN cart_item AS i ON i.id = d.cartItemId
+      WHERE i.cartId = '${cartId}' AND i.presence = 1 AND i.void = 0
+      AND d.presence = 1 AND d.void = 0
+      AND d.cartItemId = ${row.id}
+      `;
+      const [subgroupScRow] = await db.query(scq);
+      scGroup.push(...subgroupScRow);
+
+
+      const taxq = `
+      SELECT  d.menuTaxScId, d.note,  ${row.total}   as 'qty',   ${row.total} * d.debit AS 'totalAmount'
+      FROM cart_item_tax AS d
+      JOIN cart_item AS i ON i.id = d.cartItemId
+      WHERE i.cartId = '${cartId}' AND i.presence = 1 AND i.void = 0
+      AND d.presence = 1 AND d.void = 0
+      AND d.cartItemId = ${row.id}
+      `;
+      const [subgroupTaxRow] = await db.query(taxq);
+      taxGroup.push(...subgroupTaxRow);
    }
 
    // AGGREGATE subgroupDiscount by discountId + note
@@ -360,40 +386,109 @@ async function cartGrouping(cartId = '', subgroup = 0) {
       for (const it of subgroupDiscount) {
          const key = `${it.discountId}||${it.note}`;
          const qty = Number(it.qty) || 0;
-         const discAmount = Number(it.discAmount) || 0;
+         const totalAmount = Number(it.totalAmount) || 0;
          if (map.has(key)) {
             const cur = map.get(key);
             cur.qty += qty;
-            cur.discAmount += discAmount;
+            cur.totalAmount += totalAmount;
          } else {
-            map.set(key, { discountId: it.discountId, note: it.note, qty, discAmount });
+            map.set(key, { discountId: it.discountId, note: it.note, qty, totalAmount });
+         }
+      }
+      return Array.from(map.values());
+   })();
+ 
+ 
+
+   // AGGREGATE subgroupSc by menuTaxScId + note
+   const groupedSubgroupSc = (() => {
+      const map = new Map();
+      for (const it of scGroup) {
+         const key = `${it.menuTaxScId}||${it.note}`;
+         const qty = parseInt(it.qty, 10) || 0;
+         const totalAmount = parseFloat(it.totalAmount) || 0;
+         if (map.has(key)) {
+            const cur = map.get(key);
+            cur.qty = (parseInt(cur.qty, 10) || 0) + qty;
+            cur.totalAmount = (parseFloat(cur.totalAmount) || 0) + totalAmount;
+         } else {
+            map.set(key, { menuTaxScId: it.menuTaxScId, note: it.note, qty, totalAmount });
          }
       }
       return Array.from(map.values());
    })();
 
+   // AGGREGATE subgroupTax by menuTaxId + note
+   const groupedSubgroupTax = (() => {
+      const map = new Map();
+      for (const it of taxGroup) {
+         const key = `${it.menuTaxId}||${it.note}`;
+         const qty = parseInt(it.qty, 10) || 0;
+         const totalAmount = parseFloat(it.totalAmount) || 0;
+         if (map.has(key)) {
+            const cur = map.get(key);
+            cur.qty = (parseInt(cur.qty, 10) || 0) + qty;
+            cur.totalAmount = (parseFloat(cur.totalAmount) || 0) + totalAmount;
+         } else {
+            map.set(key, { menuTaxScId: it.menuTaxScId, note: it.note, qty, totalAmount });
+         }
+      }
+      return Array.from(map.values());
+   })();
+ 
 
  
    const [billVersion] = await db.query(`   
         SELECT no  FROM  bill WHERE cartId = '${cartId}' ORDER BY no DESC LIMIT 1
     `);
+      
   
+   // bisa buatkan function hitung totalIAmount dari array items di tampung di variable itemTotal
+   const calculateItemTotal = (items) => {
+      let total = 0;
+      let discount = 0;
+      let sc = 0;
+      let tax = 0;
+      items.forEach(row => {
+         total += row['totalAmount'];
+         row['modifier'].forEach(mod => {
+            if(mod['type'] == 'APPLY_DISCOUNT'){
+               discount += mod['totalAmount'];
+            }
+           if(mod['type'] == 'SC'){
+               sc += mod['totalAmount'];
+            }
+            if(mod['type'] == 'TAX'){
+               tax += mod['totalAmount'];
+            }
+         });
+      });
+      return {
+         itemTotal: total,
+         discount: discount,
+         subTotal: total - discount,
+         sc: sc,
+         tax: tax,
+         total: (total - discount) + sc + tax
+      };
+   };
+
+   const summaryFunction = calculateItemTotal(items);
    return {
       groups: subgroup,
       cart: items,
       billVersion: billVersion[0] ? billVersion[0]['no'] : 0,
-      subgroupDiscount : subgroupDiscount,
-      groupedSubgroupDiscount : groupedSubgroupDiscount,
-      scGroup: [],
-      taxGroup: [],
+      subgroupDiscount : groupedSubgroupDiscount,  
+      scGroup : groupedSubgroupSc, 
+      taxGroup: groupedSubgroupTax,
 
-
-      itemTotal: 0,
-      discount: 0,
-      subTotal: 0,
-      sc: 0,
-      tax: 0,
-      total: 0,
+ 
+      itemTotal: summaryFunction.itemTotal,
+      discount: summaryFunction.discount,
+      subTotal: summaryFunction.subTotal,
+      sc: summaryFunction.sc,
+      tax: summaryFunction.tax,
+      total: summaryFunction.total,
 
    }
 }
@@ -913,8 +1008,7 @@ async function taxUpdate(cartItem = 0) {
       if (taxRow.length > 0) {
          const taxRate = parseFloat(taxRow[0]['taxRate']) / 100;
          taxAmount = (itemPrice + scAmount) * taxRate;
-         console.log({ 'itemPrice': itemPrice, 'scAmount': scAmount, 'taxRate': taxRate, 'taxAmount': taxAmount });
-      }
+    }
 
       const a = `
       SELECT c.id, c.menuId, m.name, m.menuTaxScId, t.taxStatus, t.scStatus
@@ -1207,7 +1301,7 @@ async function discountMaxPerItem(cartId = '') {
 
             let discountMax = parseInt(discRow['discountMax']);
 
-            console.log(discRow['id'], subTotal, discountMax);
+ 
             if (subTotal < discountMax) {
                discountMax = subTotal;
             }

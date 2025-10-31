@@ -34,25 +34,20 @@
 {{/each}}
  
 {{formatLine " ITEM TOTAL" (formatCurrency data.itemTotal) 33}}
-{{#if data.discountAmountGroup}}
-    {{#each data.discountAmountGroup}}
-{{formatLine (concat "   " this.name) (formatCurrency this.discAmount) 33}}
-    {{/each}} 
-{{/if}}
-{{#if data.discountPercentGroup}}
-    {{#each data.discountPercentGroup}}
-{{formatLine (concat "   " this.name) (formatCurrency this.totalAmount) 33}}
+{{#if data.subgroupDiscount}}
+    {{#each data.subgroupDiscount}}
+{{formatLine (concat "   " this.note) (formatCurrency (concat "-" this.totalAmount)) 33}}
     {{/each}}  
 {{/if}}
 {{formatLine " SUB TOTAL" (formatCurrency data.subTotal) 33}} 
-{{#if data.scGroupSummary}}
-    {{#each data.scGroupSummary}}
-{{formatLine (concat "   " this.descl) (formatCurrency this.totalAmount) 33}}
+{{#if data.scGroup}}
+    {{#each data.scGroup}}
+{{formatLine (concat "   " this.note) (formatCurrency this.totalAmount) 33}}
     {{/each}} 
 {{/if}}
-{{#if data.taxGroupSummary}}
-    {{#each data.taxGroupSummary}}
-{{formatLine (concat "   " this.descl) (formatCurrency this.totalAmount) 33}}
+{{#if data.taxGroup}}
+    {{#each data.taxGroup}}
+{{formatLine (concat "   " this.note) (formatCurrency this.totalAmount) 33}}
     {{/each}}
 {{/if}}
 {{formatLine " TOTAL" (formatCurrency data.total) 33}}

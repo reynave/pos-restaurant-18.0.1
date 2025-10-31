@@ -347,25 +347,14 @@ exports.paid = async (req, res) => {
       }
 
 
-    }
-
-    const text = 'text test saja';
+    } 
     const [selectOutlet] = await db.query(`
         SELECT  outletTableMapId 
         FROM cart  
         WHERE id = '${cartId}'
       `);
 
-    const [selectSubgroup] = await db.query(`
-      SELECT g.subgroup
-      FROM cart_item_group AS g
-      WHERE cartId = '${cartId}'
-      GROUP BY g.subgroup;
-      `);
-
-    // let subgroupArr = [1, ...selectSubgroup.map(item => item.subgroup)];
-    // await exportTxtBill(cartId, selectOutlet, results, subgroupArr);
-
+   
 
     res.json({
       error: false,
