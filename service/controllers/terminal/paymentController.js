@@ -34,8 +34,8 @@ exports.cart = async (req, res) => {
     res.json({
       data: data,
       closePayment: data['unpaid'],
-       cart: cartData[0],
-       groups: [{ subgroup: 1 }, ...groups],
+      cart: cartData[0],
+      groups: [{ subgroup: 1 }, ...groups],
     });
 
   } catch (err) {
@@ -97,7 +97,7 @@ exports.bill = async (req, res) => {
       itemTotal: 0,
       discount: 0,
       sc: 0,
-      tax: 0, 
+      tax: 0,
       grandTotal: 0,
     }
 
@@ -156,19 +156,25 @@ exports.bill = async (req, res) => {
       line: 33,
       summary: summary,
       cartPayment: cartPayment,
-      unpaid: ( summary.grandTotal - paid ) < 0 ? 0 : (summary.grandTotal - paid),
+      unpaid: (summary.grandTotal - paid) < 0 ? 0 : (summary.grandTotal - paid),
       change: cartData[0]['changePayment'] || 0,
     };
-  
+
     result += templatePay(jsonPayment);
 
+
+    const unpaid = (summary.grandTotal - paid) < 0 ? 0 : (summary.grandTotal - paid);
+    
+
+
     res.json({
-      data: data,
-      cart: cartData[0],
+      data: data, 
       cartPayment: cartPayment,
       paid: paid,
+      unpaid : unpaid,
       summary: summary,
       groups: subgroups,
+      cart: cartData[0],
       htmlBill: result
     });
 
@@ -218,7 +224,7 @@ exports.paymentType = async (req, res) => {
 
 exports.paid = async (req, res) => {
   const cartId = req.query.id;
-  
+  const userId = headerUserId(req);
   const dailyCheckId = req.query.dailyCheckId;
   const results = [];
   try {
@@ -230,140 +236,162 @@ exports.paid = async (req, res) => {
       ORDER BY  p.inputDate ASC
     `);
 
-      const c = `
-      SELECT  grandTotal
+    const c = `
+      SELECT  grandTotal, tableMapStatusId
       FROM cart
       WHERE presence = 1 and id =  '${cartId}' `;
 
     const [grandTotalRow] = await db.query(c);
-    let   grandTotal = grandTotalRow[0]['grandTotal'];
+    let grandTotal = grandTotalRow[0]['grandTotal'];
+    let tableMapStatusId = grandTotalRow[0]['tableMapStatusId'];
+    console.log('tableMapStatusId', tableMapStatusId);
+   // if (tableMapStatusId != 20) {
 
-    const qq = `
+
+      const qq = `
       SELECT 
         COALESCE(SUM(paid), 0) AS 'paid', 
         ${grandTotal} AS grandTotal,
         (${grandTotal} - COALESCE(SUM(paid), 0)) AS 'unpaid'
       FROM cart_payment 
       WHERE presence = 1 and  submit = 1 and cartId =  '${cartId}' `;
-      console.log(qq)
-    const [cartPayment] = await db.query(qq);
+ 
+      const [cartPayment] = await db.query(qq);
 
 
-    let closePayment = 0;
+      let closePayment = 0;
 
+      let changePayment = 0;
+      if (cartPayment[0]['paid'] >= cartPayment[0]['grandTotal']) {
+        closePayment = 1;
+        changePayment = cartPayment[0]['paid'] - cartPayment[0]['grandTotal'];
+      }
 
-    if (cartPayment[0]['paid'] >= cartPayment[0]['grandTotal']) closePayment = 1;
+      if (closePayment == 1) {
 
-    if (closePayment == 1) {
-    
-      const data = await cart(cartId);
-      const q = `UPDATE cart
+        const data = await cart(cartId);
+        console.log(data);
+        const q = `UPDATE cart
             SET
               endDate = '${today()}',
               updateDate = '${today()}',
               close = 1,
               tableMapStatusId = 20,
-              totalAmount  = ${data['subTotal']}, 
-              changePayment =  ${data['change']},
-              totalTips = ${data['tips']},
-              totalItem  = ${data['totalItem']}
+              summaryTotalGroup = ${data['groups'].length},
+              summaryItemTotal  = ${data.summary['itemTotal']},  
+              summaryDiscount  = ${data.summary['discount']},
+              summarySc  = ${data.summary['sc']},
+              summaryTax  = ${data.summary['tax']},
+              grandTotal  = ${data.summary['grandTotal']},
+              changePayment = ${Math.abs(changePayment)},
+              closeBy = ${userId},
+              updateBy = ${userId}
+              
           WHERE id = '${cartId}' and close = 0`;
-      const [result] = await db.query(q);
+        const [result] = await db.query(q);
 
-      if (result.affectedRows === 0) {
-        results.push({ status: 'cart not found / Payment closed' });
-      } else {
-        closePayment = 1;
-        results.push({ status: 'cart close payment updated' });
-      }
+        if (result.affectedRows === 0) {
+          results.push({ status: 'cart not found / Payment closed' });
+        } else {
+          closePayment = 1;
+          results.push({ status: 'cart close payment updated' });
+        }
 
 
-      const q2 = `
+        const q2 = `
         SELECT sum( p.openDrawer) AS 'openDrawer', SUM(c.paid) AS 'totalPaid'
         FROM cart_payment AS c
         JOIN check_payment_type AS p ON p.id = c.checkPaymentTypeId
         WHERE c.cartId = '${cartId}'
         AND c.presence = 1   
       `;
-      const [openDrawer] = await db.query(q2);
+        const [openDrawer] = await db.query(q2);
 
-      if (openDrawer[0]['openDrawer'] >= 1) {
-        let change = parseInt(openDrawer[0]['totalPaid']) - parseInt(data['grandTotal']);
-        change = Math.abs(change);
-        const q = `UPDATE cart
+        if (openDrawer[0]['openDrawer'] >= 1) {
+          let change = parseInt(openDrawer[0]['totalPaid']) - parseInt(data.summary['grandTotal']);
+          change = Math.abs(change);
+          const q = `UPDATE cart
             SET 
               changePayment = ${change}
           WHERE id = '${cartId}' `;
-        const [result2] = await db.query(q);
+          const [result2] = await db.query(q);
 
-        if (result2.affectedRows === 0) {
-          results.push({ status: 'cart not found / Payment closed' });
-        } else {
-          closePayment = 1;
-          results.push({ status: 'cart changePayment payment updated' });
-        }
+          if (result2.affectedRows === 0) {
+            results.push({ status: 'cart not found / Payment closed' });
+          } else {
+            closePayment = 1;
+            results.push({ status: 'cart changePayment payment updated' });
+          }
 
-        const q5 = ` 
+          const q5 = ` 
         SELECT p.openDrawer, c.paid
           FROM cart_payment AS c
           JOIN check_payment_type AS p ON p.id = c.checkPaymentTypeId
           WHERE c.cartId = '${cartId}'
           AND c.presence = 1 AND  p.openDrawer = 1;   
         `;
-        const [cartPayment] = await db.query(q5);
+          const [cartPayment] = await db.query(q5);
 
-        for (const row of cartPayment) {
-          const q3 = `INSERT INTO 
+          for (const row of cartPayment) {
+            const q3 = `INSERT INTO 
           daily_cash_balance(
             presence, inputDate, updateDate, 
             cartId, dailyCheckId, cashIn)
         value(1, '${today()}', '${today()}' , '${cartId}', '${dailyCheckId}',  ${row['paid']} ) `;
-          const [result3] = await db.query(q3);
+            const [result3] = await db.query(q3);
 
-          if (result3.affectedRows === 0) {
-            results.push({ status: 'cart not found / Payment closed' });
-          } else {
-            closePayment = 1;
-            results.push({ status: 'cart changePayment payment updated' });
+            if (result3.affectedRows === 0) {
+              results.push({ status: 'cart not found / Payment closed' });
+            } else {
+              closePayment = 1;
+              results.push({ status: 'cart changePayment payment updated' });
+            }
           }
-        }
 
 
 
-        const q3 = `INSERT INTO 
+          const q3 = `INSERT INTO 
           daily_cash_balance(
             presence, inputDate, updateDate, 
             cartId, dailyCheckId, cashOut)
         value(1, '${today()}', '${today()}' , '${cartId}', '${dailyCheckId}',  ${change} ) `;
-        const [result3] = await db.query(q3);
+          const [result3] = await db.query(q3);
 
-        if (result3.affectedRows === 0) {
-          results.push({ status: 'Cart not found / Payment closed' });
-        } else {
-          closePayment = 1;
-          results.push({ status: 'cart changePayment payment updated' });
+          if (result3.affectedRows === 0) {
+            results.push({ status: 'Cart not found / Payment closed' });
+          } else {
+            closePayment = 1;
+            results.push({ status: 'cart changePayment payment updated' });
+          }
+
         }
 
+
       }
-
-
-    } 
-    const [selectOutlet] = await db.query(`
+      const [selectOutlet] = await db.query(`
         SELECT  outletTableMapId 
         FROM cart  
         WHERE id = '${cartId}'
       `);
 
-   
 
-    res.json({
-      error: false,
-      outletTableMapId: selectOutlet[0]['outletTableMapId'],
-      closePayment: closePayment,
-      cartPayment: cartPayment[0],
-      items: formattedRows, 
-      results: results,
-    });
+
+      res.json({
+        error: false,
+        outletTableMapId: selectOutlet[0]['outletTableMapId'],
+        closePayment: closePayment,
+        cartPayment: cartPayment[0],
+        items: formattedRows,
+        results: results,
+      });
+
+   /* }else{
+      res.json({
+        error: false,
+        closePayment: -1,
+        note :'Close payment already done',
+      });
+    }*/
 
   } catch (err) {
     console.error(err);
@@ -379,7 +407,7 @@ exports.markPrintBill = async (req, res) => {
           printBill = 1,
           updateDate = '${today()}'
       WHERE id = '${cartId}' `;
-    const [result] = await db.query(q); 
+    const [result] = await db.query(q);
     if (result.affectedRows === 0) {
       res.status(404).json({ error: 'Cart not found' });
     } else {
@@ -486,7 +514,7 @@ exports.updateRow = async (req, res) => {
         updateBy = ${userId}
     WHERE  id = ${item['id']} and submit = 0 `;
     const [result] = await db.query(q);
- 
+
 
     if (result.affectedRows === 0) {
       results.push({ status: 'not found' });
@@ -694,10 +722,10 @@ exports.createTxt = async (req, res) => {
   const cartId = req.body.id;
   const htmlBill = req.body.htmlBill;
   try {
-   
 
-    await exportTxtBill(cartId, htmlBill , 'billClosed');
-    res.json({ message: 'Create TXT initiated ' +cartId});
+
+    await exportTxtBill(cartId, htmlBill, 'billClosed');
+    res.json({ message: 'Create TXT initiated ' + cartId });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: true, note: err });
@@ -712,7 +740,7 @@ async function exportTxtBill(cartId, htmlBill, folder = 'logs') {
 
     // Buat folder export jika belum ada
     const dateFolder = formatDateOnly(new Date());
-    const exportDir = path.join(__dirname, '../../public/output/'+folder, dateFolder);
+    const exportDir = path.join(__dirname, '../../public/output/' + folder, dateFolder);
     if (!fs.existsSync(exportDir)) {
       fs.mkdirSync(exportDir, { recursive: true });
     }

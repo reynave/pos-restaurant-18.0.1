@@ -121,13 +121,16 @@ async function cart(cartId = '') {
       sc = parseInt(scRow[0]['totalAmount']);
    }
 
-   const [taxRow] = await db.query(`
+
+   const tq= `
       SELECT sum( (r.debit - r.credit) * i.qty) AS 'totalAmount'
       FROM  cart_item_tax AS r
       JOIN cart_item AS i ON i.id = r.cartItemId
       WHERE r.cartId = '${cartId}'
       AND r.presence = 1 AND r.void = 0 AND i.presence = 1 AND i.void = 0
-   `);
+   `;
+   const [taxRow] = await db.query(tq);
+   console.log(tq,taxRow);
    if (taxRow.length > 0) {
       tax = parseInt(taxRow[0]['totalAmount']);
    }
@@ -174,6 +177,7 @@ async function cart(cartId = '') {
          sc: sc,
          tax: tax,
          grandTotal: grandTotal,
+         ver :1.1
       },
       itemSummary: summaryFunction,
       // cartPayment: cartPayment,

@@ -681,6 +681,24 @@ exports.createPayment = async (req, res) => {
       WHERE cartId = ${cartId}`;
       await db.query(q4);
 
+        const q42 = `
+      UPDATE cart_item_tax SET
+        cartId =  '${insertId}'
+      WHERE cartId = ${cartId}`;
+      await db.query(q42);
+
+        const q43 = `
+      UPDATE cart_item_sc SET
+        cartId =  '${insertId}'
+      WHERE cartId = ${cartId}`;
+      await db.query(q43);
+
+
+        const q45 = `
+      UPDATE cart_item_discount SET
+        cartId =  '${insertId}'
+      WHERE cartId = ${cartId}`;
+      await db.query(q45);
 
       const q6 = `
           UPDATE cart_item_group SET
