@@ -1,7 +1,10 @@
 const db = require('../../config/db');
-const { headerUserId, mapUpdateByName, formatDateOnly, today, convertCustomDateTime, formatDateTime, parseTimeString, addTime } = require('../../helpers/global');
+const { headerUserId, today, 
+  convertCustomDateTime, formatDateTime, parseTimeString, addTime,} = require('../../helpers/global');
+ 
+
 const { autoNumber } = require('../../helpers/autoNumber');
-const { taxScUpdate, scUpdate, taxUpdate } = require('../../helpers/bill');
+const { taxScUpdate,   taxUpdate , discountMaxPerItem, scTaxUpdate2 } = require('../../helpers/bill');
 const { printQueueInternal } = require('../../helpers/printer');
 const { csvFile, txtTableChecker } = require('../../helpers/exportToFile');
 
@@ -254,20 +257,10 @@ exports.lookUpMenu = async (req, res) => {
     const q = `
        
         SELECT 
-          m.id, m.name, m.price${i} as 'price' , m.adjustItemsId, m.qty, m.menuSet, m.menuSetMinQty,
+          m.id, m.name, m.price${i} as 'price' , m.price${i} as 'priceLabel' , m.adjustItemsId, m.qty, m.menuSet, m.menuSetMinQty,
           m.menuDepartmentId, m.menuCategoryId, m.menuTaxScId,
           t.desc, t.taxRate, t.taxNote, t.taxStatus, t.scTaxIncluded, m.openPrice,
-            CASE 
-              WHEN t.taxStatus = 2 THEN m.price${i} - (m.price${i} / (1+ (t.taxRate/100) ))
-              WHEN t.taxStatus = 1 THEN m.price${i}*(t.taxRate/100)
-              ELSE  0
-            END AS 'taxAmount',  
           t.scRate, t.scNote, t.scStatus,
-            CASE 
-              WHEN t.scStatus = 2 THEN m.price${i} - (m.price${i} / (1+ (t.scRate/100) ))
-              WHEN t.scStatus = 1 THEN m.price${i}*(t.scRate/100)
-              ELSE  0
-            END AS 'scAmount' ,
 
               COALESCE(
                 (
@@ -291,49 +284,74 @@ exports.lookUpMenu = async (req, res) => {
           m.presence = 1 and m.menuLookupId = ${menuLookupId} and m.menuLookupId != 0 and 
           m.startDate < NOW() AND m.endDate > NOW()
     `;
-
-
+ 
 
     const [itemsRow] = await db.query(q);
 
 
     const items = [];
-
+ 
     for (const row of itemsRow) {
       let journal = [];
       row['price'] = parseInt(row['price']) || 0;
       if (row['adjustItemsId'] == '') {
         row['qty'] = 99999999
       }
+      let scAmount = 0;
+      let taxAmount = 0;
+      let price  = row['price'];
+      let originPriceData = originalPrice(row['price'], row['scRate'] / 100, row['taxRate'] / 100);
+      
+      
+      if (row['scStatus'] == 1) { 
+        scAmount = row['price'] * (row['scRate'] / 100);
+      } 
+      else if (row['scStatus'] == 2) {
+        scAmount = originPriceData['sc'];
+        price = price - originPriceData['sc'];
+      }  
+      else {
+        scAmount = 0;
+      }
 
-      // journal.push({
-      //   table: 'cart_item',
-      //   rate : 0, 
-      //   note : '',
-      //   debit: row['price'],
-      //   credit: 0
-      // });
+      if (row['taxStatus'] == 1) {
+        taxAmount = row['price'] * (row['taxRate'] / 100);
+        if (row['scStatus'] == 1) {
+          taxAmount = taxAmount + (scAmount * (row['taxRate'] / 100));
+        }
+      }
+      else if (row['taxStatus'] == 2) {
+        taxAmount = originPriceData['ppn'];
+         price = originPriceData['hargaAwal'];
+      }  
+      else {
+        taxAmount = 0;
+      }
 
       journal.push({
+        statusId: row['scStatus'],
         table: 'cart_item_sc',
         rate: row['scRate'],
         note: row['scNote'],
-        debit: parseInt(row['scAmount']),
+        debit: parseInt(scAmount),
         credit: 0
       });
       journal.push({
+        statusId: row['taxStatus'],
         table: 'cart_item_tax',
         rate: row['taxRate'],
         note: row['taxNote'],
-        debit: (parseInt(row['scAmount']) * (parseFloat(row['taxRate']) / 100)) + parseInt(row['taxAmount']),
+        debit: parseInt(taxAmount),
         credit: 0
       });
 
 
       items.push({
         ...row,
+        price :  price,
         id: row['id'],
         name: row['name'],
+     
         journal: journal,
       });
 
@@ -349,6 +367,34 @@ exports.lookUpMenu = async (req, res) => {
     res.status(500).json({ error: 'Database error' });
   }
 };
+
+
+function originalPrice(hargaTotal, scPersen = 0.05, ppnPersen = 0.10) {
+  // Rumus harga awal
+  const hargaAwal = hargaTotal / (1 + scPersen) / (1 + ppnPersen) * (1 + scPersen);
+  // Atau lebih ringkas sesuai rumus di atas:
+  // const hargaAwal = hargaTotal / (1 + scPersen) / (1 + ppnPersen) * (1 + scPersen);
+
+  // Dengan rumus: hargaAwal = hargaTotal / (1 + scPersen) / (1 + ppnPersen) * (1 + scPersen);
+
+  // Tapi sederhana (karena (1+scPersen) * (1+ppnPersen) = 1.155):
+  // hargaAwal = hargaTotal / 1.155
+  const hargaAwalRingkas = hargaTotal / ((1 + scPersen) * (1 + ppnPersen));
+
+  const sc = hargaAwalRingkas * scPersen;
+  const subtotal = hargaAwalRingkas + sc;
+  const ppn = subtotal * ppnPersen;
+
+  return {
+    hargaAwal: Math.round(hargaAwalRingkas),
+    sc: Math.round(sc),
+    subtotal: Math.round(subtotal),
+    ppn: Math.round(ppn),
+    total: Math.round(hargaAwalRingkas + sc + ppn)
+  };
+}
+
+
 
 exports.discountGroup = async (req, res) => {
   let i = 1;
@@ -541,65 +587,67 @@ exports.addToCart = async (req, res) => {
   const results = [];
   const openPrice = req.body['openPrice'] || 0;
 
-  if (openPrice == 1) {
-    menu['price'] = parseInt(req.body['price']) || 0;
+  // if (openPrice == 1) {
+  //   menu['price'] = parseInt(req.body['price']) || 0;
 
-    menu['journal'] = [];
+  //   menu['journal'] = [];
 
-    const q = `
-       SELECT 
-         m.id, m.name, ${menu['price']} as 'price', m.qty, m.menuSet, m.menuSetMinQty,
-         m.menuTaxScId,
-         t.desc, t.taxRate, t.taxNote, t.taxStatus, t.scTaxIncluded, m.openPrice,
-           CASE 
-             WHEN t.taxStatus = 2 THEN ${menu['price']} - (${menu['price']} / (1+ (t.taxRate/100) ))
-             WHEN t.taxStatus = 1 THEN ${menu['price']}*(t.taxRate/100)
-              ELSE  0
-            END AS 'taxAmount',  
-          t.scRate, t.scNote, t.scStatus,
-            CASE 
-              WHEN t.scStatus = 2 THEN ${menu['price']} - (${menu['price']} / (1+ (t.scRate/100) ))
-              WHEN t.scStatus = 1 THEN ${menu['price']}*(t.scRate/100)
-              ELSE  0
-            END AS 'scAmount' ,
-              COALESCE(
-                (
-                SELECT SUM(ci.qty)
-                FROM cart_item ci
-                WHERE ci.presence = 1
-                    AND ci.adjustItemsId = m.adjustItemsId AND ci.menuId = m.id
-                ), 0
-            ) +
-            COALESCE(
-                (
-                SELECT SUM(cim.menuSetQty)
-                FROM cart_item_modifier cim
-                WHERE cim.presence = 1
-                    AND cim.menuSetadjustItemsId = m.adjustItemsId AND cim.menuSetmenuId = m.id
-                ), 0
-            ) AS usedQty
-        FROM menu AS m
-        LEFT JOIN menu_tax_sc AS t ON t.id = m.menuTaxScId
-        WHERE 
-          m.presence = 1 and m.id =  ${menu['id']}
-      `;
-    const [itemsRow] = await db.query(q);
-    menu['journal'].push({
-      table: 'cart_item_sc',
-      rate: itemsRow[0]['scRate'],
-      note: itemsRow[0]['scNote'],
-      debit: parseInt(itemsRow[0]['scAmount']),
-      credit: 0
-    });
-    menu['journal'].push({
-      table: 'cart_item_tax',
-      rate: itemsRow[0]['taxRate'],
-      note: itemsRow[0]['taxNote'],
-      debit: (parseInt(itemsRow[0]['scAmount']) * (parseFloat(itemsRow[0]['taxRate']) / 100)) + parseInt(itemsRow[0]['taxAmount']),
-      credit: 0
-    });
+  //   const q = `
+  //      SELECT 
+  //        m.id, m.name, ${menu['price']} as 'price', m.qty, m.menuSet, m.menuSetMinQty,
+  //        m.menuTaxScId,
+  //        t.desc, t.taxRate, t.taxNote, t.taxStatus, t.scTaxIncluded, m.openPrice,
+  //          CASE 
+  //            WHEN t.taxStatus = 2 THEN ${menu['price']} - (${menu['price']} / (1+ (t.taxRate/100) ))
+  //            WHEN t.taxStatus = 1 THEN ${menu['price']}*(t.taxRate/100)
+  //             ELSE  0
+  //           END AS 'taxAmount',  
+  //         t.scRate, t.scNote, t.scStatus,
+  //           CASE 
+  //             WHEN t.scStatus = 2 THEN ${menu['price']} - (${menu['price']} / (1+ (t.scRate/100) ))
+  //             WHEN t.scStatus = 1 THEN ${menu['price']}*(t.scRate/100)
+  //             ELSE  0
+  //           END AS 'scAmount' ,
+  //             COALESCE(
+  //               (
+  //               SELECT SUM(ci.qty)
+  //               FROM cart_item ci
+  //               WHERE ci.presence = 1
+  //                   AND ci.adjustItemsId = m.adjustItemsId AND ci.menuId = m.id
+  //               ), 0
+  //           ) +
+  //           COALESCE(
+  //               (
+  //               SELECT SUM(cim.menuSetQty)
+  //               FROM cart_item_modifier cim
+  //               WHERE cim.presence = 1
+  //                   AND cim.menuSetadjustItemsId = m.adjustItemsId AND cim.menuSetmenuId = m.id
+  //               ), 0
+  //           ) AS usedQty
+  //       FROM menu AS m
+  //       LEFT JOIN menu_tax_sc AS t ON t.id = m.menuTaxScId
+  //       WHERE 
+  //         m.presence = 1 and m.id =  ${menu['id']}
+  //     `;
+  //   const [itemsRow] = await db.query(q);
+  //   menu['journal'].push({
+  //     status : itemsRow[0]['scStatus'],
+  //     table: 'cart_item_sc',
+  //     rate: itemsRow[0]['scRate'],
+  //     note: itemsRow[0]['scNote'],
+  //     debit: parseInt(itemsRow[0]['scAmount']),
+  //     credit: 0
+  //   });
+  //   menu['journal'].push({
+  //     status : itemsRow[0]['taxStatus'],
+  //     table: 'cart_item_tax',
+  //     rate: itemsRow[0]['taxRate'],
+  //     note: itemsRow[0]['taxNote'],
+  //     debit: (parseInt(itemsRow[0]['scAmount']) * (parseFloat(itemsRow[0]['taxRate']) / 100)) + parseInt(itemsRow[0]['taxAmount']),
+  //     credit: 0
+  //   });
 
-  }
+  // }
   try {
 
     let q =
@@ -626,14 +674,15 @@ exports.addToCart = async (req, res) => {
     for (const row of menu['journal']) {
       let q =
         `INSERT INTO ${row['table']} (
-        presence, inputDate, updateDate,  cartId, cartItemId,
-        menuTaxScId, rate, note, 
-        debit, credit
+          presence, inputDate, updateDate,  cartId, cartItemId,
+          menuTaxScId, rate, note, 
+          debit, credit, status 
       )
       VALUES (1, '${inputDate}', '${inputDate}',  '${cartId}', ${cartItemId},
           ${menu['menuTaxScId']}, ${row['rate']}, '${row['note']}',
-          ${row['debit']}, ${row['credit']}
+          ${row['debit']}, ${row['credit']}, ${row['statusId']}
       )`;
+    
       const [result] = await db.query(q);
 
       if (result.affectedRows === 0) {
@@ -1164,6 +1213,9 @@ exports.voidItemSo = async (req, res) => {
       results.push({ status: 'UPDATE VOID updated' });
     }
 
+    console.log('Starting discountMaxPerItem and scTaxUpdate2...');
+    await discountMaxPerItem(id);
+    await scTaxUpdate2(id);
 
 
     res.status(201).json({
@@ -1865,7 +1917,7 @@ exports.exitWithoutOrder = async (req, res) => {
         DELETE FROM ${table}
         WHERE cartId = '${cartId}' and sendOrder = '';
       `;
-      console.log('Delete Query:', q2);
+    
       await db.query(q2);
     }
 
@@ -1916,7 +1968,7 @@ exports.voidTransacton = async (req, res) => {
       'cart_item_sc',
       'cart_item_tax',
     ];
-    for (const table of tablesVoid) { 
+    for (const table of tablesVoid) {
       const q = `
       UPDATE ${table} SET
         presence = 0,
