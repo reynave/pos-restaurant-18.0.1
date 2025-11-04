@@ -96,6 +96,8 @@ app.use(process.env.PREFIX + 'dailyClose', require('./routes/report/dailyClose')
 app.use(process.env.PREFIX + 'userLogin', require('./routes/report/userLogin')); 
 app.use(process.env.PREFIX + 'transaction', require('./routes/report/transaction')); 
 
+app.use(process.env.PREFIX + 'cashback', require('./routes/general/cashback')); 
+
 
 // TERMINAL SERVICE HERE
 app.use(process.env.PREFIX + process.env.TERMINAL + 'login', loginPos);

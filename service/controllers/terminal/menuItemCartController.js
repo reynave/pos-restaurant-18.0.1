@@ -1,6 +1,6 @@
 const db = require('../../config/db');
 const { headerUserId, mapUpdateByName, today, sanitizeText } = require('../../helpers/global');
-const { scUpdate, taxUpdate, discountMaxPerItem, scTaxUpdate2 } = require('../../helpers/bill');
+const { scUpdate, taxUpdate, discountMaxPerItem, scTaxUpdate2, summary } = require('../../helpers/bill');
 
 const { logger } = require('./userLogController');
 
@@ -118,7 +118,7 @@ exports.cart = async (req, res) => {
          // tolong buat float hanya 2 digit di belakang koma
          element.totalAmount = parseFloat(element.totalAmount).toFixed(2);
          element.totalAmount = parseInt(Math.ceil(parseFloat(element.totalAmount)) || 0);
-         
+
       });
 
 
@@ -152,11 +152,11 @@ exports.cart = async (req, res) => {
          totalItem += item.total;
       });
 
- 
+
       // End of calculation
       res.json({
          table: tableRow,
-         items: items, 
+         items: items,
          totalItem: totalItem,
       });
 
@@ -247,7 +247,7 @@ exports.updateQty = async (req, res) => {
 
       await discountMaxPerItem(cartId);
       await scTaxUpdate2(cartId);
-    
+
 
       res.status(201).json({
          error: false,
@@ -347,7 +347,7 @@ exports.voidItem = async (req, res) => {
          await taxUpdate(id);
 
       }
- 
+
       const q = `SELECT 
             m.id, m.cartId, m.cartItemId, c.presence, c.void
          FROM cart_item_modifier AS m
@@ -356,7 +356,7 @@ exports.voidItem = async (req, res) => {
             c.presence = 0 AND c.void = 1`;
       const [result] = await db.query(q);
       for (const row of result) {
-          
+
          const q11 = `UPDATE cart_item_modifier
             SET
               presence = 0,  
@@ -366,7 +366,7 @@ exports.voidItem = async (req, res) => {
             WHERE  cartItemId = ${row['cartItemId']} `;
          await db.query(q11);
 
-          const q13 = `UPDATE cart_item_discount
+         const q13 = `UPDATE cart_item_discount
             SET
               presence = 0,  
               void = 1,
@@ -375,7 +375,7 @@ exports.voidItem = async (req, res) => {
             WHERE  cartItemId = ${row['cartItemId']} `;
          await db.query(q13);
 
-          const q14 = `UPDATE cart_item_sc
+         const q14 = `UPDATE cart_item_sc
             SET
               presence = 0,  
               void = 1,
@@ -384,7 +384,7 @@ exports.voidItem = async (req, res) => {
             WHERE  cartItemId = ${row['cartItemId']} `;
          await db.query(q14);
 
-            const q15 = `UPDATE cart_item_tax
+         const q15 = `UPDATE cart_item_tax
             SET
               presence = 0,  
               void = 1,
@@ -498,7 +498,7 @@ exports.addToItemModifier = async (req, res) => {
          }
       }
 
-            await discountMaxPerItem(cartId);
+      await discountMaxPerItem(cartId);
       await scTaxUpdate2(cartId);
 
       res.status(201).json({
@@ -574,20 +574,37 @@ exports.addDiscountGroup = async (req, res) => {
    const results = [];
 
    try {
+      const summaryArray = await summary(cartId);
+      let totalItem = 0;
+      for (const sum of summaryArray) {
+         totalItem += parseInt(sum['itemTotal']) || 0;
+      }
 
+
+      console.log('summaryArray', summaryArray, totalItem);
       for (const emp of cart) {
          const { id, checkBox, discountGroupId, name } = emp;
 
          if (checkBox == 1) {
-
+            console.log('totalItem', totalItem, 'with requiredItemTotal:', discountGroup['requiredItemTotal']);
             let allowAdd = false;
 
             if (discountGroup['discountGroupId'] == discountGroupId) {
                allowAdd = true;
-            }
+            } 
+
+
             if (discountGroup['allDiscountGroup'] == 1) {
                allowAdd = true;
+            } 
+
+
+            if (totalItem < discountGroup['requiredItemTotal']) {
+               allowAdd = false;
+               console.log('allowAdd set to true');
+               results.push({ status: `ERROR : Discount ${discountGroup['name']} required ${totalItem} greater than ${discountGroup['requiredItemTotal']} ` });
             }
+
 
             if (allowAdd == true) {
 
@@ -616,16 +633,16 @@ exports.addDiscountGroup = async (req, res) => {
                   ) AS t1 
  
                   `;
-               console.log(t1)
+
                const [queryT1] = await db.query(t1);
                const totalAmount = parseInt(queryT1[0]['totalAmount']);
 
                let discAmount = 0;
                if (parseInt(discountGroup['discAmount']) > 0) {
                   // DISCOUNT MAX AMOUNT  ex 50.000
-                 
+
                   discAmount = parseInt(discountGroup['discAmount']);
-                 
+
                } else {
                   // DISCOUNT PERCENTAGE ex 10%  
                   discAmount = (totalAmount * (parseFloat(discountGroup['discRate']) / 100));
@@ -646,14 +663,12 @@ exports.addDiscountGroup = async (req, res) => {
                   0, ${parseInt(discAmount)},
                   ${userId}, ${userId}
                )`;
-               await db.query(q); 
+               await db.query(q);
 
-            } else {
-               results.push({ status: `ERROR ${discountGroup['discountGroup']} was not match menu ${name}` });
-            }
+            }  
          }
       }
-  
+
 
       await discountMaxPerItem(cartId);
       await scTaxUpdate2(cartId);

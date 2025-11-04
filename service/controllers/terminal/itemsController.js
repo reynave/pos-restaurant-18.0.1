@@ -3,11 +3,11 @@ const { today, formatDateOnly } = require('../../helpers/global');
 const { autoNumber } = require('../../helpers/autoNumber');
 
 exports.getItems = async (req, res) => {
-
+   const lookupId = req.query.lookupId || 0;
    try {
       const [formattedRows] = await db.query(`
        SELECT 
-          m.id, m.name,   m.adjustItemsId,  0 as 'checkBox',
+          m.id, m.name,   m.adjustItemsId,  0 as 'checkBox', m.menuLookupId,
           m.menuDepartmentId, m.menuCategoryId,  m.startDate, m.endDate,
             m.qty -  (
                 SELECT COUNT(ci.id)
@@ -18,6 +18,7 @@ exports.getItems = async (req, res) => {
               ) AS qty
         FROM menu AS m 
         WHERE m.presence = 1 
+        ${lookupId > 0 ? `AND m.menuLookupId = ${lookupId}` : ''}
     `);
 
 

@@ -136,7 +136,7 @@ async function cart(cartId = '') {
       AND r.presence = 1 AND r.void = 0 AND i.presence = 1 AND i.void = 0
    `;
    const [taxRow] = await db.query(tq);
-   console.log(tq,taxRow);
+ 
    if (taxRow.length > 0) {
       tax = parseInt(taxRow[0]['totalAmount']);
    }

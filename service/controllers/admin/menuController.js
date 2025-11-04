@@ -99,7 +99,7 @@ exports.getAllData = async (req, res) => {
       {
         name: 'Daily Schedule', href: 'dailySchedule', icon: '<i class="bi bi-calendar-week"></i>',
       },
-
+   
       {
         name: 'Discount', href: 'discount', icon: '<i class="bi bi-percent"></i>',
         children: [
@@ -131,6 +131,10 @@ exports.getAllData = async (req, res) => {
 
         ]
       },
+         {
+        name: 'Cashback', href: 'cashback', icon: '<i class="bi bi-gift"></i>',
+      },
+
     ];
     const [printerGroup] = await db.query(
       ` SELECT id, name  ,  'workStation/printer/'  as 'href' ,  
