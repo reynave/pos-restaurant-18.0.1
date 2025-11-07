@@ -1,9 +1,25 @@
-{{formatLine " GRAND TOTAL " (formatCurrency summary.grandTotal) 33}}
+{{formatLine " GRAND TOTAL " (formatCurrency summary.grandTotal) line}}
 {{#each cartPayment}}
-{{formatLine (concat "  - " this.name) (formatCurrency this.paid) 33}}
+{{formatLine (concat "  - " this.name) (formatCurrency this.paid) line}}
 {{/each}}
-{{formatLine " UNPAID " (concat "(" (formatCurrency unpaid) ")") 33}}
-{{formatLine " CHANGE " (concat "(" (formatCurrency change) ")") 33}}
+{{formatLine " UNPAID " (concat "(" (formatCurrency unpaid) ")") line}}
+{{formatLine " CHANGE " (concat "(" (formatCurrency change) ")") line}}
 {{#if (eq transaction.close 1)}}
-{{center "[ CLOSED BILL ]" 33}}
+{{center "[ CLOSED BILL ]" line}}
+{{/if}}
+
+{{#each cashbackData}}
+{{this.type}}
+{{formatLine "CASHBACK " (formatCurrency this.cashbackMax) line}}
+VALID DATE {{this.redeemStartDate}}-{{this.redeemEndDate}}
+{{this.name}}
+{{this.description}}
+{{/each}}
+{{#if cashbackData.length}}
+<img src="{{qrCode}}" alt="QR Code" style="display: block; margin: 10px auto;" />
+{{center "Scan to Redeem Cashback" line}}
+{{/if}}
+
+{{#if (eq transaction.close 1)}}
+{{center "Thank You!" line}} 
 {{/if}}
