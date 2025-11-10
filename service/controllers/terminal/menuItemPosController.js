@@ -1734,11 +1734,7 @@ exports.sendOrder = async (req, res) => {
               )`;
           await db.query(q12);
         }
-      }
-
-
-
-
+      } 
 
       cartId = insertId;
     }
@@ -1760,7 +1756,7 @@ exports.sendOrder = async (req, res) => {
       updateDate = '${today()}',
       updateBy = ${userId}
     WHERE cartId = ${cartId}  and presence = 1 and void = 0 and sendOrder = '' `;
-    await db.query(q);
+     const [result2] =  await db.query(q);
 
 
     const q4 = `
@@ -1795,7 +1791,7 @@ exports.sendOrder = async (req, res) => {
       updateDate = '${today()}',
       updateBy = ${userId}
     WHERE cartId = ${cartId}  and presence = 1 and void = 0 and sendOrder = ''`;
-    const [result2] = await db.query(q2);
+   await db.query(q2);
 
     if (result2.affectedRows !== 0) {
 

@@ -269,7 +269,7 @@ exports.paid = async (req, res) => {
     const [grandTotalRow] = await db.query(c);
     let grandTotal = grandTotalRow[0]['grandTotal'];
     let tableMapStatusId = grandTotalRow[0]['tableMapStatusId'];
-    console.log('tableMapStatusId', tableMapStatusId);
+ 
     // if (tableMapStatusId != 20) {
 
 
@@ -295,7 +295,7 @@ exports.paid = async (req, res) => {
     if (closePayment == 1) {
 
       const data = await cart(cartId);
-      console.log(data);
+    
       const q = `UPDATE cart
             SET
               endDate = '${today()}',
@@ -339,7 +339,7 @@ exports.paid = async (req, res) => {
             SELECT 1 FROM cart_cashback
             WHERE cartId = '${cartId}' AND cashbackId = '${item.cashbackId}' AND presence = 1
             )`;
-            console.log(q3);
+           
           const [result3] = await db.query(q3);
 
           if (result3.affectedRows === 0) {
@@ -710,7 +710,7 @@ exports.addPaid = async (req, res) => {
         AND p.paymentId = ${checkPaymentTypeId} 
         ORDER BY a.earnMax DESC
       LIMIT 1`;
-      console.log(q2)
+   
       const [cashbackData] = await db.query(q2);
       if (cashbackData.length > 0) {  
         results.push({ id, status: 'cashback available', cashbackData: cashbackData });
@@ -727,7 +727,7 @@ exports.addPaid = async (req, res) => {
             SELECT 1 FROM cart_cashback
             WHERE cartId = '${cartId}' AND cashbackId = '${cb.cashbackId}' AND presence = 1 AND paymentId = ${checkPaymentTypeId}
           )`;
-          console.log(q3);
+       
           const [result3] = await db.query(q3); 
           if (result3.affectedRows === 0) {
             results.push({ status: 'cart not found / Payment closed' });

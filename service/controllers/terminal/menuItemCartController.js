@@ -1,6 +1,6 @@
 const db = require('../../config/db');
 const { headerUserId, mapUpdateByName, today, sanitizeText } = require('../../helpers/global');
-const { scUpdate, taxUpdate, discountMaxPerItem, scTaxUpdate2, summary } = require('../../helpers/bill');
+const { scUpdate, taxUpdate, discountMaxPerItem, scTaxUpdate2, summary,discountMaxAmountByPercent } = require('../../helpers/bill');
 
 const { logger } = require('./userLogController');
 
@@ -245,8 +245,9 @@ exports.updateQty = async (req, res) => {
          }
       }
 
+      await discountMaxAmountByPercent(cartId);
       await discountMaxPerItem(cartId);
-      await scTaxUpdate2(cartId);
+      await scTaxUpdate2(cartId);``
 
 
       res.status(201).json({

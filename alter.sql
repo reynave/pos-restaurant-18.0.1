@@ -94,3 +94,7 @@ ENGINE=InnoDB
 
 ALTER TABLE `printer`
 	ADD COLUMN `printerId2` TINYINT NOT NULL DEFAULT 0 AFTER `port`;
+
+
+ALTER TABLE `print_queue`
+	ADD COLUMN `printerId2` SMALLINT(6) NOT NULL DEFAULT '0' AFTER `printerId`;

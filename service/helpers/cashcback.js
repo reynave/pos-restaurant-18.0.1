@@ -16,7 +16,7 @@ async function cashback(cartId = '', line=33, whereCardPayment = '') {
       JOIN cashback AS b ON b.id = c.cashbackId 
       WHERE c.presence = 1 AND c.cartId = '${cartId}' ${where}
     `;
-    console.log(q);
+   
   const [cashbackData] = await db.query(q);
 
   
