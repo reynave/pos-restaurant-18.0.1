@@ -23,11 +23,11 @@
 {{/if}} 
 
 {{#each data.cart}}
-{{formatLine (concat this.total "X " this.name) (formatCurrency this.totalAmount) line}}
+{{formatLine (concat this.total "X " this.name) (formatCurrency this.totalAmount) 33}}
     {{#if this.modifier}}
         {{#each this.modifier}}
             {{#if (eq this.type "MODIFIER")}}
-{{formatLine (concat "   + " this.descl) (formatCurrency this.price) line}}
+{{formatLine (concat "   + " this.descl) (formatCurrency this.price) 33}}
             {{/if}}
         {{/each}}
     {{/if}}
@@ -36,18 +36,18 @@
 {{formatLine " ITEM TOTAL" (formatCurrency data.itemTotal) line}}
 {{#if data.subgroupDiscount}}
     {{#each data.subgroupDiscount}}
-{{formatLine (concat "   " this.note) (formatCurrency (concat "-" this.totalAmount)) line}}
+{{formatLine (concat "   " this.note) (formatCurrency (concat "-" this.totalAmount)) 33}}
     {{/each}}  
 {{/if}}
 {{formatLine " SUB TOTAL" (formatCurrency data.subTotal) line}} 
 {{#if data.scGroup}}
     {{#each data.scGroup}}
-{{formatLine (concat "   " this.note) (formatCurrency this.totalAmount) line}}
+{{formatLine (concat "   " this.note) (formatCurrency this.totalAmount) 33}}
     {{/each}} 
 {{/if}}
 {{#if data.taxGroup}}
     {{#each data.taxGroup}}
-{{formatLine (concat "   " this.note) (formatCurrency this.totalAmount) line}}
+{{formatLine (concat "   " this.note) (formatCurrency this.totalAmount) 33}}
     {{/each}}
 {{/if}}
 {{formatLine " TOTAL" (formatCurrency data.total) line}}
