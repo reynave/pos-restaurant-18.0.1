@@ -1,6 +1,8 @@
+const db = require('../../config/db');
+const { today, formatDateOnly, headerUserId, formatDateTime } = require('../../helpers/global');
+
 const path = require('path');
 const fs = require('fs');
-const { formatDateTime } = require('../../helpers/global');
 const winston = require('winston');
 const csv = require('csv-parser'); // npm install csv-parser
 const getTodayDate = () => new Date().toISOString().split('T')[0];
@@ -23,6 +25,40 @@ const logger = winston.createLogger({
     ]
 });
 
+exports.inputLog = async (req, res) => {
+    const log = req.body;
+ 
+
+    try {
+
+
+        const timestamp = Math.floor(new Date().getTime()/1000.0);
+
+        const q3 = `INSERT INTO 
+            logs(
+               timestamp, actionDate, bill, action, actionBy, actionId, 
+               dailyCheckId, actionRelated, terminalId, outletId, url)
+            VALUES (
+            '${timestamp}', '${log.actionDate}', '${log.bill}', '${log.action}', '${log.actionBy}', '${log.actionId}', 
+            '${log.dailyCheckId}', '${log.actionRelated}', '${log.terminalId}', '${log.outletId}', '${log.url}'
+            )`;
+
+        const [result3] = await db.query(q3);
+
+        if (result3.affectedRows === 0) {
+            results.push({ status: 'cart not found / Payment closed' });
+        } else {
+            results.push({ status: 'cart changePayment payment updated' });
+        }
+
+        res.json({ status: 'ok', message: 'Log saved' });
+    } catch (err) {
+        console.error('Error saving log:', err);
+        res.status(500).json({ status: 'error', message: 'Failed to save log' });
+    }
+
+};
+
 exports.userLogIndex = (req, res) => {
 
     const log = req.body;
@@ -33,8 +69,25 @@ exports.userLogIndex = (req, res) => {
     res.json({ status: 'ok', message: 'Log saved' });
 };
 
+exports.getLog = async (req, res) => {
+    const startDate = req.query.startDate || '1970-01-01'; // Default to earliest date if not provided
+    const endDate = req.query.endDate || new Date().toISOString().split('T')[0]; // Default to today if not provided
 
-exports.getLog = (req, res) => {
+    const q = `SELECT *, DATE_FORMAT(actionDate, '%Y-%m-%d %H:%i:%s') as actionDate FROM logs 
+    WHERE DATE(actionDate) BETWEEN ? AND ? 
+    ORDER BY timestamp 
+    ASC limit 1000`;
+
+    try {
+        const [results] = await db.query(q, [startDate, endDate]);
+        res.json({ log: results });
+    } catch (err) {
+        console.error('Error fetching logs:', err);
+        res.status(500).json({ error: 'Failed to fetch logs' });
+    }
+};
+
+exports.getLog_DEL = (req, res) => {
     const date = req.query.date;
 
     const filePath = path.join(__dirname, './../../public/userLog', date + '.csv');
