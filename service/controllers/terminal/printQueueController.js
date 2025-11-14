@@ -87,8 +87,9 @@ exports.fnReprint = async (req, res) => {
     const id = item['id']; 
 
     const [result] = await db.query(`
-        UPDATE print_queue SET  
+        UPDATE print_queue SET   
           status = 0,
+          status2 = 0,
           updateDate = '${today()}'
         WHERE id = ${id}
     `);
@@ -121,6 +122,7 @@ exports.fnRushPrint = async (req, res) => {
     const [result] = await db.query(`
         UPDATE print_queue SET  
           status = 0,
+          status2 = 0,
           rushPrinting = 1,
           updateDate = '${today()}'
         WHERE id = ${id}

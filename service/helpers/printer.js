@@ -186,7 +186,8 @@ async function printQueueInternal(db, sendOrder, userId) {
           qty : row['qty'],
           descs: row['descs'],
           modifier: row['modifier'],
-          printerId : rexv['id'],
+          printerId : rexv['id'],  
+          printerId2 : rexv['printerId2'],
           printerName : rexv['name'],
           ipAddress : rexv['ipAddress'],
           port : rexv['port']
@@ -197,14 +198,17 @@ async function printQueueInternal(db, sendOrder, userId) {
             INSERT INTO print_queue (
                 dailyCheckId, cartId,  so, 
                 cartItemId,
-                message,  printerId, status, 
+                message,  printerId, 
+                printerId2, status, 
+                
                 inputDate, updateDate , menuId,
                 inputBy, updateBy
             ) 
           VALUES (
             '${items[0]['dailyCheckId']}', '${row['cartId']}', '${row['sendOrder']}', 
             '${row['cartItemId']}',
-            '${JSON.stringify(message)}',  '${rexv['id']}',  0,
+            '${JSON.stringify(message)}',  '${rexv['id']}', 
+            '${rexv['printerId2']}', 0,
             '${today()}', '${today()}', '${row['menuId']}',
              ${userId}, ${userId}
           )`;

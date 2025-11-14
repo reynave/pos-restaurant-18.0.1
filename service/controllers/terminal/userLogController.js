@@ -27,7 +27,7 @@ const logger = winston.createLogger({
 
 exports.inputLog = async (req, res) => {
     const log = req.body;
- 
+    const results = [];
 
     try {
 
@@ -46,9 +46,9 @@ exports.inputLog = async (req, res) => {
         const [result3] = await db.query(q3);
 
         if (result3.affectedRows === 0) {
-            results.push({ status: 'cart not found / Payment closed' });
+            results.push({ status: 'update Logs '+ log.action+' failed' });
         } else {
-            results.push({ status: 'cart changePayment payment updated' });
+            results.push({ status: 'update Logs Success' });
         }
 
         res.json({ status: 'ok', message: 'Log saved' });
