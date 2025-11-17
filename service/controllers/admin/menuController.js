@@ -99,7 +99,7 @@ exports.getAllData = async (req, res) => {
       {
         name: 'Daily Schedule', href: 'dailySchedule', icon: '<i class="bi bi-calendar-week"></i>',
       },
-   
+
       {
         name: 'Discount', href: 'discount', icon: '<i class="bi bi-percent"></i>',
         children: [
@@ -131,8 +131,11 @@ exports.getAllData = async (req, res) => {
 
         ]
       },
-         {
+      {
         name: 'Cashback', href: 'cashback', icon: '<i class="bi bi-gift"></i>',
+      },
+      {
+        name: 'User Interface', href: 'ux', icon: '<i class="bi bi-window"></i>',
       },
 
     ];
@@ -189,13 +192,123 @@ exports.getAllData = async (req, res) => {
 
       outletTab: outletTab,
       reportTab: reportTab,
-      patch : packageJson.version
+      patch: packageJson.version
     }
 
     res.json(data);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Database error' });
+  }
+};
+
+exports.uxFunction = async (req, res) => {
+  try {
+
+    
+
+    const [items] = await db.query(
+      `Select id, name, pos2sorting as 'sorting', pos2Status as 'status', pos2Class as 'class' from ux order by pos2Sorting ASC`,
+    );
+      
+    const data = { 
+      items: items, 
+    }
+
+    res.json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+};
+exports.uxFunctionSaveOrder = async (req, res) => {
+  // const { id, name, position, email } = req.body;
+  const data = req.body['order'];
+  console.log(data);
+  // res.json({
+  //   body: req.body, 
+  // });
+
+  if (!Array.isArray(data) || data.length === 0) {
+    return res.status(400).json({ error: 'Request body should be a non-empty array' });
+  }
+
+  const results = [];
+
+  try {
+    let i = 0;
+    for (const emp of data) {
+      const id  = emp; 
+      if (!id) {
+        results.push({ id, status: 'failed', reason: 'Missing fields' });
+        continue;
+      }
+      i++;
+      const [result] = await db.query(
+        `UPDATE ux SET 
+          pos2Sorting = '${i}'
+        WHERE id = ${id}`,
+      );  
+      if (result.affectedRows === 0) {
+        results.push({ id, status: 'not found' });
+      } else {
+        results.push({ id, status: 'updated' });
+      }
+    }
+
+    res.json({
+      message: 'Batch update completed',
+      results: results
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database update error', details: err.message });
+  }
+};
+exports.uxFunctionStatus = async (req, res) => {
+  // const { id, name, position, email } = req.body;
+  const data = req.body['items'];
+  console.log(data);
+  // res.json({
+  //   body: req.body, 
+  // });
+
+  if (!Array.isArray(data) || data.length === 0) {
+    return res.status(400).json({ error: 'Request body should be a non-empty array' });
+  }
+
+  const results = [];
+
+  try {
+    let i = 0;
+    for (const emp of data) {
+      const { id, status, class: className } = emp; 
+      console.log(id, status);
+      if (!id) {
+        results.push({ id, status: 'failed', reason: 'Missing fields' });
+        continue;
+      }
+      i++;
+      const [result] = await db.query(
+        `UPDATE ux SET 
+          pos2Status = '${status}',
+          pos2Class  = '${className}'
+        WHERE id = ${id}`,
+      );  
+      if (result.affectedRows === 0) {
+        results.push({ id, status: 'not found' });
+      } else {
+        results.push({ id, status: 'updated' });
+      }
+    }
+
+    res.json({
+      message: 'Batch update completed',
+      results: results
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database update error', details: err.message });
   }
 };
 
@@ -229,56 +342,7 @@ exports.postCreate = async (req, res) => {
   }
 };
 
-exports.postUpdate = async (req, res) => {
-  // const { id, name, position, email } = req.body;
-  const data = req.body;
-  console.log(data);
-  // res.json({
-  //   body: req.body, 
-  // });
 
-  if (!Array.isArray(data) || data.length === 0) {
-    return res.status(400).json({ error: 'Request body should be a non-empty array' });
-  }
-
-  const results = [];
-
-  try {
-    for (const emp of data) {
-      const { cashid } = emp;
-      const id = cashid;
-      if (!id) {
-        results.push({ id, status: 'failed', reason: 'Missing fields' });
-        continue;
-      }
-
-      const [result] = await db.query(
-        `UPDATE check_cash_type SET 
-          desc1 = '${emp['desc1']}',   
-          value = '${emp['value']}',    
-          
-          updateDate = '${today()}'
-
-        WHERE cashid = ${id}`,
-      );
-
-
-      if (result.affectedRows === 0) {
-        results.push({ id, status: 'not found' });
-      } else {
-        results.push({ id, status: 'updated' });
-      }
-    }
-
-    res.json({
-      message: 'Batch update completed',
-      results: results
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Database update error', details: err.message });
-  }
-};
 
 exports.postDelete = async (req, res) => {
   // const { id, name, position, email } = req.body;
