@@ -4,6 +4,7 @@ const employee = require('./../../controllers/admin/general/employeeController')
 const employeeAuthLevel = require('./../../controllers/admin/general/employeeAuthLevelController');
 const employeeDept = require('./../../controllers/admin/general/employeeDeptController');
 const employeeOrderLevel = require('./../../controllers/admin/general/employeeOrderLevelController');
+const a = require('./../../controllers/admin/general/employeeAccessRightController');
 
 router.get('/', employee.getAllData);
 router.get('/select', employee.getSelect); 
@@ -17,6 +18,13 @@ router.get('/authLevel/', employeeAuthLevel.getAllData);
 router.post('/authLevel/update', employeeAuthLevel.postUpdate);
 router.post('/authLevel/create', employeeAuthLevel.postCreate);
 router.post('/authLevel/delete', employeeAuthLevel.postDelete);
+
+// employee_auth_level
+router.get('/accessRight/', a.getAllData); 
+router.post('/accessRight/update', a.postUpdate);
+router.post('/accessRight/create', a.postCreate);
+router.post('/accessRight/delete', a.postDelete); 
+
 
 // employeeDept
 router.get('/dept/', employeeDept.getAllData); 
