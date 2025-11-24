@@ -179,3 +179,24 @@ exports.cashDrawer = async (req, res) => {
     res.status(500).json({ success: false, message: 'Failed to open cash drawer', error: err.message });
   }
 };
+
+// buatkan funciton view printer darit teble printer dan render ke html dengan ejs
+exports.viewPrinters = async (req, res) => {
+  try {
+    const q = `SELECT g.name AS 'group', 
+            p.id, p.name, p.printerTypeCon, p.ipAddress, p.port, 
+            p2.id AS id2, p2.name AS 'name2', p2.printerTypeCon AS printerTypeCon2, p2.ipAddress AS 'ipAddress2',
+            p2.port AS 'port2'
+            FROM printer AS p
+            JOIN (SELECT m.printerGroupId FROM menu AS m
+            GROUP BY m.printerGroupId) AS t1 ON t1.printerGroupId = p.printerGroupId
+            LEFT JOIN printer AS p2 ON p2.id = p.printerId2
+            JOIN printer_group AS g ON  g.id = p.printerGroupId`;
+
+    const [printers] = await db.query(q);  
+    res.json(printers);
+  } catch (err) {
+    console.error('View printers error:', err);
+    res.status(500).send('Failed to load printers');
+  }
+};
