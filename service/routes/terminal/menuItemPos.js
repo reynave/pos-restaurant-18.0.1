@@ -35,6 +35,8 @@ router.post('/exitWithoutOrder', menuItemPos.exitWithoutOrder);
 router.post('/voidTransacton', menuItemPos.voidTransacton);
 router.post('/updateCover', menuItemPos.updateCover);
 
+router.post('/voidTransaction', menuItemFunc.voidTransaction);
+
 
 router.get('/getModifier', menuItemPos.getModifier);
 router.get('/cartDetail', menuItemPos.cartDetail);
@@ -63,6 +65,9 @@ router.post('/voidItemSo', menuItemPos.voidItemSo);
 
 router.get('/tableChecker', menuItemFunc.tableChecker);
 router.get('/tableCheckerDetail', menuItemFunc.tableCheckerDetail);
+
+
+
 
 
 module.exports = router;

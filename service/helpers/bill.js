@@ -1201,7 +1201,7 @@ async function discountMaxAmountByPercent(cartId = '') {
             SET credit = ${row.discountAmount}
          WHERE id = ${row.id}
          `;
-         console.log(updateQuery);
+         //console.log(updateQuery);
          await db.query(updateQuery);
       }
 
@@ -1221,7 +1221,7 @@ async function discountMaxAmountByPercent(cartId = '') {
       WHERE d.discRate > 0 AND d.maxDiscount > 0  
       AND t1.totalDiscount > d.maxDiscount+1
       `;
-         console.log(a);
+     //    console.log(a);
          const [queryA] = await db.query(a);
          for (const rec of queryA) {
             const d = `SELECT  a.discountId, SUM( i.qty) AS 'qty'
@@ -1233,7 +1233,7 @@ async function discountMaxAmountByPercent(cartId = '') {
             GROUP BY a.discountId`;
             const [queryD] = await db.query(d);
             let qtyTotal = parseInt(queryD[0]['qty']) || 0;
-              console.log(d,queryD, qtyTotal);
+           //   console.log(d,queryD, qtyTotal);
 
             // select cart_item_discount 
             const j = ` 
@@ -1489,6 +1489,8 @@ async function scTaxUpdate2(cartId = '') {
       const summaryFunction = await summary(cartId);
 
       for (const rec of summaryFunction) {
+
+         // SC UPDATE
          const s = `
             SELECT s.* , i.qty
             FROM cart_item_sc AS s
@@ -1514,7 +1516,7 @@ async function scTaxUpdate2(cartId = '') {
          }
 
 
-
+         // TAX UPDATE
          const t = `
             SELECT s.* , i.qty
             FROM cart_item_tax AS s
@@ -1534,9 +1536,11 @@ async function scTaxUpdate2(cartId = '') {
                AND s.presence = 1 AND s.void = 0;
             `;
             const [scTotalData] = await db.query(s);
-            let scTotal = parseInt(scTotalData[0]['scTotal'] || 0) / taxRow['qty'];
+            let scTotal = parseInt(scTotalData[0]['scTotal'] || 0);
+          //  console.log(taxRow,  scTotal, scTotalData[0]['scTotal'], taxRow['qty']);
             let newTaxAmount = Math.round(((rec.itemTotal / taxRow['qty']) + scTotal) * (taxRow['rate'] / 100));
-
+          //   console.log('newTaxAmount : ', rec.itemTotal, '/', taxRow['qty'],'+' , scTotal, '*', taxRow['rate']);
+          //  console.log('newTaxAmount :', newTaxAmount);
             const u = `
                UPDATE cart_item_tax SET 
                debit = ${newTaxAmount < 0 ? 0 : newTaxAmount},

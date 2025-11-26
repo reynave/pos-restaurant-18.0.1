@@ -12,7 +12,7 @@ module.exports = (Handlebars) => {
 
     // Helper format currency (contoh format Indonesia)
     Handlebars.registerHelper("formatCurrency", function (value) {
-        return Number(value).toLocaleString("id-ID");
+        return Number(value).toLocaleString("en-EN");
     });
 
     // Helper format line kiri-kanan

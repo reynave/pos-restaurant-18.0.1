@@ -247,7 +247,7 @@ exports.updateQty = async (req, res) => {
 
       await discountMaxAmountByPercent(cartId);
       await discountMaxPerItem(cartId);
-      await scTaxUpdate2(cartId);``
+      await scTaxUpdate2(cartId);
 
 
       res.status(201).json({
@@ -582,12 +582,12 @@ exports.addDiscountGroup = async (req, res) => {
       }
 
 
-      console.log('summaryArray', summaryArray, totalItem);
+      //console.log('summaryArray', summaryArray, totalItem);
       for (const emp of cart) {
          const { id, checkBox, discountGroupId, name } = emp;
 
          if (checkBox == 1) {
-            console.log('totalItem', totalItem, 'with requiredItemTotal:', discountGroup['requiredItemTotal']);
+           // console.log('totalItem', totalItem, 'with requiredItemTotal:', discountGroup['requiredItemTotal']);
             let allowAdd = false;
 
             if (discountGroup['discountGroupId'] == discountGroupId) {
@@ -602,7 +602,7 @@ exports.addDiscountGroup = async (req, res) => {
 
             if (totalItem < discountGroup['requiredItemTotal']) {
                allowAdd = false;
-               console.log('allowAdd set to true');
+             //  console.log('allowAdd set to true');
                results.push({ status: `ERROR : Discount ${discountGroup['name']} required ${totalItem} greater than ${discountGroup['requiredItemTotal']} ` });
             }
 

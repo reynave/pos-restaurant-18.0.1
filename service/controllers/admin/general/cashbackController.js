@@ -50,11 +50,11 @@ exports.detail = async (req, res) => {
     }));
 
      
-    const [cashback_outlet] = await db.query(`
+    const [selectOutlet] = await db.query(`
       SELECT * 
-      FROM cashback_outlet  
-      WHERE cashbackId = ${id} AND
-      presence =1
+      FROM outlet   
+      WHERE  presence =1
+      order by name asc
     `);
 
     
@@ -68,7 +68,7 @@ exports.detail = async (req, res) => {
 
     const data = {
       items: formattedRows[0], 
-      outlet: cashback_outlet,
+      selectOutlet: selectOutlet,
       payment: cashback_payment,
     }
 
@@ -172,22 +172,22 @@ exports.updateDetail = async (req, res) => {
   const results = [];
 
   try {
-    const [result] = await db.query(
-      `UPDATE cashback SET 
+    const q =  `UPDATE cashback SET 
         name = '${model['name']}',    
         description = '${model['description']}', 
         earningStartDate = '${date['earningStartDate']}', 
         earningEndDate = '${date['earningEndDate']}', 
         redeemStartDate = '${date['redeemStartDate']}', 
-        redeemEndDate = '${date['redeemEndDate']}', 
+        redeemEndDate = '${date['redeemEndDate']}',  
         updateDate = '${today()}',
+        outletId =  ${model['outletId']}, 
+        
         status = '${model['status']}',
         x1 = '${model['x1']}',
         x2 = '${model['x2']}'
-      WHERE id = ${id}`,
-    );
-
-
+      WHERE id = ${id}`;
+    const [result] = await db.query(q);
+   
     if (result.affectedRows === 0) {
       results.push({ id, status: 'not found' });
     } else {
@@ -225,11 +225,10 @@ exports.updateAmount = async (req, res) => {
       }
 
       const [result] = await db.query(
-        `UPDATE cashback_amount SET 
-          earnMin = ${emp['earnMin']},   
-          earnMax = ${emp['earnMax']},     
-          cashbackMin = ${emp['cashbackMin']},     
+        `UPDATE cashback_amount SET   
+          earnMax = ${emp['earnMax']},         
           cashbackMax = ${emp['cashbackMax']},     
+             redeemMinAmount = ${emp['redeemMinAmount']},
           status = ${emp['status']},     
           updateDate = '${today()}'   
         WHERE id = ${id}`,

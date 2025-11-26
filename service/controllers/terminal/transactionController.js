@@ -1,13 +1,13 @@
 const db = require('../../config/db');
 const { today, formatDateOnly, headerUserId } = require('../../helpers/global');
 const { cart } = require('../../helpers/bill');
- 
+
 exports.getAllData = async (req, res) => {
   const outletId = req.query.outletId;
   const dailyCheckId = req.query.dailyCheckId;
   const startDate = req.query.startDate || '';
   const endDate = req.query.endDate || '';
-  try { 
+  try {
     const q = `
       SELECT 
         c.id, c.startDate, c.endDate, c.outletId, c.cover,  t.tableName,
@@ -17,10 +17,10 @@ exports.getAllData = async (req, res) => {
       LEFT JOIN outlet_table_map AS t ON  t.id = c.outletTableMapId
       LEFT JOIN outlet_table_map_status AS s ON s.id = c.tableMapStatusId
       WHERE c.presence = 1  AND c.close = 1 AND s.id = 20
-      ${startDate != '' ? '--':''} AND c.dailyCheckId = '${dailyCheckId}'
-      ${startDate != '' ? '':'--'}    AND (c.startDate >= '${startDate}' AND c.endDate <= '${endDate} 23:59:55');
+      ${startDate != '' ? '--' : ''} AND c.dailyCheckId = '${dailyCheckId}'
+      ${startDate != '' ? '' : '--'}    AND (c.startDate >= '${startDate}' AND c.endDate <= '${endDate} 23:59:55');
     `;
- 
+
     const [formattedRows] = await db.query(q);
 
     for (const row of formattedRows) {
@@ -35,9 +35,9 @@ exports.getAllData = async (req, res) => {
       const [paymentType] = await db.query(s);
       row.paymentType = paymentType;
 
-    } 
-    res.json({ 
-      items: formattedRows, 
+    }
+    res.json({
+      items: formattedRows,
     });
 
   } catch (err) {
@@ -147,16 +147,16 @@ exports.detail = async (req, res) => {
       const [cartItemModifier] = await db.query(q2);
 
 
-      cartItemModifier.forEach(element => { 
-         items.push(element);
+      cartItemModifier.forEach(element => {
+        items.push(element);
       });
-     
+
     }
 
 
     res.json({
       error: false,
-      items: items, 
+      items: items,
     });
 
   } catch (err) {
@@ -193,9 +193,9 @@ exports.getCopyBill = async (req, res) => {
     res.status(500).json({ error: 'Database error' });
   }
 };
- 
+
 exports.addCopyBill = async (req, res) => {
-    const userId = headerUserId(req); 
+  const userId = headerUserId(req);
   const cartId = req.body['id'];
   const results = [];
 
@@ -229,14 +229,32 @@ exports.addCopyBill = async (req, res) => {
 };
 
 
-exports.void = async (req, res) => {
-  const userId = headerUserId(req); 
+exports.voidPaid = async (req, res) => {
+  const userId = headerUserId(req);
   const cartId = req.body['id'];
+  const reason = req.body['reason'];
   const results = [];
 
   try {
+    const q1 = `INSERT INTO cart_payment_void_reason (
+            cartId,  reason, presence, 
+            inputDate, updateDate,  
+            inputBy, updateBy
+        )
+        VALUES (
+          '${cartId}', '${reason}', 1,
+          '${today()}', '${today()}', 
+          ${userId}, ${userId}
+        )`;
+    const [result1] = await db.query(q1);
+    if (result1.affectedRows === 0) {
+      results.push({ status: 'not found' });
+    }
+    else {
+      results.push({ status: 'INSERT VOID REASON inserted' });
+    }
 
-     const q = `UPDATE cart
+    const q = `UPDATE cart
         SET
           printBill = 0,
           paymentId = '',
@@ -245,8 +263,8 @@ exports.void = async (req, res) => {
           updateBy = ${userId},
           updateDate = '${today()}'
       WHERE id = '${cartId}' `;
-    const [result] = await db.query(q); 
- 
+    const [result] = await db.query(q);
+
     if (result.affectedRows === 0) {
       results.push({ cartId, status: 'void not found' });
     } else {
@@ -254,15 +272,15 @@ exports.void = async (req, res) => {
     }
 
 
-     const q3 = `UPDATE cart_payment
+    const q3 = `UPDATE cart_payment
         SET
           presence = 0,
           void = 1, 
           updateBy = ${userId},
           updateDate = '${today()}'
       WHERE cartId = '${cartId}' `;
-    const [result3] = await db.query(q3); 
- 
+    const [result3] = await db.query(q3);
+
     if (result3.affectedRows === 0) {
       results.push({ cartId, status: 'void not found' });
     } else {

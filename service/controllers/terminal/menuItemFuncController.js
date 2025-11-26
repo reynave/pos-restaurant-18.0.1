@@ -2,7 +2,7 @@ const db = require('../../config/db');
 //const { headerUserId } = require('../../helpers/global');
 //const { headerUserId } = require('../../helpers/global');
 const { sendOrder } = require('../../helpers/sendOrder');
-const {  formatDateTime } = require('../../helpers/global');
+const { formatDateTime, headerUserId, today } = require('../../helpers/global');
 
 const { logger } = require('./userLogController');
 const fs = require('fs');
@@ -50,7 +50,7 @@ exports.tableChecker = async (req, res) => {
 
 
 exports.tableCheckerDetail = async (req, res) => {
-    const so = req.query.so; 
+    const so = req.query.so;
     const api = req.query.api == 'true' ? true : false;
     const templatePath = path.join(__dirname, '../../public/template/tableChecker.hbs');
     try {
@@ -69,7 +69,7 @@ exports.tableCheckerDetail = async (req, res) => {
             JOIN outlet_table_map AS t ON t.id = c.outletTableMapId
             WHERE c.presence = 1 AND  c.id = '${cartId[0].cartId}'
         `
-   
+
         const [transactionq] = await db.query(qq);
 
         const transaction = transactionq.map(row => ({
@@ -102,3 +102,86 @@ exports.tableCheckerDetail = async (req, res) => {
         res.status(500).send('Gagal render HTML');
     }
 }
+
+exports.voidTransaction = async (req, res) => {
+    // const { id, name, position, email } = req.body;
+    const results = [];
+    const userId = headerUserId(req);
+    const cartId = req.body['id'];
+    const reason = req.body['reason'];
+
+    try {
+        const q1 = `INSERT INTO cart_void_reason (
+            cartId,  reason, presence, 
+            inputDate, updateDate,  
+            inputBy, updateBy
+        )
+        VALUES (
+          '${cartId}', '${reason}', 1,
+          '${today()}', '${today()}', 
+          ${userId}, ${userId}
+        )`;
+        const [result1] = await db.query(q1);
+        if (result1.affectedRows === 0) {
+            results.push({ status: 'not found' });
+        }
+        else {
+            results.push({ status: 'INSERT VOID REASON inserted' });
+        }
+
+
+        const a = `
+      UPDATE cart SET
+        void = 1,
+        close = 1,
+        tableMapStatusId = 41,
+        endDate =  '${today()}', 
+        updateDate = '${today()}',
+        updateBy = ${userId}
+      WHERE id = '${cartId}' `;
+        const [resulta] = await db.query(a);
+
+        if (resulta.affectedRows === 0) {
+            results.push({ cartId, status: 'not found', });
+        } else {
+            results.push({ cartId, status: 'cart updated', });
+        }
+
+        const tablesVoid = [
+            'cart_item',
+            'cart_item_modifier',
+            'cart_item_discount',
+            'cart_item_sc',
+            'cart_item_tax',
+        ];
+        for (const table of tablesVoid) {
+            const q = `
+      UPDATE ${table} SET
+        presence = 0,
+        void  = 1, 
+        updateDate = '${today()}',
+        updateBy = ${userId}
+      WHERE cartId = '${cartId}'  `;
+            const [result] = await db.query(q);
+            if (result.affectedRows === 0) {
+                results.push({ cartId, status: 'not found', });
+            } else {
+                results.push({ cartId, status: 'cart_item updated', });
+            }
+        }
+
+
+
+        res.status(201).json({
+            error: false,
+            results: results,
+            message: 'cart_item close Order',
+        });
+
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database update error', details: err.message });
+    }
+};
+ 

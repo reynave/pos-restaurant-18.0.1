@@ -1,10 +1,10 @@
 const db = require('../../config/db');
-const { headerUserId, today, 
-  convertCustomDateTime, formatDateTime, parseTimeString, addTime,} = require('../../helpers/global');
- 
+const { headerUserId, today,
+  convertCustomDateTime, formatDateTime, parseTimeString, addTime, } = require('../../helpers/global');
+
 
 const { autoNumber } = require('../../helpers/autoNumber');
-const { taxScUpdate,   taxUpdate , discountMaxPerItem, scTaxUpdate2 } = require('../../helpers/bill');
+const { taxScUpdate, taxUpdate, discountMaxPerItem, scTaxUpdate2, scUpdate } = require('../../helpers/bill');
 const { printQueueInternal } = require('../../helpers/printer');
 const { csvFile, txtTableChecker } = require('../../helpers/exportToFile');
 
@@ -284,13 +284,13 @@ exports.lookUpMenu = async (req, res) => {
           m.presence = 1 and m.menuLookupId = ${menuLookupId} and m.menuLookupId != 0 and 
           m.startDate < NOW() AND m.endDate > NOW()
     `;
- 
+
 
     const [itemsRow] = await db.query(q);
 
 
     const items = [];
- 
+
     for (const row of itemsRow) {
       let journal = [];
       row['price'] = parseInt(row['price']) || 0;
@@ -299,17 +299,17 @@ exports.lookUpMenu = async (req, res) => {
       }
       let scAmount = 0;
       let taxAmount = 0;
-      let price  = row['price'];
+      let price = row['price'];
       let originPriceData = originalPrice(row['price'], row['scRate'] / 100, row['taxRate'] / 100);
-      
-      
-      if (row['scStatus'] == 1) { 
+
+
+      if (row['scStatus'] == 1) {
         scAmount = row['price'] * (row['scRate'] / 100);
-      } 
+      }
       else if (row['scStatus'] == 2) {
         scAmount = originPriceData['sc'];
         price = price - originPriceData['sc'];
-      }  
+      }
       else {
         scAmount = 0;
       }
@@ -322,8 +322,8 @@ exports.lookUpMenu = async (req, res) => {
       }
       else if (row['taxStatus'] == 2) {
         taxAmount = originPriceData['ppn'];
-         price = originPriceData['hargaAwal'];
-      }  
+        price = originPriceData['hargaAwal'];
+      }
       else {
         taxAmount = 0;
       }
@@ -348,10 +348,10 @@ exports.lookUpMenu = async (req, res) => {
 
       items.push({
         ...row,
-        price :  price,
+        price: price,
         id: row['id'],
         name: row['name'],
-     
+
         journal: journal,
       });
 
@@ -580,78 +580,54 @@ exports.selectMenuSet = async (req, res) => {
 }
 
 exports.addToCart = async (req, res) => {
-  const menu = req.body['menu'];
+  let menu = req.body['menu'];
   const cartId = req.body['id'];
+  const price = req.body['price'] || 0;
   const userId = headerUserId(req);
   let inputDate = today();
   const results = [];
   const openPrice = req.body['openPrice'] || 0;
 
-  // if (openPrice == 1) {
-  //   menu['price'] = parseInt(req.body['price']) || 0;
-
-  //   menu['journal'] = [];
-
-  //   const q = `
-  //      SELECT 
-  //        m.id, m.name, ${menu['price']} as 'price', m.qty, m.menuSet, m.menuSetMinQty,
-  //        m.menuTaxScId,
-  //        t.desc, t.taxRate, t.taxNote, t.taxStatus, t.scTaxIncluded, m.openPrice,
-  //          CASE 
-  //            WHEN t.taxStatus = 2 THEN ${menu['price']} - (${menu['price']} / (1+ (t.taxRate/100) ))
-  //            WHEN t.taxStatus = 1 THEN ${menu['price']}*(t.taxRate/100)
-  //             ELSE  0
-  //           END AS 'taxAmount',  
-  //         t.scRate, t.scNote, t.scStatus,
-  //           CASE 
-  //             WHEN t.scStatus = 2 THEN ${menu['price']} - (${menu['price']} / (1+ (t.scRate/100) ))
-  //             WHEN t.scStatus = 1 THEN ${menu['price']}*(t.scRate/100)
-  //             ELSE  0
-  //           END AS 'scAmount' ,
-  //             COALESCE(
-  //               (
-  //               SELECT SUM(ci.qty)
-  //               FROM cart_item ci
-  //               WHERE ci.presence = 1
-  //                   AND ci.adjustItemsId = m.adjustItemsId AND ci.menuId = m.id
-  //               ), 0
-  //           ) +
-  //           COALESCE(
-  //               (
-  //               SELECT SUM(cim.menuSetQty)
-  //               FROM cart_item_modifier cim
-  //               WHERE cim.presence = 1
-  //                   AND cim.menuSetadjustItemsId = m.adjustItemsId AND cim.menuSetmenuId = m.id
-  //               ), 0
-  //           ) AS usedQty
-  //       FROM menu AS m
-  //       LEFT JOIN menu_tax_sc AS t ON t.id = m.menuTaxScId
-  //       WHERE 
-  //         m.presence = 1 and m.id =  ${menu['id']}
-  //     `;
-  //   const [itemsRow] = await db.query(q);
-  //   menu['journal'].push({
-  //     status : itemsRow[0]['scStatus'],
-  //     table: 'cart_item_sc',
-  //     rate: itemsRow[0]['scRate'],
-  //     note: itemsRow[0]['scNote'],
-  //     debit: parseInt(itemsRow[0]['scAmount']),
-  //     credit: 0
-  //   });
-  //   menu['journal'].push({
-  //     status : itemsRow[0]['taxStatus'],
-  //     table: 'cart_item_tax',
-  //     rate: itemsRow[0]['taxRate'],
-  //     note: itemsRow[0]['taxNote'],
-  //     debit: (parseInt(itemsRow[0]['scAmount']) * (parseFloat(itemsRow[0]['taxRate']) / 100)) + parseInt(itemsRow[0]['taxAmount']),
-  //     credit: 0
-  //   });
-
-  // }
   try {
 
-    let q =
-      `INSERT INTO cart_item (presence, inputDate, updateDate, menuId, price, cartId,
+    if (openPrice == 1) {
+      menu['price'] = parseInt(price) || 0;
+      for (const row of menu['journal']) {
+        /*
+        journal example
+        {statusId: 1, table: "cart_item_sc", rate: 5, note: "S.C. 5%", debit: 500, credit: 0}
+        {statusId: 1, table: "cart_item_tax", rate: 10, note: "10% Tax ", debit: 1050, credit: 0}*/
+        if (row['table'] == 'cart_item_sc') {
+          let scAmount = 0;
+          if (row['statusId'] == 1) {
+            scAmount = menu['price'] * (row['rate'] / 100);
+            row['debit'] = parseInt(scAmount);
+          }
+          else if (row['statusId'] == 2) {
+            let originPriceData = originalPrice(menu['price'], row['rate'] / 100, 0);
+            scAmount = originPriceData['sc'];
+            row['debit'] = parseInt(scAmount);
+          }
+        }
+        if (row['table'] == 'cart_item_tax') {
+          let taxAmount = 0;
+          if (row['statusId'] == 1) {
+            taxAmount = menu['price'] * (row['rate'] / 100);
+            row['debit'] = parseInt(taxAmount);
+            if (menu['scStatus'] == 1) {
+              taxAmount = taxAmount + (menu['price'] * (menu['scRate'] / 100) * (row['rate'] / 100));
+              row['debit'] = parseInt(taxAmount);
+            }
+          }
+          else if (row['statusId'] == 2) {
+            let originPriceData = originalPrice(menu['price'], 0, row['rate'] / 100);
+            taxAmount = originPriceData['ppn'];
+            row['debit'] = parseInt(taxAmount);
+          }
+        }
+      }
+    }
+    const q = `INSERT INTO cart_item (presence, inputDate, updateDate, menuId, price, cartId,
       menuDepartmentId, menuCategoryId, adjustItemsId, inputBy, updateBy,
       debit, credit
       )
@@ -682,7 +658,7 @@ exports.addToCart = async (req, res) => {
           ${menu['menuTaxScId']}, ${row['rate']}, '${row['note']}',
           ${row['debit']}, ${row['credit']}, ${row['statusId']}
       )`;
-    
+
       const [result] = await db.query(q);
 
       if (result.affectedRows === 0) {
@@ -760,6 +736,12 @@ exports.addToCart = async (req, res) => {
       }
 
     }
+
+    let id = cartItemId;
+    // await scUpdate(id);
+    // await taxUpdate(id);
+
+
 
     const q1 = `
       UPDATE cart SET
@@ -1734,7 +1716,7 @@ exports.sendOrder = async (req, res) => {
               )`;
           await db.query(q12);
         }
-      } 
+      }
 
       cartId = insertId;
     }
@@ -1756,7 +1738,7 @@ exports.sendOrder = async (req, res) => {
       updateDate = '${today()}',
       updateBy = ${userId}
     WHERE cartId = ${cartId}  and presence = 1 and void = 0 and sendOrder = '' `;
-     const [result2] =  await db.query(q);
+    const [result2] = await db.query(q);
 
 
     const q4 = `
@@ -1791,7 +1773,7 @@ exports.sendOrder = async (req, res) => {
       updateDate = '${today()}',
       updateBy = ${userId}
     WHERE cartId = ${cartId}  and presence = 1 and void = 0 and sendOrder = ''`;
-   await db.query(q2);
+    await db.query(q2);
 
     if (result2.affectedRows !== 0) {
 
@@ -1913,7 +1895,7 @@ exports.exitWithoutOrder = async (req, res) => {
         DELETE FROM ${table}
         WHERE cartId = '${cartId}' and sendOrder = '';
       `;
-    
+
       await db.query(q2);
     }
 
