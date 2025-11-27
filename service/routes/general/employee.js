@@ -12,6 +12,7 @@ router.post('/update', employee.postUpdate);
 router.post('/create', employee.postCreate);
 router.post('/delete', employee.postDelete);
 router.post('/changePassword', employee.changePassword);
+router.post('/duplicate', employee.duplicate);
 
 // employee_auth_level
 router.get('/authLevel/', employeeAuthLevel.getAllData); 

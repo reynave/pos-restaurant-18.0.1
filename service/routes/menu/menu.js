@@ -36,7 +36,7 @@ router.post('/addMenuSet/', menuItem.addMenuSet);
 router.post('/updateMenuDetail/', menuItem.updateMenuDetail);
 router.post('/removeMenuSet/', menuItem.removeMenuSet);
 
-
+router.post('/item/duplicate', menuItem.duplicate);
 router.post('/item/update', menuItem.postUpdate);
 router.post('/item/create', menuItem.postCreate);
 router.post('/item/delete', menuItem.postDelete); 

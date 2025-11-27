@@ -24,7 +24,7 @@ exports.getAllData = async (req, res) => {
   try {
 
     const authlevelId = req.query.authlevelId == 'undefined' ? '' : req.query.authlevelId;
- // const filterDept = req.query.filterDept != '' ? " AND e.empdept = " + req.query.filterDept : '';
+    // const filterDept = req.query.filterDept != '' ? " AND e.empdept = " + req.query.filterDept : '';
     // const filterOrdLevel = req.query.filterOrdLevel != '' ? " AND e.ordlevel = " + req.query.filterOrdLevel : '';
 
     const q = `SELECT *, 0 as checkbox
@@ -78,7 +78,7 @@ exports.postCreate = async (req, res) => {
   const results = [];
   try {
 
-  const saltRounds = 4;
+    const saltRounds = 4;
     const salt = await bcrypt.genSalt(saltRounds);
     const hash = await bcrypt.hash(model['passwd'], salt);
 
@@ -217,6 +217,72 @@ exports.postDelete = async (req, res) => {
   }
 };
 
+exports.duplicate = async (req, res) => {
+  // const { id, name, position, email } = req.body;
+  const data = req.body;
+  console.log(data);
+  // res.json({
+  //   body: req.body, 
+  // });
+
+  if (!Array.isArray(data) || data.length === 0) {
+    return res.status(400).json({ error: 'Request body should be a non-empty array' });
+  }
+
+  const results = [];
+
+  try {
+    for (const emp of data) {
+      console.log(emp);
+      const { id, checkbox } = emp;
+
+      if (!id || !checkbox) {
+        results.push({ id, status: 'failed', reason: 'Missing fields' });
+        continue;
+      }
+
+      if (checkbox == 1) {
+        const randomId = Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000;
+
+        const [result] = await db.query(
+          `INSERT INTO employee (
+          presence, inputDate, username, 
+          hash, name, authlevelId, tel, contact, address,
+          birthday, dob, sex, socialid, email, empdept, 
+          ordlevel, disclevel, actdate, card, emptype, 
+          status, inputBy, updateDate, updateBy
+        )
+        VALUES ( 
+            1, '${today()}', '${randomId}',
+            '${emp['hash']}', '${emp['name']}', '${emp['authlevelId']}', '${emp['tel']}', '${emp['contact']}', '${emp['address']}',
+            '${emp['birthday']}', '${emp['dob']}', '${emp['sex']}', '${emp['socialid']}', '${emp['email']}', '${emp['empdept']}',
+            '${emp['ordlevel']}', '${emp['disclevel']}', '${emp['actdate']}', '${emp['card']}', '${emp['emptype']}',
+            '${emp['status']}', '${emp['inputBy']}', '${emp['updateDate']}', '${emp['updateBy']}'
+          )`,
+        );
+
+
+        if (result.affectedRows === 0) {
+          results.push({ id, status: 'not found' });
+        } else {
+          results.push({ id, status: 'updated' });
+          const newId = result.insertId+(Math.floor(Math.random() * (99 - 10 + 1)) + 10).toString();
+          await db.query(`UPDATE employee SET username = '${newId}' WHERE id = ${result.insertId}`);
+
+        }
+      }
+    }
+
+    res.json({
+      message: 'Batch update completed',
+      results: results
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database update error', details: err.message });
+  }
+};
+
 
 exports.changePassword = async (req, res) => {
   // const { id, name, position, email } = req.body;
@@ -228,7 +294,7 @@ exports.changePassword = async (req, res) => {
     const { id, passwd } = data;
     console.log(data);
 
-      const saltRounds = 4;
+    const saltRounds = 4;
     const salt = await bcrypt.genSalt(saltRounds);
     const hash = await bcrypt.hash(passwd, salt);
 

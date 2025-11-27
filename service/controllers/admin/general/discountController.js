@@ -106,7 +106,7 @@ exports.postUpdate = async (req, res) => {
           name = '${emp['name']}',   
           discRate = '${emp['discRate']}',   
           status = '${emp['status']}',   
-
+          requiredItemTotal = '${emp['requiredItemTotal']}',
           postDiscountSC = '${emp['postDiscountSC']}',   
           postDiscountTax = '${emp['postDiscountTax']}',   
           remark = '${emp['remark']}',   

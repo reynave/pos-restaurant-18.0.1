@@ -3,12 +3,12 @@ const { today, formatDateOnly } = require('../../../helpers/global');
 
 exports.getAllData = async (req, res) => {
 
-  const menuDepartmentId = req.query.departmentId == 'undefined' ? '' : req.query.departmentId; 
+  const menuDepartmentId = req.query.departmentId == 'undefined' ? '' : req.query.departmentId;
 
   try {
 
     const [rows] = await db.query(`
-     SELECT m.id, m.name, m.price1, m.price2, m.price3, m.price4, m.price5,
+     SELECT m.id, m.plu, m.name, m.price1, m.price2, m.price3, m.price4, m.price5,
       m.menuDepartmentId, m.menuCategoryId, m.menuClassId , m.menuSet, m.menuSetMinQty, l.name AS 'lookup', 
       l.id AS 'lookupId', m.printerGroupId,
       m.menuTaxScId, m.discountGroupId, m.modifierGroupId,  m.startDate, m.endDate, m.printerId,
@@ -61,7 +61,7 @@ exports.getMasterData = async (req, res) => {
       WHERE presence = 1 order by desc1 ASC
     `);
 
-     const [printerGroup] = await db.query(`
+    const [printerGroup] = await db.query(`
       SELECT id, name
       FROM printer_group  
       WHERE presence = 1 order by name ASC
@@ -102,7 +102,7 @@ exports.getMasterData = async (req, res) => {
       menuTaxSc: menuTaxSc,
       discountGroup: discountGroup,
       modifierGroup: modifierGroup,
-      printerGroup : printerGroup,
+      printerGroup: printerGroup,
     }
 
     res.json(data);
@@ -289,12 +289,13 @@ exports.postCreate = async (req, res) => {
   try {
 
     const [result] = await db.query(
-      `INSERT INTO menu (presence, inputDate, name ) 
-      VALUES (?, ?,?)`,
+      `INSERT INTO menu (presence, inputDate, name, plu ) 
+      VALUES (?, ?,? , ?)`,
       [
         1,
         inputDate,
-        model['desc1']
+        model['desc1'],
+        model['plu']
       ]
     );
 
@@ -340,7 +341,7 @@ exports.postUpdate = async (req, res) => {
            price3 = ${emp['price3']},  
            price4 = ${emp['price4']},  
            price5 = ${emp['price5']},  
-          
+          plu = '${emp['plu']}',
    printerId = ${emp['printerId']},  
             printerGroupId = ${emp['printerGroupId']},   
           menuDepartmentId = ${emp['menuDepartmentId']},  
@@ -405,6 +406,100 @@ exports.postDelete = async (req, res) => {
         results.push({ id, status: 'not found' });
       } else {
         results.push({ id, status: 'updated' });
+      }
+    }
+
+    res.json({
+      message: 'Batch update completed',
+      results: results
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database update error', details: err.message });
+  }
+};
+
+exports.duplicate = async (req, res) => {
+  // const { id, name, position, email } = req.body;
+  const data = req.body;
+
+  if (!Array.isArray(data) || data.length === 0) {
+    return res.status(400).json({ error: 'Request body should be a non-empty array' });
+  }
+
+  const results = [];
+
+  try {
+    for (const emp of data) {
+      const { id } = emp;
+
+
+      const [rows] = await db.query(`
+          SELECT * FROM menu WHERE id = ${id}   
+        `);
+
+      const q = `INSERT INTO menu (
+            presence, inputDate, plu, menuSet, menuSetMinQty, name, descm, descs, menuLookupId, 
+            startDate, endDate, discountGroupId, adjustItemsId, menuTaxScId, qty, sku, barcode, 
+            keyword, price1, price2, price3, price4, price5, specialPrice1, specialPrice2, 
+            specialPrice3, specialPrice4, specialPrice5, cost, printerId, printerGroupId, 
+            itemGroupId, orderLevelGroupId, menuDepartmentId, menuCategoryId, menuClassId, 
+            modifierGroupId, taxStatus, scStatus, openPrice, image, inputBy, updateBy
+          ) VALUES (
+            1, '${today()}', '${rows[0]['plu']}', '${rows[0]['menuSet']}', ${rows[0]['menuSetMinQty']}, 
+            '${rows[0]['name']}', '${rows[0]['descm']}', '${rows[0]['descs']}', ${rows[0]['menuLookupId']}, 
+            '${rows[0]['startDate']}', '${rows[0]['endDate']}', ${rows[0]['discountGroupId']}, 
+            '${rows[0]['adjustItemsId']}', ${rows[0]['menuTaxScId']}, ${rows[0]['qty']}, '${rows[0]['sku']}', 
+            '${rows[0]['barcode']}', '${rows[0]['keyword']}', ${rows[0]['price1']}, ${rows[0]['price2']}, 
+            ${rows[0]['price3']}, ${rows[0]['price4']}, ${rows[0]['price5']}, ${rows[0]['specialPrice1']}, 
+            ${rows[0]['specialPrice2']}, ${rows[0]['specialPrice3']}, ${rows[0]['specialPrice4']}, 
+            ${rows[0]['specialPrice5']}, ${rows[0]['cost']}, ${rows[0]['printerId']}, ${rows[0]['printerGroupId']}, 
+            '${rows[0]['itemGroupId']}', ${rows[0]['orderLevelGroupId']}, ${rows[0]['menuDepartmentId']}, 
+            ${rows[0]['menuCategoryId']}, ${rows[0]['menuClassId']}, ${rows[0]['modifierGroupId']}, 
+            '${rows[0]['taxStatus']}', '${rows[0]['scStatus']}', ${rows[0]['openPrice']}, '${rows[0]['image']}', 
+           ' ${today()}', '${today()}'
+          )`;
+
+      const [result] = await db.query(q);
+
+      if (result.affectedRows === 0) {
+        results.push({ id, status: 'not found' });
+      } else {
+        results.push({ id, status: 'insert done' });
+
+
+        //buatkan juga menu_set kalo dia menu set
+        if (rows[0]['menuSet'] != '') {
+
+          const [menuSet] = await db.query(`
+              SELECT * FROM menu_set WHERE menuId = ${id}   and presence = 1
+            `);
+
+
+          for (const menuSetItem of menuSet) {
+            const q2 = `INSERT INTO menu_set (
+                presence, inputDate, menuId, detailMenuId, minQty, maxQty, inputBy, updateBy
+              ) VALUES (
+                1, '${today()}', ${result.insertId}, ${menuSetItem['detailMenuId']}, ${menuSetItem['minQty']}, ${menuSetItem['maxQty']}, 1, 1
+              )`;
+            const [result2] = await db.query(q2);
+            if (result2.affectedRows === 0) {
+              results.push({ menuSetId: menuSetItem['id'], status: 'menu_set insert failed' });
+            } else {
+              results.push({ menuSetId: menuSetItem['id'], status: 'menu_set insert done' });
+            }
+          }
+
+
+
+        }
+
+
+
+
+
+
+
       }
     }
 
