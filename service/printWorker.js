@@ -30,7 +30,7 @@ async function processQueue() {
         LEFT JOIN printer AS p ON p.id = q.printerId
       WHERE q.status = 0  ORDER BY q.id DESC LIMIT 1 FOR UPDATE`
     );
-      let consoleError = rows[0] ? rows[0].consoleError : '';
+    let consoleError = rows[0] ? rows[0].consoleError : '';
 
     if (rows.length === 0) {
       await db.rollback(); // tetap rollback meski tidak ada data (safe exit)
@@ -45,13 +45,15 @@ async function processQueue() {
 
     await db.commit(); // penting! simpan perubahan status
     db.release();      // kembalikan koneksi ke pool
+
     rows[0].message = JSON.parse(rows[0].message);
-    const dataToPrint =  rows[0].message;  
+
+    const dataToPrint = rows[0].message;
     dataToPrint['rushPrinting'] = rows[0]['rushPrinting'];
 
 
     console.log(dataToPrint)
-   
+
     const data = {
       id: task.id,
       status: 1,
@@ -59,20 +61,30 @@ async function processQueue() {
       consoleError: ''
     }
     socket.emit('printing-reload', data);
-
+    console.log(rows[0].cartId)
     try {
       // Proses cetak
-      const templatePath = path.join(__dirname, './public/template/kitchen.hbs');
-      const templateSource = fs.readFileSync(templatePath, 'utf8');
-      const template = Handlebars.compile(templateSource);
-      const result = {
-        port : rows[0].port,
-        ipAddress : rows[0].ipAddress,
-        message : template(dataToPrint),
-      };
-      
-      
-      console.log("Await sendToPrinter(dataToPrint)",result)
+      let result = {};
+      if (rows[0].cartId != 'globalTest') {
+
+        const templatePath = path.join(__dirname, './public/template/kitchen.hbs');
+        const templateSource = fs.readFileSync(templatePath, 'utf8');
+        const template = Handlebars.compile(templateSource);
+        result = {
+          port: rows[0].port,
+          ipAddress: rows[0].ipAddress,
+          message: template(dataToPrint),
+        };
+      } else {
+        result = {
+          port: rows[0].port,
+          ipAddress: rows[0].ipAddress,
+          message: dataToPrint,
+        };
+      }
+
+
+      console.log("Await sendToPrinter(dataToPrint)", result)
       await sendToPrinter(result);
 
       const data = {
@@ -85,7 +97,7 @@ async function processQueue() {
       // Update status jadi 2 (DONE)
       await pool.query(`UPDATE print_queue SET status = 2 WHERE id = ?`, [task.id]);
     } catch (printErr) {
-      console.error('❌ Gagal print:', printErr.message);
+      console.error('❌ ERROR 1, Gagal print:', printErr.message);
       const data = {
         id: task.id,
         status: -1,
@@ -95,14 +107,14 @@ async function processQueue() {
       socket.emit('printing-reload', data);
       // Update status jadi -1 (FAILED)
       await pool.query(`UPDATE print_queue  SET 
-        status = -1 , consoleError = '${consoleError+'; \n '+printErr.message}'
+        status = -1 , consoleError = '${consoleError + '; \n ' + printErr.message}'
         WHERE id = ${task.id}`);
     }
 
   } catch (err) {
     await db.rollback();
     db.release();
-    console.error('❌ Error saat proses queue:', err.message);
+    console.error('❌ Error 2 : saat proses queue:', err.message);
   }
 }
 
@@ -136,12 +148,12 @@ async function processQueue2() {
     await db.commit(); // penting! simpan perubahan status
     db.release();      // kembalikan koneksi ke pool
     rows[0].message = JSON.parse(rows[0].message);
-    const dataToPrint =  rows[0].message;  
+    const dataToPrint = rows[0].message;
     dataToPrint['rushPrinting'] = rows[0]['rushPrinting'];
 
 
     console.log(dataToPrint)
-   
+
     const data = {
       id: task.id,
       status: 1,
@@ -151,18 +163,27 @@ async function processQueue2() {
     socket.emit('printing-reload', data);
 
     try {
-      // Proses cetak
-      const templatePath = path.join(__dirname, './public/template/kitchen.hbs');
-      const templateSource = fs.readFileSync(templatePath, 'utf8');
-      const template = Handlebars.compile(templateSource);
-      const result = {
-        port : rows[0].port,
-        ipAddress : rows[0].ipAddress,
-        message : template(dataToPrint),
-      };
-      
-      
-      console.log("Await sendToPrinter(dataToPrint)",result)
+      let result = {};
+      if (rows[0].cartId != 'globalTest') {
+        const templatePath = path.join(__dirname, './public/template/kitchen.hbs');
+        const templateSource = fs.readFileSync(templatePath, 'utf8');
+        const template = Handlebars.compile(templateSource);
+         result = {
+          port: rows[0].port,
+          ipAddress: rows[0].ipAddress,
+          message: template(dataToPrint),
+        };
+      } else {
+         result = {
+          port: rows[0].port,
+          ipAddress: rows[0].ipAddress,
+          message: dataToPrint,
+        };
+      }
+
+
+
+      console.log("Await sendToPrinter(dataToPrint)", result)
       await sendToPrinter(result);
 
       const data = {
@@ -188,7 +209,7 @@ async function processQueue2() {
 
 
       await pool.query(`UPDATE print_queue  SET 
-        status2 = -1 , consoleError = '${consoleError+'; \n '+printErr.message}'
+        status2 = -1 , consoleError = '${consoleError + '; \n ' + printErr.message}'
         WHERE id = ${task.id}`);
     }
 

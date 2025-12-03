@@ -13,9 +13,11 @@ router.get('/tableChecker', c.tableChecker);
 router.get('/kitchen', c.kitchen);  
 router.post('/test', c.test);  
 router.post('/print', c.print);  
+router.post('/printQueue', c.printQueue);  
 
 router.post('/cashDrawer', c.cashDrawer);  
 router.get('/viewPrinters', c.viewPrinters);  
+router.get('/viewPrintersLogs', c.viewPrintersLogs);  
 
 
 module.exports = router;

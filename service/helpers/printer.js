@@ -2,7 +2,7 @@ const net = require('net');
 const escpos = require('escpos');
 escpos.Network = require('escpos-network');
 
-const {  today  } = require('./global');
+const { today } = require('./global');
 
 // Fungsi reusable untuk mencetak ke printer ESC/POS via IP
 const printToPrinter = (message, printerIp = '10.51.122.20', printerPort = 9100) => {
@@ -51,21 +51,21 @@ async function openCashDrawer(printerIp, printerPort) {
 
 async function printerEsc(message, printerData) {
   const printerIp = printerData?.address || 'IP not found';
-  const printerPort = printerData?.port || 9100; 
+  const printerPort = printerData?.port || 9100;
 
   return new Promise((resolve) => {
     try {
       const device = new escpos.Network(printerIp, printerPort);
-      const printer = new escpos.Printer(device); 
-   
+      const printer = new escpos.Printer(device);
+
       device.open(function (err) {
         if (err) {
-            console.error('❌ Error while opening connection:', err);
+          console.error('❌ Error while opening connection:', err);
           return resolve(false);
         }
         printer
-          .size(0, 0)  
-          .text(message)  
+          .size(0, 0)
+          .text(message)
           .cut()
           .close(() => {
             console.log('Printing completed successfully!');
@@ -83,15 +83,15 @@ async function printerEsc(message, printerData) {
 async function sendToPrinter(data) {
   return new Promise((resolve, reject) => {
     const client = new net.Socket();
-   // console.log(data);
-    const message = data.message; 
-  
-  //  const jsonMessage = typeof data.message === 'string' ? JSON.parse(data.message) : data.message;
-   // console.log("Message:", jsonMessage);
+    // console.log(data);
+    const message = data.message;
+
+    //  const jsonMessage = typeof data.message === 'string' ? JSON.parse(data.message) : data.message;
+    // console.log("Message:", jsonMessage);
 
     const printerPort = data.port;
     const printerIp = data.ipAddress;
- 
+
 
     client.connect(printerPort, printerIp, () => {
       console.log('🖨️  Connected to printer');
@@ -123,7 +123,7 @@ async function sendToPrinterDummy(data) {
 
 async function printQueueInternal(db, sendOrder, userId) {
   const printResults = [];
-   const q1 = `SELECT 
+  const q1 = `SELECT 
         c.qty , c.cartId, c.sendOrder,  c.menuId , c.id AS 'cartItemId',    
         m.descs,   m.printerGroupId,  
         b.tableName, '' as modifier,  a.dailyCheckId
@@ -132,13 +132,13 @@ async function printQueueInternal(db, sendOrder, userId) {
       LEFT JOIN menu AS m ON m.id = c.menuId 
       LEFT JOIN outlet_table_map AS b ON b.id = a.outletTableMapId
       WHERE c.sendOrder = '${sendOrder}' `;
-    const [items] = await db.query(q1);
+  const [items] = await db.query(q1);
 
-    let i = 0;
-    for (const emp of items) {
-      const {   cartItemId, } = emp;
+  let i = 0;
+  for (const emp of items) {
+    const { cartItemId, } = emp;
 
-      const q2 = `
+    const q2 = `
       SELECT m.descs
       FROM cart_item_modifier AS c
       LEFT JOIN modifier AS m ON m.id = c.modifierId
@@ -153,48 +153,48 @@ async function printQueueInternal(db, sendOrder, userId) {
       ORDER BY descs ASC
       `;
 
-      const [cart_item_modifier] = await db.query(q2);
-      let n = 0;
-      cart_item_modifier.forEach(element => {
-        items[i]['modifier'] += ((n > 0) ? ', ' : '') + element['descs'] ; 
+    const [cart_item_modifier] = await db.query(q2);
+    let n = 0;
+    cart_item_modifier.forEach(element => {
+      items[i]['modifier'] += ((n > 0) ? ', ' : '') + element['descs'];
 
-        n++
-      });
-      i++;
-    }
-
-     
-
-    for (const row of items) {
+      n++
+    });
+    i++;
+  }
 
 
-      const x1 = `SELECT * FROM printer WHERE printerGroupId = ${row['printerGroupId']} AND presence = 1`;
-      const [printerList] = await db.query(x1);
 
-      for (const rexv of printerList) {
-        // Format date and time
-        const now = new Date();
-        const pad = (n) => n.toString().padStart(2, '0');
-        const date = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
-        const time = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+  for (const row of items) {
 
-        const message = {
-          tableName: row['tableName'],
-          dateTime: today(),
-        
-          cartItemId: row['cartItemId'],
-          qty : row['qty'],
-          descs: row['descs'],
-          modifier: row['modifier'],
-          printerId : rexv['id'],  
-          printerId2 : rexv['printerId2'],
-          printerName : rexv['name'],
-          ipAddress : rexv['ipAddress'],
-          port : rexv['port']
-        };
-        printResults.push(message);
 
-        const q11 = `
+    const x1 = `SELECT * FROM printer WHERE printerGroupId = ${row['printerGroupId']} AND presence = 1`;
+    const [printerList] = await db.query(x1);
+
+    for (const rexv of printerList) {
+      // Format date and time
+      const now = new Date();
+      const pad = (n) => n.toString().padStart(2, '0');
+      const date = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+      const time = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+
+      const message = {
+        tableName: row['tableName'],
+        dateTime: today(),
+
+        cartItemId: row['cartItemId'],
+        qty: row['qty'],
+        descs: row['descs'],
+        modifier: row['modifier'],
+        printerId: rexv['id'],
+        printerId2: rexv['printerId2'],
+        printerName: rexv['name'],
+        ipAddress: rexv['ipAddress'],
+        port: rexv['port']
+      };
+      printResults.push(message);
+
+      const q11 = `
             INSERT INTO print_queue (
                 dailyCheckId, cartId,  so, 
                 cartItemId,
@@ -213,23 +213,68 @@ async function printQueueInternal(db, sendOrder, userId) {
              ${userId}, ${userId}
           )`;
 
-        const [rest] = await db.query(q11);
-        
-
-      }
+      const [rest] = await db.query(q11);
 
 
     }
 
+
+  }
+
   return {
-    items: items, 
-    printResults : printResults,
+    items: items,
+    printResults: printResults,
+    message: 'Print queue processed',
+    // tambahkan data lain jika perlu
+  };
+}
+
+async function inputPrintQueue(db, message, printers, dailyCheckId = 'test', userId = 1) {
+  const printResults = [];
+  console.log("Printers:", printers);
+  console.log("Message:", message);
+  console.log("dailyCheckId:", dailyCheckId);
+  console.log("UserId:", userId);
+
+  for (const rexv of printers) {
+
+    const messageObj = {
+      note : message,
+    }
+    const q11 = `
+            INSERT INTO print_queue (
+                dailyCheckId, 
+                cartId,
+                message,  printerId, 
+                printerId2, status, 
+                
+                inputDate, updateDate ,  
+                inputBy, updateBy
+            ) 
+          VALUES (
+            '${dailyCheckId}', 
+            'globalTest',
+            '${JSON.stringify(messageObj)}', '${rexv['id']}', 
+            '${rexv['id2']}', 0,
+            '${today()}', '${today()}', 
+             ${userId}, ${userId}
+          )`;
+
+    const [rest] = await db.query(q11);
+
+
+  }
+
+
+  return {
+    printResults: printResults,
     message: 'Print queue processed',
     // tambahkan data lain jika perlu
   };
 }
 
 
+
 module.exports = {
-  printToPrinter, sendToPrinter, sendToPrinterDummy, printQueueInternal, printerEsc, openCashDrawer
+  printToPrinter, sendToPrinter, sendToPrinterDummy, printQueueInternal, printerEsc, openCashDrawer, inputPrintQueue
 };
