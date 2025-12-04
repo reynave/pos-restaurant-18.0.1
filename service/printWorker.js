@@ -204,10 +204,7 @@ async function processQueue2() {
         consoleError: printErr.message
       }
       socket.emit('printing-reload', data);
-      // Update status2 jadi -1 (FAILED)
-
-
-
+      // Update status2 jadi -1 (FAILED) 
       await pool.query(`UPDATE print_queue  SET 
         status2 = -1 , consoleError = '${consoleError + '; \n ' + printErr.message}'
         WHERE id = ${task.id}`);

@@ -5,6 +5,8 @@ escpos.Network = require('escpos-network');
 const { today } = require('./global');
 
 // Fungsi reusable untuk mencetak ke printer ESC/POS via IP
+const CUT_COMMAND = Buffer.from([0x1B, 0x69]); // ESC i = full cut for Epson-compatible printers
+
 const printToPrinter = (message, printerIp = '10.51.122.20', printerPort = 9100) => {
   return new Promise((resolve, reject) => {
     const client = new net.Socket();
@@ -13,6 +15,7 @@ const printToPrinter = (message, printerIp = '10.51.122.20', printerPort = 9100)
       console.log(`Connected to printer at ${printerIp}:${printerPort}`);
       console.log("Message:", message);
       client.write(message);
+      client.write(CUT_COMMAND); // ensure paper cut after manual print helper
       client.end();
     });
 
@@ -66,9 +69,10 @@ async function printerEsc(message, printerData) {
         printer
           .size(0, 0)
           .text(message)
+          .feed(5) // Add some space before cutting (5 lines of feed)
           .cut()
           .close(() => {
-            console.log('Printing completed successfully!');
+            console.log('printerEsc Printing completed successfully!');
             resolve(true);
           });
       });
@@ -81,33 +85,40 @@ async function printerEsc(message, printerData) {
 
 
 async function sendToPrinter(data) {
-  return new Promise((resolve, reject) => {
-    const client = new net.Socket();
-    // console.log(data);
-    const message = data.message;
+  try {
+    return await new Promise((resolve, reject) => {
+      const message = data.message;
+      const printerPort = data.port;
+      const printerIp = data.ipAddress;
 
-    //  const jsonMessage = typeof data.message === 'string' ? JSON.parse(data.message) : data.message;
-    // console.log("Message:", jsonMessage);
+      const device = new escpos.Network(printerIp, printerPort);
+      const printer = new escpos.Printer(device);
 
-    const printerPort = data.port;
-    const printerIp = data.ipAddress;
+      device.open(function (err) {
+        if (err) {
+          console.error('❌ Error while opening connection:', err);
+          return resolve(false);
+        }
+        printer
+          .size(0, 0)
+          .text(message)
+          .feed(5) // Add some space before cutting (5 lines of feed)
+          .cut()
+          .close(() => {
+            console.log('✅ Printing completed successfully!');
+            resolve(true);
+          });
+      });
 
-
-    client.connect(printerPort, printerIp, () => {
-      console.log('🖨️  Connected to printer');
-      client.write(message);
-      client.end();
+      device.on('error', (err) => {
+        console.error('❌ Device error:', err);
+        reject(err);
+      });
     });
-
-    client.on('close', () => {
-      console.log('✅  Print selesai');
-      resolve();
-    });
-
-    client.on('error', (err) => {
-      reject(err);
-    });
-  });
+  } catch (error) {
+    console.error('❌ Exception in sendToPrinter:', error);
+    return false;
+  }
 }
 
 // Simulasi print
@@ -181,7 +192,9 @@ async function printQueueInternal(db, sendOrder, userId) {
       const message = {
         tableName: row['tableName'],
         dateTime: today(),
-
+        cartId: row['cartId'],
+        sendOrder: row['sendOrder'],
+        menuId: row['menuId'],
         cartItemId: row['cartItemId'],
         qty: row['qty'],
         descs: row['descs'],
