@@ -5,7 +5,7 @@ exports.validateToken = (req, res, next) => {
   let token = null;
 
 
-  if (process.env.PRODUCTION == true) {
+  //if (process.env.PRODUCTION == true) {
     if (authHeader && authHeader.startsWith('Bearer ')) {
       token = authHeader.split(' ')[1];
     }
@@ -18,7 +18,7 @@ exports.validateToken = (req, res, next) => {
 
     try {
       const decoded = jwt.verify(token, SECRET_KEY);
-      // console.log('✅ Token valid:', decoded);
+      // console.log('✅ Token valid');
 
       // Simpan decoded ke req untuk digunakan di controller berikutnya
       req.user = decoded;
@@ -30,11 +30,11 @@ exports.validateToken = (req, res, next) => {
 
       next(); // lanjut ke controller berikutnya
     } catch (err) {
-      //  console.error('❌ Token tidak valid:', err.message);
+      console.error('❌ Token tidak valid:', err.message);
       return res.status(401).json({ error: 'Invalid token', message: err.message });
     }
-  }else{
-    next(); // lanjut ke controller berikutnya
-  }
+  //}else{
+ //   next(); // lanjut ke controller berikutnya
+  //}
 
 };

@@ -70,6 +70,22 @@ exports.signin = async (req, res) => {
         if (!passwordMatch) {
             return res.status(401).json({ message: 'Invalid password' });
         }
+       // const accessRight = {};
+
+        const [accessRight] = await db.query(`
+            SELECT e.id, e.authLevelId , r.moduleId, m.name, m.category
+            FROM employee  AS e 
+            LEFT JOIN employee_access_right AS r ON r.authLevelId = e.authlevelId
+            JOIN module AS m ON m.id = r.moduleId
+            WHERE e.id =   '${employee[0]['id']}';
+        `);
+
+        // bisa ubah format dari { id : 71 , name : 'cashBalance' }  jadi  'cashBalance': true
+        const accessRightFormatted = {};
+        accessRight.forEach(item => {
+            accessRightFormatted[item.name] = true;
+        });
+
 
         const data = {
             id: employee[0]['id'],
@@ -82,6 +98,8 @@ exports.signin = async (req, res) => {
             employeeAuthLevelId: employee[0]['authlevelId'],
             status: employee[0]['status'],
             lastLogin: today(),
+            //accessRight: accessRight,
+            accessRight: accessRightFormatted
         }
 
         const SECRET_KEY = process.env.SECRET_KEY;
@@ -112,7 +130,8 @@ exports.signin = async (req, res) => {
             message: 'Login successful',
             dailyCheck: dailyCheck,
             token: tokenjwt,
-            outlet : outlet,
+            data: data,
+            outlet: outlet,
             printer: {
                 con: 'ip',
                 address: '192.168.1.31',
@@ -171,7 +190,7 @@ exports.terminal = async (req, res) => {
                 const [terminal] = await db.query(q1);
 
 
-                if (terminal.length) { 
+                if (terminal.length) {
                     const q0 = `UPDATE terminal
                         SET
                             exp = '${keyLicense['expired']}',
@@ -182,7 +201,7 @@ exports.terminal = async (req, res) => {
                         results.push({ status: ' not found', });
                     } else {
                         results.push({ status: 'Update terminal insert' });
-                    } 
+                    }
                 } else {
                     const q0 = `
                     INSERT INTO terminal( 

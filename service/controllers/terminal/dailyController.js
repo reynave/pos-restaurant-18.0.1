@@ -62,8 +62,7 @@ exports.getDailyStart = async (req, res) => {
             LEFT JOIN daily_schedule as c on c.id = d.dailyScheduleId
             WHERE  d.id = '${id}' and d.presence = 1  
         `);
-        res.json({
-            error: false,
+        res.json({ 
             date: days[date.getDay()],
             item: formattedRows[0],
         });
