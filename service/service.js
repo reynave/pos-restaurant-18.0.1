@@ -113,6 +113,7 @@ app.use(process.env.PREFIX + process.env.TERMINAL + 'log', userLog);
 app.use(process.env.PREFIX + process.env.TERMINAL + 'printQueue', IsAuth.validateToken, printQueue);
 app.use(process.env.PREFIX + process.env.TERMINAL + 'cashier', IsAuth.validateToken, cashier);
 app.use(process.env.PREFIX + process.env.TERMINAL + 'ux', IsAuth.validateToken, require('./routes/terminal/ux'));
+app.use(process.env.PREFIX + process.env.TERMINAL + 'language',  require('./routes/terminal/language'));
 
   
 app.use('/', (req, res) => {
