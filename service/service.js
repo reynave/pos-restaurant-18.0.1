@@ -97,6 +97,7 @@ app.use(process.env.PREFIX + 'userLogin', require('./routes/report/userLogin'));
 app.use(process.env.PREFIX + 'transaction', require('./routes/report/transaction')); 
 
 app.use(process.env.PREFIX + 'cashback', require('./routes/general/cashback')); 
+app.use(process.env.PREFIX + 'language', require('./routes/general/language')); 
 
 
 // TERMINAL SERVICE HERE

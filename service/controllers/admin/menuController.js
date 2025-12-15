@@ -138,6 +138,9 @@ exports.getAllData = async (req, res) => {
         name: 'User Interface', href: 'ux', icon: '<i class="bi bi-window"></i>',
       },
 
+      {
+        name: 'Global Language', href: 'language', icon: '<i class="bi bi-translate"></i>'
+      },
     ];
     const [printerGroup] = await db.query(
       ` SELECT id, name  ,  'workStation/printer/'  as 'href' ,  
@@ -205,14 +208,14 @@ exports.getAllData = async (req, res) => {
 exports.uxFunction = async (req, res) => {
   try {
 
-    
+
 
     const [items] = await db.query(
       `Select id, name, pos2sorting as 'sorting', pos2Status as 'status', pos2Class as 'class' from ux order by pos2Sorting ASC`,
     );
-      
-    const data = { 
-      items: items, 
+
+    const data = {
+      items: items,
     }
 
     res.json(data);
@@ -238,7 +241,7 @@ exports.uxFunctionSaveOrder = async (req, res) => {
   try {
     let i = 0;
     for (const emp of data) {
-      const id  = emp; 
+      const id = emp;
       if (!id) {
         results.push({ id, status: 'failed', reason: 'Missing fields' });
         continue;
@@ -248,7 +251,7 @@ exports.uxFunctionSaveOrder = async (req, res) => {
         `UPDATE ux SET 
           pos2Sorting = '${i}'
         WHERE id = ${id}`,
-      );  
+      );
       if (result.affectedRows === 0) {
         results.push({ id, status: 'not found' });
       } else {
@@ -282,7 +285,7 @@ exports.uxFunctionStatus = async (req, res) => {
   try {
     let i = 0;
     for (const emp of data) {
-      const { id, status, class: className } = emp; 
+      const { id, status, class: className } = emp;
       console.log(id, status);
       if (!id) {
         results.push({ id, status: 'failed', reason: 'Missing fields' });
@@ -294,7 +297,7 @@ exports.uxFunctionStatus = async (req, res) => {
           pos2Status = '${status}',
           pos2Class  = '${className}'
         WHERE id = ${id}`,
-      );  
+      );
       if (result.affectedRows === 0) {
         results.push({ id, status: 'not found' });
       } else {
