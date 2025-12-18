@@ -5,7 +5,7 @@ exports.validateToken = (req, res, next) => {
   let token = null;
 
 
-  //if (process.env.PRODUCTION == true) {
+  if (process.env.PRODUCTION == true) {
     if (authHeader && authHeader.startsWith('Bearer ')) {
       token = authHeader.split(' ')[1];
     }
@@ -33,8 +33,8 @@ exports.validateToken = (req, res, next) => {
       console.error('❌ Token tidak valid:', err.message);
       return res.status(401).json({ error: 'Invalid token', message: err.message });
     }
-  //}else{
- //   next(); // lanjut ke controller berikutnya
-  //}
+  }else{
+    next(); // lanjut ke controller berikutnya
+  }
 
 };

@@ -1,14 +1,13 @@
 {{formatLine " GRAND TOTAL " (formatCurrency summary.grandTotal) line}}
 {{#each cartPayment}}
-{{formatLine (concat "  - " this.name) (formatCurrency this.paid) 33}}
+{{formatLine (concat "  - " this.name) (formatCurrency this.paid) line}}
 {{/each}}
 {{formatLine " UNPAID " (concat "(" (formatCurrency unpaid) ")") line}}
 {{formatLine " CHANGE " (concat "(" (formatCurrency change) ")") line}}
-{{#if (eq cart.close 1)}}
+{{#if (eq transaction.close 1)}}
 {{center "[ CLOSED BILL ]" line}}
-copyBill : {{copyBill}}
 {{/if}}
- 
+
 {{#each cashbackData}}
 {{this.type}}
 {{formatLine "CASHBACK " (formatCurrency this.cashbackMax) line}}

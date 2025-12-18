@@ -166,15 +166,7 @@ async function cart(cartId = '') {
    return {
 
       cart: items,
-      billVersion: billVersion[0] ? billVersion[0]['no'] : 0,
-      // itemTotal: itemTotal,
-      // fixDiscountGroup: fixDiscountGroup,
-      // discountGroup: discountGroup,
-      // discountAmount: discountAmount,
-
-      // taxSc: taxSc,
-      // grandTotal: grandTotal,
-
+      billVersion: billVersion[0] ? billVersion[0]['no'].toString().padStart(2, '0') : '00',
       summary: {
          itemTotal: itemTotal,
          discount: discount,
@@ -186,10 +178,6 @@ async function cart(cartId = '') {
          ver: 1.1
       },
       itemSummary: summaryFunction,
-      // cartPayment: cartPayment,
-      // unpaid: grandTotal - paid < 0 ? 0 : (grandTotal - paid),
-      // change: grandTotal - paid < 0 ? (grandTotal - paid) * -1 : 0,
-      // tips: tips,
       groups: groups
    }
 }

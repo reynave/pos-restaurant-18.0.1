@@ -146,25 +146,41 @@ exports.bill = async (req, res) => {
     const resultData = await cashback(cartId, line, whereCardPayment);
     let cashbackData = resultData['cashbackData'];
     let qrCode = resultData['qrCode'];
-    
+
 
     let result = '';
     const templateSource = fs.readFileSync("public/template/bill.hbs", "utf8");
-    for (let i = 0; i < subgroups.length; i++) {
 
+    let [billVersion] = await db.query(`
+      SELECT billNo
+      FROM cart
+      WHERE id = '${cartId}'
+    `);
+
+    let [copyBill] = await db.query(`
+      SELECT COUNT(id) AS total
+      FROM cart_copy_bill
+      WHERE cartId = '${cartId}'
+    `);
+    console.log(copyBill);
+
+ 
+
+    for (let i = 0; i < subgroups.length; i++) {
       const template = Handlebars.compile(templateSource);
       const jsonData = {
         line: line,
         data: data[i]['data'],
+        billVersion: billVersion[0]['billNo'].toString().padStart(2, '0'),
         transaction: cartData[0],
         company: outlet[0],
         cashbackData: cashbackData,
         // subgroup: subgroup,
-        // copyBill : copyBill.length > 0 ? copyBill[0] : 0,
+          copyBill : copyBill[0]['total'],
         group: subgroups[i],
         totalGroup: subgroups.length,
-
       };
+      console.log(jsonData);
 
       result += template(jsonData);
     }
@@ -172,9 +188,11 @@ exports.bill = async (req, res) => {
     const templatePay = Handlebars.compile(templatePayment);
     const jsonPayment = {
       line: line,
-
+      billVersion: billVersion[0]['billNo'].toString().padStart(2, '0'),
       summary: summary,
+      cart : cartData[0],
       cartPayment: cartPayment,
+       copyBill : copyBill[0]['total'],
       unpaid: unpaid,
       change: cartData[0]['changePayment'] || 0,
       cashbackData: cashbackData,
@@ -182,11 +200,7 @@ exports.bill = async (req, res) => {
     };
 
     result += templatePay(jsonPayment);
-
-
-
-
-
+ 
     res.json({
       data: data,
       cashbackData: cashbackData,
@@ -197,6 +211,7 @@ exports.bill = async (req, res) => {
       groups: subgroups,
       qrCode: qrCode,   // Tambahkan QR code
       cart: cartData[0],
+      copyBill : copyBill[0]['total'],
       htmlBill: result
     });
 
@@ -269,7 +284,7 @@ exports.paid = async (req, res) => {
     const [grandTotalRow] = await db.query(c);
     let grandTotal = grandTotalRow[0]['grandTotal'];
     let tableMapStatusId = grandTotalRow[0]['tableMapStatusId'];
- 
+
     // if (tableMapStatusId != 20) {
 
 
@@ -277,11 +292,18 @@ exports.paid = async (req, res) => {
       SELECT 
         COALESCE(SUM(paid), 0) AS 'paid', 
         ${grandTotal} AS grandTotal,
-        (${grandTotal} - COALESCE(SUM(paid), 0)) AS 'unpaid'
+        (${grandTotal} - COALESCE(SUM(paid), 0)) AS 'unpaid',  
+        (${grandTotal} - COALESCE(SUM(paid), 0)) AS 'change'
+        
       FROM cart_payment 
       WHERE presence = 1 and  submit = 1 and cartId =  '${cartId}' `;
-
+    console.log(qq);
     const [cartPayment] = await db.query(qq);
+
+    if (cartPayment[0]['paid'] >= cartPayment[0]['grandTotal']) {
+
+      cartPayment[0]['unpaid'] = 0;
+    }
 
 
     let closePayment = 0;
@@ -295,7 +317,7 @@ exports.paid = async (req, res) => {
     if (closePayment == 1) {
 
       const data = await cart(cartId);
-    
+
       const q = `UPDATE cart
             SET
               endDate = '${today()}',
@@ -330,7 +352,7 @@ exports.paid = async (req, res) => {
 
       if (cashbackData.length > 0) {
         for (const item of cashbackData) {
-            const q3 = `INSERT INTO 
+          const q3 = `INSERT INTO 
             cart_cashback(
             presence, inputDate, updateDate, 
             cartId, cashbackId)
@@ -339,7 +361,7 @@ exports.paid = async (req, res) => {
             SELECT 1 FROM cart_cashback
             WHERE cartId = '${cartId}' AND cashbackId = '${item.cashbackId}' AND presence = 1
             )`;
-           
+
           const [result3] = await db.query(q3);
 
           if (result3.affectedRows === 0) {
@@ -463,6 +485,13 @@ exports.markPrintBill = async (req, res) => {
     if (result.affectedRows === 0) {
       res.status(404).json({ error: 'Cart not found' });
     } else {
+        // Insert a record into cart_copy_bill to mark this bill as printed
+      const insertCopyBill = `
+        INSERT INTO cart_copy_bill (cartId, inputDate, updateDate, presence)
+        VALUES ('${cartId}', '${today()}', '${today()}', 1)
+      `;
+      await db.query(insertCopyBill);
+
       res.json({ message: 'Cart printBill updated' });
     }
   } catch (err) {
@@ -710,9 +739,9 @@ exports.addPaid = async (req, res) => {
         AND p.paymentId = ${checkPaymentTypeId} 
         ORDER BY a.earnMax DESC
       LIMIT 1`;
-   
+
       const [cashbackData] = await db.query(q2);
-      if (cashbackData.length > 0) {  
+      if (cashbackData.length > 0) {
         results.push({ id, status: 'cashback available', cashbackData: cashbackData });
         for (const cb of cashbackData) {
           const q3 = `INSERT INTO
@@ -727,8 +756,8 @@ exports.addPaid = async (req, res) => {
             SELECT 1 FROM cart_cashback
             WHERE cartId = '${cartId}' AND cashbackId = '${cb.cashbackId}' AND presence = 1 AND paymentId = ${checkPaymentTypeId}
           )`;
-       
-          const [result3] = await db.query(q3); 
+
+          const [result3] = await db.query(q3);
           if (result3.affectedRows === 0) {
             results.push({ status: 'cart not found / Payment closed' });
           } else {

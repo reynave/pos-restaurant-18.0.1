@@ -21,7 +21,7 @@ exports.tableChecker = async (req, res) => {
   try {
     const cartId = req.query.id;
     const so = req.query.so;
-    
+
     const data = await sendOrder(so);
 
     const [transactionq] = await db.query(`
@@ -124,7 +124,7 @@ exports.kitchen = async (req, res) => {
 exports.test = async (req, res) => {
   const note = req.body.note || 'Test print from server';
   const printer = req.body.printer;
- 
+
   try {
     const message = `
 *** TEST PRINT ***
@@ -136,7 +136,7 @@ Thank you.
     // Panggil fungsi printToPrinter
     const result = await printToPrinter(message, printer.address, printer.port);
 
- 
+
     res.json({ success: true, message: 'Printed successfully', detail: result });
 
   } catch (err) {
@@ -152,14 +152,14 @@ exports.printQueue = async (req, res) => {
   const printers = req.body.printers;
   const dailyCheckId = req.body.dailyCheckId || 'test';
   const userId = headerUserId(req);
-  try { 
+  try {
 
     const result = await inputPrintQueue(db, message, printers, dailyCheckId, userId);
 
-    
-      res.json({ message: 'Printed successfully', detail: result });
-   
-   
+
+    res.json({ message: 'Printed successfully', detail: result });
+
+
 
   } catch (err) {
     console.error('Print error:', err);
@@ -171,19 +171,20 @@ exports.printQueue = async (req, res) => {
 exports.print = async (req, res) => {
   const note = req.body.note || 'Test print from server';
   const printer = req.body.printer;
- 
+
   try {
-    const message =  req.body.message;  
-
-    const result = await printerEsc(message, printer);
-
- 
-    if(result === true){
-      res.json({ success: true, message: 'Printed successfully', detail: result });
-    }else{
-      res.status(500).json({ error: 'Failed to print', detail: 'Printer ESC command failed', printer:printer });
+    const message = req.body.message;
+    if (process.env.DUMMY_PRINTER == 'true') {
+      res.json({ success: true, message: 'Printed successfully', detail: 'This is a dummy printer response'  });
+    } else {
+      const result = await printerEsc(message, printer); 
+      if (result === true) {
+        res.json({ success: true, message: 'Printed successfully', detail: result });
+      } else {
+        res.status(500).json({ error: 'Failed to print', detail: 'Printer ESC command failed', printer: printer });
+      } 
     }
-   
+
 
   } catch (err) {
     console.error('Print error:', err);
@@ -201,7 +202,7 @@ exports.cashDrawer = async (req, res) => {
     res.status(500).json({ success: false, message: 'Failed to open cash drawer', error: err.message });
   }
 };
- 
+
 exports.viewPrinters = async (req, res) => {
   try {
     const q = `SELECT 0 as checkBox, g.name AS 'group', 
@@ -216,18 +217,18 @@ exports.viewPrinters = async (req, res) => {
             WHERE p.presence = 1 AND g.presence = 1
           `;
 
-    const [printers] = await db.query(q);  
+    const [printers] = await db.query(q);
     res.json(printers);
   } catch (err) {
     console.error('View printers error:', err);
     res.status(500).send('Failed to load printers');
   }
 };
- 
+
 exports.viewPrintersLogs = async (req, res) => {
   const dailyCheckId = req.query.dailyCheckId || 0;
   try {
-    const q = `SELECT q.updateDate, q.consoleError, q.status, q.status2, 
+    const q = `SELECT q.updateDate, q.consoleError, q.status, q.status2, q.message,
 q.printerid, q.printerId2, p.name AS 'printer1' , p2.name AS 'printer2'
 FROM print_queue AS q
 LEFT JOIN printer AS p ON p.id =  q.printerId
@@ -236,7 +237,7 @@ LEFT JOIN printer AS p2 ON p2.id =  q.printerId2
 WHERE q.cartItemId = 0 AND q.so = 0 and q.dailyCheckId = '${dailyCheckId}' ORDER BY q.id DESC LIMIT 100
           `;
 
-    const [printers] = await db.query(q);  
+    const [printers] = await db.query(q);
     res.json(printers);
   } catch (err) {
     console.error('View printers error:', err);

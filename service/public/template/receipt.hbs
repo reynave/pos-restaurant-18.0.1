@@ -8,7 +8,6 @@
 {{#if (eq copyBill.total 1)}}
 {{center "[ COPY BILL ]" line}}
 {{/if}}
-NO OF PRINT BILL               {{billVersion}} 
 {{formatLine "BILL" transaction.bill line}}
 {{formatLine "CASHIER " transaction.employeeName line}}
 {{formatLine "START DATE" transaction.startDate line}}
@@ -21,10 +20,9 @@ NO OF PRINT BILL               {{billVersion}}
 {{formatLine "COVER " (formatCurrency transaction.cover) line}}
 {{#if (gt totalGroup 1)}}
 {{formatLine "GROUP " data.groups line}}
-{{/if}}
+{{/if}} 
 
-
-{{#each data.cart}} 
+{{#each data.cart}}
 {{formatLine (concat this.total "X " this.name) (formatCurrency this.totalAmount) 33}}
     {{#if this.modifier}}
         {{#each this.modifier}}
