@@ -176,6 +176,7 @@ exports.bill = async (req, res) => {
         company: outlet[0],
         cashbackData: cashbackData,
         // subgroup: subgroup,
+          cart : cartData[0],
           copyBill : copyBill[0]['total'],
         group: subgroups[i],
         totalGroup: subgroups.length,
@@ -192,18 +193,16 @@ exports.bill = async (req, res) => {
       summary: summary,
       cart : cartData[0],
       cartPayment: cartPayment,
-       copyBill : copyBill[0]['total'],
+      copyBill : copyBill[0]['total'],
       unpaid: unpaid,
       change: cartData[0]['changePayment'] || 0,
-      cashbackData: cashbackData,
-      qrCode: qrCode
+     
     };
 
     result += templatePay(jsonPayment);
  
     res.json({
       data: data,
-      cashbackData: cashbackData,
       cartPayment: cartPayment,
       paid: paid,
       unpaid: unpaid,

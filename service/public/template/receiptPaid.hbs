@@ -4,10 +4,8 @@
 {{/each}}
 {{formatLine " UNPAID " (concat "(" (formatCurrency unpaid) ")") line}}
 {{formatLine " CHANGE " (concat "(" (formatCurrency change) ")") line}}
-{{#if (eq transaction.close 1)}}
-{{center "[ CLOSED BILL ]" line}}
-{{/if}}
-
+{{center (concat "[ " statusPrint " ]") line}}
+ 
 {{#each cashbackData}}
 {{this.type}}
 {{formatLine "CASHBACK " (formatCurrency this.cashbackMax) line}}

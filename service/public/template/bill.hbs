@@ -5,8 +5,8 @@
 {{center company.city line}} 
 {{center (concat "Telp :" company.tel) line}}
  
-{{#if (eq copyBill.total 1)}}
-{{center "[ COPY BILL ]" line}}
+{{#if (eq cart.close 1)}}
+{{center "[ CLOSED ]" line}}
 {{/if}}
 NO OF PRINT BILL               {{billVersion}} 
 {{formatLine "BILL" transaction.bill line}}
@@ -22,7 +22,6 @@ NO OF PRINT BILL               {{billVersion}}
 {{#if (gt totalGroup 1)}}
 {{formatLine "GROUP " data.groups line}}
 {{/if}}
-
 
 {{#each data.cart}} 
 {{formatLine (concat this.total "X " this.name) (formatCurrency this.totalAmount) 33}}

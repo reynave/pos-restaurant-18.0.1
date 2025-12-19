@@ -4,10 +4,9 @@
 {{center company.street line}}
 {{center company.city line}} 
 {{center (concat "Telp :" company.tel) line}}
- 
-{{#if (eq copyBill.total 1)}}
-{{center "[ COPY BILL ]" line}}
-{{/if}}
+
+{{center (concat "[ " statusPrint " ]") line}}
+NO OF PRINT BILL               {{billVersion}} 
 {{formatLine "BILL" transaction.bill line}}
 {{formatLine "CASHIER " transaction.employeeName line}}
 {{formatLine "START DATE" transaction.startDate line}}

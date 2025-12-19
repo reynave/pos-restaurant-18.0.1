@@ -4,23 +4,3 @@
 {{/each}}
 {{formatLine " UNPAID " (concat "(" (formatCurrency unpaid) ")") line}}
 {{formatLine " CHANGE " (concat "(" (formatCurrency change) ")") line}}
-{{#if (eq cart.close 1)}}
-{{center "[ CLOSED BILL ]" line}}
-copyBill : {{copyBill}}
-{{/if}}
- 
-{{#each cashbackData}}
-{{this.type}}
-{{formatLine "CASHBACK " (formatCurrency this.cashbackMax) line}}
-VALID DATE {{this.redeemStartDate}}-{{this.redeemEndDate}}
-{{this.name}}
-{{this.description}}
-{{/each}}
-{{#if cashbackData.length}}
-<img src="{{qrCode}}" alt="QR Code" style="display: block; margin: 10px auto;" />
-{{center "Scan to Redeem Cashback" line}}
-{{/if}}
-
-{{#if (eq transaction.close 1)}}
-{{center "Thank You!" line}} 
-{{/if}}

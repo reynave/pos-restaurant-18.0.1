@@ -105,7 +105,9 @@ app.use(process.env.PREFIX + process.env.TERMINAL + 'login', loginPos);
 app.use(process.env.PREFIX + process.env.TERMINAL + 'transaction', IsAuth.validateToken,transactionPos);
 app.use(process.env.PREFIX + process.env.TERMINAL + 'tableMap', IsAuth.validateToken,terminalMap);
 app.use(process.env.PREFIX + process.env.TERMINAL + 'menuItemPos', IsAuth.validateToken,menuItemPos);
-app.use(process.env.PREFIX + process.env.TERMINAL + 'bill',  bill);
+app.use(process.env.PREFIX + process.env.TERMINAL + 'bill',  IsAuth.validateToken, bill);
+app.use(process.env.PREFIX + process.env.TERMINAL + 'receipt',  IsAuth.validateToken, require('./routes/terminal/receipt'));
+    
 app.use(process.env.PREFIX + process.env.TERMINAL + 'payment', IsAuth.validateToken,paymentPos);
 app.use(process.env.PREFIX + process.env.TERMINAL + 'daily', IsAuth.validateToken, daily);
 app.use(process.env.PREFIX + process.env.TERMINAL + 'items', IsAuth.validateToken,items);

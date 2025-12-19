@@ -287,6 +287,22 @@ exports.voidPaid = async (req, res) => {
       results.push({ cartId, status: 'void update' });
     }
 
+
+     const b = `
+      UPDATE daily_cash_balance SET 
+        presence = 0, 
+        updateDate = '${today()}',
+        updateBy = ${userId}
+      WHERE cartId = '${cartId}' `;
+    const [resultb] = await db.query(b);
+
+    if (resultb.affectedRows === 0) {
+      results.push({ cartId, status: 'not found', });
+    } else {
+      results.push({ cartId, status: 'daily_cash_balance updated', });
+    }
+
+
     res.json({
       error: false,
       id: cartId,

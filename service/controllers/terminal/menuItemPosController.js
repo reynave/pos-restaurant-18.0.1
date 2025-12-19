@@ -1927,6 +1927,7 @@ exports.voidTransacton = async (req, res) => {
         void = 1,
         close = 1,
         tableMapStatusId = 41,
+        changePayment = 0,
         endDate =  '${today()}', 
         updateDate = '${today()}',
         updateBy = ${userId}
@@ -1938,6 +1939,7 @@ exports.voidTransacton = async (req, res) => {
     } else {
       results.push({ cartId, status: 'cart updated', });
     }
+ 
 
     const tablesVoid = [
       'cart_item',
