@@ -134,14 +134,16 @@ async function sendToPrinterDummy(data) {
 
 async function printQueueInternal(db, sendOrder, userId) {
   const printResults = [];
-  const q1 = `SELECT 
+  const q1 = `
+      SELECT 
         c.qty , c.cartId, c.sendOrder,  c.menuId , c.id AS 'cartItemId',    
         m.descs,   m.printerGroupId,  
-        b.tableName, '' as modifier,  a.dailyCheckId
+        b.tableName, '' as modifier,  a.dailyCheckId, a.cover, c.inputBy, e.name AS 'employeeName'
       FROM cart_item AS c
       JOIN cart AS a ON c.cartId = a.id
       LEFT JOIN menu AS m ON m.id = c.menuId 
       LEFT JOIN outlet_table_map AS b ON b.id = a.outletTableMapId
+      LEFT JOIN employee AS e ON e.id = c.inputBy
       WHERE c.sendOrder = '${sendOrder}' `;
   const [items] = await db.query(q1);
 
@@ -203,7 +205,9 @@ async function printQueueInternal(db, sendOrder, userId) {
         printerId2: rexv['printerId2'],
         printerName: rexv['name'],
         ipAddress: rexv['ipAddress'],
-        port: rexv['port']
+        port: rexv['port'],
+        employeeName: rexv['employeeName'],
+        cover: row['cover'],
       };
       printResults.push(message);
 

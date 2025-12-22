@@ -127,9 +127,11 @@ async function processQueue2() {
     // Ambil 1 data status = 0 (PENDING)
     const [rows] = await db.query(
       `SELECT 
-            q.*, p.printerTypeCon, p.ipAddress, p.port , q.message, q.rushPrinting
+            q.*, p.printerTypeCon, p.ipAddress, p.port , q.message, q.rushPrinting,
+              p1.name as printerName1
         FROM print_queue AS q
         LEFT JOIN printer AS p ON p.id = q.printerId2
+        left join printer as p1 on p1.id = q.printerId
       WHERE q.status = -1 AND  q.status2 = 0 ORDER BY q.id DESC LIMIT 1 FOR UPDATE`
     );
     let consoleError = rows[0] ? rows[0].consoleError : '';
@@ -150,9 +152,11 @@ async function processQueue2() {
     rows[0].message = JSON.parse(rows[0].message);
     const dataToPrint = rows[0].message;
     dataToPrint['rushPrinting'] = rows[0]['rushPrinting'];
-
+    let printer1 =  rows[0]['printerName1'] || 'PRINTER 1';
+    dataToPrint['printerNote'] = '** REDIRECT FROM '+printer1+' ** \n\n\n';
 
     console.log(dataToPrint)
+
 
     const data = {
       id: task.id,
