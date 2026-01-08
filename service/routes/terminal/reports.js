@@ -12,7 +12,7 @@ router.get('/getOutlets', c.getOutlets);
 router.get('/salesSummaryReport', c.salesSummaryReport); 
 
 //2a. Cashier Report - POS Printer Paper.pdf
-router.get('/cashierPosPrinterPaper', c.cashierPosPrinterPaper); 
+router.get('/cashierReports', c.cashierReports); 
 
 //router.post('/signin', loginController.newOrder);
 

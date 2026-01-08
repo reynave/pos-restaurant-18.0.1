@@ -246,7 +246,7 @@ exports.salesSummaryReport = async (req, res) => {
 };
 
 
-exports.cashierPosPrinterPaper = async (req, res) => {
+exports.cashierReports = async (req, res) => {
   const startDate = req.query.startDate || '';
   const endDate = req.query.endDate || '';
   const data = [];
