@@ -1,13 +1,40 @@
 const db = require('../../config/db');
 const { today, formatDateOnly, headerUserId } = require('../../helpers/global');
 
-//http://localhost:3000/terminal/reports/salesSummaryReport?startDate=2025-12-18&endDate=2025-12-18
+//buatkan getUser dari table user
+exports.getUsers = async (req, res) => {
+  try {
+    const q = `SELECT id, username, name FROM employee WHERE presence = 1 `;
+    const [users] = await db.query(q);
+
+    res.json({ users: users });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+};
+
+//buatkan getOutlets dari table outlet
+exports.getOutlets = async (req, res) => {
+  try {
+    const q = `SELECT id,name FROM outlet WHERE presence = 1`;
+    const [outlets] = await db.query(q);
+    res.json({ outlets: outlets });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+};
+
+
+
+
 exports.salesSummaryReport = async (req, res) => {
   const startDate = req.query.startDate || '';
   const endDate = req.query.endDate || '';
   const userId = req.query.userId || '';
   const outletId = req.query.outletId || '';
-// AND (c.startDate >= '2025-12-18 00:00:00' AND c.endDate <= '2025-12-18 23:59:59' )
+  // AND (c.startDate >= '2025-12-18 00:00:00' AND c.endDate <= '2025-12-18 23:59:59' )
   try {
     let whereFilter = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
 
@@ -44,17 +71,17 @@ exports.salesSummaryReport = async (req, res) => {
         GROUP BY  p.id
       ) AS t1
       LEFT JOIN outlet_floor_plan AS p ON  p.id = t1.id`;
-     
-    const [salesByMode] = await db.query(salesByModeQuery); 
+
+    const [salesByMode] = await db.query(salesByModeQuery);
     // saya mau hitung total itemSales dari salesByMode 
     const totalItemSales = salesByMode.reduce((acc, curr) => acc + parseFloat(curr.itemSales), 0);
-    const totalNetSales = salesByMode.reduce((acc, curr) => acc + parseFloat(curr.netSales), 0); 
+    const totalNetSales = salesByMode.reduce((acc, curr) => acc + parseFloat(curr.netSales), 0);
     // saya mau hitung percentItemSales  dan update ke salesByMode
     salesByMode.forEach(item => {
       item.percentItemSales = totalItemSales ? ((item.itemSales / totalItemSales) * 100).toFixed(2) : '0.00';
       item.percentNetSales = totalNetSales ? ((item.netSales / totalNetSales) * 100).toFixed(2) : '0.00';
     });
- 
+
     const salesByDepartmentQuery = `
     SELECT  t1.* , (t1.itemSales - t1.discount) AS 'netSales',  d.desc1 FROM (
 
@@ -75,10 +102,10 @@ exports.salesSummaryReport = async (req, res) => {
     ) AS t1 
     LEFT JOIN menu_department AS d ON d.id = t1.menuDepartmentId
     `;
-    const [salesByDepartment] = await db.query(salesByDepartmentQuery); 
+    const [salesByDepartment] = await db.query(salesByDepartmentQuery);
     const totalItemSalesByDepartment = salesByDepartment.reduce((acc, curr) => acc + parseFloat(curr.itemSales), 0);
-    const totalNetSalesByDepartment = salesByDepartment.reduce((acc, curr) => acc + parseFloat(curr.netSales), 0); 
- 
+    const totalNetSalesByDepartment = salesByDepartment.reduce((acc, curr) => acc + parseFloat(curr.netSales), 0);
+
     salesByDepartment.forEach(item => {
       item.percentItemSales = totalItemSalesByDepartment ? ((item.itemSales / totalItemSalesByDepartment) * 100).toFixed(2) : '0.00';
       item.percentNetSales = totalNetSalesByDepartment ? ((item.netSales / totalNetSalesByDepartment) * 100).toFixed(2) : '0.00';
@@ -86,7 +113,7 @@ exports.salesSummaryReport = async (req, res) => {
 
 
 
-     const salesByPeriodQuery = `
+    const salesByPeriodQuery = `
       SELECT IFNULL(p.name,'no_name') AS 'period',
         count(c.id) AS 'noOfCheck', SUM(c.cover) AS 'noOfCover', sum(c.summaryItemTotal) AS 'itemSales', 
         SUM(c.summaryTax) AS 'tax', SUM(c.summarySc) AS 'sc',
@@ -101,10 +128,10 @@ exports.salesSummaryReport = async (req, res) => {
       AND c.presence = 1 AND c.void =0 
         ${whereFilter}
       GROUP BY c.periodId`;
-    const [salesByPeriod] = await db.query(salesByPeriodQuery); 
+    const [salesByPeriod] = await db.query(salesByPeriodQuery);
     // saya mau hitung total itemSales dari salesByPeriod 
     const totalItemSalesByPeriod = salesByPeriod.reduce((acc, curr) => acc + parseFloat(curr.itemSales), 0);
-    const totalNetSalesByPeriod = salesByPeriod.reduce((acc, curr) => acc + parseFloat(curr.netSales), 0); 
+    const totalNetSalesByPeriod = salesByPeriod.reduce((acc, curr) => acc + parseFloat(curr.netSales), 0);
     // saya mau hitung percentItemSales  dan update ke salesByPeriod
     salesByPeriod.forEach(item => {
       item.percentItemSales = totalItemSalesByPeriod ? ((item.itemSales / totalItemSalesByPeriod) * 100).toFixed(2) : '0.00';
@@ -168,7 +195,7 @@ exports.salesSummaryReport = async (req, res) => {
     const [unpaid] = await db.query(unpaidQuery);
 
 
-      const voidPaymentSummaryQuery = `
+    const voidPaymentSummaryQuery = `
     SELECT t1.*, e.name AS 'payType' FROM (
         SELECT  p.checkPaymentTypeId, count( p.paid) AS 'paid',
         SUM( p.paid) AS 'paidAmount', SUM( p.tips) AS 'tipsAmount',  SUM( p.paid + p.tips) AS 'subTotal'
@@ -216,4 +243,121 @@ exports.salesSummaryReport = async (req, res) => {
     console.error(err);
     res.status(500).json({ error: 'Database error' });
   }
-}; 
+};
+
+
+exports.cashierPosPrinterPaper = async (req, res) => {
+  const startDate = req.query.startDate || '';
+  const endDate = req.query.endDate || '';
+  const data = [];
+  try {
+
+    let whereFilterOry = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+
+
+    const employeedSelectQuery = `SELECT id, username, name FROM employee 
+    WHERE presence = 1   order by name  asc`;
+    const [employees] = await db.query(employeedSelectQuery);
+
+
+    for (const emp of employees) {
+      let whereFilter = whereFilterOry + ` AND c.closeBy = '${emp.id}' `;
+
+
+      const q1 = `
+    SELECT t.*, pp.name AS 'paytype' FROM (SELECT 
+      p.checkPaymentTypeId, COUNT(p.checkPaymentTypeId) AS 'qty',
+      sum(p.paid) AS 'amount', sum(p.tips) AS 'tips' , sum(p.paid + p.tips) AS 'total'
+    FROM cart AS c 
+    LEFT JOIN cart_payment AS p ON p.cartId = c.id
+    WHERE c.close = 1 
+    AND p.presence = 1 AND p.void = 0  AND p.submit = 1
+    AND c.presence = 1 AND c.void = 0
+    ${whereFilter}
+    GROUP BY p.checkPaymentTypeId) AS t
+    LEFT join check_payment_type AS pp ON pp.id = t.checkPaymentTypeId
+    `;
+  
+      const [paymentSummary] = await db.query(q1);
+
+      const totalTips = paymentSummary.reduce((acc, curr) => acc + parseFloat(curr.tips), 0);
+      const totalAmount = paymentSummary.reduce((acc, curr) => acc + parseFloat(curr.amount), 0);
+      const totalTotal = paymentSummary.reduce((acc, curr) => acc + parseFloat(curr.total), 0);
+
+      const cashBalanceQuery = `SELECT  
+      SUM( p.cashIn) AS 'cashIn' , sum(p.cashOut) AS 'cashOut', SUM(p.cashIn - p.cashOut) AS 'netCash' 
+      FROM cart AS c 
+      LEFT JOIN daily_cash_balance AS p ON p.cartId = c.id
+      WHERE c.close = 1 
+      AND p.presence = 1  
+      AND c.presence = 1 AND c.void = 0
+      ${whereFilter}
+      `;
+      const [cashBalanceResult] = await db.query(cashBalanceQuery);
+      const cashBalance = cashBalanceResult[0];
+
+
+      const salesSummaryReport = `
+    SELECT  SUM(c.summaryItemTotal) AS 'itemSales', SUM(c.summaryDiscount) AS 'discount',
+      SUM(c.summaryItemTotal - c.summaryDiscount) AS 'netSales', 
+      SUM(c.summaryTax) AS 'tax', 
+      SUM(c.summarySc) AS 'sc', SUM(c.grandTotal) AS 'grossSales',
+      COUNT(c.id) AS 'check', SUM(c.cover) AS 'cover',  
+
+      SUM(c.grandTotal) / COUNT(c.id)  AS 'avgCheck',
+      SUM(c.grandTotal) / COUNT(c.cover)  AS 'avgCover' 
+    FROM cart AS c  
+    WHERE c.close = 1  
+    AND c.presence = 1 AND c.void = 0
+     ${whereFilter} 
+    `;
+      const [salesSummaryResult] = await db.query(salesSummaryReport);
+      const salesSummary = salesSummaryResult[0];
+
+
+      const fullPaidChecksQuery = `
+    SELECT   SUM(c.grandTotal) AS 'grossSales',
+      COUNT(c.id) AS 'check', SUM(c.cover) AS 'cover'  
+      FROM cart AS c  
+      WHERE c.close = 1  
+      AND c.presence = 1 AND c.void = 0
+      ${whereFilter}`;
+      const [fullPaidChecksResult] = await db.query(fullPaidChecksQuery);
+      const fullPaidChecks = fullPaidChecksResult[0];
+
+      const unpaidCheckQuery = `
+    SELECT   SUM(c.grandTotal) AS 'grossSales',
+      COUNT(c.id) AS 'check', SUM(c.cover) AS 'cover'  
+      FROM cart AS c  
+      WHERE c.close = 0  
+      AND c.presence = 1 AND c.void = 0
+      ${whereFilter}`;
+      const [unpaidCheckResult] = await db.query(unpaidCheckQuery);
+      const unpaidChecks = unpaidCheckResult[0];
+
+
+      const items = {
+        paymentSummary: paymentSummary,
+        grandSummary: {
+          tips: totalTips,
+          payAmount: totalAmount,
+          payAmtPlusTips: totalTotal
+        },
+        cashBalance: cashBalance,
+        salesSummary: salesSummary,
+        fullPaidChecks: fullPaidChecks,
+        unpaidChecks: unpaidChecks
+
+      };
+      data.push({ employee: emp, report: items });
+
+    }
+
+
+    res.json(data);
+  }
+  catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+};
