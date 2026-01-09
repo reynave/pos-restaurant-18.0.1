@@ -277,7 +277,7 @@ exports.cashierReports = async (req, res) => {
     GROUP BY p.checkPaymentTypeId) AS t
     LEFT join check_payment_type AS pp ON pp.id = t.checkPaymentTypeId
     `;
-  
+
       const [paymentSummary] = await db.query(q1);
 
       const totalTips = paymentSummary.reduce((acc, curr) => acc + parseFloat(curr.tips), 0);
@@ -361,3 +361,97 @@ exports.cashierReports = async (req, res) => {
     res.status(500).json({ error: 'Database error' });
   }
 };
+
+exports.itemizedSalesDetail = async (req, res) => {
+  const startDate = req.query.startDate || '';
+  const endDate = req.query.endDate || '';
+  try {
+
+    const periodQuery = `
+        SELECT DISTINCT periodId, IFNULL(p.name, 'no-name') AS 'period' 
+        FROM cart AS c
+        left JOIN period AS p ON p.id = c.periodId`;
+    const [periods] = await db.query(periodQuery);
+
+    const items = [];
+    const whereFilterDate = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+    for (const period of periods) { 
+      const periodId = period.periodId;
+      const whereFilter = whereFilterDate + ` AND c.periodId = ${periodId} `;
+      const itemsSalesQuery = ` 
+      SELECT  
+          SUM(p.debit * p.qty ) AS 'itemSales', SUM(p.qty) AS 'qty', 	sum((p.debit-  IFNULL(d.credit,0)) * p.qty ) AS 'netSales'
+          FROM cart AS c 
+      LEFT JOIN cart_item AS p ON p.cartId = c.id
+      LEFT JOIN cart_item_discount AS d ON d.cartItemId = p.id
+      WHERE c.close = 1  ${whereFilter}
+      AND p.presence = 1 AND p.void = 0  
+      AND c.presence = 1 AND c.void = 0  `;
+      const [itemsSalesResult] = await db.query(itemsSalesQuery);
+      const totalItemSales = itemsSalesResult[0].itemSales || 0;
+      const totalQty = itemsSalesResult[0].qty || 0;
+      const totalNetSales = itemsSalesResult[0].netSales || 0;
+
+
+     
+      const q = `
+       SELECT m.name, m.plu, t1.* FROM (
+        SELECT  
+          p.menuId, p.debit AS 'price',  SUM( p.qty) AS 'qty',
+            SUM(p.debit * p.qty ) AS 'itemSales', 
+           ( ( SUM(p.debit * p.qty ) /  ${totalItemSales} ) * 100 )  AS 'percentPerAllItemSales', 
+            (IFNULL(d.credit,0)) AS 'discount', 
+            sum((p.debit-  IFNULL(d.credit,0)) * p.qty ) AS 'netSales',
+             ( ( sum((p.debit-  IFNULL(d.credit,0)) * p.qty ) /  ${totalNetSales} ) * 100 ) AS 'percentPerAllNetSales' 
+            FROM cart AS c 
+        LEFT JOIN cart_item AS p ON p.cartId = c.id
+        LEFT JOIN cart_item_discount AS d ON d.cartItemId = p.id
+        WHERE c.close = 1 ${whereFilter}
+        AND p.presence = 1 AND p.void = 0  
+        AND c.presence = 1 AND c.void = 0  
+        GROUP BY p.menuId,  p.debit, d.credit
+      ) AS t1
+      LEFT JOIN menu AS m ON m.id = t1.menuId
+      ORDER BY m.name ASC
+    `;
+      const [itemizedSalesDetail] = await db.query(q);
+
+
+      const setMenuQuery = `SELECT  CONCAT('*',m.name) AS 'name', m.plu, t1.menuSetMenuId AS 'menuId', 
+        0 AS 'price', t1.qty, 0 AS 'itemSales', 0 AS 'percentPerAllItemSales', 0 AS 'discount', 0 AS 'netSales' , 0 AS 'percentPerAllNetSales' FROM (
+          SELECT m.menuSetMenuId,  SUM( p.qty ) AS 'qty'
+          FROM cart AS c
+          JOIN cart_item_modifier AS m ON m.cartId = c.id
+          JOIN cart_item AS p ON p.id = m.cartItemId 
+          WHERE m.menuSetMenuId > 0 ${whereFilter}
+          AND p.presence = 1 AND p.void = 0 AND c.close = 1
+          GROUP BY m.menuSetMenuId
+        ) AS t1
+        LEFT JOIN menu AS m ON m.id = t1.menuSetMenuId
+      `;
+      const [setMenuResult] = await db.query(setMenuQuery);
+
+
+      items.push({
+        period: period,
+        itemizedSalesDetail: [...itemizedSalesDetail, ...setMenuResult], 
+        totalItemSales: totalItemSales,
+        totalQty: totalQty,
+        totalNetSales: totalNetSales
+      });
+    }
+
+    
+
+    res.json({
+      periods: periods,
+      data: items, 
+
+    });
+
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+}

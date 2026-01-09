@@ -11,11 +11,12 @@ router.get('/getOutlets', c.getOutlets);
 //http://localhost:3000/terminal/reports/salesSummaryReport?startDate=2025-12-18&endDate=2025-12-18
 router.get('/salesSummaryReport', c.salesSummaryReport); 
 
-//2a. Cashier Report - POS Printer Paper.pdf
+//2a. Cashier Report  
 router.get('/cashierReports', c.cashierReports); 
-
-//router.post('/signin', loginController.newOrder);
-
+ 
+//3a. Itemized Sales Report - Detail.pdf
+router.get('/itemizedSalesDetail', c.itemizedSalesDetail); 
+//router.get('/itemizedSalesSummary', c.itemizedSalesSummary); 
 
 // router.post('/create', tableMap.postCreate);
 // router.post('/delete', tableMap.postDelete);
