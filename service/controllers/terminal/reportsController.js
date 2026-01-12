@@ -366,6 +366,9 @@ exports.itemizedSalesDetail = async (req, res) => {
   const startDate = req.query.startDate || '';
   const endDate = req.query.endDate || '';
   try {
+    const menu_department_query = `SELECT id, desc1 FROM menu_department WHERE presence = 1 ORDER BY desc1 ASC`;
+    const [menuDepartments] = await db.query(menu_department_query);
+
 
     const periodQuery = `
         SELECT DISTINCT periodId, IFNULL(p.name, 'no-name') AS 'period' 
@@ -375,26 +378,33 @@ exports.itemizedSalesDetail = async (req, res) => {
 
     const items = [];
     const whereFilterDate = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
-    for (const period of periods) { 
-      const periodId = period.periodId;
-      const whereFilter = whereFilterDate + ` AND c.periodId = ${periodId} `;
-      const itemsSalesQuery = ` 
+
+    for (const menuDept of menuDepartments) { 
+      const departments = [];
+
+      for (const period of periods) {
+        const periodId = period.periodId;
+        const whereFilter = whereFilterDate + ` AND c.periodId = ${periodId} `;
+        const itemsSalesQuery = ` 
       SELECT  
           SUM(p.debit * p.qty ) AS 'itemSales', SUM(p.qty) AS 'qty', 	sum((p.debit-  IFNULL(d.credit,0)) * p.qty ) AS 'netSales'
           FROM cart AS c 
       LEFT JOIN cart_item AS p ON p.cartId = c.id
       LEFT JOIN cart_item_discount AS d ON d.cartItemId = p.id
+        LEFT JOIN menu AS m ON m.id = p.menuId
       WHERE c.close = 1  ${whereFilter}
       AND p.presence = 1 AND p.void = 0  
-      AND c.presence = 1 AND c.void = 0  `;
-      const [itemsSalesResult] = await db.query(itemsSalesQuery);
-      const totalItemSales = itemsSalesResult[0].itemSales || 0;
-      const totalQty = itemsSalesResult[0].qty || 0;
-      const totalNetSales = itemsSalesResult[0].netSales || 0;
+      AND c.presence = 1 AND c.void = 0  
+      AND m.menuDepartmentId = ${menuDept.id}
+      `;
+        const [itemsSalesResult] = await db.query(itemsSalesQuery);
+        const totalItemSales = itemsSalesResult[0].itemSales || 0;
+        const totalQty = itemsSalesResult[0].qty || 0;
+        const totalNetSales = itemsSalesResult[0].netSales || 0;
 
 
-     
-      const q = `
+
+        const q = `
        SELECT m.name, m.plu, t1.* FROM (
         SELECT  
           p.menuId, p.debit AS 'price',  SUM( p.qty) AS 'qty',
@@ -412,12 +422,14 @@ exports.itemizedSalesDetail = async (req, res) => {
         GROUP BY p.menuId,  p.debit, d.credit
       ) AS t1
       LEFT JOIN menu AS m ON m.id = t1.menuId
-      ORDER BY m.name ASC
-    `;
-      const [itemizedSalesDetail] = await db.query(q);
+      WHERE m.menuDepartmentId = ${menuDept.id} 
+      ORDER BY m.name ASC 
+      `;
+
+        const [itemizedSalesDetail] = await db.query(q);
 
 
-      const setMenuQuery = `SELECT  CONCAT('*',m.name) AS 'name', m.plu, t1.menuSetMenuId AS 'menuId', 
+        const setMenuQuery = `SELECT  CONCAT('*',m.name) AS 'name', m.plu, t1.menuSetMenuId AS 'menuId', 
         0 AS 'price', t1.qty, 0 AS 'itemSales', 0 AS 'percentPerAllItemSales', 0 AS 'discount', 0 AS 'netSales' , 0 AS 'percentPerAllNetSales' FROM (
           SELECT m.menuSetMenuId,  SUM( p.qty ) AS 'qty'
           FROM cart AS c
@@ -429,23 +441,104 @@ exports.itemizedSalesDetail = async (req, res) => {
         ) AS t1
         LEFT JOIN menu AS m ON m.id = t1.menuSetMenuId
       `;
-      const [setMenuResult] = await db.query(setMenuQuery);
+        const [setMenuResult] = await db.query(setMenuQuery);
 
+
+        departments.push({
+
+          period: period,
+          itemizedSalesDetail: [...itemizedSalesDetail, ...setMenuResult],
+          setMenu: setMenuResult.length,
+          totalItemSales: totalItemSales,
+          totalQty: totalQty,
+          totalNetSales: totalNetSales
+        });
+      }
 
       items.push({
-        period: period,
-        itemizedSalesDetail: [...itemizedSalesDetail, ...setMenuResult], 
-        totalItemSales: totalItemSales,
-        totalQty: totalQty,
-        totalNetSales: totalNetSales
+        departmentId: menuDept.id,
+        name: menuDept.desc1,
+        departments: departments
       });
     }
 
-    
+
+    const allDepartmentsQuery = ` 
+      SELECT  
+            SUM( p.qty) AS 'qty',
+            SUM(p.debit * p.qty ) AS 'itemSales',  
+            SUM((IFNULL(d.credit,0))) AS 'discount', 
+            sum((p.debit-  IFNULL(d.credit,0)) * p.qty ) AS 'netSales'
+        FROM cart AS c 
+        LEFT JOIN cart_item AS p ON p.cartId = c.id
+        LEFT JOIN cart_item_discount AS d ON d.cartItemId = p.id
+        WHERE c.close = 1 ${whereFilterDate}
+        AND p.presence = 1 AND p.void = 0  
+        AND c.presence = 1 AND c.void = 0   
+      `;
+    const [allDepartments] = await db.query(allDepartmentsQuery);
+
+    const byPeriod = [];
+    for (const period of periods) {
+      const whereFilter = whereFilterDate + ` AND c.periodId = ${period.periodId} `;
+      const allDepartmentsQuery = ` 
+      SELECT  
+            SUM( p.qty) AS 'qty',
+            SUM(p.debit * p.qty ) AS 'itemSales',  
+            SUM((IFNULL(d.credit,0))) AS 'discount', 
+            sum((p.debit-  IFNULL(d.credit,0)) * p.qty ) AS 'netSales'
+        FROM cart AS c 
+        LEFT JOIN cart_item AS p ON p.cartId = c.id
+        LEFT JOIN cart_item_discount AS d ON d.cartItemId = p.id
+        WHERE c.close = 1 ${whereFilter}
+        AND p.presence = 1 AND p.void = 0  
+        AND c.presence = 1 AND c.void = 0   
+      `; 
+      const [allDepartments] = await db.query(allDepartmentsQuery);
+      byPeriod.push({
+        period: period,
+        totalQty: allDepartments[0].qty,
+        totalDiscount: allDepartments[0].discount,
+        totalItemSales: allDepartments[0].itemSales,
+        totalNetSales: allDepartments[0].netSales
+      }); 
+    }
+
+    const taxQuery = `SELECT  sum(p.debit) AS 'debit' 
+        FROM cart AS c  
+        LEFT JOIN cart_item_tax AS p ON p.cartId = c.id
+        WHERE c.close = 1  ${whereFilterDate}
+        AND p.presence = 1 AND p.void = 0  
+        AND c.presence = 1 AND c.void = 0  `;
+    const [taxResult] = await db.query(taxQuery);
+
+    const scQuery = `SELECT  sum(p.debit) AS 'debit' 
+        FROM cart AS c  
+        LEFT JOIN cart_item_sc AS p ON p.cartId = c.id
+        WHERE c.close = 1  ${whereFilterDate}
+        AND p.presence = 1 AND p.void = 0  
+        AND c.presence = 1 AND c.void = 0  `;
+    const [scResult] = await db.query(scQuery);
+
+
+     const grossSalesQuery = `SELECT  
+        SUM(c.grandTotal) AS 'grandTotal', SUM(c.cover) AS 'totalCover', count(c.id) AS 'checks'
+           
+        FROM cart AS c   
+        WHERE c.close = 1    ${whereFilterDate}
+        AND c.presence = 1 AND c.void = 0    `;
+    const [grossSalesResult] = await db.query(grossSalesQuery);
 
     res.json({
       periods: periods,
-      data: items, 
+      allDepartments: allDepartments[0],
+      byPeriod: byPeriod,
+      tax : taxResult[0].debit || 0,
+      sc : scResult[0].debit || 0,
+      grossSales : grossSalesResult[0].grandTotal || 0,
+      totalCover : grossSalesResult[0].totalCover || 0,
+      totalChecks : grossSalesResult[0].checks || 0,
+      data: items,
 
     });
 
