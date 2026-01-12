@@ -16,7 +16,7 @@ router.get('/cashierReports', c.cashierReports);
  
 //3a. Itemized Sales Report - Detail.pdf
 router.get('/itemizedSalesDetail', c.itemizedSalesDetail); 
-//router.get('/itemizedSalesSummary', c.itemizedSalesSummary); 
+router.get('/itemizedSalesSummary', c.itemizedSalesSummary); 
 
 // router.post('/create', tableMap.postCreate);
 // router.post('/delete', tableMap.postDelete);
