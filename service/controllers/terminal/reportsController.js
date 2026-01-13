@@ -856,3 +856,29 @@ exports.salesReportPerHour = async (req, res) => {
     res.status(500).json({ error: 'Database error' });
   }
 };
+
+
+exports.closeCheckReports = async (req, res) => {
+  const startDate = req.query.startDate || '';
+  const endDate = req.query.endDate || '';
+  try {
+    const whereFilter = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+    const overallQuery = ` 
+    SELECT 
+      c.id, c.startDate, c.grandTotal,   p.paid, c.changePayment, p.tips, t.name, 
+      e.name AS 'closeEmployee', c.endDate
+    FROM cart AS c
+    LEFT JOIN cart_payment AS p ON p.cartId = c.id
+    LEFT JOIN check_payment_type AS t ON t.id = p.checkPaymentTypeId
+    LEFT JOIN employee AS e  ON e.id = c.closeBy
+    WHERE c.close = 1 AND c.presence = 1 AND c.void = 0 ${whereFilter}
+    AND p.submit = 1 AND p.presence = 1 AND p.void = 0`; 
+    const [overall] = await db.query(overallQuery);
+    res.json({ data: overall });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  } 
+};
+
+  

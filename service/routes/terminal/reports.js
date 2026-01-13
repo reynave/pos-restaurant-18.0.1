@@ -28,6 +28,9 @@ router.get('/salesHistoryReport', c.salesHistoryReport);
 //6
 router.get('/salesReportPerHour', c.salesReportPerHour);
 
+//7
+router.get('/closeCheckReports', c.closeCheckReports);
+
 // router.post('/create', tableMap.postCreate);
 // router.post('/delete', tableMap.postDelete);
  
