@@ -1,3 +1,4 @@
+const e = require('express');
 const db = require('../../config/db');
 const { today, formatDateOnly, headerUserId } = require('../../helpers/global');
 
@@ -635,7 +636,7 @@ exports.itemizedSalesSummary = async (req, res) => {
 
 
 
-     const taxQuery = `SELECT  sum(p.debit) AS 'debit' 
+    const taxQuery = `SELECT  sum(p.debit) AS 'debit' 
         FROM cart AS c  
         LEFT JOIN cart_item_tax AS p ON p.cartId = c.id
         WHERE c.close = 1  ${whereFilterDate}
@@ -662,7 +663,7 @@ exports.itemizedSalesSummary = async (req, res) => {
 
 
 
-      const totalbyDepartementQuery = ` 
+    const totalbyDepartementQuery = ` 
       SELECT  
           SUM(p.debit * p.qty ) AS 'itemSales',  
           sum((p.debit-  IFNULL(d.credit,0)) * p.qty ) AS 'netSales' ,
@@ -675,14 +676,14 @@ exports.itemizedSalesSummary = async (req, res) => {
       AND p.presence = 1 AND p.void = 0  
       AND c.presence = 1 AND c.void = 0   
       `;
-      const [totalbyDepartementResult] = await db.query(totalbyDepartementQuery);
+    const [totalbyDepartementResult] = await db.query(totalbyDepartementQuery);
 
 
     res.json({
       periods: periods,
       summary: {
-        itemSales: totalbyDepartementResult[0].itemSales, 
-         discount: totalbyDepartementResult[0].discount,
+        itemSales: totalbyDepartementResult[0].itemSales,
+        discount: totalbyDepartementResult[0].discount,
         netSales: totalbyDepartementResult[0].netSales,
         tax: taxResult[0].debit || 0,
         sc: scResult[0].debit || 0,
@@ -690,8 +691,8 @@ exports.itemizedSalesSummary = async (req, res) => {
 
         totalCover: grossSalesResult[0].totalCover || 0,
         totalChecks: grossSalesResult[0].checks || 0,
-        salesPerChecks : 0,
-        salesPerCover : 0
+        salesPerChecks: 0,
+        salesPerCover: 0
       },
       data: items,
 
@@ -703,3 +704,155 @@ exports.itemizedSalesSummary = async (req, res) => {
     res.status(500).json({ error: 'Database error' });
   }
 }
+
+exports.checkDiscountListing = async (req, res) => {
+  const startDate = req.query.startDate || '';
+  const endDate = req.query.endDate || '';
+  try {
+    const items = [];
+    const whereFilterDate = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+
+    const discountQuery = `
+    SELECT c.id,  t.tableName, 
+      c.cover, d.inputDate, c.closeBy, e.name, d.credit AS 'discountAmount'
+      FROM cart AS c 
+      LEFT JOIN cart_item_discount AS d ON d.cartId = c.id
+      LEFT JOIN outlet_table_map AS t ON t.id = c.outletTableMapId
+      LEFT JOIN employee AS e ON e.id = c.closeBy
+      WHERE 
+      c.close = 1 ${whereFilterDate}
+      AND c.presence = 1    AND c.void = 0
+      AND d.presence = 1 AND d.void = 0
+      `;
+    const [discountResult] = await db.query(discountQuery);
+
+
+    const discountTotalQuery = `
+    SELECT  COUNT(d.id) AS 'totalDisc', sum(c.cover) AS 'totalCover', SUM( d.credit ) AS 'subTotal'
+      FROM cart AS c 
+      LEFT JOIN cart_item_discount AS d ON d.cartId = c.id 
+      WHERE 
+      c.close = 1  ${whereFilterDate}
+      AND c.presence = 1    AND c.void = 0
+      AND d.presence = 1 AND d.void = 0
+      `;
+    const [discountTotalResult] = await db.query(discountTotalQuery);
+
+
+    const data = {
+      discounts: discountResult,
+      summary: discountTotalResult[0]
+    }
+    res.json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+}
+
+exports.salesHistoryReport = async (req, res) => {
+  const startDate = req.query.startDate || '';
+  const endDate = req.query.endDate || '';
+  try {
+    const whereFilterDate = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+
+    const q = `
+    SELECT DATE(c.endDate) AS DATE, SUM(c.summaryItemTotal) AS 'itemSales',
+    SUM(c.summaryDiscount * -1) AS 'discount',
+    SUM(c.grandTotal) AS 'grandTotal',
+    COUNT(c.id) AS 'check', 
+    SUM(c.grandTotal) /COUNT(c.id)  AS 'avgSalesCheck',
+      SUM(c.cover)  AS 'cover',
+      SUM(c.grandTotal) /  SUM(c.cover)  AS 'avgSalesCover' 
+    FROM cart AS c
+    WHERE c.close = 1 AND c.presence = 1 AND c.void = 0 ${whereFilterDate}
+    GROUP BY DATE(c.endDate)
+    ORDER BY DATE(c.endDate) DESC`;
+    const [salesHistory] = await db.query(q);
+    
+    // buat total total per field dari salesHistory
+    const totalItemSales = salesHistory.reduce((acc, curr) => acc + parseFloat(curr.itemSales), 0);
+    const totalDiscount = salesHistory.reduce((acc, curr) => acc + parseFloat(curr.discount), 0);
+    const totalGrandTotal = salesHistory.reduce((acc, curr) => acc + parseFloat(curr.grandTotal), 0);
+    const totalCheck = salesHistory.reduce((acc, curr) => acc + parseFloat(curr.check), 0);
+    const totalCover = salesHistory.reduce((acc, curr) => acc + parseFloat(curr.cover), 0);
+
+    const data = {
+      salesHistory: salesHistory,
+      summary: {
+        totalItemSales: totalItemSales,
+        totalDiscount: totalDiscount,
+        totalGrandTotal: totalGrandTotal,
+        totalCheck: totalCheck,
+        totalCover: totalCover
+      }
+    }
+    
+    res.json({ data });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+};
+
+
+exports.salesReportPerHour = async (req, res) => {
+  const startDate = req.query.startDate || '';
+  const endDate = req.query.endDate || '';
+  try {
+    const whereFilter = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+    
+     const hours = [];
+      for (let h = 0; h < 24; h++) {
+        const hh = String(h).padStart(2, '0');
+        hours.push({
+          from: `${hh}:00:00`,
+          to: `${hh}:59:59`,
+          label: `${hh}:00 to ${hh}:59`, 
+        });
+      }
+
+      const items = [];
+      for (const hour of hours) {
+        const salesQuery = `SELECT 
+                '${hour.label}' as 'timePeriod',
+            SUM(c.summaryItemTotal) AS 'itemSales',
+            SUM(c.summaryDiscount * -1 ) AS 'discount',
+            SUM(c.summaryItemTotal + c.summaryDiscount) AS 'NetSales' ,
+            SUM(c.summaryTax) AS 'tax',
+            SUM(c.summarySc) AS 'sc',
+            SUM(c.grandTotal) AS 'grossSales',
+            count(c.id) AS 'checks',
+            SUM(c.cover) AS 'covers', 
+            SUM(c.grandTotal) / count(c.id) AS 'avgSalesPerChecks',
+            SUM(c.grandTotal) / SUM(c.cover) AS 'avgSalesPerCovers' 
+          FROM cart AS c
+          WHERE c.close = 1 AND c.presence = 1 AND c.void = 0 ${whereFilter} 
+            AND TIME(c.inputDate) BETWEEN '${hour.from}' AND '${hour.to}'`;
+        const [salesResult] = await db.query(salesQuery);
+        items.push(salesResult[0]);
+      }
+
+      // hapus jika semua fieldnya null atau 0
+      for (let i = items.length -1; i >=0 ; i--) {
+        const item = items[i];
+        if ( (!item.itemSales || item.itemSales == 0)  ) {
+          items.splice(i, 1);
+        }
+      }
+
+      // bisa hutung berapa persen dari total itemSales dan netSales
+      const totalItemSales = items.reduce((acc, curr) => acc + parseFloat(curr.itemSales), 0);
+      const totalNetSales = items.reduce((acc, curr) => acc + parseFloat(curr.NetSales), 0);  
+      items.forEach(item => {
+        item.percentItemSales = totalItemSales ? ((item.itemSales / totalItemSales) * 100).toFixed(2) : '0.00';
+        item.percentNetSales = totalNetSales ? ((item.NetSales / totalNetSales) * 100).toFixed(2) : '0.00';
+      });
+       
+      res.json({ data: items }); 
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+};

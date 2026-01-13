@@ -18,6 +18,16 @@ router.get('/cashierReports', c.cashierReports);
 router.get('/itemizedSalesDetail', c.itemizedSalesDetail); 
 router.get('/itemizedSalesSummary', c.itemizedSalesSummary); 
 
+//4. Check Discount Listing Report.pdf
+router.get('/checkDiscountListing', c.checkDiscountListing);
+
+//5. Sales History Report.pdf
+router.get('/salesHistoryReport', c.salesHistoryReport);
+
+
+//6
+router.get('/salesReportPerHour', c.salesReportPerHour);
+
 // router.post('/create', tableMap.postCreate);
 // router.post('/delete', tableMap.postDelete);
  
