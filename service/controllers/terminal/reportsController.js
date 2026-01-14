@@ -769,7 +769,7 @@ exports.salesHistoryReport = async (req, res) => {
     GROUP BY DATE(c.endDate)
     ORDER BY DATE(c.endDate) DESC`;
     const [salesHistory] = await db.query(q);
-    
+
     // buat total total per field dari salesHistory
     const totalItemSales = salesHistory.reduce((acc, curr) => acc + parseFloat(curr.itemSales), 0);
     const totalDiscount = salesHistory.reduce((acc, curr) => acc + parseFloat(curr.discount), 0);
@@ -787,7 +787,7 @@ exports.salesHistoryReport = async (req, res) => {
         totalCover: totalCover
       }
     }
-    
+
     res.json({ data });
   } catch (err) {
     console.error(err);
@@ -801,20 +801,20 @@ exports.salesReportPerHour = async (req, res) => {
   const endDate = req.query.endDate || '';
   try {
     const whereFilter = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
-    
-     const hours = [];
-      for (let h = 0; h < 24; h++) {
-        const hh = String(h).padStart(2, '0');
-        hours.push({
-          from: `${hh}:00:00`,
-          to: `${hh}:59:59`,
-          label: `${hh}:00 to ${hh}:59`, 
-        });
-      }
 
-      const items = [];
-      for (const hour of hours) {
-        const salesQuery = `SELECT 
+    const hours = [];
+    for (let h = 0; h < 24; h++) {
+      const hh = String(h).padStart(2, '0');
+      hours.push({
+        from: `${hh}:00:00`,
+        to: `${hh}:59:59`,
+        label: `${hh}:00 to ${hh}:59`,
+      });
+    }
+
+    const items = [];
+    for (const hour of hours) {
+      const salesQuery = `SELECT 
                 '${hour.label}' as 'timePeriod',
             SUM(c.summaryItemTotal) AS 'itemSales',
             SUM(c.summaryDiscount * -1 ) AS 'discount',
@@ -829,27 +829,27 @@ exports.salesReportPerHour = async (req, res) => {
           FROM cart AS c
           WHERE c.close = 1 AND c.presence = 1 AND c.void = 0 ${whereFilter} 
             AND TIME(c.inputDate) BETWEEN '${hour.from}' AND '${hour.to}'`;
-        const [salesResult] = await db.query(salesQuery);
-        items.push(salesResult[0]);
-      }
+      const [salesResult] = await db.query(salesQuery);
+      items.push(salesResult[0]);
+    }
 
-      // hapus jika semua fieldnya null atau 0
-      for (let i = items.length -1; i >=0 ; i--) {
-        const item = items[i];
-        if ( (!item.itemSales || item.itemSales == 0)  ) {
-          items.splice(i, 1);
-        }
+    // hapus jika semua fieldnya null atau 0
+    for (let i = items.length - 1; i >= 0; i--) {
+      const item = items[i];
+      if ((!item.itemSales || item.itemSales == 0)) {
+        items.splice(i, 1);
       }
+    }
 
-      // bisa hutung berapa persen dari total itemSales dan netSales
-      const totalItemSales = items.reduce((acc, curr) => acc + parseFloat(curr.itemSales), 0);
-      const totalNetSales = items.reduce((acc, curr) => acc + parseFloat(curr.NetSales), 0);  
-      items.forEach(item => {
-        item.percentItemSales = totalItemSales ? ((item.itemSales / totalItemSales) * 100).toFixed(2) : '0.00';
-        item.percentNetSales = totalNetSales ? ((item.NetSales / totalNetSales) * 100).toFixed(2) : '0.00';
-      });
-       
-      res.json({ data: items }); 
+    // bisa hutung berapa persen dari total itemSales dan netSales
+    const totalItemSales = items.reduce((acc, curr) => acc + parseFloat(curr.itemSales), 0);
+    const totalNetSales = items.reduce((acc, curr) => acc + parseFloat(curr.NetSales), 0);
+    items.forEach(item => {
+      item.percentItemSales = totalItemSales ? ((item.itemSales / totalItemSales) * 100).toFixed(2) : '0.00';
+      item.percentNetSales = totalNetSales ? ((item.NetSales / totalNetSales) * 100).toFixed(2) : '0.00';
+    });
+
+    res.json({ data: items });
 
   } catch (err) {
     console.error(err);
@@ -872,13 +872,308 @@ exports.closeCheckReports = async (req, res) => {
     LEFT JOIN check_payment_type AS t ON t.id = p.checkPaymentTypeId
     LEFT JOIN employee AS e  ON e.id = c.closeBy
     WHERE c.close = 1 AND c.presence = 1 AND c.void = 0 ${whereFilter}
-    AND p.submit = 1 AND p.presence = 1 AND p.void = 0`; 
+    AND p.submit = 1 AND p.presence = 1 AND p.void = 0`;
     const [overall] = await db.query(overallQuery);
     res.json({ data: overall });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Database error' });
-  } 
+  }
 };
 
-  
+exports.ccPayment = async (req, res) => {
+  const startDate = req.query.startDate || '';
+  const endDate = req.query.endDate || '';
+  try {
+
+    const paymentType = `
+    SELECT id, name FROM 
+    check_payment_type 
+    WHERE presence = 1 and openDrawer = 0 ORDER BY name ASC`;
+    const [paymentTypes] = await db.query(paymentType);
+
+    const items = [];
+    for (const pt of paymentTypes) {
+
+      const whereFilter = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+      const overallQuery = `
+      SELECT c.id , p.checkPaymentTypeId,  p.cardNumber, p.expCard, p.paid, p.tips, (p.paid+p.tips) AS 'total'
+        FROM cart AS c 
+      LEFT JOIN cart_payment AS p ON p.cartId = c.id 
+      WHERE 
+        c.close = 1 AND c.presence = 1 AND c.void = 0 and p.checkPaymentTypeId = ${pt.id}
+        AND p.presence = 1 AND p.void = 0 AND p.submit = 1
+        ${whereFilter}`;
+      const [overall] = await db.query(overallQuery);
+
+      // hitung total dari paid, tips, total
+      const totalPaid = overall.reduce((acc, curr) => acc + parseFloat(curr.paid), 0);
+      const totalTips = overall.reduce((acc, curr) => acc + parseFloat(curr.tips), 0);
+      const totalTotal = overall.reduce((acc, curr) => acc + parseFloat(curr.total), 0);
+
+      items.push({
+        paymentType: pt,
+        data: overall,
+        summary: {
+          totalPaid: totalPaid,
+          totalTips: totalTips,
+          totalTotal: totalTotal
+        }
+      });
+    }
+
+    // hapus jika data kosong
+    for (let i = items.length - 1; i >= 0; i--) {
+      const item = items[i];
+      if (item.data.length === 0) {
+        items.splice(i, 1);
+      }
+    }
+
+
+    res.json({ data: items });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+};
+
+exports.scHistory = async (req, res) => {
+  const startDate = req.query.startDate || '';
+  const endDate = req.query.endDate || '';
+  try {
+    const whereFilter = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+
+    const taxQuery = `SELECT 
+      id, scNote as  name 
+      FROM menu_tax_sc
+    WHERE presence = 1 `;
+    const [tax] = await db.query(taxQuery);
+
+    let whereSc = '';
+    let headerSc = [];
+    tax.forEach(t => {
+      headerSc.push({ id: t.id, name: t.name, field: `sc${t.id}` });
+      whereSc += ` SUM(CASE WHEN i.menuTaxScId = ${t.id} THEN i.debit ELSE 0 END) AS 'sc${t.id}', `;
+    });
+
+
+    let grandTotal = 0;
+    const overallQuery = ` 
+        SELECT
+          DATE_FORMAT(c.endDate, '%Y-%m-%d') AS 'Business Date',
+          ${whereSc}
+          SUM(i.debit) AS 'Total sc'
+        FROM cart c
+        LEFT JOIN cart_item_sc i ON i.cartId = c.id AND i.presence = 1 AND i.void = 0
+        WHERE c.close = 1 AND c.presence = 1 AND c.void = 0 ${whereFilter} 
+        GROUP BY DATE(c.endDate)
+        ORDER BY DATE(c.endDate) ASC`;
+    console.log(overallQuery);
+    const [overall] = await db.query(overallQuery);
+
+
+    // hitung sub total per tax1, tax2, tax3 dst,  footer object
+    const footer = {};
+    headerSc.forEach(ht => {
+      footer[ht.field] = overall.reduce((acc, curr) => acc + parseFloat(curr[ht.field]), 0);
+    });
+
+    // hitung grand total dari footer totalTax
+    grandTotal = overall.reduce((acc, curr) => acc + parseFloat(curr['Total sc']), 0);
+
+    res.json({
+      headerSc: headerSc,
+      items: overall,
+      footer: footer,
+      grandTotal: grandTotal
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+};
+
+exports.taxHistory = async (req, res) => {
+  const startDate = req.query.startDate || '';
+  const endDate = req.query.endDate || '';
+  try {
+    const whereFilter = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+
+    const taxQuery = `SELECT 
+      id, taxNote as name 
+      FROM menu_tax_sc
+    WHERE presence = 1 `;
+    const [tax] = await db.query(taxQuery);
+
+    let whereTax = '';
+    let headerTax = [];
+    tax.forEach(t => {
+      headerTax.push({ id: t.id, name: t.name, field: `tax${t.id}` });
+      whereTax += ` SUM(CASE WHEN i.menuTaxScId = ${t.id} THEN i.debit ELSE 0 END) AS 'tax${t.id}', `;
+    });
+
+
+    let grandTotal = 0;
+    const overallQuery = ` 
+        SELECT
+          DATE_FORMAT(c.endDate, '%Y-%m-%d') AS 'Business Date',
+          ${whereTax}
+          SUM(i.debit) AS 'Total Tax'
+        FROM cart c
+        LEFT JOIN cart_item_tax i ON i.cartId = c.id AND i.presence = 1 AND i.void = 0
+        WHERE c.close = 1 AND c.presence = 1 AND c.void = 0 ${whereFilter} 
+        GROUP BY DATE(c.endDate)
+        ORDER BY DATE(c.endDate) ASC`;
+    console.log(overallQuery);
+    const [overall] = await db.query(overallQuery);
+
+
+    // hitung sub total per tax1, tax2, tax3 dst,  footer object
+    const footer = {};
+    headerTax.forEach(ht => {
+      footer[ht.field] = overall.reduce((acc, curr) => acc + parseFloat(curr[ht.field]), 0);
+    });
+
+    // hitung grand total dari footer totalTax
+    grandTotal = overall.reduce((acc, curr) => acc + parseFloat(curr['Total Tax']), 0);
+
+    res.json({
+      headerTax: headerTax,
+      items: overall,
+      footer: footer,
+      grandTotal: grandTotal
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+};
+
+
+exports.itemizedSales = async (req, res) => {
+  const startDate = req.query.startDate || '';
+  const endDate = req.query.endDate || '';
+  try {
+    let globalQty = 0;
+    let globalItemSales = 0;
+    const whereFilter = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+
+    const menuDepartmentsQuery = `
+        SELECT id, desc1 
+          FROM menu_department 
+        WHERE presence = 1 ORDER BY desc1 ASC`;
+    const [menuDepartments] = await db.query(menuDepartmentsQuery);
+
+    const data = [];
+    for (const md of menuDepartments) {
+      const itemsQuery = ` 
+      SELECT m.name , m.plu, t1.qty , t1.itemSales , 0 as 'unserMenuSet' FROM (
+        SELECT p.menuId, SUM( p.qty) AS 'qty', sum(p.debit * p.qty) AS 'itemSales'
+        FROM cart AS c 
+        LEFT JOIN cart_item AS p ON p.cartId = c.id 
+        left join menu as m on m.id = p.menuId 
+        WHERE p.presence = 1 AND p.void = 0  AND  c.close = 1
+        AND m.menuDepartmentId = ${md.id}
+        ${whereFilter}
+        GROUP BY p.menuId
+      ) AS t1
+      LEFT JOIN menu AS m ON m.id = t1.menuId
+
+      UNION ALL 
+
+      SELECT CONCAT('*',m.name) AS 'name' , m.plu, t1.qty , t1.itemSales, 1 as 'unserMenuSet'  FROM (
+      SELECT p.menuSetMenuId AS 'menuId',  SUM( (p.debit * i.qty) + (p.debit * p.menuSetQty)) AS 'itemSales' , sum(i.qty) AS 'qty'
+      FROM cart AS c 
+      LEFT JOIN cart_item_modifier AS p ON p.cartId = c.id 
+      LEFT JOIN cart_item AS i ON i.id = p.cartItemId
+      left join menu as m on m.id = p.menuSetMenuId 
+     
+      WHERE p.presence = 1 AND p.void = 0  AND c.close = 1 AND i.presence =1 AND i.void = 0  
+      AND m.menuDepartmentId = ${md.id}
+       ${whereFilter}
+      AND p.menuSetMenuId != 0
+      GROUP BY p.menuSetMenuId
+      
+      ) AS t1
+      LEFT JOIN menu AS m ON m.id = t1.menuId 
+
+      ORDER BY plu, name
+    `;
+      const [items] = await db.query(itemsQuery);
+
+      // hitung total qyt, itemSales
+      let totalQty = 0;
+      let totalItemSales = 0;
+      let unserMenuSet = 0;
+      items.forEach(i => {
+        totalQty += parseFloat(i.qty);
+        totalItemSales += parseFloat(i.itemSales);
+        unserMenuSet += parseInt(i.unserMenuSet);
+      });
+
+      globalQty += totalQty;
+      globalItemSales += totalItemSales;
+
+      data.push({ 
+        menuDepartment: md.desc1, 
+        items: items,  
+        menuSetIncluded : unserMenuSet > 0 ? 1 : 0,
+        summary:{
+           totalRow: items.length, totalQty: totalQty, totalItemSales: totalItemSales  
+        }} );
+    }
+
+
+    // tolong hapus data jika item kosong
+    for (let i = data.length - 1; i >= 0; i--) {
+      const item = data[i];
+      if (item.items.length === 0) {
+        data.splice(i, 1);
+      }
+    }
+
+
+    res.json({
+      data: data,
+      globalSummary: {
+        totalDepartments: data.length,
+        globalQty: globalQty,
+        globalItemSales: globalItemSales
+      }
+
+    });
+
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+};
+
+
+
+
+exports.sample = async (req, res) => {
+  const startDate = req.query.startDate || '';
+  const endDate = req.query.endDate || '';
+  try {
+    const whereFilter = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+    const overallQuery = ` 
+      SELECT 
+        c.*
+      FROM cart AS c 
+      WHERE 
+        c.close = 1 AND c.presence = 1 AND c.void = 0 ${whereFilter}`;
+    const [overall] = await db.query(overallQuery);
+    res.json({ data: overall });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+};
+
+
+
+
+

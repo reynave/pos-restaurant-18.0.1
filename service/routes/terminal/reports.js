@@ -30,8 +30,15 @@ router.get('/salesReportPerHour', c.salesReportPerHour);
 
 //7
 router.get('/closeCheckReports', c.closeCheckReports);
+//8
+router.get('/ccPayment', c.ccPayment);
 
-// router.post('/create', tableMap.postCreate);
-// router.post('/delete', tableMap.postDelete);
- 
+//9
+router.get('/scHistory', c.scHistory);
+//10
+router.get('/taxHistory', c.taxHistory);
+
+//11
+router.get('/itemizedSales', c.itemizedSales);
+
 module.exports = router;
