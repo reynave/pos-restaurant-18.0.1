@@ -1115,13 +1115,14 @@ exports.itemizedSales = async (req, res) => {
       globalQty += totalQty;
       globalItemSales += totalItemSales;
 
-      data.push({ 
-        menuDepartment: md.desc1, 
-        items: items,  
-        menuSetIncluded : unserMenuSet > 0 ? 1 : 0,
-        summary:{
-           totalRow: items.length, totalQty: totalQty, totalItemSales: totalItemSales  
-        }} );
+      data.push({
+        menuDepartment: md.desc1,
+        items: items,
+        menuSetIncluded: unserMenuSet > 0 ? 1 : 0,
+        summary: {
+          totalRow: items.length, totalQty: totalQty, totalItemSales: totalItemSales
+        }
+      });
     }
 
 
@@ -1152,6 +1153,41 @@ exports.itemizedSales = async (req, res) => {
 };
 
 
+exports.itemCount = async (req, res) => {
+  try {
+    let items = [];
+
+    const menuDepartmentsQuery = `
+        SELECT id, desc1 
+          FROM menu_department 
+        WHERE presence = 1 ORDER BY desc1 ASC`;
+    const [menuDepartments] = await db.query(menuDepartmentsQuery);
+
+    for (const md of menuDepartments) { 
+      const overallQuery = ` 
+      SELECT NAME, qty, adjustItemsId , menuDepartmentId FROM menu  
+      WHERE adjustItemsId != ''
+      AND presence = 1 and menuDepartmentId = ${md.id}
+      ORDER BY name ASC`;
+
+      const [overall] = await db.query(overallQuery);
+      items.push({
+        menuDepartment: md.desc1,
+        items:  overall
+      });
+
+    }
+
+
+    res.json({ data: items });
+
+
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+};
 
 
 exports.sample = async (req, res) => {

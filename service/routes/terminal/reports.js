@@ -41,4 +41,7 @@ router.get('/taxHistory', c.taxHistory);
 //11
 router.get('/itemizedSales', c.itemizedSales);
 
+//11
+router.get('/itemCount', c.itemCount);
+
 module.exports = router;
