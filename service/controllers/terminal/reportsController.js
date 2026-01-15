@@ -41,7 +41,7 @@ exports.salesSummaryReport = async (req, res) => {
 
     const q = `
       SELECT sum(c.summaryItemTotal) AS 'ItemSales', sum(c.summaryDiscount) AS 'discount', 
-      SUM( c.summaryItemTotal - c.summaryDiscount ) AS 'netSales',
+      SUM( c.summaryItemTotal + c.summaryDiscount ) AS 'netSales',
         sum(c.summaryTax) AS 'tax', sum(c.summarySc) AS 'sc',  sum(c.grandTotal) AS 'grossSales', 
         SUM(c.cover) AS 'totalCover', count(c.id) AS 'totalCheck', 0 as salesPerCheck, 0 as salesPerCover
       FROM cart as c
@@ -120,7 +120,7 @@ exports.salesSummaryReport = async (req, res) => {
         SUM(c.summaryTax) AS 'tax', SUM(c.summarySc) AS 'sc',
 		  
 		  0 AS 'percentItemSales',
-        sum(c.summaryDiscount) AS 'discount', SUM( c.summaryItemTotal - c.summaryDiscount ) AS 'netSales',
+        sum(c.summaryDiscount) AS 'discount', SUM( c.summaryItemTotal + c.summaryDiscount ) AS 'netSales',
         0 AS 'percentNetSales',
         SUM(c.grandTotal) AS 'GrossSales'
       FROM cart AS  c
@@ -300,7 +300,7 @@ exports.cashierReports = async (req, res) => {
 
       const salesSummaryReport = `
     SELECT  SUM(c.summaryItemTotal) AS 'itemSales', SUM(c.summaryDiscount) AS 'discount',
-      SUM(c.summaryItemTotal - c.summaryDiscount) AS 'netSales', 
+      SUM(c.summaryItemTotal + c.summaryDiscount) AS 'netSales', 
       SUM(c.summaryTax) AS 'tax', 
       SUM(c.summarySc) AS 'sc', SUM(c.grandTotal) AS 'grossSales',
       COUNT(c.id) AS 'check', SUM(c.cover) AS 'cover',  
@@ -1163,7 +1163,7 @@ exports.itemCount = async (req, res) => {
         WHERE presence = 1 ORDER BY desc1 ASC`;
     const [menuDepartments] = await db.query(menuDepartmentsQuery);
 
-    for (const md of menuDepartments) { 
+    for (const md of menuDepartments) {
       const overallQuery = ` 
       SELECT NAME, qty, adjustItemsId , menuDepartmentId FROM menu  
       WHERE adjustItemsId != ''
@@ -1173,7 +1173,7 @@ exports.itemCount = async (req, res) => {
       const [overall] = await db.query(overallQuery);
       items.push({
         menuDepartment: md.desc1,
-        items:  overall
+        items: overall
       });
 
     }
@@ -1190,17 +1190,491 @@ exports.itemCount = async (req, res) => {
 };
 
 
-exports.sample = async (req, res) => {
+exports.employeeItemizedSales = async (req, res) => {
+  const startDate = req.query.startDate || '';
+  const endDate = req.query.endDate || '';
+  try {
+    let globalQty = 0;
+    let globalItemSales = 0;
+    const whereFilter = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+
+    const employeedSelectQuery = `
+        SELECT id, name FROM employee order by name asc;`;
+    const [employee] = await db.query(employeedSelectQuery);
+
+    const data = [];
+    for (const md of employee) {
+      const itemsQuery = ` 
+      SELECT m.name , m.plu, t1.qty , t1.itemSales , 0 as 'unserMenuSet' FROM (
+        SELECT  p.menuId, SUM( p.qty) AS 'qty', sum(p.debit * p.qty) AS 'itemSales'
+        FROM cart AS c 
+        LEFT JOIN cart_item AS p ON p.cartId = c.id  
+        WHERE p.presence = 1 AND p.void = 0  AND  c.close = 1
+        AND c.closeBy = ${md.id}
+        ${whereFilter}
+        GROUP BY p.menuId
+      ) AS t1
+      LEFT JOIN menu AS m ON m.id = t1.menuId
+
+      UNION ALL 
+
+      SELECT CONCAT('*',m.name) AS 'name' , m.plu, t1.qty , t1.itemSales, 1 as 'unserMenuSet'  FROM (
+        SELECT  p.menuSetMenuId,  SUM( (p.debit * i.qty) + (p.debit * p.menuSetQty)) AS 'itemSales' , sum(i.qty) AS 'qty'
+        FROM cart AS c 
+        LEFT JOIN cart_item_modifier AS p ON p.cartId = c.id 
+        LEFT JOIN cart_item AS i ON i.id = p.cartItemId 
+      
+        WHERE p.presence = 1 AND p.void = 0  AND c.close = 1 AND i.presence =1 AND i.void = 0  
+         AND c.closeBy = ${md.id}
+        ${whereFilter}
+        AND p.menuSetMenuId != 0
+        GROUP BY p.menuSetMenuId
+        
+      ) AS t1
+      LEFT JOIN menu AS m ON m.id = t1.menuSetMenuId 
+
+      ORDER BY plu, name
+      `;
+      const [items] = await db.query(itemsQuery);
+
+      // hitung total qyt, itemSales
+      let totalQty = 0;
+      let totalItemSales = 0;
+      let unserMenuSet = 0;
+      items.forEach(i => {
+        totalQty += parseFloat(i.qty);
+        totalItemSales += parseFloat(i.itemSales);
+        unserMenuSet += parseInt(i.unserMenuSet);
+      });
+
+      globalQty += totalQty;
+      globalItemSales += totalItemSales;
+
+      data.push({
+        employee: md,
+        items: items,
+        menuSetIncluded: unserMenuSet > 0 ? 1 : 0,
+        summary: {
+          totalRow: items.length, totalQty: totalQty, totalItemSales: totalItemSales
+        }
+      });
+    }
+
+
+    // tolong hapus data jika item kosong
+    for (let i = data.length - 1; i >= 0; i--) {
+      const item = data[i];
+      if (item.items.length === 0) {
+        data.splice(i, 1);
+      }
+    }
+
+
+    res.json({
+      data: data,
+      globalSummary: {
+        totalDepartments: data.length,
+        globalQty: globalQty,
+        globalItemSales: globalItemSales
+      }
+
+    });
+
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+};
+
+
+
+exports.managerClose = async (req, res) => {
   const startDate = req.query.startDate || '';
   const endDate = req.query.endDate || '';
   try {
     const whereFilter = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+
+    const employeedSelectQuery = `
+        SELECT id, name FROM employee order by name asc;`;
+    const [employee] = await db.query(employeedSelectQuery);
+
+    const data = [];
+    for (const md of employee) {
+      const itemsQuery = ` 
+        SELECT 
+          SUM(c.summaryItemTotal) AS 'itemTotal',
+          SUM(c.summaryDiscount * -1 ) AS 'itemDiscount',
+          SUM(c.summaryItemTotal + c.summaryDiscount) AS 'netItemSales' ,
+          sum(c.cover) AS 'totalCover',
+          COUNT(c.id) AS 'totalCheck'
+        FROM cart AS c
+        WHERE c.close = 1
+          and c.presence = 1 and c.void = 0 
+          and c.closeBy = ${md.id}
+          ${whereFilter}
+        `;
+      const [itemsSales] = await db.query(itemsQuery);
+
+
+      const taxQuery = ` 
+                SELECT   t.note, SUM( t.debit) AS 'amount',  COUNT(t.id) AS 'total'
+        FROM cart AS c
+        LEFT JOIN cart_item_tax AS t ON t.cartId = c.id
+        WHERE c.close = 1  
+        and c.presence = 1 and c.void = 0 
+        and t.presence = 1 and t.void = 0 
+        and c.closeBy = ${md.id}  ${whereFilter}
+        GROUP BY t.note 
+        ORDER BY t.note ASC 
+        `;
+      const [taxSales] = await db.query(taxQuery);
+      // buatkan total tax sales dari taxSales
+      let totalTax = 0;
+      taxSales.forEach(ts => {
+        totalTax += parseFloat(ts.amount);
+      });
+
+      const scQuery = ` 
+        SELECT 
+          t.note, SUM( t.debit) AS 'amount',  COUNT(t.id) AS 'total'
+        FROM cart AS c
+        LEFT JOIN cart_item_sc AS t ON t.cartId = c.id
+        WHERE c.close = 1  
+          and c.presence = 1 and c.void = 0 
+          and t.presence = 1 and t.void = 0 
+          and c.closeBy = ${md.id}  ${whereFilter}
+        GROUP BY t.note 
+        ORDER BY t.note ASC 
+        `;
+      const [scSales] = await db.query(scQuery);
+      // buatkan total sc sales dari scSales
+      let totalSc = 0;
+      taxSales.forEach(ts => {
+        totalSc += parseFloat(ts.amount);
+      });
+
+      // hitung gross total, avg sales per check, total cover, avg sales per cover
+      let grossTotal = itemsSales[0].netItemSales + totalTax + totalSc;
+
+
+      const cashSummaryQuery = `
+       SELECT 
+      sum(p.paid) AS 'pay', sum(p.tips) AS 'tips', SUM(p.paid + p.tips) AS 'totalRecv' , t.name 
+      FROM cart AS c
+      LEFT JOIN cart_payment AS  p ON p.cartId = c.id
+      LEFT JOIN check_payment_type AS t ON t.id = p.checkPaymentTypeId
+      WHERE p.submit = 1 AND p.presence = 1 AND p.void = 0
+      AND c.presence = 1 AND p.void = 0 AND c.close = 1 
+      AND t.openDrawer = 1
+      and c.closeBy = ${md.id}  ${whereFilter}
+      GROUP BY t.name
+       `;
+      const [cashSummary] = await db.query(cashSummaryQuery);
+      // buatkan total semua dari select cash summary
+      const cashSummaryTotals = {
+        totalPay: cashSummary.reduce((acc, curr) => acc + parseFloat(curr.pay || 0), 0),
+        totalTips: cashSummary.reduce((acc, curr) => acc + parseFloat(curr.tips || 0), 0),
+        totalRecv: cashSummary.reduce((acc, curr) => acc + parseFloat(curr.totalRecv || 0), 0),
+      };
+
+
+
+
+      const cardSummaryQuery = `
+       SELECT 
+      sum(p.paid) AS 'pay', sum(p.tips) AS 'tips', SUM(p.paid + p.tips) AS 'totalRecv' , t.name 
+      FROM cart AS c
+      LEFT JOIN cart_payment AS  p ON p.cartId = c.id
+      LEFT JOIN check_payment_type AS t ON t.id = p.checkPaymentTypeId
+      WHERE p.submit = 1 AND p.presence = 1 AND p.void = 0
+      AND c.presence = 1 AND p.void = 0 AND c.close = 1 
+      AND t.openDrawer = 0
+      and c.closeBy = ${md.id}  ${whereFilter}
+      GROUP BY t.name
+       `;
+      const [cardSummary] = await db.query(cardSummaryQuery);
+      // buatkan total semua dari select cash summary
+      const cardSummaryTotals = {
+        totalPay: cardSummary.reduce((acc, curr) => acc + parseFloat(curr.pay || 0), 0),
+        totalTips: cardSummary.reduce((acc, curr) => acc + parseFloat(curr.tips || 0), 0),
+        totalRecv: cardSummary.reduce((acc, curr) => acc + parseFloat(curr.totalRecv || 0), 0),
+      };
+
+
+      const cashBalanceQuery = `
+       SELECT  SUM( d.cashIn) AS 'cashIn',  sum(d.cashOut ) AS 'cashOut', SUM(d.cashIn - d.cashOut) AS 'CashRecv'
+        FROM cart AS c
+        LEFT JOIN daily_cash_balance AS d ON d.cartId = c.id
+        WHERE c.close = 1 
+        AND c.presence = 1 AND c.void = 0 AND d.openingBalance = 0
+        AND d.presence = 1
+      and c.closeBy = ${md.id}  ${whereFilter}
+      `;
+      const [cashBalance] = await db.query(cashBalanceQuery);
+
+
+
+
+      data.push({
+        employee: md,
+        itemsSales: itemsSales,
+        taxSales: {
+          details: taxSales,
+          totalTax: totalTax,
+        },
+        scSales: {
+          details: scSales,
+          totalSc: totalSc,
+        },
+        grossTotal: grossTotal,
+        totalCover: itemsSales[0].totalCover,
+        avgSalesPerCheck: itemsSales[0].totalCheck ? (grossTotal / itemsSales[0].totalCheck) : 0,
+        avgSalesPerCover: itemsSales[0].totalCover ? (grossTotal / itemsSales[0].totalCover) : 0,
+
+        cashSummary: {
+          details: cashSummary,
+          summary: cashSummaryTotals
+        },
+        cardSummary: {
+          details: cardSummary,
+          summary: cardSummaryTotals
+        },
+        cashBalance: cashBalance[0],
+      });
+    }
+
+    // hapus jika itemsSales semua 0
+    for (let i = data.length - 1; i >= 0; i--) {
+      const item = data[i];
+      if ((!item.itemsSales[0].itemTotal || item.itemsSales[0].itemTotal == 0) &&
+        (!item.itemsSales[0].itemDiscount || item.itemsSales[0].itemDiscount == 0) &&
+        (!item.itemsSales[0].netItemSales || item.itemsSales[0].netItemSales == 0)
+      ) {
+        data.splice(i, 1);
+      }
+    }
+
+
+
+
+
+    res.json({
+      data: data,
+    });
+
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+};
+
+exports.serverCloseReport = async (req, res) => {
+  const startDate = req.query.startDate || '';
+  const endDate = req.query.endDate || '';
+  try {
+    const whereFilter = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+
+    const grandTotalQuery = `SELECT  
+          sum(i.debit) AS 'grandTotal'
+        FROM cart AS c
+        LEFT JOIN cart_item AS i ON i.cartId = c.id  
+        WHERE c.close = 1 
+        AND c.presence = 1 AND c.void = 0  
+        AND i.presence = 1 AND i.void = 0  ${whereFilter}`;
+
+    const [grandTotalResult] = await db.query(grandTotalQuery);
+    const grandTotal = grandTotalResult[0].grandTotal || 0;
+
+
     const overallQuery = ` 
-      SELECT 
-        c.*
-      FROM cart AS c 
+      SELECT t1.debit as 'itemSales', t1.percent,  m.desc1 FROM (
+        SELECT  sum(i.debit) as debit, ((sum(i.debit) / ${grandTotal}) * 100) as 'percent', i.menuCategoryId
+        FROM cart AS c
+        LEFT JOIN cart_item AS i ON i.cartId = c.id  
+        WHERE c.close = 1 
+        AND c.presence = 1 AND c.void = 0  
+        AND i.presence = 1 AND i.void = 0  ${whereFilter}
+        GROUP BY i.menuCategoryId
+      ) AS t1
+      LEFT JOIN menu_category AS m ON m.id = t1.menuCategoryId`;
+    const [overall] = await db.query(overallQuery);
+
+    // tolong buat t1.percent di round 2 desimal
+    overall.forEach(o => {
+      o.percent = parseFloat(o.percent).toFixed(2);
+    });
+
+    // hitung total itemSales
+    const totalItemSales = overall.reduce((acc, curr) => acc + parseFloat(curr.itemSales), 0);
+    const percentTotal = overall.reduce((acc, curr) => acc + parseFloat(curr.percent), 0);
+
+
+    const itemDiscountQuery = `SELECT  sum(i.credit) AS 'itemDisc'
+        FROM cart AS c
+        LEFT JOIN cart_item_discount AS i ON i.cartId = c.id  
+        WHERE c.close = 1 
+        AND c.presence = 1 AND c.void = 0  
+        AND i.presence = 1 AND i.void = 0 
+        ${whereFilter}`;
+    const [itemDiscountResult] = await db.query(itemDiscountQuery);
+    const itemDisc = itemDiscountResult[0].itemDisc || 0
+
+
+
+    const itemTaxQuery = ` 
+    SELECT i.note, sum(i.debit) AS 'amount'
+    FROM cart AS c
+    LEFT JOIN cart_item_tax AS i ON i.cartId = c.id  
+    WHERE c.close = 1 
+    AND c.presence = 1 AND c.void = 0  
+    AND i.presence = 1 AND i.void = 0   ${whereFilter}
+    GROUP BY i.note  `;
+    const [itemTaxResult] = await db.query(itemTaxQuery);
+
+    let totalTax = itemTaxResult.reduce((acc, curr) => acc + parseFloat(curr.amount), 0);
+    const checkTotal = totalItemSales - itemDisc + totalTax;
+
+    const qtyQuery = ` 
+    SELECT count(c.id) AS 'check', sum(c.cover) AS 'cover'
+    FROM cart AS c 
+    WHERE c.close = 1 
+    AND c.presence = 1 AND c.void = 0  ${whereFilter}  `;
+    const [qtyResult] = await db.query(qtyQuery);
+
+
+    const itemScQuery = ` 
+    SELECT i.note, sum(i.debit) AS 'amount'
+    FROM cart AS c
+    LEFT JOIN cart_item_sc AS i ON i.cartId = c.id  
+    WHERE c.close = 1 
+    AND c.presence = 1 AND c.void = 0  
+    AND i.presence = 1 AND i.void = 0   ${whereFilter}
+    GROUP BY i.note  `;
+    const [itemScResult] = await db.query(itemScQuery);
+
+
+    const voidPayment = `
+    SELECT  t.name, p.paid, p.tips  
+    FROM cart AS c
+    LEFT JOIN cart_payment AS p ON p.cartId = c.id
+    LEFT JOIN check_payment_type AS t ON t.id = p.checkPaymentTypeId
+    WHERE 
+      c.close = 1 AND c.presence = 1 AND c.void = 0 
+      and p.presence	 = 1 
+      AND p.void = 1 AND p.submit = 1
+    ${whereFilter} 
+    `;
+    const [voidPaymentResult] = await db.query(voidPayment);
+
+
+    const paymentTypeQuery = `
+        SELECT  t.name, count(t.id) AS 'qty', sum(p.paid) AS 'pay', sum(p.tips) AS 'tips'  
+    FROM cart AS c
+    LEFT JOIN cart_payment AS p ON p.cartId = c.id
+    LEFT JOIN check_payment_type AS t ON t.id = p.checkPaymentTypeId
+    WHERE c.close = 1 AND c.presence = 1 AND c.void = 0 
+    AND p.presence	 = 1  AND p.void = 0 AND p.submit = 1   ${whereFilter} 
+    GROUP BY t.name`;
+    const [paymentTypeResult] = await db.query(paymentTypeQuery);
+
+
+    const payment = []
+    let qty = 0;
+    const checkPaymentTypeQuery = `
+    SELECT id, name FROM check_payment_type  
+    WHERE presence = 1 ORDER BY name ASC`;
+    const [checkPaymentTypes] = await db.query(checkPaymentTypeQuery);
+    for (const cpt of checkPaymentTypes) {
+
+      const paymentListQuery = `
+        SELECT c.id, p.paid, p.tips , c.endDate
+      FROM cart AS c
+      LEFT JOIN cart_payment AS p ON p.cartId = c.id 
+      WHERE c.close = 1 AND c.presence = 1 AND c.void = 0 
+      AND p.presence	 = 1  AND p.void = 0 AND p.submit = 1
+      AND p.checkPaymentTypeId = ${cpt.id}
+      ${whereFilter} 
+        ORDER BY c.endDate ASC
+      `;
+      const [paymentListResult] = await db.query(paymentListQuery);
+      qty += paymentListResult.length;
+      payment.push({
+        paymentType: cpt.name,
+        details: paymentListResult,
+        total: {
+          pay: paymentListResult.reduce((acc, curr) => acc + parseFloat(curr.paid), 0),
+          tips: paymentListResult.reduce((acc, curr) => acc + parseFloat(curr.tips), 0),
+          qty : paymentListResult.length
+        }
+      });
+    }
+
+    // hapus jika payment detailsnya kosong
+    for (let i = payment.length - 1; i >= 0; i--) {
+      const item = payment[i];
+      if (item.details.length === 0) {
+        payment.splice(i, 1);
+      }
+    }
+
+
+
+
+
+
+    res.json({
+      department: {
+        detail: overall,
+        totalItemSales: totalItemSales,
+        percentTotal: percentTotal,
+      },
+      itemDisc: itemDisc,
+      itemSales: totalItemSales,
+      checkDisc: 0,
+      netItemSales: totalItemSales - itemDisc,
+      tax: {
+        detail: itemTaxResult,
+        totalTax: totalTax
+      },
+
+      sc: {
+        itemScResult: itemScResult,
+        totalSc: itemScResult.reduce((acc, curr) => acc + parseFloat(curr.amount), 0)
+      },
+      checkTotal: checkTotal,
+      qtyResult: qtyResult,
+      avgSalesPerCheck: qtyResult[0].check ? (checkTotal / qtyResult[0].check).toFixed(2) : 0,
+      avgSalesPerCover: qtyResult[0].cover ? (checkTotal / qtyResult[0].cover).toFixed(2) : 0,
+      voidPayment: voidPaymentResult,
+      paymentType: {
+        detail: paymentTypeResult,
+        totalPay: paymentTypeResult.reduce((acc, curr) => acc + parseFloat(curr.pay), 0),
+        totalTips: paymentTypeResult.reduce((acc, curr) => acc + parseFloat(curr.tips), 0),
+        totalQty: paymentTypeResult.reduce((acc, curr) => acc + parseFloat(curr.qty), 0),
+      },
+      payment: { 
+         details: payment, 
+         totalQty: qty  
+      },
+
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+};
+
+exports.dailyStartCloseHistory = async (req, res) => {
+  const startDate = req.query.startDate || '';
+  const endDate = req.query.endDate || '';
+  try {
+    const whereFilter = ` AND (c.startDate >= '${startDate} 00:00:00' and c.closeDate <= '${endDate} 23:59:59') `;
+    const overallQuery = ` 
+     SELECT c.* FROM daily_check   as c
       WHERE 
-        c.close = 1 AND c.presence = 1 AND c.void = 0 ${whereFilter}`;
+        c.presence = 1  ${whereFilter}`;
     const [overall] = await db.query(overallQuery);
     res.json({ data: overall });
   } catch (err) {

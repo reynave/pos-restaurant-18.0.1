@@ -41,7 +41,21 @@ router.get('/taxHistory', c.taxHistory);
 //11
 router.get('/itemizedSales', c.itemizedSales);
 
-//11
+//12
 router.get('/itemCount', c.itemCount);
+
+//13
+router.get('/employeeItemizedSales', c.employeeItemizedSales);
+
+//14
+router.get('/managerClose', c.managerClose);
+
+//15
+router.get('/serverCloseReport', c.serverCloseReport);
+
+//16
+router.get('/dailyStartCloseHistory', c.dailyStartCloseHistory);
+
+
 
 module.exports = router;
