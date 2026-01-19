@@ -1,0 +1,67 @@
+<%- include('./global/header') %>
+  
+
+<% if (report && report.data && report.data.length) { %>
+  <div >
+    <strong>Departments:</strong> <%= report.globalSummary && report.globalSummary.totalDepartments %>
+    &nbsp;|&nbsp; <strong>Qty total:</strong> <%= report.globalSummary && report.globalSummary.globalQty %>
+    &nbsp;|&nbsp; <strong>ItemSales total:</strong> <%= report.globalSummary && Number(report.globalSummary.globalItemSales).toLocaleString() %>
+  </div>
+
+  <% report.data.forEach(function(dept, dIdx) { %>
+    <div style="margin-top:14px;">
+      <h3 style="margin:6px 0;"><%= (dIdx+1) %>. <%= dept.menuDepartment %> <% if (dept.menuSetIncluded) { %> <small>(menu set included)</small> <% } %></h3>
+
+      <% if (dept.items && dept.items.length) { %>
+        <table>
+          <thead>
+            <tr>
+              <th style="width:40px;">No</th>
+              <th>Nama</th>
+              <th style="width:80px;" class="right">Qty</th>
+              <th style="width:120px;" class="right">Item Sales</th>
+              <th style="width:120px;" class="right">MenuSet</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% dept.items.forEach(function(it, idx) { %>
+              <tr>
+                <td><%= idx + 1 %></td>
+                <td><%= it.name %></td>
+                <td class="right"><%= Number(it.qty || 0) %></td>
+                <td class="right"><%= Number(it.itemSales || 0).toLocaleString() %></td>
+                <td class="right"><%= (Number(it.unserMenuSet) ? 'Yes' : '-') %></td>
+              </tr>
+            <% }); %>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="2"><strong>Summary</strong></td>
+              <td class="right"><strong><%= dept.summary && Number(dept.summary.totalQty).toLocaleString() %></strong></td>
+              <td class="right"><strong><%= dept.summary && Number(dept.summary.totalItemSales).toLocaleString() %></strong></td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      <% } else { %>
+        <div>Tidak ada item pada departemen ini.</div>
+      <% } %>
+    </div>
+  <% }); %>
+
+  <div style="margin-top:18px; border-top:1px dashed #ccc; padding-top:8px;">
+    <strong>Global Summary</strong>
+    <table style="margin-top:6px; width:400px;">
+      <tbody>
+        <tr><td>Total Departments</td><td class="right"><%= report.globalSummary.totalDepartments %></td></tr>
+        <tr><td>Total Qty</td><td class="right"><%= Number(report.globalSummary.globalQty).toLocaleString() %></td></tr>
+        <tr><td>Total Item Sales</td><td class="right"><%= Number(report.globalSummary.globalItemSales).toLocaleString() %></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+<% } else { %>
+  <p>Tidak ada data untuk ditampilkan.</p>
+<% } %>
+
+<%- include('./global/footer') %>

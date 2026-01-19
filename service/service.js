@@ -10,6 +10,7 @@ const io = require('socket.io')(http, {
  
 
 const db = require('./config/db'); // koneksi pool dari mysql2 
+const globalHelpers = require('./helpers/global');
  
 
 const loginPos = require('./routes/terminal/loginPos');
@@ -40,6 +41,12 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use((req, res, next) => {
+    res.locals.formatDate = globalHelpers.formatDateTimeID;
+    res.locals.formatDateOnly = globalHelpers.formatDateOnlyID;
+    next();
+});
 
 // Cek koneksi database saat startup
 app.get(process.env.PREFIX + 'checkdb', async (req, res) => {

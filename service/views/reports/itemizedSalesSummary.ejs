@@ -1,0 +1,105 @@
+<%- include('./global/header') %>
+
+<%
+  var reportData = report || {};
+  var payload = reportData.data || {};
+  var departments = Array.isArray(payload.data) ? payload.data : [];
+  var periodTotals = Array.isArray(payload.byPeriod) ? payload.byPeriod : [];
+  var summary = payload.summary || {};
+%>
+
+
+<% if (periodTotals.length) { %>
+  <section style="margin-bottom:24px;">
+    <header style="margin-bottom:8px;">
+      <h2 style="font-size:16px; font-weight:600; margin:0;">Ringkasan Periode</h2>
+    </header>
+    <table class="table table-sm">
+      <thead>
+        <tr>
+          <th style="width:180px;">Periode</th>
+          <th class="right" style="width:100px;">Qty</th>
+          <th class="right" style="width:140px;">Item Sales</th>
+          <th class="right" style="width:140px;">Discount</th>
+          <th class="right" style="width:160px;">Net Sales</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% periodTotals.forEach(function(entry) { %>
+          <tr>
+            <td><%= (entry.period && entry.period.period) || '-' %></td>
+            <td class="right"><%= formatNumber(entry.totalQty) %></td>
+            <td class="right"><%= formatNumber(entry.totalItemSales) %></td>
+            <td class="right"><%= formatNumber(entry.totalDiscount) %></td>
+            <td class="right"><%= formatNumber(entry.totalNetSales) %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </section>
+<% } %>
+ 
+<section style="margin-bottom:24px;">
+  <header style="margin-bottom:8px;">
+    <h2 style="font-size:16px; font-weight:600; margin:0;">Ringkasan Penjualan</h2>
+  </header>
+  <table class="table table-sm" style="max-width:520px;">
+    <tbody>
+      <tr><td>Total Qty</td><td class="right"><%= formatNumber(summary.totalQty) %></td></tr>
+      <tr><td>Total Item Sales</td><td class="right"><%= formatNumber(summary.itemSales) %></td></tr>
+      <tr><td>Total Discount</td><td class="right"><%= formatNumber(summary.discount) %></td></tr>
+      <tr><td>Total Net Sales</td><td class="right"><%= formatNumber(summary.netSales) %></td></tr>
+      <tr><td>Total Tax</td><td class="right"><%= formatNumber(summary.tax) %></td></tr>
+      <tr><td>Total Service Charge</td><td class="right"><%= formatNumber(summary.sc) %></td></tr>
+      <tr><td>Total Gross Sales</td><td class="right"><%= formatNumber(summary.grossSales) %></td></tr>
+      <tr><td>Total Covers</td><td class="right"><%= formatNumber(summary.totalCover) %></td></tr>
+      <tr><td>Total Checks</td><td class="right"><%= formatNumber(summary.totalChecks) %></td></tr>
+      <tr><td>Average Sales / Check</td><td class="right"><%= formatNumber(summary.salesPerChecks) %></td></tr>
+      <tr><td>Average Sales / Cover</td><td class="right"><%= formatNumber(summary.salesPerCover) %></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<% if (departments.length) { %>
+  <% departments.forEach(function(dep) { %>
+    <article style="margin-bottom:32px;">
+      <header style="margin-bottom:8px;">
+        <h2 style="font-size:16px; font-weight:600; margin:0;">Departemen: <%= dep.name %></h2>
+      </header>
+      <% if (dep.departments && dep.departments.length) { %>
+        <table class="table table-sm">
+          <thead>
+            <tr>
+              <th style="width:180px;">Periode</th>
+              <th class="right" style="width:100px;">Qty</th>
+              <th class="right" style="width:140px;">Item Sales</th>
+              <th class="right" style="width:140px;">Discount</th>
+              <th class="right" style="width:160px;">Net Sales</th>
+              <th class="right" style="width:140px;">% Item Sales</th>
+              <th class="right" style="width:140px;">% Net Sales</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% dep.departments.forEach(function(row) { %>
+              <tr>
+                <td><%= row.period || '-' %></td>
+                <td class="right"><%= formatNumber(row.totalQty) %></td>
+                <td class="right"><%= formatNumber(row.totalItemSales) %></td>
+                <td class="right"><%= formatNumber(row.totalDiscount) %></td>
+                <td class="right"><%= formatNumber(row.totalNetSales) %></td>
+                <td class="right"><%= row.percentItemSales %>%</td>
+                <td class="right"><%= row.percentNetSales %>%</td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      <% } else { %>
+        <p style="margin:8px 0 0;">Tidak ada data untuk departemen ini.</p>
+      <% } %>
+    </article>
+  <% }); %>
+<% } else { %>
+  <p>Tidak ada data untuk ditampilkan.</p>
+<% } %>
+
+<%- include('./global/footer') %>

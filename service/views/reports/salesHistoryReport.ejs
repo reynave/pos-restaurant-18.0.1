@@ -1,0 +1,70 @@
+<%- include('./global/header') %>
+
+<%
+  var reportData = report || {};
+  var payload = reportData.data || {};
+  var rows = Array.isArray(payload.salesHistory) ? payload.salesHistory : [];
+  var summary = payload.summary || {};
+%>
+
+<% if (rows.length) { %>
+  <section style="margin-bottom:16px;">
+    <table class="table table-sm" style="max-width:520px;">
+      <tbody>
+        <tr><td>Periode</td><td class="right"><%= reportData.startDate || '-' %> s/d <%= reportData.endDate || '-' %></td></tr>
+        <tr><td>Dibuat</td><td class="right"><%= (typeof formatDate === 'function') ? formatDate(reportData.createdDate) : (reportData.createdDate || '-') %></td></tr>
+        <tr><td>Oleh</td><td class="right"><%= reportData.createdBy || '-' %></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section style="margin-bottom:24px;">
+    <header style="margin-bottom:8px;">
+      <h2 style="font-size:16px; font-weight:600; margin:0;">Ringkasan Penjualan</h2>
+    </header>
+    <table class="table table-sm" style="max-width:520px;">
+      <tbody>
+        <tr><td>Total Item Sales</td><td class="right"><%= formatNumber(summary.totalItemSales) %></td></tr>
+        <tr><td>Total Discount</td><td class="right"><%= formatNumber(summary.totalDiscount) %></td></tr>
+        <tr><td>Total Grand Total</td><td class="right"><%= formatNumber(summary.totalGrandTotal) %></td></tr>
+        <tr><td>Total Checks</td><td class="right"><%= formatNumber(summary.totalCheck) %></td></tr>
+        <tr><td>Total Covers</td><td class="right"><%= formatNumber(summary.totalCover) %></td></tr>
+        <tr><td>Average Sales / Check</td><td class="right"><%= formatNumber(summary.avgSalesCheck) %></td></tr>
+        <tr><td>Average Sales / Cover</td><td class="right"><%= formatNumber(summary.avgSalesCover) %></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <table class="table table-sm">
+    <thead>
+      <tr>
+        <th style="width:160px;">Business Date</th>
+        <th class="right" style="width:140px;">Item Sales</th>
+        <th class="right" style="width:140px;">Discount</th>
+        <th class="right" style="width:160px;">Grand Total</th>
+        <th class="right" style="width:120px;">Checks</th>
+        <th class="right" style="width:120px;">Avg / Check</th>
+        <th class="right" style="width:120px;">Covers</th>
+        <th class="right" style="width:120px;">Avg / Cover</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% rows.forEach(function(row) { %>
+        <tr>
+          <td><%= (typeof formatDateOnly === 'function') ? formatDateOnly(row.DATE) : (row.DATE || '-') %></td>
+          <td class="right"><%= formatNumber(row.itemSales) %></td>
+          <td class="right"><%= formatNumber(row.discount) %></td>
+          <td class="right"><%= formatNumber(row.grandTotal) %></td>
+          <td class="right"><%= formatNumber(row.check) %></td>
+          <td class="right"><%= formatNumber(row.avgSalesCheck) %></td>
+          <td class="right"><%= formatNumber(row.cover) %></td>
+          <td class="right"><%= formatNumber(row.avgSalesCover) %></td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+<% } else { %>
+  <p>Tidak ada data untuk ditampilkan.</p>
+<% } %>
+
+<%- include('./global/footer') %>

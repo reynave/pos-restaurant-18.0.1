@@ -1,0 +1,173 @@
+<%- include('./global/header') %>
+
+<%
+  var reportData = report || {};
+  var payload = reportData.data || {};
+  var rows = Array.isArray(payload.data) ? payload.data : [];
+
+  var formatNumber = function(value) {
+    return Number(value || 0).toLocaleString('id-ID');
+  };
+%>
+ 
+
+<% if (rows.length) { %>
+  <% rows.forEach(function(entry, idx) { %>
+    <section style="margin-top:20px;">
+      <h2 style="margin-bottom:6px;">(<%= idx + 1 %>) <%= (entry.employee && entry.employee.name) || 'Unknown' %></h2>
+
+      <% var salesRow = (entry.itemsSales && entry.itemsSales[0]) ? entry.itemsSales[0] : {}; %>
+      <table class="table table-sm" style="max-width:520px;">
+        <tbody>
+          <tr><td>Item Sales</td><td class="right"><%= formatNumber(salesRow.itemTotal) %></td></tr>
+          <tr><td>Item Discount</td><td class="right"><%= formatNumber(salesRow.itemDiscount) %></td></tr>
+          <tr><td>Net Item Sales</td><td class="right"><%= formatNumber(salesRow.netItemSales) %></td></tr>
+          <tr><td>Tax Total</td><td class="right"><%= formatNumber(entry.taxSales && entry.taxSales.totalTax) %></td></tr>
+          <tr><td>Service Charge Total</td><td class="right"><%= formatNumber(entry.scSales && entry.scSales.totalSc) %></td></tr>
+          <tr><td>Gross Total</td><td class="right"><%= formatNumber(entry.grossTotal) %></td></tr>
+          <tr><td>Total Check</td><td class="right"><%= formatNumber(salesRow.totalCheck) %></td></tr>
+          <tr><td>Total Cover</td><td class="right"><%= formatNumber(salesRow.totalCover) %></td></tr>
+          <tr><td>Avg Sales / Check</td><td class="right"><%= formatNumber(entry.avgSalesPerCheck) %></td></tr>
+          <tr><td>Avg Sales / Cover</td><td class="right"><%= formatNumber(entry.avgSalesPerCover) %></td></tr>
+        </tbody>
+      </table>
+
+      <% if (entry.taxSales && entry.taxSales.details && entry.taxSales.details.length) { %>
+        <h3 style="margin-top:16px;">Rincian Pajak</h3>
+        <table class="table table-sm" style="max-width:420px;">
+          <thead>
+            <tr>
+              <th>Keterangan</th>
+              <th class="right" style="width:160px;">Jumlah</th>
+              <th class="right" style="width:80px;">Qty</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% entry.taxSales.details.forEach(function(row) { %>
+              <tr>
+                <td><%= row.note || '-' %></td>
+                <td class="right"><%= formatNumber(row.amount) %></td>
+                <td class="right"><%= formatNumber(row.total) %></td>
+              </tr>
+            <% }); %>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td><strong>Total</strong></td>
+              <td class="right"><strong><%= formatNumber(entry.taxSales.totalTax) %></strong></td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      <% } %>
+
+      <% if (entry.scSales && entry.scSales.details && entry.scSales.details.length) { %>
+        <h3 style="margin-top:16px;">Rincian Service Charge</h3>
+        <table class="table table-sm" style="max-width:420px;">
+          <thead>
+            <tr>
+              <th>Keterangan</th>
+              <th class="right" style="width:160px;">Jumlah</th>
+              <th class="right" style="width:80px;">Qty</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% entry.scSales.details.forEach(function(row) { %>
+              <tr>
+                <td><%= row.note || '-' %></td>
+                <td class="right"><%= formatNumber(row.amount) %></td>
+                <td class="right"><%= formatNumber(row.total) %></td>
+              </tr>
+            <% }); %>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td><strong>Total</strong></td>
+              <td class="right"><strong><%= formatNumber(entry.scSales.totalSc) %></strong></td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      <% } %>
+
+      <% if (entry.cashSummary && entry.cashSummary.details && entry.cashSummary.details.length) { %>
+        <h3 style="margin-top:16px;">Ringkasan Tunai</h3>
+        <table class="table table-sm" style="max-width:520px;">
+          <thead>
+            <tr>
+              <th>Jenis Pembayaran</th>
+              <th class="right" style="width:140px;">Paid</th>
+              <th class="right" style="width:140px;">Tips</th>
+              <th class="right" style="width:160px;">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% entry.cashSummary.details.forEach(function(row) { %>
+              <tr>
+                <td><%= row.name || '-' %></td>
+                <td class="right"><%= formatNumber(row.pay) %></td>
+                <td class="right"><%= formatNumber(row.tips) %></td>
+                <td class="right"><%= formatNumber(row.totalRecv) %></td>
+              </tr>
+            <% }); %>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td><strong>Total</strong></td>
+              <td class="right"><strong><%= formatNumber(entry.cashSummary.summary && entry.cashSummary.summary.totalPay) %></strong></td>
+              <td class="right"><strong><%= formatNumber(entry.cashSummary.summary && entry.cashSummary.summary.totalTips) %></strong></td>
+              <td class="right"><strong><%= formatNumber(entry.cashSummary.summary && entry.cashSummary.summary.totalRecv) %></strong></td>
+            </tr>
+          </tfoot>
+        </table>
+      <% } %>
+
+      <% if (entry.cardSummary && entry.cardSummary.details && entry.cardSummary.details.length) { %>
+        <h3 style="margin-top:16px;">Ringkasan Non-Tunai</h3>
+        <table class="table table-sm" style="max-width:520px;">
+          <thead>
+            <tr>
+              <th>Jenis Pembayaran</th>
+              <th class="right" style="width:140px;">Paid</th>
+              <th class="right" style="width:140px;">Tips</th>
+              <th class="right" style="width:160px;">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% entry.cardSummary.details.forEach(function(row) { %>
+              <tr>
+                <td><%= row.name || '-' %></td>
+                <td class="right"><%= formatNumber(row.pay) %></td>
+                <td class="right"><%= formatNumber(row.tips) %></td>
+                <td class="right"><%= formatNumber(row.totalRecv) %></td>
+              </tr>
+            <% }); %>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td><strong>Total</strong></td>
+              <td class="right"><strong><%= formatNumber(entry.cardSummary.summary && entry.cardSummary.summary.totalPay) %></strong></td>
+              <td class="right"><strong><%= formatNumber(entry.cardSummary.summary && entry.cardSummary.summary.totalTips) %></strong></td>
+              <td class="right"><strong><%= formatNumber(entry.cardSummary.summary && entry.cardSummary.summary.totalRecv) %></strong></td>
+            </tr>
+          </tfoot>
+        </table>
+      <% } %>
+
+      <% if (entry.cashBalance) { %>
+        <h3 style="margin-top:16px;">Cash Balance</h3>
+        <table class="table table-sm" style="max-width:420px;">
+          <tbody>
+            <tr><td>Cash In</td><td class="right"><%= formatNumber(entry.cashBalance.cashIn) %></td></tr>
+            <tr><td>Cash Out</td><td class="right"><%= formatNumber(entry.cashBalance.cashOut) %></td></tr>
+            <tr><td>Cash Received</td><td class="right"><%= formatNumber(entry.cashBalance.CashRecv) %></td></tr>
+          </tbody>
+        </table>
+      <% } %>
+    </section>
+  <% }); %>
+<% } else { %>
+  <p>Tidak ada data untuk ditampilkan.</p>
+<% } %>
+
+<%- include('./global/footer') %>

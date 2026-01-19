@@ -1,0 +1,228 @@
+<%- include('./global/header') %>
+
+<%
+  var reportData = report || {};
+  var payload = reportData.data || {};
+  var employees = Array.isArray(payload.employees) ? payload.employees : [];
+  var paymentSummary = Array.isArray(payload.paymentSummary) ? payload.paymentSummary : [];
+  var totals = payload.totals || {};
+  var totalsPayment = totals.payment || {};
+  var totalsCash = totals.cash || {};
+  var totalsSales = totals.sales || {};
+  var totalsFullPaid = totals.fullPaid || {};
+  var totalsUnpaid = totals.unpaid || {};
+%>
+
+<section class="mb-4">
+  <header class="mb-3">
+    <h2 class="h5 fw-semibold mb-0">Ringkasan Keseluruhan</h2>
+  </header>
+  <div class="container-fluid px-0">
+    <div class="row g-3">
+      <div class="col-12 col-lg-3">
+        <table class="table table-sm">
+          <thead>
+            <tr><th colspan="2">Pembayaran</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Total Transaksi</td><td class="right"><%= formatNumber(totalsPayment.qty) %></td></tr>
+            <tr><td>Total Paid</td><td class="right"><%= formatNumber(totalsPayment.amount) %></td></tr>
+            <tr><td>Total Tips</td><td class="right"><%= formatNumber(totalsPayment.tips) %></td></tr>
+            <tr><td>Total Paid + Tips</td><td class="right"><%= formatNumber(totalsPayment.total) %></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-12 col-lg-3">
+        <table class="table table-sm">
+          <thead>
+            <tr><th colspan="2">Kas</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Cash In</td><td class="right"><%= formatNumber(totalsCash.cashIn) %></td></tr>
+            <tr><td>Cash Out</td><td class="right"><%= formatNumber(totalsCash.cashOut) %></td></tr>
+            <tr><td>Net Cash</td><td class="right"><%= formatNumber(totalsCash.netCash) %></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-12 col-lg-3">
+        <table class="table table-sm">
+          <thead>
+            <tr><th colspan="2">Penjualan</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Item Sales</td><td class="right"><%= formatNumber(totalsSales.itemSales) %></td></tr>
+            <tr><td>Discount</td><td class="right"><%= formatNumber(totalsSales.discount) %></td></tr>
+            <tr><td>Net Sales</td><td class="right"><%= formatNumber(totalsSales.netSales) %></td></tr>
+            <tr><td>Tax</td><td class="right"><%= formatNumber(totalsSales.tax) %></td></tr>
+            <tr><td>Service Charge</td><td class="right"><%= formatNumber(totalsSales.sc) %></td></tr>
+            <tr><td>Gross Sales</td><td class="right"><%= formatNumber(totalsSales.grossSales) %></td></tr>
+            <tr><td>Total Checks</td><td class="right"><%= formatNumber(totalsSales.check) %></td></tr>
+            <tr><td>Total Covers</td><td class="right"><%= formatNumber(totalsSales.cover) %></td></tr>
+            <tr><td>Average / Check</td><td class="right"><%= formatNumber(totalsSales.avgCheck) %></td></tr>
+            <tr><td>Average / Cover</td><td class="right"><%= formatNumber(totalsSales.avgCover) %></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-12 col-lg-3">
+        <table class="table table-sm">
+          <thead>
+            <tr><th colspan="2">Check Status</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Full Paid - Gross</td><td class="right"><%= formatNumber(totalsFullPaid.grossSales) %></td></tr>
+            <tr><td>Full Paid - Checks</td><td class="right"><%= formatNumber(totalsFullPaid.check) %></td></tr>
+            <tr><td>Full Paid - Covers</td><td class="right"><%= formatNumber(totalsFullPaid.cover) %></td></tr>
+            <tr><td>Unpaid - Gross</td><td class="right"><%= formatNumber(totalsUnpaid.grossSales) %></td></tr>
+            <tr><td>Unpaid - Checks</td><td class="right"><%= formatNumber(totalsUnpaid.check) %></td></tr>
+            <tr><td>Unpaid - Covers</td><td class="right"><%= formatNumber(totalsUnpaid.cover) %></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+<hr class="my-4">
+<% if (paymentSummary.length) { %>
+  <section class="mb-4">
+    <header class="mb-2">
+      <h2 class="h6 fw-semibold mb-0">Pembayaran per Jenis (Semua Kasir)</h2>
+    </header>
+    <table class="table table-sm">
+      <thead>
+        <tr>
+          <th>Jenis Pembayaran</th>
+          <th class="right">Qty</th>
+          <th class="right">Paid</th>
+          <th class="right">Tips</th>
+          <th class="right">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% paymentSummary.forEach(function(row) { %>
+          <tr>
+            <td><%= row.paytype || 'Unknown' %></td>
+            <td class="right"><%= formatNumber(row.qty) %></td>
+            <td class="right"><%= formatNumber(row.amount) %></td>
+            <td class="right"><%= formatNumber(row.tips) %></td>
+            <td class="right"><%= formatNumber(row.total) %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </section>
+<% } %>
+<hr>
+<% if (employees.length) { %>
+  <% employees.forEach(function(entry) { 
+    var employee = entry.employee || {};
+    var reportItems = entry.report || {};
+    var paymentRows = Array.isArray(reportItems.paymentSummary) ? reportItems.paymentSummary : [];
+    var grandSummary = reportItems.grandSummary || {};
+    var cashBalance = reportItems.cashBalance || {};
+    var salesSummary = reportItems.salesSummary || {};
+    var fullPaid = reportItems.fullPaidChecks || {};
+    var unpaid = reportItems.unpaidChecks || {};
+  %>
+    <article class="mb-5">
+      <header class="mb-3">
+        <h2 class="h6 fw-semibold mb-0">Kasir: <%= employee.name || '-' %> (<%= employee.username || 'N/A' %>)</h2>
+      </header>
+
+      <% if (paymentRows.length) { %>
+        <section class="mb-4">
+          <h3 class="h6 fw-semibold mb-2">Ringkasan Pembayaran</h3>
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th>Jenis Pembayaran</th>
+                <th class="right">Qty</th>
+                <th class="right">Paid</th>
+                <th class="right">Tips</th>
+                <th class="right">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% paymentRows.forEach(function(row) { %>
+                <tr>
+                  <td><%= row.paytype || 'Unknown' %></td>
+                  <td class="right"><%= formatNumber(row.qty) %></td>
+                  <td class="right"><%= formatNumber(row.amount) %></td>
+                  <td class="right"><%= formatNumber(row.tips) %></td>
+                  <td class="right"><%= formatNumber(row.total) %></td>
+                </tr>
+              <% }); %>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td><strong>Total</strong></td>
+                <td class="right"><strong><%= formatNumber(paymentRows.reduce(function(acc, row) { return acc + (row.qty || 0); }, 0)) %></strong></td>
+                <td class="right"><strong><%= formatNumber(grandSummary.payAmount) %></strong></td>
+                <td class="right"><strong><%= formatNumber(grandSummary.tips) %></strong></td>
+                <td class="right"><strong><%= formatNumber(grandSummary.payAmtPlusTips) %></strong></td>
+              </tr>
+            </tfoot>
+          </table>
+        </section>
+         <section class="mb-4">
+        <div class="row g-3">
+          <div class="col-12 col-md-4 col-xl-3">
+            <table class="table table-sm">
+              <thead>
+                <tr><th colspan="2">Cash Balance</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Cash In</td><td class="right"><%= formatNumber(cashBalance.cashIn) %></td></tr>
+                <tr><td>Cash Out</td><td class="right"><%= formatNumber(cashBalance.cashOut) %></td></tr>
+                <tr><td>Net Cash</td><td class="right"><%= formatNumber(cashBalance.netCash) %></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="col-12 col-md-5 col-xl-5">
+            <table class="table table-sm">
+              <thead>
+                <tr><th colspan="2">Ringkasan Penjualan</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Item Sales</td><td class="right"><%= formatNumber(salesSummary.itemSales) %></td></tr>
+                <tr><td>Discount</td><td class="right"><%= formatNumber(salesSummary.discount) %></td></tr>
+                <tr><td>Net Sales</td><td class="right"><%= formatNumber(salesSummary.netSales) %></td></tr>
+                <tr><td>Tax</td><td class="right"><%= formatNumber(salesSummary.tax) %></td></tr>
+                <tr><td>Service Charge</td><td class="right"><%= formatNumber(salesSummary.sc) %></td></tr>
+                <tr><td>Gross Sales</td><td class="right"><%= formatNumber(salesSummary.grossSales) %></td></tr>
+                <tr><td>Total Checks</td><td class="right"><%= formatNumber(salesSummary.check) %></td></tr>
+                <tr><td>Total Covers</td><td class="right"><%= formatNumber(salesSummary.cover) %></td></tr>
+                <tr><td>Average / Check</td><td class="right"><%= formatNumber(salesSummary.avgCheck) %></td></tr>
+                <tr><td>Average / Cover</td><td class="right"><%= formatNumber(salesSummary.avgCover) %></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="col-12 col-md-3 col-xl-4">
+            <table class="table table-sm">
+              <thead>
+                <tr><th colspan="2">Status Check</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Full Paid - Gross</td><td class="right"><%= formatNumber(fullPaid.grossSales) %></td></tr>
+                <tr><td>Full Paid - Checks</td><td class="right"><%= formatNumber(fullPaid.check) %></td></tr>
+                <tr><td>Full Paid - Covers</td><td class="right"><%= formatNumber(fullPaid.cover) %></td></tr>
+                <tr><td>Unpaid - Gross</td><td class="right"><%= formatNumber(unpaid.grossSales) %></td></tr>
+                <tr><td>Unpaid - Checks</td><td class="right"><%= formatNumber(unpaid.check) %></td></tr>
+                <tr><td>Unpaid - Covers</td><td class="right"><%= formatNumber(unpaid.cover) %></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+      <% } else { %>
+        <p class="mb-3">Tidak ada transaksi pembayaran.</p>
+      <% } %>
+
+     
+    </article>
+    <hr class="my-4">
+  <% }); %>
+<% } else { %>
+  <p>Tidak ada data kasir untuk periode ini.</p>
+<% } %>
+
+<%- include('./global/footer') %>

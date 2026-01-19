@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const c = require('../../controllers/terminal/reportsController');  
+const m = require('../../controllers/terminal/menuReportsController');  
   
 //select 
-
-router.get('/getUsers', c.getUsers); 
-router.get('/getOutlets', c.getOutlets); 
+router.get('/selectReports', m.selectReports); 
+router.get('/getUsers', m.getUsers); 
+router.get('/getOutlets', m.getOutlets); 
 
 // report/*
 //http://localhost:3000/terminal/reports/salesSummaryReport?startDate=2025-12-18&endDate=2025-12-18
@@ -55,6 +56,7 @@ router.get('/serverCloseReport', c.serverCloseReport);
 
 //16
 router.get('/dailyStartCloseHistory', c.dailyStartCloseHistory);
+ 
 
 
 

@@ -1,0 +1,58 @@
+<%- include('./global/header') %>
+
+<%
+  var reportData = report || {};
+  var payload = reportData.data || {};
+  var rows = Array.isArray(payload.items) ? payload.items : [];
+  var summary = payload.summary || {};
+
+ 
+%>
+
+<% if (rows.length) { %>
+ 
+
+  <table class="table table-sm">
+    <thead>
+      <tr>
+        <th style="width:110px;">Check ID</th>
+        <th style="width:150px;">Start Date</th>
+        <th style="width:150px;">End Date</th>
+        <th style="width:160px;">Payment Type</th>
+        <th style="width:160px;">Close By</th>
+        <th class="right" style="width:120px;">Paid</th>
+        <th class="right" style="width:120px;">Tips</th>
+        <th class="right" style="width:120px;">Change</th>
+        <th class="right" style="width:140px;">Grand Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% rows.forEach(function(row) { %>
+        <tr>
+          <td><%= row.id %></td>
+          <td><%= (typeof formatDate === 'function') ? formatDate(row.startDate) : (row.startDate || '-') %></td>
+          <td><%= (typeof formatDate === 'function') ? formatDate(row.endDate) : (row.endDate || '-') %></td>
+          <td><%= row.name || '-' %></td>
+          <td><%= row.closeEmployee || '-' %></td>
+          <td class="right"><%= formatNumber(row.paid) %></td>
+          <td class="right"><%= formatNumber(row.tips) %></td>
+          <td class="right"><%= formatNumber(row.changePayment) %></td>
+          <td class="right"><%= formatNumber(row.grandTotal) %></td>
+        </tr>
+      <% }); %>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="5"><strong>Total</strong></td>
+        <td class="right"><strong><%= formatNumber(summary.totalPaid) %></strong></td>
+        <td class="right"><strong><%= formatNumber(summary.totalTips) %></strong></td>
+        <td class="right"><strong><%= formatNumber(summary.totalChange) %></strong></td>
+        <td class="right"><strong><%= formatNumber(summary.totalGrandTotal) %></strong></td>
+      </tr>
+    </tfoot>
+  </table>
+<% } else { %>
+  <p>Tidak ada data untuk ditampilkan.</p>
+<% } %>
+
+<%- include('./global/footer') %>

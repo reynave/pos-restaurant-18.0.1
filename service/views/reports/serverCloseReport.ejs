@@ -1,0 +1,226 @@
+<%- include('./global/header') %>
+
+<%
+  var reportData = report || {};
+  var summary = reportData.data || {};
+  var departmentRows = (summary.department && Array.isArray(summary.department.detail)) ? summary.department.detail : [];
+  var taxRows = (summary.tax && Array.isArray(summary.tax.detail)) ? summary.tax.detail : [];
+  var scRows = (summary.sc && Array.isArray(summary.sc.itemScResult)) ? summary.sc.itemScResult : [];
+  var paymentTypeRows = (summary.paymentType && Array.isArray(summary.paymentType.detail)) ? summary.paymentType.detail : [];
+  var paymentGroups = (summary.payment && Array.isArray(summary.payment.details)) ? summary.payment.details : [];
+  var voidPaymentRows = Array.isArray(summary.voidPayment) ? summary.voidPayment : [];
+
+  var formatNumber = function(value) {
+    return Number(value || 0).toLocaleString('id-ID');
+  };
+%>
+
+
+<% if (departmentRows.length) { %>
+  <section style="margin-top:16px;">
+    <h3>Ringkasan Penjualan per Kategori</h3>
+    <table class="table table-sm">
+      <thead>
+        <tr>
+          <th style="width:40px;">No</th>
+          <th>Kategori</th>
+          <th class="right" style="width:160px;">Item Sales</th>
+          <th class="right" style="width:120px;">Persentase (%)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% departmentRows.forEach(function(row, idx) { %>
+          <tr>
+            <td><%= idx + 1 %></td>
+            <td><%= row.desc1 || '-' %></td>
+            <td class="right"><%= formatNumber(row.itemSales) %></td>
+            <td class="right"><%= Number(row.percent || 0).toFixed(2) %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="2"><strong>Total</strong></td>
+          <td class="right"><strong><%= formatNumber(summary.department && summary.department.totalItemSales) %></strong></td>
+          <td class="right"><strong><%= Number(summary.department && summary.department.percentTotal || 0).toFixed(2) %></strong></td>
+        </tr>
+      </tfoot>
+    </table>
+  </section>
+<% } %>
+
+<section style="margin-top:16px;">
+  <h3>Ringkasan Penjualan</h3>
+  <table class="table table-sm" style="width:480px;">
+    <tbody>
+      <tr><td>Total Item Sales</td><td class="right"><%= formatNumber(summary.itemSales) %></td></tr>
+      <tr><td>Item Discount</td><td class="right"><%= formatNumber(summary.itemDisc) %></td></tr>
+      <tr><td>Net Item Sales</td><td class="right"><%= formatNumber(summary.netItemSales) %></td></tr>
+      <tr><td>Tax Total</td><td class="right"><%= formatNumber(summary.tax && summary.tax.totalTax) %></td></tr>
+      <tr><td>Service Charge Total</td><td class="right"><%= formatNumber(summary.sc && summary.sc.totalSc) %></td></tr>
+      <tr><td>Grand Total (Check Total)</td><td class="right"><%= formatNumber(summary.checkTotal) %></td></tr>
+      <tr><td>Average Sales / Check</td><td class="right"><%= formatNumber(summary.avgSalesPerCheck) %></td></tr>
+      <tr><td>Average Sales / Cover</td><td class="right"><%= formatNumber(summary.avgSalesPerCover) %></td></tr>
+      <tr><td>Total Checks</td><td class="right"><%= summary.qtyResult && summary.qtyResult[0] ? formatNumber(summary.qtyResult[0].check) : 0 %></td></tr>
+      <tr><td>Total Covers</td><td class="right"><%= summary.qtyResult && summary.qtyResult[0] ? formatNumber(summary.qtyResult[0].cover) : 0 %></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<% if (taxRows.length) { %>
+  <section style="margin-top:16px;">
+    <h3>Rincian Pajak</h3>
+    <table class="table table-sm" style="width:420px;">
+      <thead>
+        <tr>
+          <th>Nama Pajak</th>
+          <th class="right" style="width:160px;">Jumlah</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% taxRows.forEach(function(row) { %>
+          <tr>
+            <td><%= row.note || '-' %></td>
+            <td class="right"><%= formatNumber(row.amount) %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td><strong>Total</strong></td>
+          <td class="right"><strong><%= formatNumber(summary.tax && summary.tax.totalTax) %></strong></td>
+        </tr>
+      </tfoot>
+    </table>
+  </section>
+<% } %>
+
+<% if (scRows.length) { %>
+  <section style="margin-top:16px;">
+    <h3>Rincian Service Charge</h3>
+    <table class="table table-sm" style="width:420px;">
+      <thead>
+        <tr>
+          <th>Keterangan</th>
+          <th class="right" style="width:160px;">Jumlah</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% scRows.forEach(function(row) { %>
+          <tr>
+            <td><%= row.note || '-' %></td>
+            <td class="right"><%= formatNumber(row.amount) %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td><strong>Total</strong></td>
+          <td class="right"><strong><%= formatNumber(summary.sc && summary.sc.totalSc) %></strong></td>
+        </tr>
+      </tfoot>
+    </table>
+  </section>
+<% } %>
+
+<% if (paymentTypeRows.length) { %>
+  <section style="margin-top:16px;">
+    <h3>Ringkasan Pembayaran</h3>
+    <table class="table table-sm">
+      <thead>
+        <tr>
+          <th>Jenis Pembayaran</th>
+          <th class="right" style="width:80px;">Qty</th>
+          <th class="right" style="width:160px;">Paid</th>
+          <th class="right" style="width:160px;">Tips</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% paymentTypeRows.forEach(function(row) { %>
+          <tr>
+            <td><%= row.name || '-' %></td>
+            <td class="right"><%= formatNumber(row.qty) %></td>
+            <td class="right"><%= formatNumber(row.pay) %></td>
+            <td class="right"><%= formatNumber(row.tips) %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td><strong>Total</strong></td>
+          <td class="right"><strong><%= formatNumber(summary.paymentType && summary.paymentType.totalQty) %></strong></td>
+          <td class="right"><strong><%= formatNumber(summary.paymentType && summary.paymentType.totalPay) %></strong></td>
+          <td class="right"><strong><%= formatNumber(summary.paymentType && summary.paymentType.totalTips) %></strong></td>
+        </tr>
+      </tfoot>
+    </table>
+  </section>
+<% } %>
+
+<% if (paymentGroups.length) { %>
+  <section style="margin-top:18px;">
+    <h3>Detail Pembayaran per Jenis</h3>
+    <% paymentGroups.forEach(function(group) { %>
+      <div style="margin-top:12px;">
+        <h4 style="margin-bottom:6px;"><%= group.paymentType || 'Unknown' %></h4>
+        <% if (group.details && group.details.length) { %>
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th style="width:60px;">Check#</th>
+                <th style="width:200px;">Close Date</th>
+                <th class="right" style="width:160px;">Paid</th>
+                <th class="right" style="width:160px;">Tips</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% group.details.forEach(function(item) { %>
+                <tr>
+                  <td><%= item.id %></td>
+                  <td><%= (typeof formatDate === 'function') ? formatDate(item.endDate) : (item.endDate || '-') %></td>
+                  <td class="right"><%= formatNumber(item.paid) %></td>
+                  <td class="right"><%= formatNumber(item.tips) %></td>
+                </tr>
+              <% }); %>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="2"><strong>Subtotal</strong></td>
+                <td class="right"><strong><%= formatNumber(group.total && group.total.pay) %></strong></td>
+                <td class="right"><strong><%= formatNumber(group.total && group.total.tips) %></strong></td>
+              </tr>
+            </tfoot>
+          </table>
+        <% } else { %>
+          <div>Tidak ada transaksi.</div>
+        <% } %>
+      </div>
+    <% }); %>
+  </section>
+<% } %>
+
+<% if (voidPaymentRows.length) { %>
+  <section style="margin-top:16px;">
+    <h3>Void Payment</h3>
+    <table class="table table-sm" style="width:420px;">
+      <thead>
+        <tr>
+          <th>Jenis Pembayaran</th>
+          <th class="right" style="width:160px;">Paid</th>
+          <th class="right" style="width:160px;">Tips</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% voidPaymentRows.forEach(function(row) { %>
+          <tr>
+            <td><%= row.name || '-' %></td>
+            <td class="right"><%= formatNumber(row.paid) %></td>
+            <td class="right"><%= formatNumber(row.tips) %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </section>
+<% } %>
+
+<%- include('./global/footer') %>

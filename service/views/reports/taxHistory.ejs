@@ -1,0 +1,58 @@
+<%- include('./global/header') %>
+
+<%
+  var reportData = report || {};
+  var payload = reportData.data || {};
+  var headers = Array.isArray(payload.headerTax) ? payload.headerTax : [];
+  var rows = Array.isArray(payload.items) ? payload.items : [];
+  var footer = payload.footer || {};
+  var grandTotal = payload.grandTotal || 0;
+%>
+
+<% if (rows.length) { %>
+  <section style="margin-bottom:16px;">
+    <table class="table table-sm" style="max-width:520px;">
+      <tbody>
+        <tr><td>Periode</td><td class="right"><%= reportData.startDate || '-' %> s/d <%= reportData.endDate || '-' %></td></tr>
+        <tr><td>Dibuat</td><td class="right"><%= (typeof formatDate === 'function') ? formatDate(reportData.createdDate) : (reportData.createdDate || '-') %></td></tr>
+        <tr><td>Oleh</td><td class="right"><%= reportData.createdBy || '-' %></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <table class="table table-sm">
+    <thead>
+      <tr>
+        <th style="width:160px;">Business Date</th>
+        <% headers.forEach(function(col) { %>
+          <th class="right" style="width:140px;"><%= col.name || col.field %></th>
+        <% }); %>
+        <th class="right" style="width:160px;">Total Tax</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% rows.forEach(function(row) { %>
+        <tr>
+          <td><%= row['Business Date'] %></td>
+          <% headers.forEach(function(col) { %>
+            <td class="right"><%= formatNumber(row[col.field]) %></td>
+          <% }); %>
+          <td class="right"><%= formatNumber(row['Total Tax']) %></td>
+        </tr>
+      <% }); %>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td><strong>Total</strong></td>
+        <% headers.forEach(function(col) { %>
+          <td class="right"><strong><%= formatNumber(footer[col.field]) %></strong></td>
+        <% }); %>
+        <td class="right"><strong><%= formatNumber(grandTotal) %></strong></td>
+      </tr>
+    </tfoot>
+  </table>
+<% } else { %>
+  <p>Tidak ada data untuk ditampilkan.</p>
+<% } %>
+
+<%- include('./global/footer') %>

@@ -1,0 +1,54 @@
+<%- include('./global/header') %>
+
+<%
+  var reportData = report || {};
+  var payload = reportData.data || {};
+  var rows = Array.isArray(payload.discounts) ? payload.discounts : [];
+  var summary = payload.summary || {};
+%>
+
+<% if (rows.length) { %>
+    
+
+  <table class="table table-sm">
+    <thead>
+      <tr>
+        <th style="width:120px;">Check ID</th>
+        <th style="width:160px;">Table</th>
+        <th class="right" style="width:100px;">Covers</th>
+        <th style="width:180px;">Input Date</th>
+        <th style="width:160px;">Close By</th>
+        <th class="right" style="width:140px;">Discount</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% rows.forEach(function(row) { %>
+        <tr>
+          <td><%= row.id %></td>
+          <td><%= row.tableName || '-' %></td>
+          <td class="right"><%= formatNumber(row.cover) %></td>
+          <td><%= (typeof formatDate === 'function') ? formatDate(row.inputDate) : (row.inputDate || '-') %></td>
+          <td><%= row.name || '-' %></td>
+          <td class="right"><%= formatNumber(row.discountAmount) %></td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+
+   <section style="margin-bottom:24px;">
+    <header style="margin-bottom:8px;">
+      <h2 style="font-size:16px; font-weight:600; margin:0;">Ringkasan Diskon</h2>
+    </header>
+    <table class="table table-sm" style="max-width:520px;">
+      <tbody>
+        <tr><td>Total Diskon</td><td class="right"><%= formatNumber(summary.subTotal) %></td></tr>
+        <tr><td>Total Covers</td><td class="right"><%= formatNumber(summary.totalCover) %></td></tr>
+        <tr><td>Jumlah Transaksi Diskon</td><td class="right"><%= formatNumber(summary.totalDisc) %></td></tr>
+      </tbody>
+    </table>
+  </section>
+<% } else { %>
+  <p>Tidak ada data untuk ditampilkan.</p>
+<% } %>
+
+<%- include('./global/footer') %>

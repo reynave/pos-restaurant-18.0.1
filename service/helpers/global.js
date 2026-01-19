@@ -1,3 +1,6 @@
+const DEFAULT_TIME_ZONE = 'Asia/Jakarta';
+const DEFAULT_DATE_LOCALE = 'en-CA';
+
 function today() {
   const now = new Date();
 
@@ -25,8 +28,11 @@ function nextDay(addDay = 1, hour = '00:00:00') {
 
   return `${year}-${month}-${day} ${hour}`;
 }
-function formatDateOnly(dateInput, separator = '-'  ) {
+function formatDateOnly(dateInput, separator = '-') {
   const date = new Date(dateInput);
+  if (Number.isNaN(date.getTime())) {
+    return '-';
+  }
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
@@ -34,6 +40,9 @@ function formatDateOnly(dateInput, separator = '-'  ) {
 }
 function formatDateTime(dateInput) {
   const date = new Date(dateInput);
+  if (Number.isNaN(date.getTime())) {
+    return '-';
+  }
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
@@ -43,6 +52,49 @@ function formatDateTime(dateInput) {
   const ss = String(date.getSeconds()).padStart(2, '0');
 
   return `${year}-${month}-${day} ${hh}:${mm}:${ss}`;
+}
+
+function formatDateTimeID(dateInput, timeZone = DEFAULT_TIME_ZONE) {
+  if (!dateInput) {
+    return '-';
+  }
+  const date = new Date(dateInput);
+  if (Number.isNaN(date.getTime())) {
+    return '-';
+  }
+  const formatter = new Intl.DateTimeFormat(DEFAULT_DATE_LOCALE, {
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  });
+  const parts = formatter.formatToParts(date);
+  const map = {};
+  parts.forEach(part => {
+    map[part.type] = part.value;
+  });
+  return `${map.year}-${map.month}-${map.day} ${map.hour}:${map.minute}:${map.second}`;
+}
+
+function formatDateOnlyID(dateInput, timeZone = DEFAULT_TIME_ZONE) {
+  if (!dateInput) {
+    return '-';
+  }
+  const date = new Date(dateInput);
+  if (Number.isNaN(date.getTime())) {
+    return '-';
+  }
+  const formatter = new Intl.DateTimeFormat(DEFAULT_DATE_LOCALE, {
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  });
+  return formatter.format(date);
 }
 
 
@@ -158,10 +210,18 @@ async function mapUpdateByName(db, table) {
     };
   }));
 }
+
+ function formatNumber(value) {
+    return Number(value || 0).toLocaleString('id-ID');
+  };
+
 module.exports = {
   today, nextDay,
+  formatNumber,
   formatDateOnly,
   formatDateTime,
+  formatDateTimeID,
+  formatDateOnlyID,
   parseTimeString, addTime,
   formatCurrency,
   formatLine,

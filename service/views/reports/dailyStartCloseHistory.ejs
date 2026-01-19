@@ -1,0 +1,48 @@
+<%- include('./global/header') %>
+
+<%
+  var rows = (report && Array.isArray(report.data)) ? report.data : [];
+%>
+ 
+</div>
+
+<% if (rows.length) { %> 
+    <table class="table table-sm">
+    <thead>
+        <tr>
+        <th >No</th>
+        <th >Biz Date (Cnt)</th>
+        <th>Beg Ck# /Next Ck#</th>
+        <th >Start Date</th>
+            <th >Start Employee</th>
+        <th >Close Datetime</th>
+        <th >Close Employee</th> 
+        </tr>
+    </thead>
+    <tbody>
+        <% rows.forEach(function(row, idx) { %>
+        <tr>
+            <td><%= idx + 1 %></td>
+        <td><%= formatDateOnly(row.inputDate) %></td>
+            <td><%= row.id %></td>
+            <td><%= formatDate(row.startDate) %></td>
+            <td><%= (row.startBy) %></td>
+            
+            <td><%= formatDate(row.closeDate) %></td>  
+            <td><%= (row.endby) %></td>  
+            
+        </tr>
+        <% }); %>
+    </tbody>
+
+    </table>  
+    <div>
+    << Grand Total >><br>
+    Total # Day Start/Day End:<%= rows.length %><br>
+    Total # Distinct Day:<%= rows.length %><br>
+    </div>
+<% } else { %>
+  <p>Tidak ada data untuk ditampilkan.</p>
+<% } %>
+
+<%- include('./global/footer') %>

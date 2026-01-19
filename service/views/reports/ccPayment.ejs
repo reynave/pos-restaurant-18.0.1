@@ -1,0 +1,59 @@
+<%- include('./global/header') %>
+
+<%
+  var reportData = report || {};
+  var payload = reportData.data || {};
+  var sections = Array.isArray(payload.items) ? payload.items : [];
+%>
+
+<% if (sections.length) { %>
+ 
+  <% sections.forEach(function(section) { %>
+    <article style="margin-bottom:24px;">
+      <header style="margin-bottom:8px;">
+        <h2 style="font-size:16px; font-weight:600; margin:0;">Pembayaran: <%= (section.paymentType && section.paymentType.name) || 'Tidak diketahui' %></h2>
+      </header>
+
+      <% if (section.data && section.data.length) { %>
+        <table class="table table-sm">
+          <thead>
+            <tr>
+              <th style="width:120px;">Check ID</th>
+              <th style="width:160px;">Nomor Kartu</th>
+              <th style="width:120px;">Kadaluarsa</th>
+              <th class="right" style="width:120px;">Paid</th>
+              <th class="right" style="width:120px;">Tips</th>
+              <th class="right" style="width:140px;">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% section.data.forEach(function(entry) { %>
+              <tr>
+                <td><%= entry.id %></td>
+                <td><%= entry.cardNumber || '-' %></td>
+                <td><%= entry.expCard || '-' %></td>
+                <td class="right"><%= formatNumber(entry.paid) %></td>
+                <td class="right"><%= formatNumber(entry.tips) %></td>
+                <td class="right"><%= formatNumber(entry.total) %></td>
+              </tr>
+            <% }); %>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="3"><strong>Total</strong></td>
+              <td class="right"><strong><%= formatNumber(section.summary && section.summary.totalPaid) %></strong></td>
+              <td class="right"><strong><%= formatNumber(section.summary && section.summary.totalTips) %></strong></td>
+              <td class="right"><strong><%= formatNumber(section.summary && section.summary.totalTotal) %></strong></td>
+            </tr>
+          </tfoot>
+        </table>
+      <% } else { %>
+        <p style="margin:8px 0 0;">Tidak ada transaksi pada metode ini.</p>
+      <% } %>
+    </article>
+  <% }); %>
+<% } else { %>
+  <p>Tidak ada data untuk ditampilkan.</p>
+<% } %>
+
+<%- include('./global/footer') %>

@@ -1,0 +1,41 @@
+<%- include('./global/header') %>
+
+<% if (report.items && report.items.length) { %>
+  <table>
+    <thead>
+      <tr>
+        <th>No</th>
+        <th>Nama</th>
+        <th class="right">Qty</th>
+        <th class="right">Harga</th>
+        <th class="right">Subtotal</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% report.items.forEach(function(it, idx) { %>
+        <tr>
+          <td><%= idx + 1 %></td>
+          <td><%= it.name %></td>
+          <td class="right"><%= it.qty %></td>
+          <td class="right"><%= (it.price || 0).toLocaleString() %></td>
+          <td class="right"><%= ((it.qty || 0) * (it.price || 0)).toLocaleString() %></td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+<% } else { %>
+  <p>Tidak ada item untuk ditampilkan.</p>
+<% } %>
+
+<% if (report.totals) { %>
+  <div style="margin-top:12px; width:100%;">
+    <table>
+      <tbody>
+        <tr><td>Subtotal</td><td class="right"><%= (report.totals.subTotal||0).toLocaleString() %></td></tr>
+        <tr><td>Tax</td><td class="right"><%= (report.totals.tax||0).toLocaleString() %></td></tr>
+        <tr><td><strong>Grand Total</strong></td><td class="right"><strong><%= (report.totals.grandTotal||0).toLocaleString() %></strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+<% } %>
+<%- include('./global/footer') %>

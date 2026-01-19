@@ -1,0 +1,284 @@
+<%- include('./global/header') %>
+
+<%
+  var reportData = report || {};
+  var payload = reportData.data || {};
+  var overall = payload.overall || {};
+  var salesByMode = Array.isArray(payload.salesByMode) ? payload.salesByMode : [];
+  var salesByDepartment = Array.isArray(payload.salesByDepartment) ? payload.salesByDepartment : [];
+  var salesByPeriod = Array.isArray(payload.salesByPeriod) ? payload.salesByPeriod : [];
+  var paymentSection = payload.paymentAndTipsSummary || {};
+  var paymentDetails = Array.isArray(paymentSection.details) ? paymentSection.details : [];
+  var paymentTotals = paymentSection.summary || {};
+  var voidItemSummary = Array.isArray(payload.voidItemSummary) ? payload.voidItemSummary : [];
+  var voidPaymentSummary = Array.isArray(payload.voidPaymentSummary) ? payload.voidPaymentSummary : [];
+  var taxSummary = payload.taxSummary || {};
+  var taxDetails = Array.isArray(taxSummary.details) ? taxSummary.details : [];
+  var unpaid = payload.unpaid || {};
+%>
+
+<section class="mb-4">
+  <header class="mb-3">
+    <h2 class="h5 fw-semibold mb-0">Ringkasan Penjualan</h2>
+  </header>
+  <div class="row g-3">
+    <div class="col-12 col-md-6 col-xl-4">
+      <table class="table table-sm">
+        <tbody>
+          <tr><td>Item Sales</td><td class="right"><%= formatNumber(overall.itemSales) %></td></tr>
+          <tr><td>Discount</td><td class="right"><%= formatNumber(overall.discount) %></td></tr>
+          <tr><td>Net Sales</td><td class="right"><%= formatNumber(overall.netSales) %></td></tr>
+          <tr><td>Tax</td><td class="right"><%= formatNumber(overall.tax) %></td></tr>
+          <tr><td>Service Charge</td><td class="right"><%= formatNumber(overall.sc) %></td></tr>
+          <tr><td>Gross Sales</td><td class="right"><%= formatNumber(overall.grossSales) %></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-12 col-md-6 col-xl-4">
+      <table class="table table-sm">
+        <tbody>
+          <tr><td>Total Checks</td><td class="right"><%= formatNumber(overall.totalCheck) %></td></tr>
+          <tr><td>Total Covers</td><td class="right"><%= formatNumber(overall.totalCover) %></td></tr>
+          <tr><td>Sales / Check</td><td class="right"><%= formatNumber(overall.salesPerCheck) %></td></tr>
+          <tr><td>Sales / Cover</td><td class="right"><%= formatNumber(overall.salesPerCover) %></td></tr>
+          <tr><td>Unpaid Item Sales</td><td class="right"><%= formatNumber(unpaid.itemSales) %></td></tr>
+          <tr><td>Unpaid Checks</td><td class="right"><%= formatNumber(unpaid.totalCheck) %></td></tr>
+          <tr><td>Unpaid Covers</td><td class="right"><%= formatNumber(unpaid.totalCover) %></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-12 col-xl-4">
+      <table class="table table-sm">
+        <thead>
+          <tr>
+            <th>Jenis Pajak</th>
+            <th class="right">Jumlah</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (taxDetails.length) { %>
+            <% taxDetails.forEach(function(row) { %>
+              <tr>
+                <td><%= row.note || '-' %></td>
+                <td class="right"><%= formatNumber(row.total) %></td>
+              </tr>
+            <% }); %>
+          <% } else { %>
+            <tr><td colspan="2">Tidak ada data pajak.</td></tr>
+          <% } %>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td><strong>Total Pajak</strong></td>
+            <td class="right"><strong><%= formatNumber(taxSummary.totalTax) %></strong></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+</section>
+
+<% if (salesByMode.length) { %>
+  <section class="mb-4">
+    <header class="mb-2">
+      <h3 class="h6 fw-semibold mb-0">Penjualan Berdasarkan Mode</h3>
+    </header>
+    <table class="table table-sm">
+      <thead>
+        <tr>
+          <th>Mode</th>
+          <th class="right">Qty</th>
+          <th class="right">Item Sales</th>
+          <th class="right">Discount</th>
+          <th class="right">Net Sales</th>
+          <th class="right">% Item</th>
+          <th class="right">% Net</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% salesByMode.forEach(function(row) { %>
+          <tr>
+            <td><%= row.desc1 %></td>
+            <td class="right"><%= formatNumber(row.qty) %></td>
+            <td class="right"><%= formatNumber(row.itemSales) %></td>
+            <td class="right"><%= formatNumber(row.discount) %></td>
+            <td class="right"><%= formatNumber(row.netSales) %></td>
+            <td class="right"><%= row.percentItemSales %>%</td>
+            <td class="right"><%= row.percentNetSales %>%</td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </section>
+<% } %>
+
+<% if (salesByDepartment.length) { %>
+  <section class="mb-4">
+    <header class="mb-2">
+      <h3 class="h6 fw-semibold mb-0">Penjualan Berdasarkan Departemen</h3>
+    </header>
+    <table class="table table-sm">
+      <thead>
+        <tr>
+          <th>Departemen</th>
+          <th class="right">Item Sales</th>
+          <th class="right">Discount</th>
+          <th class="right">Net Sales</th>
+          <th class="right">% Item</th>
+          <th class="right">% Net</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% salesByDepartment.forEach(function(row) { %>
+          <tr>
+            <td><%= row.desc1 %></td>
+            <td class="right"><%= formatNumber(row.itemSales) %></td>
+            <td class="right"><%= formatNumber(row.discount) %></td>
+            <td class="right"><%= formatNumber(row.netSales) %></td>
+            <td class="right"><%= row.percentItemSales %>%</td>
+            <td class="right"><%= row.percentNetSales %>%</td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </section>
+<% } %>
+
+<% if (salesByPeriod.length) { %>
+  <section class="mb-4">
+    <header class="mb-2">
+      <h3 class="h6 fw-semibold mb-0">Penjualan Berdasarkan Periode</h3>
+    </header>
+    <table class="table table-sm">
+      <thead>
+        <tr>
+          <th>Periode</th>
+          <th class="right"># Check</th>
+          <th class="right"># Cover</th>
+          <th class="right">Item Sales</th>
+          <th class="right">Discount</th>
+          <th class="right">Net Sales</th>
+          <th class="right">Tax</th>
+          <th class="right">Service</th>
+          <th class="right">Gross Sales</th>
+          <th class="right">% Item</th>
+          <th class="right">% Net</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% salesByPeriod.forEach(function(row) { %>
+          <tr>
+            <td><%= row.period %></td>
+            <td class="right"><%= formatNumber(row.noOfCheck) %></td>
+            <td class="right"><%= formatNumber(row.noOfCover) %></td>
+            <td class="right"><%= formatNumber(row.itemSales) %></td>
+            <td class="right"><%= formatNumber(row.discount) %></td>
+            <td class="right"><%= formatNumber(row.netSales) %></td>
+            <td class="right"><%= formatNumber(row.tax) %></td>
+            <td class="right"><%= formatNumber(row.sc) %></td>
+            <td class="right"><%= formatNumber(row.grossSales) %></td>
+            <td class="right"><%= row.percentItemSales %>%</td>
+            <td class="right"><%= row.percentNetSales %>%</td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </section>
+<% } %>
+
+<% if (paymentDetails.length) { %>
+  <section class="mb-4">
+    <header class="mb-2">
+      <h3 class="h6 fw-semibold mb-0">Ringkasan Pembayaran & Tips</h3>
+    </header>
+    <table class="table table-sm">
+      <thead>
+        <tr>
+          <th>Jenis Pembayaran</th>
+          <th class="right">Paid Count</th>
+          <th class="right">Paid Amount</th>
+          <th class="right">Tips Amount</th>
+          <th class="right">Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% paymentDetails.forEach(function(row) { %>
+          <tr>
+            <td><%= row.payType %></td>
+            <td class="right"><%= formatNumber(row.paid) %></td>
+            <td class="right"><%= formatNumber(row.paidAmount) %></td>
+            <td class="right"><%= formatNumber(row.tipsAmount) %></td>
+            <td class="right"><%= formatNumber(row.subTotal) %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td><strong>Total</strong></td>
+          <td class="right"><strong><%= formatNumber(paymentTotals.totalPaid) %></strong></td>
+          <td class="right"><strong><%= formatNumber(paymentTotals.totalPaidAmount) %></strong></td>
+          <td class="right"><strong><%= formatNumber(paymentTotals.totalTipsAmount) %></strong></td>
+          <td class="right"><strong><%= formatNumber(paymentTotals.totalSubTotal) %></strong></td>
+        </tr>
+      </tfoot>
+    </table>
+  </section>
+<% } %>
+
+<% if (voidItemSummary.length) { %>
+  <section class="mb-4">
+    <header class="mb-2">
+      <h3 class="h6 fw-semibold mb-0">Void Item Summary</h3>
+    </header>
+    <table class="table table-sm">
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th class="right">Qty</th>
+          <th class="right">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% voidItemSummary.forEach(function(row) { %>
+          <tr>
+            <td><%= row.name %></td>
+            <td class="right"><%= formatNumber(row.qty) %></td>
+            <td class="right"><%= formatNumber(row.total) %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </section>
+<% } %>
+
+<% if (voidPaymentSummary.length) { %>
+  <section class="mb-4">
+    <header class="mb-2">
+      <h3 class="h6 fw-semibold mb-0">Void Payment Summary</h3>
+    </header>
+    <table class="table table-sm">
+      <thead>
+        <tr>
+          <th>Jenis Pembayaran</th>
+          <th class="right">Paid Count</th>
+          <th class="right">Paid Amount</th>
+          <th class="right">Tips Amount</th>
+          <th class="right">Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% voidPaymentSummary.forEach(function(row) { %>
+          <tr>
+            <td><%= row.payType %></td>
+            <td class="right"><%= formatNumber(row.paid) %></td>
+            <td class="right"><%= formatNumber(row.paidAmount) %></td>
+            <td class="right"><%= formatNumber(row.tipsAmount) %></td>
+            <td class="right"><%= formatNumber(row.subTotal) %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </section>
+<% } %>
+
+<%- include('./global/footer') %>
