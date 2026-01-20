@@ -7,17 +7,7 @@
   var summary = payload.summary || {};
 %>
 
-<% if (rows.length) { %>
-  <section style="margin-bottom:16px;">
-    <table class="table table-sm" style="max-width:520px;">
-      <tbody>
-        <tr><td>Periode</td><td class="right"><%= reportData.startDate || '-' %> s/d <%= reportData.endDate || '-' %></td></tr>
-        <tr><td>Dibuat</td><td class="right"><%= (typeof formatDate === 'function') ? formatDate(reportData.createdDate) : (reportData.createdDate || '-') %></td></tr>
-        <tr><td>Oleh</td><td class="right"><%= reportData.createdBy || '-' %></td></tr>
-      </tbody>
-    </table>
-  </section>
-
+<% if (rows.length) { %> 
   <section style="margin-bottom:24px;">
     <header style="margin-bottom:8px;">
       <h2 style="font-size:16px; font-weight:600; margin:0;">Ringkasan Penjualan</h2>

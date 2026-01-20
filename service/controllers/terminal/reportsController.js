@@ -2,20 +2,23 @@ const e = require('express');
 const db = require('../../config/db');
 const path = require('path');
 const ejs = require('ejs');
-const { today, formatDateOnly, headerUserId, formatNumber, formatDateTimeID, formatDateOnlyID } = require('../../helpers/global');
- 
-// DONE view=printable
-exports.salesSummaryReport = async (req, res) => {
-    const startDate = req.query.startDate || '';
-    const endDate = req.query.endDate || '';
-    const userId = req.query.userId || '';
-    const outletId = req.query.outletId || '';
-    const view = req.query.view || '';
-    try {
-      let whereFilter = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+const { employeeDb, formatNumber, formatDateTimeID, formatDateOnlyID, fetchReportToken } = require('../../helpers/global');
 
-      const overallQuery = `
-        SELECT sum(c.summaryItemTotal) AS 'ItemSales', sum(c.summaryDiscount) AS 'discount',
+// DONE::FILTER
+exports.salesSummaryReport = async (req, res) => {
+  const startDate = req.query.startDate || '';
+  const endDate = req.query.endDate || '';
+  const userId = req.query.userId || '';
+  const outletId = req.query.outletId || '';
+  const view = req.query.view || '';
+  try {
+
+    let whereFilter = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+    whereFilter += userId ? ` AND c.closeBy = '${userId}' ` : '';
+
+
+    const overallQuery = `
+        SELECT sum(c.summaryItemTotal) AS 'ItemSales', sum(c.summaryDiscount * -1) AS 'discount',
           SUM(c.summaryItemTotal + c.summaryDiscount) AS 'netSales',
           sum(c.summaryTax) AS 'tax', sum(c.summarySc) AS 'sc', sum(c.grandTotal) AS 'grossSales',
           SUM(c.cover) AS 'totalCover', count(c.id) AS 'totalCheck'
@@ -24,22 +27,26 @@ exports.salesSummaryReport = async (req, res) => {
           AND c.presence = 1 AND c.void = 0
           ${whereFilter}
       `;
-      const [overallResult] = await db.query(overallQuery);
-      const overallRow = overallResult[0] || {};
-      const overallSummary = {
-        itemSales: parseFloat(overallRow.ItemSales || 0),
-        discount: parseFloat(overallRow.discount || 0),
-        netSales: parseFloat(overallRow.netSales || 0),
-        tax: parseFloat(overallRow.tax || 0),
-        sc: parseFloat(overallRow.sc || 0),
-        grossSales: parseFloat(overallRow.grossSales || 0),
-        totalCover: parseFloat(overallRow.totalCover || 0),
-        totalCheck: parseFloat(overallRow.totalCheck || 0)
-      };
-      overallSummary.salesPerCheck = overallSummary.totalCheck ? overallSummary.grossSales / overallSummary.totalCheck : 0;
-      overallSummary.salesPerCover = overallSummary.totalCover ? overallSummary.grossSales / overallSummary.totalCover : 0;
+    const [overallResult] = await db.query(overallQuery);
+    const overallRow = overallResult[0] || {};
+    const overallSummary = {
+      itemSales: parseFloat(overallRow.ItemSales || 0),
+      discount: parseFloat(overallRow.discount || 0),
+      netSales: parseFloat(overallRow.netSales || 0),
+      tax: parseFloat(overallRow.tax || 0),
+      sc: parseFloat(overallRow.sc || 0),
+      grossSales: parseFloat(overallRow.grossSales || 0),
+      totalCover: parseFloat(overallRow.totalCover || 0),
+      totalCheck: parseFloat(overallRow.totalCheck || 0)
+    };
+    overallSummary.avgSalesPerCheck = overallSummary.totalCheck ? overallSummary.grossSales / overallSummary.totalCheck : 0;
+    overallSummary.avgSalesPerCover = overallSummary.totalCover ? overallSummary.grossSales / overallSummary.totalCover : 0;
 
-      const salesByModeQuery = `
+    //buat pasrse float 2 digit coma saja
+    overallSummary.avgSalesPerCheck = parseFloat(overallSummary.avgSalesPerCheck.toFixed(2));
+    overallSummary.avgSalesPerCover = parseFloat(overallSummary.avgSalesPerCover.toFixed(2));
+
+    const salesByModeQuery = `
         SELECT t1.*, p.desc1,  t1.debit * t1.qty AS 'itemSales', t1.credit * t1.qty AS 'discount',
           (t1.debit - t1.credit) * t1.qty AS 'netSales'
         FROM (
@@ -59,27 +66,27 @@ exports.salesSummaryReport = async (req, res) => {
         ) AS t1
         LEFT JOIN outlet_floor_plan AS p ON  p.id = t1.id`;
 
-      const [salesByModeResult] = await db.query(salesByModeQuery);
-      const totalItemSalesByMode = salesByModeResult.reduce((acc, curr) => acc + parseFloat(curr.itemSales || 0), 0);
-      const totalNetSalesByMode = salesByModeResult.reduce((acc, curr) => acc + parseFloat(curr.netSales || 0), 0);
-      const salesByMode = salesByModeResult.map(row => {
-        const qty = parseFloat(row.qty || 0);
-        const itemSales = parseFloat(row.itemSales || 0);
-        const discount = parseFloat(row.discount || 0);
-        const netSales = parseFloat(row.netSales || 0);
-        return {
-          id: row.id,
-          desc1: row.desc1 || '-',
-          qty,
-          itemSales,
-          discount,
-          netSales,
-          percentItemSales: totalItemSalesByMode ? ((itemSales / totalItemSalesByMode) * 100).toFixed(2) : '0.00',
-          percentNetSales: totalNetSalesByMode ? ((netSales / totalNetSalesByMode) * 100).toFixed(2) : '0.00'
-        };
-      });
+    const [salesByModeResult] = await db.query(salesByModeQuery);
+    const totalItemSalesByMode = salesByModeResult.reduce((acc, curr) => acc + parseFloat(curr.itemSales || 0), 0);
+    const totalNetSalesByMode = salesByModeResult.reduce((acc, curr) => acc + parseFloat(curr.netSales || 0), 0);
+    const salesByMode = salesByModeResult.map(row => {
+      const qty = parseFloat(row.qty || 0);
+      const itemSales = parseFloat(row.itemSales || 0);
+      const discount = parseFloat(row.discount || 0);
+      const netSales = parseFloat(row.netSales || 0);
+      return {
+        id: row.id,
+        desc1: row.desc1 || '-',
+        qty,
+        itemSales,
+        discount,
+        netSales,
+        percentItemSales: totalItemSalesByMode ? ((itemSales / totalItemSalesByMode) * 100).toFixed(2) : '0.00',
+        percentNetSales: totalNetSalesByMode ? ((netSales / totalNetSalesByMode) * 100).toFixed(2) : '0.00'
+      };
+    });
 
-      const salesByDepartmentQuery = `
+    const salesByDepartmentQuery = `
         SELECT  t1.*, (t1.itemSales - t1.discount) AS 'netSales', d.desc1 FROM (
           SELECT  
             SUM((i.debit * i.qty)) AS 'itemSales',
@@ -98,29 +105,29 @@ exports.salesSummaryReport = async (req, res) => {
         ) AS t1 
         LEFT JOIN menu_department AS d ON d.id = t1.menuDepartmentId
       `;
-      const [salesByDepartmentResult] = await db.query(salesByDepartmentQuery);
-      const totalItemSalesByDepartment = salesByDepartmentResult.reduce((acc, curr) => acc + parseFloat(curr.itemSales || 0), 0);
-      const totalNetSalesByDepartment = salesByDepartmentResult.reduce((acc, curr) => acc + parseFloat(curr.netSales || 0), 0);
-      const salesByDepartment = salesByDepartmentResult.map(row => {
-        const itemSales = parseFloat(row.itemSales || 0);
-        const discount = parseFloat(row.discount || 0);
-        const netSales = parseFloat(row.netSales || 0);
-        return {
-          menuDepartmentId: row.menuDepartmentId,
-          desc1: row.desc1 || '-',
-          itemSales,
-          discount,
-          netSales,
-          percentItemSales: totalItemSalesByDepartment ? ((itemSales / totalItemSalesByDepartment) * 100).toFixed(2) : '0.00',
-          percentNetSales: totalNetSalesByDepartment ? ((netSales / totalNetSalesByDepartment) * 100).toFixed(2) : '0.00'
-        };
-      });
+    const [salesByDepartmentResult] = await db.query(salesByDepartmentQuery);
+    const totalItemSalesByDepartment = salesByDepartmentResult.reduce((acc, curr) => acc + parseFloat(curr.itemSales || 0), 0);
+    const totalNetSalesByDepartment = salesByDepartmentResult.reduce((acc, curr) => acc + parseFloat(curr.netSales || 0), 0);
+    const salesByDepartment = salesByDepartmentResult.map(row => {
+      const itemSales = parseFloat(row.itemSales || 0);
+      const discount = parseFloat(row.discount || 0);
+      const netSales = parseFloat(row.netSales || 0);
+      return {
+        menuDepartmentId: row.menuDepartmentId,
+        desc1: row.desc1 || '-',
+        itemSales,
+        discount,
+        netSales,
+        percentItemSales: totalItemSalesByDepartment ? ((itemSales / totalItemSalesByDepartment) * 100).toFixed(2) : '0.00',
+        percentNetSales: totalNetSalesByDepartment ? ((netSales / totalNetSalesByDepartment) * 100).toFixed(2) : '0.00'
+      };
+    });
 
-      const salesByPeriodQuery = `
+    const salesByPeriodQuery = `
         SELECT IFNULL(p.name,'no_name') AS 'period',
           count(c.id) AS 'noOfCheck', SUM(c.cover) AS 'noOfCover', sum(c.summaryItemTotal) AS 'itemSales', 
           SUM(c.summaryTax) AS 'tax', SUM(c.summarySc) AS 'sc',
-          sum(c.summaryDiscount) AS 'discount', SUM(c.summaryItemTotal + c.summaryDiscount) AS 'netSales',
+          sum(c.summaryDiscount * -1) AS 'discount', SUM(c.summaryItemTotal + c.summaryDiscount) AS 'netSales',
           SUM(c.grandTotal) AS 'grossSales'
         FROM cart AS  c
         LEFT JOIN period AS p ON p.id = c.periodId
@@ -128,32 +135,32 @@ exports.salesSummaryReport = async (req, res) => {
           AND c.presence = 1 AND c.void = 0 
           ${whereFilter}
         GROUP BY c.periodId`;
-      const [salesByPeriodResult] = await db.query(salesByPeriodQuery);
-      const totalItemSalesByPeriod = salesByPeriodResult.reduce((acc, curr) => acc + parseFloat(curr.itemSales || 0), 0);
-      const totalNetSalesByPeriod = salesByPeriodResult.reduce((acc, curr) => acc + parseFloat(curr.netSales || 0), 0);
-      const salesByPeriod = salesByPeriodResult.map(row => {
-        const itemSales = parseFloat(row.itemSales || 0);
-        const discount = parseFloat(row.discount || 0);
-        const netSales = parseFloat(row.netSales || 0);
-        const tax = parseFloat(row.tax || 0);
-        const sc = parseFloat(row.sc || 0);
-        const grossSales = parseFloat(row.grossSales || 0);
-        return {
-          period: row.period || '-',
-          noOfCheck: parseFloat(row.noOfCheck || 0),
-          noOfCover: parseFloat(row.noOfCover || 0),
-          itemSales,
-          discount,
-          netSales,
-          tax,
-          sc,
-          grossSales,
-          percentItemSales: totalItemSalesByPeriod ? ((itemSales / totalItemSalesByPeriod) * 100).toFixed(2) : '0.00',
-          percentNetSales: totalNetSalesByPeriod ? ((netSales / totalNetSalesByPeriod) * 100).toFixed(2) : '0.00'
-        };
-      });
+    const [salesByPeriodResult] = await db.query(salesByPeriodQuery);
+    const totalItemSalesByPeriod = salesByPeriodResult.reduce((acc, curr) => acc + parseFloat(curr.itemSales || 0), 0);
+    const totalNetSalesByPeriod = salesByPeriodResult.reduce((acc, curr) => acc + parseFloat(curr.netSales || 0), 0);
+    const salesByPeriod = salesByPeriodResult.map(row => {
+      const itemSales = parseFloat(row.itemSales || 0);
+      const discount = parseFloat(row.discount || 0);
+      const netSales = parseFloat(row.netSales || 0);
+      const tax = parseFloat(row.tax || 0);
+      const sc = parseFloat(row.sc || 0);
+      const grossSales = parseFloat(row.grossSales || 0);
+      return {
+        period: row.period || '-',
+        noOfCheck: parseFloat(row.noOfCheck || 0),
+        noOfCover: parseFloat(row.noOfCover || 0),
+        itemSales,
+        discount,
+        netSales,
+        tax,
+        sc,
+        grossSales,
+        percentItemSales: totalItemSalesByPeriod ? ((itemSales / totalItemSalesByPeriod) * 100).toFixed(2) : '0.00',
+        percentNetSales: totalNetSalesByPeriod ? ((netSales / totalNetSalesByPeriod) * 100).toFixed(2) : '0.00'
+      };
+    });
 
-      const paymentAndTipsSummaryQuery = `
+    const paymentAndTipsSummaryQuery = `
         SELECT t1.*, e.name AS 'payType' FROM (
           SELECT  p.checkPaymentTypeId, count(p.paid) AS 'paid',
             SUM(p.paid) AS 'paidAmount', SUM(p.tips) AS 'tipsAmount', SUM(p.paid + p.tips) AS 'subTotal'
@@ -166,44 +173,44 @@ exports.salesSummaryReport = async (req, res) => {
           GROUP BY p.checkPaymentTypeId
         ) as t1
         LEFT JOIN check_payment_type AS e ON t1.checkPaymentTypeId = e.id`;
-      const [paymentAndTipsSummaryResult] = await db.query(paymentAndTipsSummaryQuery);
-      const paymentAndTipsDetails = paymentAndTipsSummaryResult.map(row => {
-        const paid = parseFloat(row.paid || 0);
-        const paidAmount = parseFloat(row.paidAmount || 0);
-        const tipsAmount = parseFloat(row.tipsAmount || 0);
-        const subTotal = parseFloat(row.subTotal || 0);
-        return {
-          checkPaymentTypeId: row.checkPaymentTypeId,
-          payType: row.payType || '-',
-          paid,
-          paidAmount,
-          tipsAmount,
-          subTotal
-        };
-      });
-      const paymentSummaryTotals = paymentAndTipsDetails.reduce((acc, row) => {
-        acc.totalPaid += row.paid;
-        acc.totalPaidAmount += row.paidAmount;
-        acc.totalTipsAmount += row.tipsAmount;
-        acc.totalSubTotal += row.subTotal;
-        return acc;
-      }, { totalPaid: 0, totalPaidAmount: 0, totalTipsAmount: 0, totalSubTotal: 0 });
+    const [paymentAndTipsSummaryResult] = await db.query(paymentAndTipsSummaryQuery);
+    const paymentAndTipsDetails = paymentAndTipsSummaryResult.map(row => {
+      const paid = parseFloat(row.paid || 0);
+      const paidAmount = parseFloat(row.paidAmount || 0);
+      const tipsAmount = parseFloat(row.tipsAmount || 0);
+      const subTotal = parseFloat(row.subTotal || 0);
+      return {
+        checkPaymentTypeId: row.checkPaymentTypeId,
+        payType: row.payType || '-',
+        paid,
+        paidAmount,
+        tipsAmount,
+        subTotal
+      };
+    });
+    const paymentSummaryTotals = paymentAndTipsDetails.reduce((acc, row) => {
+      acc.totalPaid += row.paid;
+      acc.totalPaidAmount += row.paidAmount;
+      acc.totalTipsAmount += row.tipsAmount;
+      acc.totalSubTotal += row.subTotal;
+      return acc;
+    }, { totalPaid: 0, totalPaidAmount: 0, totalTipsAmount: 0, totalSubTotal: 0 });
 
-      const taxQuery = ` SELECT t.note , sum(t.debit ) AS 'total'
+    const taxQuery = ` SELECT t.note , sum(t.debit ) AS 'total'
         FROM cart_item_tax AS t
         LEFT JOIN cart AS c ON c.id = t.cartId 
         WHERE c.close = 1 AND t.presence = 1 AND t.void = 0
-          AND c.presence = 1 AND c.void = 0 AND 
-          (c.startDate >= ${startDate} or c.endDate <= ${endDate})
+          AND c.presence = 1 AND c.void = 0 
+              ${whereFilter}
         GROUP BY t.note`;
-      const [taxSummaryResult] = await db.query(taxQuery);
-      const taxDetails = taxSummaryResult.map(row => ({
-        note: row.note || '-',
-        total: parseFloat(row.total || 0)
-      }));
-      const totalTax = taxDetails.reduce((acc, curr) => acc + curr.total, 0);
+    const [taxSummaryResult] = await db.query(taxQuery);
+    const taxDetails = taxSummaryResult.map(row => ({
+      note: row.note || '-',
+      total: parseFloat(row.total || 0)
+    }));
+    const totalTax = taxDetails.reduce((acc, curr) => acc + curr.total, 0);
 
-      const voidItemSummaryQuery = `SELECT t1.*, m.name FROM (
+    const voidItemSummaryQuery = `SELECT t1.*, m.name FROM (
         SELECT p.menuId, sum(p.qty) AS 'qty', sum(p.debit) AS 'total'
         FROM cart AS c 
         LEFT JOIN cart_item AS p ON p.cartId = c.id
@@ -213,31 +220,31 @@ exports.salesSummaryReport = async (req, res) => {
           ${whereFilter}
         GROUP BY p.menuId) t1
         LEFT JOIN menu AS m ON m.id = t1.menuId`;
-      const [voidItemSummaryResult] = await db.query(voidItemSummaryQuery);
-      const voidItemSummary = voidItemSummaryResult.map(row => ({
-        menuId: row.menuId,
-        name: row.name || '-',
-        qty: parseFloat(row.qty || 0),
-        total: parseFloat(row.total || 0)
-      }));
+    const [voidItemSummaryResult] = await db.query(voidItemSummaryQuery);
+    const voidItemSummary = voidItemSummaryResult.map(row => ({
+      menuId: row.menuId,
+      name: row.name || '-',
+      qty: parseFloat(row.qty || 0),
+      total: parseFloat(row.total || 0)
+    }));
 
-      const unpaidQuery = `SELECT 
+    const unpaidQuery = `SELECT 
           sum(c.summaryItemTotal) AS 'ItemSales' , 
           SUM(c.cover) AS 'totalCover', count(c.id) AS 'totalCheck'
         FROM cart as c
         WHERE c.close = 0
-          AND c.presence = 1 AND c.void = 0 AND 
-          (c.startDate >= ${startDate} or c.endDate <= ${endDate}) 
+          AND c.presence = 1 AND c.void = 0 
+         ${whereFilter}
       `;
-      const [unpaidResult] = await db.query(unpaidQuery);
-      const unpaidRow = unpaidResult[0] || {};
-      const unpaidSummary = {
-        itemSales: parseFloat(unpaidRow.ItemSales || 0),
-        totalCover: parseFloat(unpaidRow.totalCover || 0),
-        totalCheck: parseFloat(unpaidRow.totalCheck || 0)
-      };
+    const [unpaidResult] = await db.query(unpaidQuery);
+    const unpaidRow = unpaidResult[0] || {};
+    const unpaidSummary = {
+      itemSales: parseFloat(unpaidRow.ItemSales || 0),
+      totalCover: parseFloat(unpaidRow.totalCover || 0),
+      totalCheck: parseFloat(unpaidRow.totalCheck || 0)
+    };
 
-      const voidPaymentSummaryQuery = `
+    const voidPaymentSummaryQuery = `
         SELECT t1.*, e.name AS 'payType' FROM (
           SELECT  p.checkPaymentTypeId, count(p.paid) AS 'paid',
             SUM(p.paid) AS 'paidAmount', SUM(p.tips) AS 'tipsAmount', SUM(p.paid + p.tips) AS 'subTotal'
@@ -250,76 +257,81 @@ exports.salesSummaryReport = async (req, res) => {
           GROUP BY p.checkPaymentTypeId
         ) as t1
         LEFT JOIN check_payment_type AS e ON t1.checkPaymentTypeId = e.id`;
-      const [voidPaymentSummaryResult] = await db.query(voidPaymentSummaryQuery);
-      const voidPaymentSummary = voidPaymentSummaryResult.map(row => ({
-        checkPaymentTypeId: row.checkPaymentTypeId,
-        payType: row.payType || '-',
-        paid: parseFloat(row.paid || 0),
-        paidAmount: parseFloat(row.paidAmount || 0),
-        tipsAmount: parseFloat(row.tipsAmount || 0),
-        subTotal: parseFloat(row.subTotal || 0)
-      }));
+    const [voidPaymentSummaryResult] = await db.query(voidPaymentSummaryQuery);
+    const voidPaymentSummary = voidPaymentSummaryResult.map(row => ({
+      checkPaymentTypeId: row.checkPaymentTypeId,
+      payType: row.payType || '-',
+      paid: parseFloat(row.paid || 0),
+      paidAmount: parseFloat(row.paidAmount || 0),
+      tipsAmount: parseFloat(row.tipsAmount || 0),
+      subTotal: parseFloat(row.subTotal || 0)
+    }));
 
-      const payload = {
-        filter: {
-          startDate,
-          endDate,
-          userId,
-          outletId
-        },
-        overall: overallSummary,
-        salesByMode,
-        salesByDepartment,
-        salesByPeriod,
-        paymentAndTipsSummary: {
-          details: paymentAndTipsDetails,
-          summary: paymentSummaryTotals
-        },
-        voidItemSummary,
-        voidPaymentSummary,
-        unpaid: unpaidSummary,
-        taxSummary: {
-          details: taxDetails,
-          totalTax
-        }
-      };
 
-      if (view === 'printable') {
-        const templatePath = path.join(__dirname, './../../views/reports/salesSummaryReport.ejs');
-        const reportPayload = {
-          title: 'Sales Summary Report',
-          startDate,
-          endDate,
-          createdDate: formatDateTimeID(new Date()),
-          createdBy: 'DEMO',
-          data: payload
-        };
 
-        ejs.renderFile(templatePath, {
-          report: reportPayload,
-          formatDate: formatDateTimeID,
-          formatDateOnly: formatDateOnlyID,
-          formatNumber: formatNumber
-        }, {}, (err, html) => {
-          if (err) {
-            console.error('EJS render error', err);
-            return res.status(500).send('Template render error');
-          }
-          res.send(html);
-        });
-      } else {
-        res.json(payload);
+    const payload = {
+      filter: {
+        startDate,
+        endDate,
+        userId,
+        outletId,
+        employee: await employeeDb(userId) || {},
+      },
+
+      overall: overallSummary,
+      salesByMode,
+      salesByDepartment,
+      salesByPeriod,
+      paymentAndTipsSummary: {
+        details: paymentAndTipsDetails,
+        summary: paymentSummaryTotals
+      },
+      voidItemSummary,
+      voidPaymentSummary,
+      unpaid: unpaidSummary,
+      taxSummary: {
+        details: taxDetails,
+        totalTax
       }
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: 'Database error' });
+    };
+    const reportPayload = {
+      title: 'Sales Summary Report',
+      startDate,
+      endDate,
+      header: await fetchReportToken(req.query.t) || {},
+      data: payload
+    };
+    if (view === 'printable') {
+      const templatePath = path.join(__dirname, './../../views/reports/salesSummaryReport.ejs');
+      ejs.renderFile(templatePath, {
+        report: reportPayload,
+        formatDate: formatDateTimeID,
+        formatDateOnly: formatDateOnlyID,
+        formatNumber: formatNumber
+      }, {}, (err, html) => {
+        if (err) {
+          console.error('EJS render error', err);
+          return res.status(500).send('Template render error');
+        }
+        res.send(html);
+      });
+    } else {
+      res.json({ report: reportPayload });
     }
-  };
-// DONE view=printable
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+};
+
+// DONE::FILTER
 exports.cashierReports = async (req, res) => {
   const startDate = req.query.startDate || '';
   const endDate = req.query.endDate || '';
+  const userId = req.query.userId || '';
+  const outletId = req.query.outletId || '';
   const view = req.query.view || '';
+
   const data = [];
   const overallPaymentTypes = new Map();
   const overallTotals = {
@@ -330,7 +342,10 @@ exports.cashierReports = async (req, res) => {
     unpaid: { grossSales: 0, check: 0, cover: 0 }
   };
   try {
-    const whereFilterOry = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+    let whereFilterOry = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+    //  whereFilterOry += userId ? ` AND c.closeBy = '${userId}' ` : '';
+
+
 
     const employeedSelectQuery = `SELECT id, username, name FROM employee 
     WHERE presence = 1   ORDER BY name ASC`;
@@ -523,56 +538,61 @@ exports.cashierReports = async (req, res) => {
     }
 
     overallTotals.cash.netCash = overallTotals.cash.cashIn - overallTotals.cash.cashOut;
+    const reportHeader = await fetchReportToken(req.query.t);
+    const paymentSummaryTotals = Array.from(overallPaymentTypes.values()).sort((a, b) => {
+      const left = (a.paytype || '').toLowerCase();
+      const right = (b.paytype || '').toLowerCase();
+      if (left < right) return -1;
+      if (left > right) return 1;
+      return 0;
+    });
 
-    if (view === 'printable') {
-      const paymentSummaryTotals = Array.from(overallPaymentTypes.values()).sort((a, b) => {
-        const left = (a.paytype || '').toLowerCase();
-        const right = (b.paytype || '').toLowerCase();
-        if (left < right) return -1;
-        if (left > right) return 1;
-        return 0;
-      });
+    const overallSalesAvgCheck = overallTotals.sales.check ? overallTotals.sales.grossSales / overallTotals.sales.check : 0;
+    const overallSalesAvgCover = overallTotals.sales.cover ? overallTotals.sales.grossSales / overallTotals.sales.cover : 0;
 
-      const overallSalesAvgCheck = overallTotals.sales.check ? overallTotals.sales.grossSales / overallTotals.sales.check : 0;
-      const overallSalesAvgCover = overallTotals.sales.cover ? overallTotals.sales.grossSales / overallTotals.sales.cover : 0;
-
-      const payload = {
-        employees: data,
-        paymentSummary: paymentSummaryTotals,
-        totals: {
-          payment: overallTotals.payment,
-          cash: {
-            cashIn: overallTotals.cash.cashIn,
-            cashOut: overallTotals.cash.cashOut,
-            netCash: overallTotals.cash.netCash
-          },
-          sales: {
-            itemSales: overallTotals.sales.itemSales,
-            discount: overallTotals.sales.discount,
-            netSales: overallTotals.sales.netSales,
-            tax: overallTotals.sales.tax,
-            sc: overallTotals.sales.sc,
-            grossSales: overallTotals.sales.grossSales,
-            check: overallTotals.sales.check,
-            cover: overallTotals.sales.cover,
-            avgCheck: overallSalesAvgCheck,
-            avgCover: overallSalesAvgCover
-          },
-          fullPaid: overallTotals.fullPaid,
-          unpaid: overallTotals.unpaid
-        }
-      };
-
-      const templatePath = path.join(__dirname, './../../views/reports/cashierReports.ejs');
-      const reportPayload = {
-        title: 'Cashier Reports',
+    const payload = {
+      filter: {
         startDate,
         endDate,
-        createdDate: formatDateTimeID(new Date()),
-        createdBy: 'DEMO',
-        data: payload
-      };
+        userId,
+        outletId,
+        employee: await employeeDb(userId) || {},
+      },
+      employees: data,
 
+      paymentSummary: paymentSummaryTotals,
+      totals: {
+        payment: overallTotals.payment,
+        cash: {
+          cashIn: overallTotals.cash.cashIn,
+          cashOut: overallTotals.cash.cashOut,
+          netCash: overallTotals.cash.netCash
+        },
+        sales: {
+          itemSales: overallTotals.sales.itemSales,
+          discount: overallTotals.sales.discount,
+          netSales: overallTotals.sales.netSales,
+          tax: overallTotals.sales.tax,
+          sc: overallTotals.sales.sc,
+          grossSales: overallTotals.sales.grossSales,
+          check: overallTotals.sales.check,
+          cover: overallTotals.sales.cover,
+          avgCheck: overallSalesAvgCheck,
+          avgCover: overallSalesAvgCover
+        },
+        fullPaid: overallTotals.fullPaid,
+        unpaid: overallTotals.unpaid
+      }
+    };
+    const reportPayload = {
+      title: 'Cashier Reports',
+      header: reportHeader || {},
+      startDate,
+      endDate,
+      data: payload
+    };
+    if (view === 'printable') {
+      const templatePath = path.join(__dirname, './../../views/reports/cashierReports.ejs');
       ejs.renderFile(templatePath, {
         report: reportPayload,
         formatDate: formatDateTimeID,
@@ -586,7 +606,7 @@ exports.cashierReports = async (req, res) => {
         res.send(html);
       });
     } else {
-      res.json(data);
+      res.json({ report: reportPayload });
     }
   } catch (err) {
     console.error(err);
@@ -594,10 +614,12 @@ exports.cashierReports = async (req, res) => {
   }
 };
 
-// DONE view=printable
+// DONE::FILTER
 exports.itemizedSalesDetail = async (req, res) => {
   const startDate = req.query.startDate || '';
   const endDate = req.query.endDate || '';
+  const userId = req.query.userId || '';
+  const outletId = req.query.outletId || '';
   const view = req.query.view || '';
   try {
     const menuDepartmentQuery = `SELECT id, desc1 FROM menu_department WHERE presence = 1 ORDER BY desc1 ASC`;
@@ -609,7 +631,10 @@ exports.itemizedSalesDetail = async (req, res) => {
       LEFT JOIN period AS p ON p.id = c.periodId`;
     const [periods] = await db.query(periodQuery);
 
-    const whereFilterDate = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+    let whereFilterDate = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+    whereFilterDate += userId ? ` AND c.closeBy = '${userId}' ` : '';
+
+
     const departmentsData = [];
 
     for (const menuDept of menuDepartments) {
@@ -802,6 +827,7 @@ exports.itemizedSalesDetail = async (req, res) => {
     const salesPerChecks = totalChecksValue ? grossSalesValue / totalChecksValue : 0;
     const salesPerCover = totalCoverValue ? grossSalesValue / totalCoverValue : 0;
 
+
     const summary = {
       totalQty: parseFloat(allDepartmentsTotals.qty || 0),
       itemSales: parseFloat(allDepartmentsTotals.itemSales || 0),
@@ -817,7 +843,15 @@ exports.itemizedSalesDetail = async (req, res) => {
     };
 
     const payload = {
+      filter: {
+        startDate,
+        endDate,
+        userId,
+        outletId,
+        employee: await employeeDb(userId) || {},
+      },
       periods,
+
       allDepartments: allDepartmentsTotals,
       byPeriod,
       tax: taxValue,
@@ -831,16 +865,16 @@ exports.itemizedSalesDetail = async (req, res) => {
       data: departmentsData
     };
 
+    const reportPayload = {
+      title: 'Itemized Sales Detail',
+      startDate,
+      endDate,
+      header: await fetchReportToken(req.query.t) || {},
+      data: payload
+    };
     if (view === 'printable') {
       const templatePath = path.join(__dirname, './../../views/reports/itemizedSalesDetail.ejs');
-      const reportPayload = {
-        title: 'Itemized Sales Detail',
-        startDate,
-        endDate,
-        createdDate: formatDateTimeID(new Date()),
-        createdBy: 'DEMO',
-        data: payload
-      };
+
 
       ejs.renderFile(templatePath, {
         report: reportPayload,
@@ -855,7 +889,7 @@ exports.itemizedSalesDetail = async (req, res) => {
         res.send(html);
       });
     } else {
-      res.json(payload);
+      res.json({ report: reportPayload });
     }
   } catch (err) {
     console.error(err);
@@ -863,10 +897,12 @@ exports.itemizedSalesDetail = async (req, res) => {
   }
 };
 
-// DONE view=printable
+// DONE::FILTER
 exports.itemizedSalesSummary = async (req, res) => {
   const startDate = req.query.startDate || '';
   const endDate = req.query.endDate || '';
+  const userId = req.query.userId || '';
+  const outletId = req.query.outletId || '';
   const view = req.query.view || '';
   try {
     const menu_department_query = `SELECT id, desc1 FROM menu_department WHERE presence = 1 ORDER BY desc1 ASC`;
@@ -878,7 +914,9 @@ exports.itemizedSalesSummary = async (req, res) => {
         LEFT JOIN period AS p ON p.id = c.periodId`;
     const [periods] = await db.query(periodQuery);
 
-    const whereFilterDate = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+    let whereFilterDate = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+    whereFilterDate += userId ? ` AND c.closeBy = '${userId}' ` : '';
+
     const items = [];
 
     for (const menuDept of menuDepartments) {
@@ -1043,23 +1081,31 @@ exports.itemizedSalesSummary = async (req, res) => {
     summary.salesPerCover = summary.totalCover ? summary.grossSales / summary.totalCover : 0;
 
     const payload = {
+
+      filter: {
+        startDate,
+        endDate,
+        userId,
+        outletId,
+        employee: await employeeDb(userId) || {},
+      },
+
       periods,
       allDepartments: allDepartmentsTotals,
       byPeriod,
       data: items,
       summary
     };
-
+    const reportPayload = {
+      title: 'Itemized Sales Summary',
+      startDate,
+      endDate,
+      header: await fetchReportToken(req.query.t) || {},
+      data: payload
+    };
     if (view === 'printable') {
       const templatePath = path.join(__dirname, './../../views/reports/itemizedSalesSummary.ejs');
-      const reportPayload = {
-        title: 'Itemized Sales Summary',
-        startDate,
-        endDate,
-        createdDate: formatDateTimeID(new Date()),
-        createdBy: 'DEMO',
-        data: payload
-      };
+
 
       ejs.renderFile(templatePath, {
         report: reportPayload,
@@ -1075,14 +1121,7 @@ exports.itemizedSalesSummary = async (req, res) => {
       });
     } else {
       res.json({
-        ...payload,
-        tax: summary.tax,
-        sc: summary.sc,
-        grossSales: summary.grossSales,
-        totalCover: summary.totalCover,
-        totalChecks: summary.totalChecks,
-        salesPerChecks: summary.salesPerChecks,
-        salesPerCover: summary.salesPerCover
+        report: reportPayload,
       });
     }
   } catch (err) {
@@ -1091,14 +1130,18 @@ exports.itemizedSalesSummary = async (req, res) => {
   }
 }
 
-// DONE view=printable
+// DONE::FILTER
 exports.checkDiscountListing = async (req, res) => {
   const startDate = req.query.startDate || '';
   const endDate = req.query.endDate || '';
+  const userId = req.query.userId || '';
+  const outletId = req.query.outletId || '';
   const view = req.query.view || '';
   try {
     const items = [];
-    const whereFilterDate = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+    let whereFilterDate = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+    whereFilterDate += userId ? ` AND c.closeBy = '${userId}' ` : '';
+
 
     const discountQuery = `
     SELECT c.id,  t.tableName, 
@@ -1134,20 +1177,26 @@ exports.checkDiscountListing = async (req, res) => {
     };
 
     const payload = {
+      filter: {
+        startDate,
+        endDate,
+        userId,
+        outletId,
+        employee: await employeeDb(userId) || {},
+      },
       discounts: discountResult,
       summary
     };
-
+    const reportPayload = {
+      title: 'Check Discount Listing',
+      startDate,
+      endDate,
+      header: await fetchReportToken(req.query.t) || {},
+      data: payload
+    };
     if (view === 'printable') {
       const templatePath = path.join(__dirname, './../../views/reports/checkDiscountListing.ejs');
-      const reportPayload = {
-        title: 'Check Discount Listing',
-        startDate,
-        endDate,
-        createdDate: formatDateTimeID(new Date()),
-        createdBy: 'DEMO',
-        data: payload
-      };
+
 
       ejs.renderFile(templatePath, {
         report: reportPayload,
@@ -1162,20 +1211,23 @@ exports.checkDiscountListing = async (req, res) => {
         res.send(html);
       });
     } else {
-      res.json(payload);
+      res.json({ report: reportPayload });
     }
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Database error' });
   }
 }
-// DONE view=printable
+// DONE::FILTER
 exports.salesHistoryReport = async (req, res) => {
   const startDate = req.query.startDate || '';
   const endDate = req.query.endDate || '';
+  const userId = req.query.userId || '';
+  const outletId = req.query.outletId || '';
   const view = req.query.view || '';
   try {
-    const whereFilterDate = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+    let whereFilterDate = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+    whereFilterDate += userId ? ` AND c.closeBy = '${userId}' ` : '';
 
     const q = `
     SELECT DATE(c.endDate) AS DATE, SUM(c.summaryItemTotal) AS 'itemSales',
@@ -1201,6 +1253,14 @@ exports.salesHistoryReport = async (req, res) => {
     const avgSalesCover = totalCover ? totalGrandTotal / totalCover : 0;
 
     const data = {
+      filter: {
+        startDate,
+        endDate,
+        userId,
+        outletId,
+        employee: await employeeDb(userId) || {},
+      },
+
       salesHistory: salesHistory,
       summary: {
         totalItemSales: totalItemSales,
@@ -1212,17 +1272,16 @@ exports.salesHistoryReport = async (req, res) => {
         avgSalesCover
       }
     }
-
+    const reportPayload = {
+      title: 'Sales History Report',
+      startDate,
+      endDate,
+      header: await fetchReportToken(req.query.t) || {},
+      data: data
+    };
     if (view === 'printable') {
       const templatePath = path.join(__dirname, './../../views/reports/salesHistoryReport.ejs');
-      const reportPayload = {
-        title: 'Sales History Report',
-        startDate,
-        endDate,
-        createdDate: formatDateTimeID(new Date()),
-        createdBy: 'DEMO',
-        data: data
-      };
+
 
       ejs.renderFile(templatePath, {
         report: reportPayload,
@@ -1237,7 +1296,7 @@ exports.salesHistoryReport = async (req, res) => {
         res.send(html);
       });
     } else {
-      res.json({ data });
+      res.json({ report: reportPayload });
     }
   } catch (err) {
     console.error(err);
@@ -1245,13 +1304,16 @@ exports.salesHistoryReport = async (req, res) => {
   }
 };
 
-// DONE view=printable
+
 exports.salesReportPerHour = async (req, res) => {
   const startDate = req.query.startDate || '';
   const endDate = req.query.endDate || '';
+  const userId = req.query.userId || '';
+  const outletId = req.query.outletId || '';
   const view = req.query.view || '';
   try {
-    const whereFilter = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+    let whereFilter = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+    whereFilter += userId ? ` AND c.closeBy = '${userId}' ` : '';
 
     const hours = [];
     for (let h = 0; h < 24; h++) {
@@ -1324,20 +1386,26 @@ exports.salesReportPerHour = async (req, res) => {
     };
 
     const payload = {
+      filter: {
+        startDate,
+        endDate,
+        userId,
+        outletId,
+        employee: await employeeDb(userId) || {},
+      },
       items,
       summary
     };
-
+    const reportPayload = {
+      title: 'Sales Report Per Hour',
+      startDate,
+      endDate,
+      header: await fetchReportToken(req.query.t) || {},
+      data: payload
+    };
     if (view === 'printable') {
       const templatePath = path.join(__dirname, './../../views/reports/salesReportPerHour.ejs');
-      const reportPayload = {
-        title: 'Sales Report Per Hour',
-        startDate,
-        endDate,
-        createdDate: formatDateTimeID(new Date()),
-        createdBy: 'DEMO',
-        data: payload
-      };
+
 
       ejs.renderFile(templatePath, {
         report: reportPayload,
@@ -1352,7 +1420,7 @@ exports.salesReportPerHour = async (req, res) => {
         res.send(html);
       });
     } else {
-      res.json({ data: items, summary });
+      res.json({ report: reportPayload });
     }
 
   } catch (err) {
@@ -1361,13 +1429,18 @@ exports.salesReportPerHour = async (req, res) => {
   }
 };
 
-// DONE view=printable
+
 exports.closeCheckReports = async (req, res) => {
   const startDate = req.query.startDate || '';
   const endDate = req.query.endDate || '';
+  const userId = req.query.userId || '';
+  const outletId = req.query.outletId || '';
   const view = req.query.view || '';
   try {
-    const whereFilter = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+    let whereFilter = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+    whereFilter += userId ? ` AND c.closeBy = '${userId}' ` : '';
+
+
     const overallQuery = ` 
     SELECT 
       c.id, c.startDate, c.grandTotal,   p.paid, c.changePayment, p.tips, t.name, 
@@ -1394,26 +1467,33 @@ exports.closeCheckReports = async (req, res) => {
     });
 
     const payload = {
+      filter: {
+        startDate,
+        endDate,
+        userId,
+        outletId,
+        employee: await employeeDb(userId) || {},
+      },
+
       items: overall,
       summary
     };
-
+    const reportPayload = {
+      title: 'Close Check Report',
+      startDate,
+      endDate,
+      header: await fetchReportToken(req.query.t) || {},
+      data: payload
+    };
     if (view === 'printable') {
       const templatePath = path.join(__dirname, './../../views/reports/closeCheckReports.ejs');
-      const reportPayload = {
-        title: 'Close Check Report',
-        startDate,
-        endDate,
-        createdDate: formatDateTimeID(new Date()),
-        createdBy: 'DEMO',
-        data: payload
-      };
+
 
       ejs.renderFile(templatePath, {
         report: reportPayload,
         formatDate: formatDateTimeID,
         formatDateOnly: formatDateOnlyID,
-        formatNumber:formatNumber
+        formatNumber: formatNumber
       }, {}, (err, html) => {
         if (err) {
           console.error('EJS render error', err);
@@ -1422,7 +1502,7 @@ exports.closeCheckReports = async (req, res) => {
         res.send(html);
       });
     } else {
-      res.json({ data: overall, summary });
+      res.json({ report: reportPayload });
     }
   } catch (err) {
     console.error(err);
@@ -1431,10 +1511,12 @@ exports.closeCheckReports = async (req, res) => {
 };
 
 
-// DONE view=printable
+
 exports.ccPayment = async (req, res) => {
   const startDate = req.query.startDate || '';
   const endDate = req.query.endDate || '';
+  const userId = req.query.userId || '';
+  const outletId = req.query.outletId || '';
   const view = req.query.view || '';
   try {
 
@@ -1443,11 +1525,12 @@ exports.ccPayment = async (req, res) => {
     check_payment_type 
     WHERE presence = 1 and openDrawer = 0 ORDER BY name ASC`;
     const [paymentTypes] = await db.query(paymentType);
-
+    let whereFilter = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+    whereFilter += userId ? ` AND c.closeBy = '${userId}' ` : '';
     const items = [];
     for (const pt of paymentTypes) {
 
-      const whereFilter = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+
       const overallQuery = `
       SELECT c.id , p.checkPaymentTypeId,  p.cardNumber, p.expCard, p.paid, p.tips, (p.paid+p.tips) AS 'total'
         FROM cart AS c 
@@ -1464,6 +1547,7 @@ exports.ccPayment = async (req, res) => {
       const totalTotal = overall.reduce((acc, curr) => acc + parseFloat(curr.total), 0);
 
       items.push({
+
         paymentType: pt,
         data: overall,
         summary: {
@@ -1482,18 +1566,28 @@ exports.ccPayment = async (req, res) => {
       }
     }
 
-    const payload = { items };
+    const payload = {
 
-    if (view === 'printable') {
-      const templatePath = path.join(__dirname, './../../views/reports/ccPayment.ejs');
-      const reportPayload = {
-        title: 'Credit Card Payment Report',
+      filter: {
         startDate,
         endDate,
-        createdDate: formatDateTimeID(new Date()),
-        createdBy: 'DEMO',
-        data: payload
-      };
+        userId,
+        outletId,
+        employee: await employeeDb(userId) || {},
+      },
+
+      items
+    };
+    const reportPayload = {
+      title: 'Credit Card Payment Report',
+      startDate,
+      endDate,
+      header: await fetchReportToken(req.query.t) || {},
+      data: payload
+    };
+    if (view === 'printable') {
+      const templatePath = path.join(__dirname, './../../views/reports/ccPayment.ejs');
+
 
       ejs.renderFile(templatePath, {
         report: reportPayload,
@@ -1508,7 +1602,7 @@ exports.ccPayment = async (req, res) => {
         res.send(html);
       });
     } else {
-      res.json({ data: items });
+      res.json({ report: reportPayload });
     }
   } catch (err) {
     console.error(err);
@@ -1516,13 +1610,16 @@ exports.ccPayment = async (req, res) => {
   }
 };
 
-// DONE view=printable
+
 exports.scHistory = async (req, res) => {
   const startDate = req.query.startDate || '';
   const endDate = req.query.endDate || '';
+  const userId = req.query.userId || '';
+  const outletId = req.query.outletId || '';
   const view = req.query.view || '';
   try {
-    const whereFilter = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+    let whereFilter = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+    whereFilter += userId ? ` AND c.closeBy = '${userId}' ` : '';
 
     const taxQuery = `SELECT 
       id, scNote as  name 
@@ -1562,22 +1659,29 @@ exports.scHistory = async (req, res) => {
     grandTotal = overall.reduce((acc, curr) => acc + parseFloat(curr['Total sc']), 0);
 
     const payload = {
+      filter: {
+        startDate,
+        endDate,
+        userId,
+        outletId,
+        employee: await employeeDb(userId) || {},
+      },
+
       headerSc: headerSc,
       items: overall,
       footer: footer,
       grandTotal: grandTotal
     };
-
+    const reportPayload = {
+      title: 'Service Charge History Report',
+      startDate,
+      endDate,
+      header: await fetchReportToken(req.query.t) || {},
+      data: payload
+    };
     if (view === 'printable') {
       const templatePath = path.join(__dirname, './../../views/reports/scHistory.ejs');
-      const reportPayload = {
-        title: 'Service Charge History Report',
-        startDate,
-        endDate,
-        createdDate: formatDateTimeID(new Date()),
-        createdBy: 'DEMO',
-        data: payload
-      };
+
 
       ejs.renderFile(templatePath, {
         report: reportPayload,
@@ -1592,7 +1696,7 @@ exports.scHistory = async (req, res) => {
         res.send(html);
       });
     } else {
-      res.json(payload);
+      res.json({ report: reportPayload });
     }
   } catch (err) {
     console.error(err);
@@ -1600,13 +1704,16 @@ exports.scHistory = async (req, res) => {
   }
 };
 
-// DONE view=printable
+
 exports.taxHistory = async (req, res) => {
   const startDate = req.query.startDate || '';
   const endDate = req.query.endDate || '';
+  const userId = req.query.userId || '';
+  const outletId = req.query.outletId || '';
   const view = req.query.view || '';
   try {
-    const whereFilter = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+    let whereFilter = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+    whereFilter += userId ? ` AND c.closeBy = '${userId}' ` : '';
 
     const taxQuery = `SELECT 
       id, taxNote as name 
@@ -1646,22 +1753,29 @@ exports.taxHistory = async (req, res) => {
     grandTotal = overall.reduce((acc, curr) => acc + parseFloat(curr['Total Tax']), 0);
 
     const payload = {
+      filter: {
+        startDate,
+        endDate,
+        userId,
+        outletId,
+        employee: await employeeDb(userId) || {},
+      },
+
       headerTax: headerTax,
       items: overall,
       footer: footer,
       grandTotal: grandTotal
     };
+    const reportPayload = {
+      title: 'Tax History Report',
+      startDate,
+      endDate,
+      header: await fetchReportToken(req.query.t) || {},
+      data: payload
+    };
 
     if (view === 'printable') {
       const templatePath = path.join(__dirname, './../../views/reports/taxHistory.ejs');
-      const reportPayload = {
-        title: 'Tax History Report',
-        startDate,
-        endDate,
-        createdDate: formatDateTimeID(new Date()),
-        createdBy: 'DEMO',
-        data: payload
-      };
 
       ejs.renderFile(templatePath, {
         report: reportPayload,
@@ -1676,7 +1790,7 @@ exports.taxHistory = async (req, res) => {
         res.send(html);
       });
     } else {
-      res.json(payload);
+      res.json({ report: reportPayload });
     }
   } catch (err) {
     console.error(err);
@@ -1688,12 +1802,14 @@ exports.taxHistory = async (req, res) => {
 exports.itemizedSales = async (req, res) => {
   const startDate = req.query.startDate || '';
   const endDate = req.query.endDate || '';
+  const userId = req.query.userId || '';
+  const outletId = req.query.outletId || '';
   const view = req.query.view || '';
-
   try {
     let globalQty = 0;
     let globalItemSales = 0;
-    const whereFilter = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+    let whereFilter = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+    whereFilter += userId ? ` AND c.closeBy = '${userId}' ` : '';
 
     const menuDepartmentsQuery = `
         SELECT id, desc1 
@@ -1769,23 +1885,34 @@ exports.itemizedSales = async (req, res) => {
         data.splice(i, 1);
       }
     }
+    const payload = {
+      filter: {
+        startDate,
+        endDate,
+        userId,
+        outletId,
+        employee: await employeeDb(userId) || {},
+      },
+      itemizedSales: data,
+      globalSummary: {
+        totalDepartments: data.length,
+        globalQty: globalQty,
+        globalItemSales: globalItemSales
+      }
+    }
 
+    const reportPayload = {
+      title: 'Itemized Sales',
+      startDate: `${startDate}`,
+      endDate: `${endDate}`,
+      header: await fetchReportToken(req.query.t) || {},
+      data: payload
+    };
 
     if (view === 'printable') {
-      payload = {
-        title: 'Itemized Sales',
-        startDate: `${startDate}`,
-        endDate: `${endDate}`,
-        data: data,
-        globalSummary: {
-          totalDepartments: data.length,
-          globalQty: globalQty,
-          globalItemSales: globalItemSales
-        }
-      };
 
       const templatePath = path.join(__dirname, './../../views/reports/itemizedSales.ejs');
-      ejs.renderFile(templatePath, { report: payload }, {}, (err, html) => {
+      ejs.renderFile(templatePath, { report: reportPayload, }, {}, (err, html) => {
         if (err) {
           console.error('EJS render error', err);
           return res.status(500).send('Template render error');
@@ -1794,15 +1921,7 @@ exports.itemizedSales = async (req, res) => {
       });
 
     } else {
-      res.json({
-        data: data,
-        globalSummary: {
-          totalDepartments: data.length,
-          globalQty: globalQty,
-          globalItemSales: globalItemSales
-        }
-      });
-
+      res.json({ report: reportPayload, });
     }
 
 
@@ -1814,7 +1933,7 @@ exports.itemizedSales = async (req, res) => {
 };
 
 
-// DONE view=printable
+
 exports.itemCount = async (req, res) => {
   const view = req.query.view || '';
   try {
@@ -1847,7 +1966,7 @@ exports.itemCount = async (req, res) => {
       const reportPayload = {
         title: 'Item Count Report',
         createdDate: formatDateTimeID(new Date()),
-        createdBy: 'DEMO',
+        header: await fetchReportToken(req.query.t) || {},
         data: items
       };
 
@@ -1875,15 +1994,19 @@ exports.itemCount = async (req, res) => {
   }
 };
 
-// DONE view=printable
+
 exports.employeeItemizedSales = async (req, res) => {
   const startDate = req.query.startDate || '';
   const endDate = req.query.endDate || '';
+  const userId = req.query.userId || '';
+  const outletId = req.query.outletId || '';
   const view = req.query.view || '';
+
   try {
     let globalQty = 0;
     let globalItemSales = 0;
-    const whereFilter = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+    let whereFilter = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+    whereFilter += userId ? ` AND c.closeBy = '${userId}' ` : '';
 
     const employeedSelectQuery = `
         SELECT id, name FROM employee order by name asc;`;
@@ -1956,6 +2079,14 @@ exports.employeeItemizedSales = async (req, res) => {
       }
     }
     const payload = {
+      filter: {
+        startDate,
+        endDate,
+        userId,
+        outletId,
+        employee: await employeeDb(userId) || {},
+      },
+
       data: data,
       globalSummary: {
         totalDepartments: data.length,
@@ -1963,17 +2094,16 @@ exports.employeeItemizedSales = async (req, res) => {
         globalItemSales: globalItemSales
       }
     };
-
+    const reportPayload = {
+      title: 'Employee Itemized Sales',
+      startDate,
+      endDate,
+      header: await fetchReportToken(req.query.t) || {},
+      data: payload
+    };
     if (view === 'printable') {
       const templatePath = path.join(__dirname, './../../views/reports/employeeItemizedSales.ejs');
-      const reportPayload = {
-        title: 'Employee Itemized Sales',
-        startDate,
-        endDate,
-        createdDate: formatDateTimeID(new Date()),
-        createdBy: 'DEMO',
-        data: payload
-      };
+
 
       ejs.renderFile(templatePath, {
         report: reportPayload,
@@ -1987,7 +2117,7 @@ exports.employeeItemizedSales = async (req, res) => {
         res.send(html);
       });
     } else {
-      res.json(payload);
+      res.json({ report: reportPayload });
     }
 
 
@@ -1998,13 +2128,17 @@ exports.employeeItemizedSales = async (req, res) => {
 };
 
 
-// DONE view=printable
+
 exports.managerClose = async (req, res) => {
   const startDate = req.query.startDate || '';
   const endDate = req.query.endDate || '';
+  const userId = req.query.userId || '';
+  const outletId = req.query.outletId || '';
   const view = req.query.view || '';
+
   try {
-    const whereFilter = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+    let whereFilter = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+    whereFilter += userId ? ` AND c.closeBy = '${userId}' ` : '';
 
     const employeedSelectQuery = `
         SELECT id, name FROM employee order by name asc;`;
@@ -2167,19 +2301,28 @@ exports.managerClose = async (req, res) => {
     }
 
     const payload = {
+      filter: {
+        startDate,
+        endDate,
+        userId,
+        outletId,
+        employee: await employeeDb(userId) || {},
+      },
+
       data: data,
+    };
+
+    const reportPayload = {
+      title: 'Manager Close Report',
+      startDate,
+      endDate,
+      header: await fetchReportToken(req.query.t) || {},
+      data: payload
     };
 
     if (view === 'printable') {
       const templatePath = path.join(__dirname, './../../views/reports/managerClose.ejs');
-      const reportPayload = {
-        title: 'Manager Close Report',
-        startDate,
-        endDate,
-        createdDate: formatDateTimeID(new Date()),
-        createdBy: 'DEMO',
-        data: payload
-      };
+
 
       ejs.renderFile(templatePath, {
         report: reportPayload,
@@ -2193,7 +2336,7 @@ exports.managerClose = async (req, res) => {
         res.send(html);
       });
     } else {
-      res.json(payload);
+      res.json({ report: reportPayload });
     }
 
 
@@ -2204,13 +2347,17 @@ exports.managerClose = async (req, res) => {
 };
 
 
-// DONE view=printable
+
 exports.serverCloseReport = async (req, res) => {
   const startDate = req.query.startDate || '';
   const endDate = req.query.endDate || '';
+  const userId = req.query.userId || '';
+  const outletId = req.query.outletId || '';
   const view = req.query.view || '';
+
   try {
-    const whereFilter = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+    let whereFilter = ` AND (c.startDate >= '${startDate} 00:00:00' and c.endDate <= '${endDate} 23:59:59') `;
+    whereFilter += userId ? ` AND c.closeBy = '${userId}' ` : '';
 
     const grandTotalQuery = `SELECT  
           sum(i.debit) AS 'grandTotal'
@@ -2361,6 +2508,13 @@ exports.serverCloseReport = async (req, res) => {
 
 
     const payload = {
+      filter: {
+        startDate,
+        endDate,
+        userId,
+        outletId,
+        employee: await employeeDb(userId) || {},
+      },
       department: {
         detail: overall,
         totalItemSales: totalItemSales,
@@ -2395,17 +2549,16 @@ exports.serverCloseReport = async (req, res) => {
         totalQty: qty
       }
     };
+    const reportData = {
+      title: 'Server Close Report',
+      startDate,
+      endDate,
+      header: await fetchReportToken(req.query.t) || {},
+      data: payload
+    };
 
     if (view === 'printable') {
       const templatePath = path.join(__dirname, './../../views/reports/serverCloseReport.ejs');
-      const reportData = {
-        title: 'Server Close Report',
-        startDate,
-        endDate,
-        createdDate: formatDateTimeID(new Date()),
-        createdBy: 'DEMO',
-        data: payload
-      };
 
       ejs.renderFile(templatePath, {
         report: reportData,
@@ -2419,7 +2572,7 @@ exports.serverCloseReport = async (req, res) => {
         res.send(html);
       });
     } else {
-      res.json(payload);
+      res.json({ report: reportPayload });
     }
   } catch (err) {
     console.error(err);
@@ -2431,10 +2584,14 @@ exports.serverCloseReport = async (req, res) => {
 exports.dailyStartCloseHistory = async (req, res) => {
   const startDate = req.query.startDate || '';
   const endDate = req.query.endDate || '';
+  const userId = req.query.userId || '';
+  const outletId = req.query.outletId || '';
   const view = req.query.view || '';
 
   try {
-    const whereFilter = ` AND (c.startDate >= '${startDate} 00:00:00' and c.closeDate <= '${endDate} 23:59:59') `;
+    let whereFilter = ` AND (c.startDate >= '${startDate} 00:00:00' and c.closeDate <= '${endDate} 23:59:59') `;
+    whereFilter += userId ? ` AND c.inputBy = '${userId}' ` : '';
+
     const overallQuery = `  
      SELECT c.* , a.name AS startBy, b.name AS endby
       FROM daily_check   as c
@@ -2443,19 +2600,34 @@ exports.dailyStartCloseHistory = async (req, res) => {
       WHERE 
      c.presence = 1  ${whereFilter}`;
     const [overall] = await db.query(overallQuery);
+
+
+
+    const payload = { 
+       filter: {
+        startDate,
+        endDate,
+        userId,
+        outletId,
+        employee: await employeeDb(userId) || {},
+      },
+	  
+      data: overall, 
+    };
+    const reportPayload = {
+      startDate: `${startDate}`,
+      endDate: `${endDate}`,
+      header: await fetchReportToken(req.query.t) || {},
+      data: payload,
+      title: 'Daily Start/Close History'
+    }
+
     if (view === 'printable') {
-      payload = {
-        createdDate: formatDateTimeID(new Date()),
-        createdBy: 'DEMO',
-        startDate: `${startDate}`,
-        endDate: `${endDate}`,
-        data: overall,
-        title: 'Daily Start/Close History'
-      };
+
 
       const templatePath = path.join(__dirname, './../../views/reports/dailyStartCloseHistory.ejs');
       ejs.renderFile(templatePath, {
-        report: payload,
+        report: reportPayload,
         formatDate: formatDateTimeID,
         formatDateOnly: formatDateOnlyID
       }, {}, (err, html) => {
@@ -2467,9 +2639,7 @@ exports.dailyStartCloseHistory = async (req, res) => {
       });
     }
     else {
-      res.json({
-        data: overall
-      });
+      res.json({ report: reportPayload });
     }
 
   } catch (err) {

@@ -124,9 +124,9 @@ app.use(process.env.PREFIX + process.env.TERMINAL + 'printQueue', IsAuth.validat
 app.use(process.env.PREFIX + process.env.TERMINAL + 'cashier', IsAuth.validateToken, cashier);
 app.use(process.env.PREFIX + process.env.TERMINAL + 'ux', IsAuth.validateToken, require('./routes/terminal/ux'));
 app.use(process.env.PREFIX + process.env.TERMINAL + 'language',  require('./routes/terminal/language'));
-app.use(process.env.PREFIX + process.env.TERMINAL + 'reports',  require('./routes/terminal/reports'));
+app.use(process.env.PREFIX + process.env.TERMINAL + 'menuReports',  IsAuth.validateToken, require('./routes/terminal/menuReports'));
+app.use(process.env.PREFIX + process.env.TERMINAL + 'reports',  IsAuth.checkReportToken, require('./routes/terminal/reports'));
 
-  
 app.use('/', (req, res) => {
     const data = {
         error: false,

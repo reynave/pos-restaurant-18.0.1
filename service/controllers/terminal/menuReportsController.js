@@ -1,4 +1,5 @@
 const e = require('express');
+const crypto = require('crypto');
 const db = require('../../config/db'); 
  
 const buildReportTree = rows => {
@@ -81,6 +82,37 @@ exports.getOutlets = async (req, res) => {
     const q = `SELECT id,name FROM outlet WHERE presence = 1`;
     const [outlets] = await db.query(q);
     res.json({ outlets: outlets });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+};
+
+
+//buatkan create token donk controller
+exports.createReportToken = async (req, res) => {
+  const createdName = req.body.createdName || 'System';
+  const inputBy  = req.body.inputBy || 0;
+  try { 
+    let expTime = 0;
+    // bisa buatkan expTime pakai epoch atau timestamp + beberapa menit misal 24 jam 
+    const minute = 60 * 24;
+
+    const timestamp = Math.floor(Date.now() / 1000); // waktu sekarang dalam detik
+    expTime = timestamp + (minute * 60);  
+
+ 
+
+
+    const token = crypto.randomBytes(16).toString('hex');
+    const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    const inputDateValue =  now; 
+
+    const q = `INSERT INTO reports_token (token, expTime, createdName, presence, inputDate, inputBy) VALUES (?, ?, ?, ?, ?, ?)`;
+    const values = [token, expTime, createdName, 1, inputDateValue, inputBy];
+    const [result] = await db.query(q, values);
+
+    res.json({ expTime: expTime, token });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Database error' });

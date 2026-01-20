@@ -1,12 +1,26 @@
 <%- include('./global/header') %>
 
 <%
-  var rows = (report && Array.isArray(report.data)) ? report.data : [];
-%>
- 
-</div>
+    const payload = (report && report.data) || {};
+    const rows = Array.isArray(payload.data) ? payload.data : [];
+    const distinctBizDates = new Set();
 
-<% if (rows.length) { %> 
+    rows.forEach(row => {
+        const candidate = row.startDate || row.closeDate || row.inputDate;
+        if (!candidate) {
+            return;
+        }
+        const dt = new Date(candidate);
+        if (!Number.isNaN(dt.getTime())) {
+            distinctBizDates.add(dt.toISOString().slice(0, 10));
+        }
+    });
+
+    const totalRows = rows.length;
+    const totalDistinctDays = distinctBizDates.size;
+%>
+
+<% if (rows.length) { %>
     <table class="table table-sm">
     <thead>
         <tr>
@@ -23,13 +37,13 @@
         <% rows.forEach(function(row, idx) { %>
         <tr>
             <td><%= idx + 1 %></td>
-        <td><%= formatDateOnly(row.inputDate) %></td>
-            <td><%= row.id %></td>
-            <td><%= formatDate(row.startDate) %></td>
-            <td><%= (row.startBy) %></td>
+                <td><%= formatDateOnly(row.startDate || row.inputDate) %></td>
+                    <td><%= row.id %></td>
+                    <td><%= formatDate(row.startDate) %></td>
+                    <td><%= row.startBy || '-' %></td>
             
-            <td><%= formatDate(row.closeDate) %></td>  
-            <td><%= (row.endby) %></td>  
+                    <td><%= formatDate(row.closeDate) %></td>  
+                    <td><%= row.endby || '-' %></td>  
             
         </tr>
         <% }); %>
@@ -38,8 +52,8 @@
     </table>  
     <div>
     << Grand Total >><br>
-    Total # Day Start/Day End:<%= rows.length %><br>
-    Total # Distinct Day:<%= rows.length %><br>
+        Total # Day Start/Day End:<%= totalRows %><br>
+        Total # Distinct Day:<%= totalDistinctDays %><br>
     </div>
 <% } else { %>
   <p>Tidak ada data untuk ditampilkan.</p>

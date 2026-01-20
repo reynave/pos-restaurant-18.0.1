@@ -4,11 +4,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  
+
   <title>
     <%= report.title || 'Laporan' %>
   </title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
   <style>
     body {
       font-family: 'Courier New', Courier, monospace;
@@ -23,12 +24,15 @@
       margin: 0px;
       list-style: 100%;
     }
-     h2 {
-      font-size: 1.3rem; 
+
+    h2 {
+      font-size: 1.3rem;
       list-style: 100%;
     }
-     h3,h4 {
-      font-size: 1rem; 
+
+    h3,
+    h4 {
+      font-size: 1rem;
       list-style: 100%;
     }
 
@@ -37,24 +41,28 @@
       border-collapse: collapse;
       margin-top: 8px;
     }
-    .table-sm>:not(caption)>*>* {
-    padding: 0px;
-}
 
-    th{
-      border-bottom: 1px solid #000;
-       font-size: 0.8rem;
-      text-align: left;
- 
+    .table-sm>:not(caption)>*>* {
+      padding: 0px;
     }
+
+    th {
+      border-bottom: 1px solid #000;
+      font-size: 0.8rem;
+      text-align: left;
+
+    }
+
     td {
       font-size: 0.8rem;
       padding: 0px;
-      
-    }
-    
 
-  
+    }
+
+tfoot td {
+      border-top: 1px solid #000;
+    } 
+
     .right {
       text-align: right;
     }
@@ -111,11 +119,13 @@
       .page-break {
         page-break-after: always;
       }
+
       .no-print {
         display: none;
       }
     }
-    .no-print{
+
+    .no-print {
       position: fixed;
       top: 10px;
       right: 10px;
@@ -133,27 +143,41 @@
   </style>
 </head>
 
-  <body class="report">
-    <div class="no-print">
-      <button onclick="window.print()">Print</button>
-    </div>
+<body class="report">
+  <div class="no-print">
+    <button onclick="window.print()">Print</button>
+  </div>
   <div class="container">
-    <div class="row mb-4">
+    <div class="row mb-3">
       <div class="col-12 text-center">
-        <div> PT. Mitrasys Bisnis Sinergi (FOR DEMO ONLY)</div> 
-        <h1><%= report.title %></h1>
-        <div><%= report.startDate %>  to <%= report.endDate %></div>
-      </div>
-    </div>  
-
-    <div class="row">
-     
-      <div class="col-6">
-        Created Date : <%= report.createdDate %>
-      </div>
-       <div class="col-6 text-end">
-        Created By : <%= report.createdBy %>
+        <div> PT. Mitrasys Bisnis Sinergi (FOR DEMO ONLY)</div>
+        <h1>
+          <%= report.title %>
+        </h1>
+        <div>
+          <%= report.startDate %> to <%= report.endDate %>
+        </div>
       </div>
     </div>
-  
+
+    <div class="row mb-3">
+
+      <div class="col-4">
+        <% const d=new Date(report.header.inputDate); const pad=n=> String(n).padStart(2, '0');
+          const formatted = isNaN(d) ? report.header.inputDate :
+          `${pad(d.getDate())}-${pad(d.getMonth()+1)}-${d.getFullYear()}
+          ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+          %>
+          Printed At: <%= formatted %>
+      </div>
+      <div class="col-4 text-center">
+        Printed By : <%= report.header.createdName %>
+      </div>
+      <div class="col-4 text-end">
+        Served : <%= report.data.filter.employee  %>
+      </div>
+
+    </div>
+  </div>
+
   </div>

@@ -1,3 +1,5 @@
+const db = require('../config/db');
+
 const DEFAULT_TIME_ZONE = 'Asia/Jakarta';
 const DEFAULT_DATE_LOCALE = 'en-CA';
 
@@ -189,6 +191,37 @@ function headerUserId(req) {
 }
 // ...existing code...
 
+async function fetchReportToken(tokenValue) {
+  if (!tokenValue) {
+    return null;
+  }
+  
+    const timestamp = Math.floor(Date.now() / 1000); // waktu sekarang dalam detik
+ 
+  const q = `SELECT
+          id, token, createdName, presence, FROM_UNIXTIME(expTime) AS 'expTime',
+           now() AS 'currentTime', inputDate
+        FROM reports_token
+        WHERE token = '${tokenValue}' and expTime > ${timestamp}`;
+  const [rows] = await db.query(q);
+
+  if (!rows.length) {
+    return null;
+  } 
+  return rows[0];
+}
+async function employeeDb(userId = '') {
+  let employee = 'All Users';
+      if (userId !== '') {
+        const employeeQuery = `SELECT name FROM employee WHERE id = ${userId} LIMIT 1`;
+        const [employeeResult] = await db.query(employeeQuery);
+        if (employeeResult.length > 0) {
+          employee = employeeResult[0]['name'] || 'All Users';
+        }
+      }
+  
+  return employee;
+}
 async function mapUpdateByName(db, table) {
   return Promise.all(table.map(async row => {
     let inputByName = null;
@@ -214,6 +247,7 @@ async function mapUpdateByName(db, table) {
  function formatNumber(value) {
     return Number(value || 0).toLocaleString('id-ID');
   };
+  
 
 module.exports = {
   today, nextDay,
@@ -229,6 +263,8 @@ module.exports = {
   convertCustomDateTime,
   getBearerToken,
   headerUserId,
+  fetchReportToken,
   mapUpdateByName,
-  sanitizeText
+  sanitizeText,
+  employeeDb
 };

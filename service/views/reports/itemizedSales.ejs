@@ -1,14 +1,19 @@
 <%- include('./global/header') %>
   
 
-<% if (report && report.data && report.data.length) { %>
-  <div >
-    <strong>Departments:</strong> <%= report.globalSummary && report.globalSummary.totalDepartments %>
-    &nbsp;|&nbsp; <strong>Qty total:</strong> <%= report.globalSummary && report.globalSummary.globalQty %>
-    &nbsp;|&nbsp; <strong>ItemSales total:</strong> <%= report.globalSummary && Number(report.globalSummary.globalItemSales).toLocaleString() %>
+<%
+  const itemizedData = (report && report.data && report.data.itemizedSales) || [];
+  const globalSummary = (report && report.data && report.data.globalSummary) || report.globalSummary || {};
+%>
+
+<% if (itemizedData.length) { %>
+  <div>
+    <strong>Departments:</strong> <%= globalSummary.totalDepartments || 0 %>
+    &nbsp;|&nbsp; <strong>Qty total:</strong> <%= Number(globalSummary.globalQty || 0).toLocaleString() %>
+    &nbsp;|&nbsp; <strong>ItemSales total:</strong> <%= Number(globalSummary.globalItemSales || 0).toLocaleString() %>
   </div>
 
-  <% report.data.forEach(function(dept, dIdx) { %>
+  <% itemizedData.forEach(function(dept, dIdx) { %>
     <div style="margin-top:14px;">
       <h3 style="margin:6px 0;"><%= (dIdx+1) %>. <%= dept.menuDepartment %> <% if (dept.menuSetIncluded) { %> <small>(menu set included)</small> <% } %></h3>
 
@@ -36,9 +41,10 @@
           </tbody>
           <tfoot>
             <tr>
-              <td colspan="2"><strong>Summary</strong></td>
-              <td class="right"><strong><%= dept.summary && Number(dept.summary.totalQty).toLocaleString() %></strong></td>
-              <td class="right"><strong><%= dept.summary && Number(dept.summary.totalItemSales).toLocaleString() %></strong></td>
+              <td></td>
+              <td ><strong>Summary</strong></td>
+              <td class="right"><strong><%= dept.summary ? Number(dept.summary.totalQty || 0).toLocaleString() : 0 %></strong></td>
+              <td class="right"><strong><%= dept.summary ? Number(dept.summary.totalItemSales || 0).toLocaleString() : 0 %></strong></td>
               <td></td>
             </tr>
           </tfoot>
@@ -53,9 +59,9 @@
     <strong>Global Summary</strong>
     <table style="margin-top:6px; width:400px;">
       <tbody>
-        <tr><td>Total Departments</td><td class="right"><%= report.globalSummary.totalDepartments %></td></tr>
-        <tr><td>Total Qty</td><td class="right"><%= Number(report.globalSummary.globalQty).toLocaleString() %></td></tr>
-        <tr><td>Total Item Sales</td><td class="right"><%= Number(report.globalSummary.globalItemSales).toLocaleString() %></td></tr>
+        <tr><td>Total Departments</td><td class="right"><%= globalSummary.totalDepartments || 0 %></td></tr>
+        <tr><td>Total Qty</td><td class="right"><%= Number(globalSummary.globalQty || 0).toLocaleString() %></td></tr>
+        <tr><td>Total Item Sales</td><td class="right"><%= Number(globalSummary.globalItemSales || 0).toLocaleString() %></td></tr>
       </tbody>
     </table>
   </div>
