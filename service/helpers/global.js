@@ -3,6 +3,21 @@ const db = require('../config/db');
 const DEFAULT_TIME_ZONE = 'Asia/Jakarta';
 const DEFAULT_DATE_LOCALE = 'en-CA';
 
+function ceilToTwoDecimal(num, status = 1) {
+   let strNum = parseFloat(num) || 0;
+
+  if (status == 1) {
+    // Pastikan num adalah angka sebelum memanggil toFixed
+    if (typeof num === 'number' && !isNaN(num)) {
+      strNum = parseFloat(num.toFixed(2)) || 0;
+    }
+    // Buat jadi pembulatan ke atas
+    strNum = Math.ceil(parseFloat(strNum)) || 0;
+  }
+  return strNum;
+
+}
+
 function today() {
   const now = new Date();
 
@@ -245,7 +260,8 @@ async function mapUpdateByName(db, table) {
 }
 
  function formatNumber(value) {
-    return Number(value || 0).toLocaleString('id-ID');
+    // buat format 2 digit coma, dan koma sebagai pemisah ribuan
+    return Number(value || 0).toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
   };
   
 
@@ -266,5 +282,6 @@ module.exports = {
   fetchReportToken,
   mapUpdateByName,
   sanitizeText,
-  employeeDb
+  employeeDb,
+  ceilToTwoDecimal
 };

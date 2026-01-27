@@ -52,11 +52,31 @@ const buildReportTree = rows => {
 
 exports.selectReports = async (req, res) => {
   try {
-    const q = `SELECT id, parentId, name, label, startDate, endDate , employeeId ,outletId , mapId, sorting
-    FROM reports WHERE presence = 1 order by sorting ASC `;
+    const q = `
+    SELECT 
+      id, parentId, name as 'router', label as 'title', startDate, endDate , 
+      employeeId , outletId , mapId, sorting, false as 'show'
+    FROM reports 
+    WHERE presence = 1 and parentId = 0
+    ORDER BY sorting ASC `;
     const [tableReports] = await db.query(q);
 
-    const data = buildReportTree(tableReports);
+   
+    for (const row of tableReports) {
+
+       const q = `
+        SELECT 
+          id, parentId, name as 'router', label as 'title', startDate, endDate , 
+          employeeId , outletId , mapId, sorting, false as 'show'
+        FROM reports 
+        WHERE presence = 1 and parentId = ${row.id}
+        ORDER BY sorting ASC `;
+        const [items] = await db.query(q);
+       
+          row.items = items;
+    } 
+
+      const data = tableReports;
 
     res.json({ data });
   } catch (err) {

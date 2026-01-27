@@ -684,7 +684,7 @@ exports.addDiscountGroup = async (req, res) => {
 
       res.status(201).json({
          error: false,
-         message: 'cart created',
+         message: 'addDiscountGroup 567 Updated',
          results: results
       });
    } catch (err) {

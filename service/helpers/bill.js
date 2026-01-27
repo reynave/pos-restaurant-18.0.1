@@ -1,5 +1,5 @@
 const db = require('../config/db'); // sesuaikan path kalau perlu 
-const { today } = require('./global');
+const { today, ceilToTwoDecimal } = require('./global');
 
 async function cart(cartId = '') {
    let subTotal = 0;
@@ -44,8 +44,8 @@ async function cart(cartId = '') {
    itemTotal = 0;
    subTotal = 0;
    summaryFunction.forEach(element => {
-      itemTotal += parseInt(element.itemTotal) || 0;
-      subTotal += parseInt(element.subTotal) || 0;
+      itemTotal += parseFloat(element.itemTotal)|| 0;
+      //subTotal += parseFloat(element.subTotal) || 0;
    });
 
 
@@ -99,7 +99,7 @@ async function cart(cartId = '') {
    modifier.forEach(element => {
       // tolong buat float hanya 2 digit di belakang koma
       element.totalAmount = parseFloat(element.totalAmount).toFixed(2);
-      element.totalAmount = parseInt(Math.ceil(parseFloat(element.totalAmount)) || 0);
+      element.totalAmount = parseFloat(element.totalAmount) || 0;
 
    });
 
@@ -124,7 +124,7 @@ async function cart(cartId = '') {
       AND r.presence = 1 AND r.void = 0 AND i.presence = 1 AND i.void = 0;
    `);
    if (scRow.length > 0) {
-      sc = parseInt(scRow[0]['totalAmount']);
+      sc = parseFloat(scRow[0]['totalAmount']);
    }
 
 
@@ -138,7 +138,7 @@ async function cart(cartId = '') {
    const [taxRow] = await db.query(tq);
 
    if (taxRow.length > 0) {
-      tax = parseInt(taxRow[0]['totalAmount']);
+      tax = parseFloat(taxRow[0]['totalAmount']);
    }
 
    const [discountRow] = await db.query(`
@@ -149,13 +149,13 @@ async function cart(cartId = '') {
       AND r.presence = 1 AND r.void = 0 AND i.presence = 1 AND i.void = 0
    `);
    if (discountRow.length > 0) {
-      discount = parseInt(discountRow[0]['totalAmount']) || 0;
+      discount = parseFloat(discountRow[0]['totalAmount']) || 0;
    }
 
 
 
 
-
+   subTotal = itemTotal + discount;
    grandTotal = subTotal + sc + tax;
 
 
@@ -168,14 +168,13 @@ async function cart(cartId = '') {
       cart: items,
       billVersion: billVersion[0] ? billVersion[0]['no'].toString().padStart(2, '0') : '00',
       summary: {
-         itemTotal: itemTotal,
-         discount: discount,
-         subTotal: subTotal,
+         itemTotal: ceilToTwoDecimal(itemTotal),
+         discount: ceilToTwoDecimal(discount),
+         subTotal: ceilToTwoDecimal(subTotal),
 
-         sc: sc,
-         tax: tax,
-         grandTotal: grandTotal,
-         ver: 1.1
+         sc: ceilToTwoDecimal(sc),
+         tax: ceilToTwoDecimal(tax),
+         grandTotal: ceilToTwoDecimal(grandTotal), 
       },
       itemSummary: summaryFunction,
       groups: groups
@@ -485,15 +484,14 @@ async function cartGrouping(cartId = '', subgroup = 0) {
       billVersion: billVersion[0] ? billVersion[0]['no'] : 0,
       subgroupDiscount: groupedSubgroupDiscount,
       scGroup: groupedSubgroupSc,
-      taxGroup: groupedSubgroupTax,
+      taxGroup: groupedSubgroupTax, 
 
-
-      itemTotal: summaryFunction.itemTotal,
-      discount: summaryFunction.discount,
-      subTotal: summaryFunction.subTotal,
-      sc: summaryFunction.sc,
-      tax: summaryFunction.tax,
-      total: summaryFunction.total,
+      itemTotal: ceilToTwoDecimal(summaryFunction.itemTotal),
+      discount: ceilToTwoDecimal(summaryFunction.discount),
+      subTotal: ceilToTwoDecimal(summaryFunction.subTotal),
+      sc: ceilToTwoDecimal(summaryFunction.sc),
+      tax: ceilToTwoDecimal(summaryFunction.tax),
+      total: ceilToTwoDecimal(summaryFunction.total),
 
    }
 }

@@ -210,20 +210,38 @@ exports.newOrder = async (req, res) => {
     let overDue = updatedDate.toLocaleString(process.env.TO_LOCALE_STRING).replace('T', ' ').substring(0, 19);
     overDue = convertCustomDateTime(overDue.toString())
  
+    //get periodId
+    const queryPeriod = `SELECT *
+      FROM period
+      WHERE 
+          (startTime <= CURTIME() AND endTime >= CURTIME()) 
+          OR 
+          (startTime <= CURTIME() AND endTime < startTime) 
+          OR 
+          (endTime >= CURTIME() AND endTime < startTime)`;
+
+    const [period] = await db.query(queryPeriod);
+    const periodId = period.length > 0 ? period[0]['id'] : null;
+
+
+
     if (total == 0) {
       const a = `INSERT INTO cart (
           presence, inputDate, tableMapStatusId, outletTableMapId, 
           cover,  id, outletId, dailyCheckId,
           lockBy,
           startDate, endDate, overDue, 
-          updateBy, inputBy
+          updateBy, inputBy,
+          periodId
         ) 
         VALUES (
         1, '${inputDate}', 10, ${model['outletTableMapId']}, 
           ${model['cover']},  '${insertId}',  ${outletId}, '${dailyCheckId}', 
           '${terminalId}',
           '${inputDate}', '${inputDate}' , '${overDue}', 
-          ${userId}, ${userId})`;
+          ${userId}, ${userId},
+          ${periodId}
+          )`;
       
       const [newOrder] = await db.query(a);
       if (newOrder.affectedRows === 0) {
