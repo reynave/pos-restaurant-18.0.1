@@ -156,7 +156,10 @@ async function cart(cartId = '') {
 
 
    subTotal = itemTotal + discount;
-   grandTotal = subTotal + sc + tax;
+   // tolong buatkan sc jika bukan NaN maka 0
+   sc = isNaN(sc) ? 0 : sc;
+   tax = isNaN(tax) ? 0 : tax;
+   grandTotal = subTotal +  sc + tax;
 
 
 

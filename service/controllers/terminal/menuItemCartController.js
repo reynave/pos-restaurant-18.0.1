@@ -152,12 +152,39 @@ exports.cart = async (req, res) => {
          totalItem += item.total;
       });
 
+      // bisa buat kan query jika now > limitEndDate maka overdue = 1
+
+      const durationQuery = `
+         SELECT startDate, limitEndDate, timer ,NOW() as currentDate,
+          CASE 
+         WHEN NOW() > limitEndDate THEN 1 
+         ELSE 0 
+      END AS overdue
+
+         from cart where id = '${cartId}'
+      `;
+      const [durationRows] = await db.query(durationQuery);
+      // tolong ubah format date menjadi yyyy-mm-dd hh:mm:ss
+      if (durationRows.length > 0) {
+         durationRows[0]['startDate'] = durationRows[0]['startDate'] ? new Date(durationRows[0]['startDate']).toISOString().slice(0, 19).replace('T', ' ') : '';
+         durationRows[0]['limitEndDate'] = durationRows[0]['limitEndDate'] ? new Date(durationRows[0]['limitEndDate']).toISOString().slice(0, 19).replace('T', ' ') : '';
+         durationRows[0]['currentDate'] = durationRows[0]['currentDate'] ? new Date(durationRows[0]['currentDate']).toISOString().slice(0, 19).replace('T', ' ') : '';
+      }
+
 
       // End of calculation
       res.json({
+         duration : {
+            startDate : durationRows[0]['startDate'] || '',
+            limitEndDate : durationRows[0]['limitEndDate'] || '',
+            timer : durationRows[0]['timer'] || 0, 
+            currentDate : durationRows[0]['currentDate'] || '',
+            overdue : durationRows[0]['overdue'] || 0
+         },
          table: tableRow,
          items: items,
          totalItem: totalItem,
+         
       });
 
    } catch (err) {

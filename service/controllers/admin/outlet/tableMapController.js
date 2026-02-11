@@ -109,7 +109,7 @@ exports.postCreate = async (req, res) => {
     const [rows] = await db.query(`
       SELECT * 
       FROM template_table_map  
-      WHERE presence =1 and id = ${model['outletFloorPlandId']}
+      WHERE presence =1 and id = ${model['templateTableId']}
     `);
 
     const templateTableMap = rows[0];

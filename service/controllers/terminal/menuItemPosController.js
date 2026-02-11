@@ -655,17 +655,19 @@ exports.addToCart = async (req, res) => {
           debit, credit, status 
       )
       VALUES (1, '${inputDate}', '${inputDate}',  '${cartId}', ${cartItemId},
-          ${menu['menuTaxScId']}, ${row['rate']}, '${row['note']}',
-          ${row['debit']}, ${row['credit']}, ${row['statusId']}
+          ${menu['menuTaxScId']}, ${row['rate'] == null ? 0 : row['rate']}, '${row['note']}',
+          ${row['debit']}, ${row['credit']}, ${row['statusId'] == null ? 0 : row['statusId']}
       )`;
+      if (row['rate'] != null) {
+        const [result] = await db.query(q);
 
-      const [result] = await db.query(q);
-
-      if (result.affectedRows === 0) {
-        results.push({ status: 'journal not found' });
-      } else {
-        results.push({ status: 'journal insert' });
+        if (result.affectedRows === 0) {
+          results.push({ status: 'journal not found' });
+        } else {
+          results.push({ status: 'journal insert' });
+        }
       }
+
     }
 
 
@@ -1831,6 +1833,26 @@ exports.sendOrder = async (req, res) => {
 
     txtTableChecker(cartId, so, data['cart'], transaction[0]);
 
+
+    const timerQuery = `SELECT SUM( m.timer) AS totalTimer FROM cart_item AS c	
+LEFT JOIN menu AS m ON m.id = c.menuId 
+WHERE c.cartId = '${cartId}'
+AND c.presence = 1 AND c.void = 0;`;
+    const [timerResult] = await db.query(timerQuery);
+    const totalTimer = timerResult[0]['totalTimer'] || 0;
+  
+
+    // timer here
+    const updateCartquery = `UPDATE cart SET 
+      timer = ${totalTimer},
+      limitEndDate = DATE_ADD(startDate, INTERVAL ${totalTimer} MINUTE),
+      updateDate = '${today()}',
+      updateBy = ${userId}
+    WHERE id = '${cartId}';`; 
+    await db.query(updateCartquery);
+
+
+
     res.status(201).json({
       error: false,
       sendOrder: so,
@@ -1939,7 +1961,7 @@ exports.voidTransacton = async (req, res) => {
     } else {
       results.push({ cartId, status: 'cart updated', });
     }
- 
+
 
     const tablesVoid = [
       'cart_item',
