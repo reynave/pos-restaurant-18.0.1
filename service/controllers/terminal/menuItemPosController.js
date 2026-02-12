@@ -1834,10 +1834,12 @@ exports.sendOrder = async (req, res) => {
     txtTableChecker(cartId, so, data['cart'], transaction[0]);
 
 
-    const timerQuery = `SELECT SUM( m.timer) AS totalTimer FROM cart_item AS c	
-LEFT JOIN menu AS m ON m.id = c.menuId 
-WHERE c.cartId = '${cartId}'
-AND c.presence = 1 AND c.void = 0;`;
+    const timerQuery = `
+     SELECT SUM( m.timer * c.qty) AS totalTimer 
+            FROM cart_item AS c	
+        LEFT JOIN menu AS m ON m.id = c.menuId 
+        WHERE c.cartId = '${cartId}'
+        AND c.presence = 1 AND c.void = 0;`;
     const [timerResult] = await db.query(timerQuery);
     const totalTimer = timerResult[0]['totalTimer'] || 0;
   

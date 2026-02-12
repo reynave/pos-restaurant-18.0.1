@@ -2,7 +2,8 @@ const db = require('../../config/db');
 const { headerUserId, today, convertCustomDateTime, parseTimeString, addTime } = require('../../helpers/global');
 const { autoNumber } = require('../../helpers/autoNumber');
 
-exports.getAllData = async (req, res) => {
+// http://localhost:3000/terminal/tableMap?outletId=1002
+exports.index = async (req, res) => {
   const outletId = req.query.outletId;
   try {
 
@@ -23,15 +24,42 @@ exports.getAllData = async (req, res) => {
       row.maps = maps;
     }
 
-    const [cart] = await db.query(`
+    const cartQuery =  `
       SELECT 
         c.*, s.name AS 'tableMapStatus',  
-        TIMESTAMPDIFF(MINUTE,  overDue, NOW()) AS overdueMinute,
-        s.bgn, s.color, c.lockBy
+        TIMESTAMPDIFF(MINUTE,  c.overDue, NOW()) AS overdueMinute,
+        s.bgn, s.color, c.lockBy,
+
+          c.timer,
+  CASE
+    WHEN NOW() > c.limitEndDate THEN '00:00:00'
+    ELSE SEC_TO_TIME(ABS(TIMESTAMPDIFF(SECOND, NOW(), c.limitEndDate)))
+  END AS timeRemaining,
+  CASE 
+    WHEN (TIMESTAMPDIFF(SECOND, NOW(), c.limitEndDate)) < 900 AND c.timer > 0 THEN 1
+    ELSE 0
+  END AS warning 
+
       FROM cart AS c
       LEFT JOIN outlet_table_map_status AS s ON c.tableMapStatusId = s.id 
       WHERE c.close  = 0 AND c.presence = 1 AND c.outletId = ${outletId}
-    `);
+    `;
+    console.log('cartQuery', cartQuery);
+    const [cart] = await db.query(cartQuery);
+
+    for (const row of cart) {
+      console.log('cart item', row);
+      if(row.warning == 1){
+        // update cart to set warning
+        await db.query(`
+          UPDATE cart 
+          SET tableMapStatusId = 30
+          WHERE id = ?
+        `, [row.id]);   
+
+      }
+    }
+
 
     for (let i = 0; i < formattedRows.length; i++) {
       let checking = 0;
@@ -66,6 +94,9 @@ exports.getAllData = async (req, res) => {
         const index = cart.findIndex(y => y.outletTableMapId === x.outletTableMapId);
 
         if (index !== -1) {
+          x['timer']  = cart[index]['timer'];
+          x['timeRemaining']  = cart[index]['timeRemaining'];
+          x['warning']  = cart[index]['warning'];
 
           x['close'] = cart[index]['close'];
           x['cardId'] = cart[index]['id'];
@@ -105,12 +136,10 @@ exports.getAllData = async (req, res) => {
     });
 
 
-    res.json({
-      //  error: false,
+    res.json({ 
       items: formattedRows,
       cart: cart,
-      statusMap: statusMap,
-      //get: req.query
+      statusMap: statusMap, 
     });
 
   } catch (err) {

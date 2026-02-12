@@ -3,7 +3,7 @@ const router = express.Router();
 const tableMap = require('../../controllers/terminal/tableMapController');  
   
 // tableMap/*
-router.get('/', tableMap.getAllData);
+router.get('/', tableMap.index);
 router.get('/detail', tableMap.tableDetail);
 
 router.post('/newOrder', tableMap.newOrder);
