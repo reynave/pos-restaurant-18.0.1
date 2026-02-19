@@ -1,36 +1,68 @@
 const db = require('../../../config/db');
 const { today, formatDateOnly } = require('../../../helpers/global');
 
+const toDateStruct = (value) => {
+  if (!value) {
+    return null;
+  }
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return null;
+  }
+
+  return {
+    year: date.getFullYear(),
+    month: date.getMonth() + 1,
+    day: date.getDate(),
+  };
+};
+
 exports.getAllData = async (req, res) => {
 
   const menuDepartmentId = req.query.departmentId == 'undefined' ? '' : req.query.departmentId;
 
   try {
+    const a0 = `
+      SELECT m.id, m.plu, m.name, m.price1, m.price2, m.price3, m.price4, m.price5,
+        m.menuDepartmentId, m.menuCategoryId, m.menuClassId , m.menuSet, m.menuSetMinQty, l.name AS 'lookup', 
+        l.id AS 'lookupId', m.printerGroupId,
+        m.menuTaxScId, m.discountGroupId, m.modifierGroupId,  m.startDate, m.endDate, m.printerId,
+        m.qty - ( 
+            (
+            SELECT COUNT(ci.id)
+              FROM cart_item ci
+              WHERE ci.presence = 1  
+                AND ci.adjustItemsId = m.adjustItemsId AND ci.menuId = m.id
+            )  +
+            (
+            SELECT COUNT(cim.id)
+              FROM cart_item_modifier cim
+              WHERE cim.presence = 1  
+                AND cim.menuSetadjustItemsId = m.adjustItemsId AND cim.menuSetmenuId = m.id
+            )
+        )
+        AS 'currentQty', 0 as 'checkbox',  m.inputDate , m.updateDate,
+        m.timer
+        FROM menu AS m
+        LEFT JOIN menu_lookup AS l ON l.id = m.menuLookupId 
+        WHERE m.presence = 1    ${menuDepartmentId ? 'and menuDepartmentId = ' + menuDepartmentId : ''}
+    `;
 
-    const [rows] = await db.query(`
-     SELECT m.id, m.plu, m.name, m.price1, m.price2, m.price3, m.price4, m.price5,
-      m.menuDepartmentId, m.menuCategoryId, m.menuClassId , m.menuSet, m.menuSetMinQty, l.name AS 'lookup', 
-      l.id AS 'lookupId', m.printerGroupId,
-      m.menuTaxScId, m.discountGroupId, m.modifierGroupId,  m.startDate, m.endDate, m.printerId,
-      m.qty - ( 
-          (
-          SELECT COUNT(ci.id)
-            FROM cart_item ci
-            WHERE ci.presence = 1  
-              AND ci.adjustItemsId = m.adjustItemsId AND ci.menuId = m.id
-          )  +
-          (
-          SELECT COUNT(cim.id)
-            FROM cart_item_modifier cim
-            WHERE cim.presence = 1  
-              AND cim.menuSetadjustItemsId = m.adjustItemsId AND cim.menuSetmenuId = m.id
-          )
-      )
-      AS 'currentQty', 0 as 'checkbox',  m.inputDate , m.updateDate
-      FROM menu AS m
-      LEFT JOIN menu_lookup AS l ON l.id = m.menuLookupId 
-      WHERE m.presence = 1    ${menuDepartmentId ? 'and menuDepartmentId = ' + menuDepartmentId : ''}
-    `);
+     const a = `
+      SELECT m.id, m.plu, m.name, m.price1, m.price2, m.price3, m.price4, m.price5,
+        m.menuDepartmentId, m.menuCategoryId, m.menuClassId , m.menuSet, m.menuSetMinQty, l.name AS 'lookup', 
+        l.id AS 'lookupId', m.printerGroupId,
+        m.menuTaxScId, m.discountGroupId, m.modifierGroupId,  m.startDate, m.endDate, m.printerId,
+         0 as 'checkbox',  m.inputDate , m.updateDate, m.openPrice,
+        m.timer
+        FROM menu AS m
+        LEFT JOIN menu_lookup AS l ON l.id = m.menuLookupId 
+        WHERE m.presence = 1    ${menuDepartmentId ? 'and menuDepartmentId = ' + menuDepartmentId : ''}
+    `;
+    const [rows] = await db.query(a);
+    
 
     const formattedRows = rows.map(row => ({
       ...row,
@@ -209,8 +241,11 @@ exports.updateMenuDetail = async (req, res) => {
           price3 = ${item['price3']},  
           price4 = ${item['price4']},  
           price5 = ${item['price5']},   
-            printerGroupId = ${item['printerGroupId']},   
-          
+          printerGroupId = ${item['printerGroupId']},   
+            discountGroupId = ${item['discountGroupId']},
+            startDate = '${date['startDate']}',
+            endDate = '${date['endDate']}',
+            timer = ${item['timer']},  
           startDate = '${date['startDate']}',   
           endDate = '${date['endDate']}',   
           updateDate = '${today()}' 
@@ -333,21 +368,37 @@ exports.postUpdate = async (req, res) => {
         continue;
       }
 
+      // // emp['startDate'] array ubah ke string date 'yyyy-mm-dd'
+      // if (emp['startDate'] && typeof emp['startDate'] === 'object') {
+      //   const { year, month, day } = emp['startDate'];
+      //   emp['startDate'] = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      // }
+
+      // // emp['endDate'] array ubah ke string date 'yyyy-mm-dd'
+      // if (emp['endDate'] && typeof emp['endDate'] === 'object') {
+      //   const { year, month, day } = emp['endDate'];
+      //   emp['endDate'] = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      // }
+
       const [result] = await db.query(
         `UPDATE menu SET 
           name = '${emp['name']}',     
           price1 = ${emp['price1']},   
           price2 = ${emp['price2']},  
-           price3 = ${emp['price3']},  
-           price4 = ${emp['price4']},  
-           price5 = ${emp['price5']},  
+          price3 = ${emp['price3']},  
+          price4 = ${emp['price4']},  
+          price5 = ${emp['price5']},  
           plu = '${emp['plu']}',
-   printerId = ${emp['printerId']},  
-            printerGroupId = ${emp['printerGroupId']},   
+          printerId = ${emp['printerId']},  
+          printerGroupId = ${emp['printerGroupId']},   
           menuDepartmentId = ${emp['menuDepartmentId']},  
           menuCategoryId = ${emp['menuCategoryId']},  
           menuClassId = ${emp['menuClassId']},  
-            
+          timer = ${emp['timer']},
+          startDate = '${emp['startDate']}',
+          endDate = '${emp['endDate']}',
+          openPrice = ${emp['openPrice']},
+          
           updateDate = '${today()}'
 
         WHERE id = ${id}`,
@@ -444,7 +495,7 @@ exports.duplicate = async (req, res) => {
             keyword, price1, price2, price3, price4, price5, specialPrice1, specialPrice2, 
             specialPrice3, specialPrice4, specialPrice5, cost, printerId, printerGroupId, 
             itemGroupId, orderLevelGroupId, menuDepartmentId, menuCategoryId, menuClassId, 
-            modifierGroupId, taxStatus, scStatus, openPrice, image, inputBy, updateBy
+            modifierGroupId, taxStatus, scStatus, openPrice, image, inputBy, updateBy, timer, startDate, endDate
           ) VALUES (
             1, '${today()}', '${rows[0]['plu']}', '${rows[0]['menuSet']}', ${rows[0]['menuSetMinQty']}, 
             '${rows[0]['name']}', '${rows[0]['descm']}', '${rows[0]['descs']}', ${rows[0]['menuLookupId']}, 
@@ -457,7 +508,7 @@ exports.duplicate = async (req, res) => {
             '${rows[0]['itemGroupId']}', ${rows[0]['orderLevelGroupId']}, ${rows[0]['menuDepartmentId']}, 
             ${rows[0]['menuCategoryId']}, ${rows[0]['menuClassId']}, ${rows[0]['modifierGroupId']}, 
             '${rows[0]['taxStatus']}', '${rows[0]['scStatus']}', ${rows[0]['openPrice']}, '${rows[0]['image']}', 
-           ' ${today()}', '${today()}'
+           ' ${today()}', '${today()}', ${rows[0]['timer']}, '${rows[0]['startDate']}', '${rows[0]['endDate']}'
           )`;
 
       const [result] = await db.query(q);

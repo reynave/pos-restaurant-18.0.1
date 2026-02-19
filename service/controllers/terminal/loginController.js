@@ -13,7 +13,8 @@ exports.getAllData = async (req, res) => {
 
         const [formattedRows] = await db.query(`
             SELECT id, name FROM outlet
-            WHERE presence = 1;
+            WHERE presence = 1 
+            order by sorting asc
         `);
 
         const [employee] = await db.query(`
@@ -105,7 +106,7 @@ exports.signin = async (req, res) => {
         const SECRET_KEY = process.env.SECRET_KEY;
 
         const tokenjwt = jwt.sign(data, SECRET_KEY);
-        console.log(tokenjwt);
+ 
 
         // const decoded = jwt.verify(tokenjwt, SECRET_KEY);
         // console.log(decoded);

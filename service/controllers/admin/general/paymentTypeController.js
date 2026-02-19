@@ -85,31 +85,15 @@ exports.postUpdate = async (req, res) => {
 
       const [result] = await db.query(
         `UPDATE check_payment_type SET 
-          desc1 = '${emp['desc1']}',   
-          fcyid =  '${emp['fcyid']}', 
-          havetips =  '${emp['havetips']}',
-          tipsaltr =  '${emp['tipsaltr']}',
-          payclass =  '${emp['payclass']}',
-          paymeth =  '${emp['paymeth']}',
-          maxlimit =  '${emp['maxlimit']}',
-          nonsales =  '${emp['nonsales']}',
-          opendrw =  '${emp['opendrw']}',
-          prefix =  '${emp['prefix']}',
-          paysign =  '${emp['paysign']}',
-          prtvoid =  '${emp['prtvoid']}',
-            reftype =  '${emp['reftype']}',
-          haveccac =  '${emp['haveccac']}',
-          isguitype =  '${emp['isguitype']}',
-          extpath =  '${emp['extpath']}',
-          discid =  '${emp['discid']}',
-          paygrpid =  '${emp['paygrpid']}',
-
-          disctype =  '${emp['disctype']}',
-          drwmulti =  '${emp['drwmulti']}',
-  
-          
+          setDefault = ${emp['setDefault'] || 0},
+          paymentGroupId = ${emp['paymentGroupId'] || 0},
+          name = '${emp['name'] || ''}',
+          autoMatchAmount = ${emp['autoMatchAmount'] || 1},
+          maxlimit = ${emp['maxlimit'] !== undefined ? emp['maxlimit'] : 'NULL'},
+          openDrawer = ${emp['openDrawer'] || 0},
+          checkPaymentTypePopupId = ${emp['checkPaymentTypePopupId'] || 0},
+          checkPaymentTypePopupRequirement = ${emp['checkPaymentTypePopupRequirement'] || 0},
           updateDate = '${today()}'
-
         WHERE id = ${id}`,
       );
 

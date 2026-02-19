@@ -134,6 +134,8 @@ exports.postUpdate = async (req, res) => {
           ipAddress = '${emp['ipAddress']}',   
           port = '${emp['port']}',    
           printerGroupId = '${emp['printerGroupId']}',
+           printerId2 = '${emp['printerId2']}',
+          
           updateDate = '${today()}'
 
         WHERE id = ${id}`,

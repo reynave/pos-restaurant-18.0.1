@@ -188,11 +188,11 @@ CREATE TABLE IF NOT EXISTS `auto_number` (
 
 -- Dumping data for table pos_resto.auto_number: ~6 rows (approximately)
 INSERT INTO `auto_number` (`id`, `name`, `prefix`, `digit`, `runningNumber`, `lastRecord`, `updateDate`) VALUES
-	(1, 'cart', 'yymmdd', 6, 677, '260211000677', '2026-02-11 18:17:22'),
-	(2, 'order', NULL, 6, 358, '000358', '2026-02-11 18:15:59'),
+	(1, 'cart', 'yymmdd', 6, 684, '260213000684', '2026-02-13 14:50:02'),
+	(2, 'order', NULL, 6, 365, '000365', '2026-02-13 14:49:14'),
 	(3, 'counter', NULL, 6, 0, '000002', '2025-10-01 12:14:40'),
-	(320, 'sendOrder', 'SO', 6, 1327, 'SO001327', '2026-02-11 19:15:27'),
-	(321, 'dailyCheck', NULL, 6, 109, '000109', '2026-02-11 15:46:54'),
+	(320, 'sendOrder', 'SO', 6, 1351, 'SO001351', '2026-02-13 15:32:55'),
+	(321, 'dailyCheck', NULL, 6, 111, '000111', '2026-02-13 14:30:27'),
 	(322, 'adjustItems', 'A', 4, 174, 'A0174', '2026-02-11 18:03:34');
 
 -- Dumping structure for table pos_resto.bill
@@ -206,11 +206,16 @@ CREATE TABLE IF NOT EXISTS `bill` (
   `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
   `updateBy` smallint(6) NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table pos_resto.bill: ~1 rows (approximately)
+-- Dumping data for table pos_resto.bill: ~6 rows (approximately)
 INSERT INTO `bill` (`id`, `cartId`, `no`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
-	(1, '260211000677', 0, 1, '2026-02-11 18:40:41', 76, '2026-02-11 18:40:41', 76);
+	(1, '260211000677', 0, 1, '2026-02-11 18:40:41', 76, '2026-02-11 18:40:41', 76),
+	(2, '260211000677', 1, 1, '2026-02-12 15:06:19', 76, '2026-02-12 15:06:19', 76),
+	(3, '260212000682', 0, 1, '2026-02-13 14:28:54', 76, '2026-02-13 14:28:54', 76),
+	(4, '260212000679', 0, 1, '2026-02-13 14:29:14', 76, '2026-02-13 14:29:14', 76),
+	(5, '260212000678', 0, 1, '2026-02-13 14:29:48', 76, '2026-02-13 14:29:48', 76),
+	(6, '260212000680', 0, 1, '2026-02-13 14:30:11', 76, '2026-02-13 14:30:11', 76);
 
 -- Dumping structure for table pos_resto.cart
 CREATE TABLE IF NOT EXISTS `cart` (
@@ -254,9 +259,16 @@ CREATE TABLE IF NOT EXISTS `cart` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16 COLLATE=utf16_bin;
 
--- Dumping data for table pos_resto.cart: ~1 rows (approximately)
+-- Dumping data for table pos_resto.cart: ~8 rows (approximately)
 INSERT INTO `cart` (`id`, `counterNo`, `billNo`, `printBill`, `paymentId`, `dailyCheckId`, `sendOrder`, `outletId`, `outletTableMapId`, `lockBy`, `cover`, `tableMapStatusId`, `close`, `closeBy`, `periodId`, `totalItem`, `totalAmount`, `totalTips`, `changePayment`, `tips`, `summaryTotalGroup`, `summaryItemTotal`, `summaryDiscount`, `summarySc`, `summaryTax`, `grandTotal`, `startDate`, `endDate`, `overDue`, `timer`, `limitEndDate`, `void`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
-	('260211000677', 0, 1, 0, '', '000109', 1, 1002, 154, '0005', 4, 13, 0, 0, 52, 0, 0, 0, 0, 0, 1, 548000, 0, 0, 0, 548000, '2026-02-11 18:15:59', '2026-02-11 18:15:59', '2026-02-11 22:15:59', 120, '2026-02-11 20:15:59', 0, 1, '2026-02-11 18:15:59', 76, '2026-02-11 19:15:42', 76);
+	('260211000677', 0, 2, 0, '1506', '000109', 1, 1002, 154, '', 4, 20, 1, 76, 52, 0, 0, 0, 122000, 0, 0, 1078000, 0, 0, 0, 1078000, '2026-02-11 18:15:59', '2026-02-12 15:06:33', '2026-02-11 22:15:59', 120, '2026-02-11 20:15:59', 0, 1, '2026-02-11 18:15:59', 76, '2026-02-12 15:06:34', 76),
+	('260212000678', 0, 1, 0, '1429', '000110', 1, 1002, 147, '', 4, 20, 1, 76, 51, 0, 0, 0, 100000, 0, 0, 500000, 0, 0, 0, 500000, '2026-02-12 15:07:12', '2026-02-13 14:29:59', '2026-02-12 19:07:12', 60, '2026-02-12 16:07:12', 0, 1, '2026-02-12 15:07:12', 76, '2026-02-13 14:30:01', 76),
+	('260212000679', 0, 1, 0, '1429', '000110', 1, 1002, 148, '', 4, 20, 1, 76, 51, 0, 0, 0, 115000, 0, 0, 85000, 0, 0, 0, 85000, '2026-02-12 15:08:45', '2026-02-13 14:29:22', '2026-02-12 19:08:45', 0, '2026-02-12 15:08:45', 0, 1, '2026-02-12 15:08:45', 76, '2026-02-13 14:29:24', 76),
+	('260212000680', 0, 1, 0, '1430', '000110', 1, 1002, 153, '', 5, 20, 1, 76, 51, 0, 0, 0, 67000, 0, 0, 33000, 0, 0, 0, 33000, '2026-02-12 15:57:22', '2026-02-13 14:30:20', '2026-02-12 19:57:22', 0, '2026-02-12 15:57:22', 0, 1, '2026-02-12 15:57:22', 76, '2026-02-13 14:30:21', 76),
+	('260212000681', 0, 0, 0, '', '000110', 1, 1002, 149, '', 4, 41, 1, 0, 51, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, '2026-02-12 16:17:35', '2026-02-12 16:20:15', '2026-02-12 20:17:35', 60, '2026-02-12 17:17:35', 1, 1, '2026-02-12 16:17:35', 76, '2026-02-12 16:20:16', 76),
+	('260212000682', 0, 1, 0, '1428', '000110', 1, 1002, 149, '', 4, 20, 1, 76, 51, 0, 0, 0, 20000, 0, 0, 1030000, 0, 0, 0, 1030000, '2026-02-12 16:20:19', '2026-02-13 14:29:08', '2026-02-12 20:20:19', 120, '2026-02-12 18:20:19', 0, 1, '2026-02-12 16:20:19', 76, '2026-02-13 14:29:09', 76),
+	('260213000683', 0, 0, 0, '', '000111', 1, 1002, 148, '', 4, 30, 0, 0, 51, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, '2026-02-13 14:47:54', '2026-02-13 14:47:54', '2026-02-13 18:47:54', 60, '2026-02-13 15:47:54', 0, 1, '2026-02-13 14:47:54', 76, '2026-02-13 14:49:10', 76),
+	('260213000684', 0, 0, 0, '', '000111', 1, 1002, 147, '', 4, 12, 0, 0, 51, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, '2026-02-13 14:49:14', '2026-02-13 14:49:14', '2026-02-13 18:49:14', 60, '2026-02-13 15:49:14', 0, 1, '2026-02-13 14:49:14', 76, '2026-02-13 15:32:55', 76);
 
 -- Dumping structure for table pos_resto.cart_cashback
 CREATE TABLE IF NOT EXISTS `cart_cashback` (
@@ -272,9 +284,9 @@ CREATE TABLE IF NOT EXISTS `cart_cashback` (
   `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
   `updateBy` smallint(6) NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=76 DEFAULT CHARSET=utf16 COLLATE=utf16_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=86 DEFAULT CHARSET=utf16 COLLATE=utf16_bin;
 
--- Dumping data for table pos_resto.cart_cashback: ~67 rows (approximately)
+-- Dumping data for table pos_resto.cart_cashback: ~75 rows (approximately)
 INSERT INTO `cart_cashback` (`id`, `cartId`, `cashbackId`, `cartPaymentId`, `cashbackMax`, `paymentId`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
 	(9, '251107000599', 1, 22, 10000, 1, 0, '2025-11-07 16:51:11', 1, '2025-11-07 17:03:09', 76),
 	(10, '251107000599', 1, 23, 100000, 2, 1, '2025-11-07 17:03:49', 1, '2025-11-07 17:03:49', 1),
@@ -342,7 +354,17 @@ INSERT INTO `cart_cashback` (`id`, `cartId`, `cashbackId`, `cartPaymentId`, `cas
 	(72, '260210000673', 1, 28, 50000, 1, 1, '2026-02-10 11:38:56', 1, '2026-02-10 11:38:56', 1),
 	(73, '260210000673', 0, 0, 0, 0, 1, '2026-02-10 11:38:56', 1, '2026-02-10 11:38:56', 1),
 	(74, '260210000675', 1, 30, 100000, 1, 1, '2026-02-10 11:52:40', 1, '2026-02-10 11:52:40', 1),
-	(75, '260210000675', 0, 0, 0, 0, 1, '2026-02-10 11:52:41', 1, '2026-02-10 11:52:41', 1);
+	(75, '260210000675', 0, 0, 0, 0, 1, '2026-02-10 11:52:41', 1, '2026-02-10 11:52:41', 1),
+	(76, '260211000677', 1, 1, 100000, 1, 1, '2026-02-12 15:06:33', 1, '2026-02-12 15:06:33', 1),
+	(77, '260211000677', 0, 0, 0, 0, 1, '2026-02-12 15:06:33', 1, '2026-02-12 15:06:33', 1),
+	(78, '260212000682', 1, 6, 100000, 1, 1, '2026-02-13 14:29:08', 1, '2026-02-13 14:29:08', 1),
+	(79, '260212000682', 0, 0, 0, 0, 1, '2026-02-13 14:29:08', 1, '2026-02-13 14:29:08', 1),
+	(80, '260212000679', 1, 3, 50000, 1, 1, '2026-02-13 14:29:22', 1, '2026-02-13 14:29:22', 1),
+	(81, '260212000679', 0, 0, 0, 0, 1, '2026-02-13 14:29:22', 1, '2026-02-13 14:29:22', 1),
+	(82, '260212000678', 1, 2, 100000, 1, 1, '2026-02-13 14:29:59', 1, '2026-02-13 14:29:59', 1),
+	(83, '260212000678', 0, 0, 0, 0, 1, '2026-02-13 14:29:59', 1, '2026-02-13 14:29:59', 1),
+	(84, '260212000680', 1, 4, 10000, 1, 1, '2026-02-13 14:30:20', 1, '2026-02-13 14:30:20', 1),
+	(85, '260212000680', 0, 0, 0, 0, 1, '2026-02-13 14:30:20', 1, '2026-02-13 14:30:20', 1);
 
 -- Dumping structure for table pos_resto.cart_copy_bill
 CREATE TABLE IF NOT EXISTS `cart_copy_bill` (
@@ -381,9 +403,9 @@ CREATE TABLE IF NOT EXISTS `cart_item` (
   `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
   `updateBy` smallint(6) NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf16 COLLATE=utf16_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf16 COLLATE=utf16_bin;
 
--- Dumping data for table pos_resto.cart_item: ~9 rows (approximately)
+-- Dumping data for table pos_resto.cart_item: ~21 rows (approximately)
 INSERT INTO `cart_item` (`id`, `cartId`, `subgroup`, `qty`, `menuId`, `adjustItemsId`, `ta`, `price`, `debit`, `credit`, `closedPrice`, `sendOrder`, `void`, `menuCategoryId`, `menuDepartmentId`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
 	(1, '000357', 1, 1, 199, '', 0, 500000, 500000, 0, 0, '', 0, 0, 3, 1, '2026-02-11 18:12:29', 76, '2026-02-11 18:12:29', 76),
 	(2, '000357', 1, 1, 199, '', 0, 500000, 500000, 0, 0, '', 0, 0, 3, 1, '2026-02-11 18:14:18', 76, '2026-02-11 18:14:18', 76),
@@ -395,7 +417,20 @@ INSERT INTO `cart_item` (`id`, `cartId`, `subgroup`, `qty`, `menuId`, `adjustIte
 	(9, '260211000677', 1, 1, 196, 'A0171', 0, 18000, 18000, 0, 0, 'SO001322', 0, 0, 5, 1, '2026-02-11 18:28:11', 76, '2026-02-11 18:28:16', 76),
 	(10, '260211000677', 1, 1, 194, 'A0169', 0, 15000, 15000, 0, 0, 'SO001325', 0, 0, 5, 1, '2026-02-11 18:56:11', 76, '2026-02-11 18:56:46', 76),
 	(11, '260211000677', 1, 1, 195, 'A0170', 0, 15000, 15000, 0, 0, 'SO001326', 0, 0, 5, 1, '2026-02-11 19:15:00', 76, '2026-02-11 19:15:03', 76),
-	(12, '260211000677', 1, 1, 199, '', 0, 500000, 500000, 0, 0, 'SO001327', 0, 0, 3, 1, '2026-02-11 19:15:25', 76, '2026-02-11 19:15:27', 76);
+	(12, '260211000677', 1, 1, 199, '', 0, 500000, 500000, 0, 0, 'SO001327', 0, 0, 3, 1, '2026-02-11 19:15:25', 76, '2026-02-11 19:15:27', 76),
+	(13, '260212000678', 1, 1, 199, '', 0, 500000, 500000, 0, 0, 'SO001330', 0, 0, 3, 1, '2026-02-12 15:08:02', 76, '2026-02-12 15:08:08', 76),
+	(14, '260212000679', 1, 1, 169, 'A0144', 0, 28000, 28000, 0, 0, 'SO001331', 0, 0, 2, 1, '2026-02-12 15:08:49', 76, '2026-02-12 15:08:53', 76),
+	(15, '260212000679', 1, 1, 170, 'A0145', 0, 32000, 32000, 0, 0, 'SO001331', 0, 0, 2, 1, '2026-02-12 15:08:50', 76, '2026-02-12 15:08:53', 76),
+	(16, '260212000679', 1, 1, 171, 'A0146', 0, 25000, 25000, 0, 0, 'SO001331', 0, 0, 2, 1, '2026-02-12 15:08:50', 76, '2026-02-12 15:08:53', 76),
+	(17, '260212000680', 1, 1, 195, 'A0170', 0, 15000, 15000, 0, 0, 'SO001332', 0, 0, 5, 1, '2026-02-12 16:13:40', 76, '2026-02-12 16:13:43', 76),
+	(18, '260212000680', 1, 1, 196, 'A0171', 0, 18000, 18000, 0, 0, 'SO001332', 0, 0, 5, 1, '2026-02-12 16:13:40', 76, '2026-02-12 16:13:43', 76),
+	(19, '260212000681', 1, 2, 199, '', 0, 500000, 500000, 0, 0, 'SO001333', 1, 0, 3, 0, '2026-02-12 16:17:37', 76, '2026-02-12 16:20:15', 76),
+	(20, '260212000682', 1, 2, 199, '', 0, 500000, 500000, 0, 0, 'SO001335', 0, 0, 3, 1, '2026-02-12 16:21:45', 76, '2026-02-12 16:21:50', 76),
+	(21, '260212000682', 1, 1, 194, 'A0169', 0, 15000, 15000, 0, 0, 'SO001336', 0, 0, 5, 1, '2026-02-12 18:07:58', 76, '2026-02-12 18:08:01', 76),
+	(22, '260212000682', 1, 1, 195, 'A0170', 0, 15000, 15000, 0, 0, 'SO001336', 0, 0, 5, 1, '2026-02-12 18:07:59', 76, '2026-02-12 18:08:01', 76),
+	(23, '260213000683', 1, 1, 199, '', 0, 500000, 500000, 0, 0, 'SO001348', 0, 0, 3, 1, '2026-02-13 14:47:56', 76, '2026-02-13 14:47:59', 76),
+	(24, '260213000684', 1, 1, 199, '', 0, 500000, 500000, 0, 0, 'SO001349', 0, 0, 3, 1, '2026-02-13 14:49:58', 76, '2026-02-13 14:50:02', 76),
+	(25, '260213000684', 1, 3, 201, 'A0163', 0, 0, 0, 0, 0, 'SO001350', 0, 0, 1, 1, '2026-02-13 14:51:28', 76, '2026-02-13 14:51:34', 76);
 
 -- Dumping structure for table pos_resto.cart_item_discount
 CREATE TABLE IF NOT EXISTS `cart_item_discount` (
@@ -491,11 +526,13 @@ CREATE TABLE IF NOT EXISTS `cart_item_sc` (
   `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
   `updateBy` smallint(6) NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf16 COLLATE=utf16_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf16 COLLATE=utf16_bin;
 
 -- Dumping data for table pos_resto.cart_item_sc: ~1 rows (approximately)
 INSERT INTO `cart_item_sc` (`id`, `cartId`, `cartItemId`, `sendOrder`, `menuTaxScId`, `note`, `rate`, `status`, `debit`, `credit`, `void`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
-	(1, '000357', 4, '', 0, 'null', 0, 0, 0, 0, 0, 1, '2026-02-11 18:15:42', 1, '2026-02-11 18:15:42', 1);
+	(1, '000357', 4, '', 0, 'null', 0, 0, 0, 0, 0, 1, '2026-02-11 18:15:42', 1, '2026-02-11 18:15:42', 1),
+	(3, '260213000684', 24, 'SO001349', 1, 'S.C. 5%', 5, 1, 25000, 0, 0, 1, '2026-02-13 14:49:58', 1, '2026-02-13 14:51:33', 76),
+	(4, '260213000684', 25, 'SO001350', 1, 'S.C. 5%', 5, 1, 0, 0, 0, 1, '2026-02-13 14:51:28', 1, '2026-02-13 14:51:34', 76);
 
 -- Dumping structure for table pos_resto.cart_item_tax
 CREATE TABLE IF NOT EXISTS `cart_item_tax` (
@@ -516,11 +553,13 @@ CREATE TABLE IF NOT EXISTS `cart_item_tax` (
   `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
   `updateBy` smallint(6) NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf16 COLLATE=utf16_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf16 COLLATE=utf16_bin;
 
 -- Dumping data for table pos_resto.cart_item_tax: ~1 rows (approximately)
 INSERT INTO `cart_item_tax` (`id`, `cartId`, `cartItemId`, `sendOrder`, `menuTaxScId`, `note`, `rate`, `status`, `debit`, `credit`, `void`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
-	(1, '000357', 4, '', 0, 'null', 0, 0, 0, 0, 0, 1, '2026-02-11 18:15:42', 1, '2026-02-11 18:15:42', 1);
+	(1, '000357', 4, '', 0, 'null', 0, 0, 0, 0, 0, 1, '2026-02-11 18:15:42', 1, '2026-02-11 18:15:42', 1),
+	(3, '260213000684', 24, 'SO001349', 1, '10% Tax ', 10, 1, 52500, 0, 0, 1, '2026-02-13 14:49:58', 1, '2026-02-13 14:51:33', 76),
+	(4, '260213000684', 25, 'SO001350', 1, '10% Tax ', 10, 1, 0, 0, 0, 1, '2026-02-13 14:51:28', 1, '2026-02-13 14:51:34', 76);
 
 -- Dumping structure for table pos_resto.cart_item_void_reason
 CREATE TABLE IF NOT EXISTS `cart_item_void_reason` (
@@ -584,11 +623,18 @@ CREATE TABLE IF NOT EXISTS `cart_payment` (
   `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
   `updateBy` smallint(6) NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf16 COLLATE=utf16_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf16 COLLATE=utf16_bin;
 
--- Dumping data for table pos_resto.cart_payment: ~1 rows (approximately)
+-- Dumping data for table pos_resto.cart_payment: ~7 rows (approximately)
 INSERT INTO `cart_payment` (`id`, `cartId`, `checkPaymentTypeId`, `paid`, `tips`, `cardNumber`, `expCard`, `submit`, `void`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
-	(1, '260211000677', 1, 0, 0, '', '', 0, 0, 1, '2026-02-11 18:17:22', 76, '2026-02-11 18:17:22', 76);
+	(1, '260211000677', 1, 1200000, 0, '', '', 1, 0, 1, '2026-02-11 18:17:22', 76, '2026-02-12 15:06:33', 76),
+	(2, '260212000678', 1, 600000, 0, '', '', 1, 0, 1, '2026-02-12 15:08:08', 76, '2026-02-13 14:29:59', 76),
+	(3, '260212000679', 1, 200000, 0, '', '', 1, 0, 1, '2026-02-12 15:08:53', 76, '2026-02-13 14:29:22', 76),
+	(4, '260212000680', 1, 100000, 0, '', '', 1, 0, 1, '2026-02-12 16:13:43', 76, '2026-02-13 14:30:20', 76),
+	(5, '260212000681', 1, 0, 0, '', '', 0, 0, 1, '2026-02-12 16:17:53', 76, '2026-02-12 16:17:53', 76),
+	(6, '260212000682', 1, 1050000, 0, '', '', 1, 0, 1, '2026-02-12 16:21:50', 76, '2026-02-13 14:29:08', 76),
+	(7, '260213000683', 1, 0, 0, '', '', 0, 0, 1, '2026-02-13 14:47:59', 76, '2026-02-13 14:47:59', 76),
+	(8, '260213000684', 1, 0, 0, '', '', 0, 0, 1, '2026-02-13 14:50:02', 76, '2026-02-13 14:50:02', 76);
 
 -- Dumping structure for table pos_resto.cart_payment_void_reason
 CREATE TABLE IF NOT EXISTS `cart_payment_void_reason` (
@@ -640,9 +686,9 @@ CREATE TABLE IF NOT EXISTS `cart_void_reason` (
   `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
   `updateBy` smallint(6) NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf16 COLLATE=utf16_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf16 COLLATE=utf16_bin;
 
--- Dumping data for table pos_resto.cart_void_reason: ~21 rows (approximately)
+-- Dumping data for table pos_resto.cart_void_reason: ~19 rows (approximately)
 INSERT INTO `cart_void_reason` (`id`, `cartId`, `reason`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
 	(2, 'undefined', 'Kelebihan', 1, '2025-11-26 18:03:22', 76, '2025-11-26 18:03:22', 76),
 	(3, '251126000622', 'Sala Pilih', 1, '2025-11-26 18:04:01', 76, '2025-11-26 18:04:01', 76),
@@ -669,7 +715,8 @@ INSERT INTO `cart_void_reason` (`id`, `cartId`, `reason`, `presence`, `inputDate
 	(24, '251222000660', 'Sala Pilih', 1, '2025-12-23 15:20:25', 76, '2025-12-23 15:20:25', 76),
 	(25, '251222000659', 'tidak cocok', 1, '2025-12-23 15:20:30', 76, '2025-12-23 15:20:30', 76),
 	(26, '260210000674', 'Kelebihan', 1, '2026-02-11 15:46:37', 76, '2026-02-11 15:46:37', 76),
-	(27, '260210000676', 'Kelebihan', 1, '2026-02-11 15:46:43', 76, '2026-02-11 15:46:43', 76);
+	(27, '260210000676', 'Kelebihan', 1, '2026-02-11 15:46:43', 76, '2026-02-11 15:46:43', 76),
+	(28, '260212000681', 'tidak cocok', 1, '2026-02-12 16:20:15', 76, '2026-02-12 16:20:15', 76);
 
 -- Dumping structure for table pos_resto.cashback
 CREATE TABLE IF NOT EXISTS `cashback` (
@@ -940,9 +987,9 @@ CREATE TABLE IF NOT EXISTS `daily_cash_balance` (
   `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
   `updateBy` smallint(6) NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=564 DEFAULT CHARSET=utf16 COLLATE=utf16_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=574 DEFAULT CHARSET=utf16 COLLATE=utf16_bin;
 
--- Dumping data for table pos_resto.daily_cash_balance: ~511 rows (approximately)
+-- Dumping data for table pos_resto.daily_cash_balance: ~519 rows (approximately)
 INSERT INTO `daily_cash_balance` (`id`, `cartId`, `dailyCheckId`, `openingBalance`, `cashIn`, `cashOut`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
 	(1, '', '000010', 1, 1000000, 0, 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
 	(2, '', '000010', 0, 10000, 0, 1, '2025-06-04 14:20:27', 1, '2025-06-04 14:20:27', 1),
@@ -1506,7 +1553,17 @@ INSERT INTO `daily_cash_balance` (`id`, `cartId`, `dailyCheckId`, `openingBalanc
 	(560, '260210000673', '000108', 0, 200000, 0, 1, '2026-02-10 11:38:56', 1, '2026-02-10 11:38:56', 1),
 	(561, '260210000673', '000108', 0, 0, 178450, 1, '2026-02-10 11:38:56', 1, '2026-02-10 11:38:56', 1),
 	(562, '260210000675', '000108', 0, 350000, 0, 1, '2026-02-10 11:52:41', 1, '2026-02-10 11:52:41', 1),
-	(563, '260210000675', '000108', 0, 0, 293800, 1, '2026-02-10 11:52:41', 1, '2026-02-10 11:52:41', 1);
+	(563, '260210000675', '000108', 0, 0, 293800, 1, '2026-02-10 11:52:41', 1, '2026-02-10 11:52:41', 1),
+	(564, '260211000677', '000109', 0, 1200000, 0, 1, '2026-02-12 15:06:33', 1, '2026-02-12 15:06:33', 1),
+	(565, '260211000677', '000109', 0, 0, 122000, 1, '2026-02-12 15:06:33', 1, '2026-02-12 15:06:33', 1),
+	(566, '260212000682', '000110', 0, 1050000, 0, 1, '2026-02-13 14:29:08', 1, '2026-02-13 14:29:08', 1),
+	(567, '260212000682', '000110', 0, 0, 20000, 1, '2026-02-13 14:29:08', 1, '2026-02-13 14:29:08', 1),
+	(568, '260212000679', '000110', 0, 200000, 0, 1, '2026-02-13 14:29:22', 1, '2026-02-13 14:29:22', 1),
+	(569, '260212000679', '000110', 0, 0, 115000, 1, '2026-02-13 14:29:22', 1, '2026-02-13 14:29:22', 1),
+	(570, '260212000678', '000110', 0, 600000, 0, 1, '2026-02-13 14:29:59', 1, '2026-02-13 14:29:59', 1),
+	(571, '260212000678', '000110', 0, 0, 100000, 1, '2026-02-13 14:29:59', 1, '2026-02-13 14:29:59', 1),
+	(572, '260212000680', '000110', 0, 100000, 0, 1, '2026-02-13 14:30:20', 1, '2026-02-13 14:30:20', 1),
+	(573, '260212000680', '000110', 0, 0, 67000, 1, '2026-02-13 14:30:21', 1, '2026-02-13 14:30:21', 1);
 
 -- Dumping structure for table pos_resto.daily_check
 CREATE TABLE IF NOT EXISTS `daily_check` (
@@ -1628,7 +1685,9 @@ INSERT INTO `daily_check` (`id`, `dailyScheduleId`, `outletId`, `closed`, `start
 	('000106', 2, NULL, 1, '2026-01-20 13:12:11', '2026-01-27 11:31:50', '2026-01-21 04:00:00', 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, '2026-01-20 13:12:11', 1, '2026-01-27 11:31:50', 1),
 	('000107', 2, NULL, 1, '2026-01-27 11:31:57', '2026-01-27 17:09:53', '2026-01-28 04:00:00', 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, '2026-01-27 11:31:57', 1, '2026-01-27 17:09:53', 1),
 	('000108', 2, NULL, 1, '2026-02-10 11:04:57', '2026-02-11 15:46:47', '2026-02-11 04:00:00', 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, '2026-02-10 11:04:57', 1, '2026-02-11 15:46:47', 1),
-	('000109', 2, NULL, 0, '2026-02-11 15:46:54', NULL, '2026-02-12 04:00:00', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, '2026-02-11 15:46:54', 1, '2026-02-11 15:46:54', 1);
+	('000109', 2, NULL, 1, '2026-02-11 15:46:54', '2026-02-12 15:06:36', '2026-02-12 04:00:00', 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, '2026-02-11 15:46:54', 1, '2026-02-12 15:06:36', 1),
+	('000110', 2, NULL, 1, '2026-02-12 15:06:40', '2026-02-13 14:30:23', '2026-02-13 04:00:00', 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, '2026-02-12 15:06:40', 1, '2026-02-13 14:30:23', 1),
+	('000111', 1, NULL, 0, '2026-02-13 14:30:27', NULL, '2026-02-14 00:00:00', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, '2026-02-13 14:30:27', 1, '2026-02-13 14:30:27', 1);
 
 -- Dumping structure for table pos_resto.daily_schedule
 CREATE TABLE IF NOT EXISTS `daily_schedule` (
@@ -1810,13 +1869,13 @@ CREATE TABLE IF NOT EXISTS `employee` (
   `updateBy` int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE KEY `flogin` (`username`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=90 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
 -- Dumping data for table pos_resto.employee: ~3 rows (approximately)
 INSERT INTO `employee` (`id`, `authlevelId`, `username`, `hash`, `name`, `tel`, `contact`, `address`, `birthday`, `dob`, `sex`, `socialid`, `email`, `empdept`, `ordlevel`, `disclevel`, `actdate`, `card`, `emptype`, `status`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
-	(1, 4, 'r', '$2b$04$qiBKEOtdwoFe7pD4ijLjA.HbXnmKhUSIikw6g7.sA7Upup98WT5Ci', 'R ', 'null ', NULL, 'null ', '2000-01-01', NULL, 'n', NULL, 'null ', NULL, NULL, NULL, NULL, NULL, NULL, 1, 1, '2025-01-01 00:00:00', 0, '2025-11-25 15:35:02', 0),
-	(2, 4, '00', '$2b$04$qiBKEOtdwoFe7pD4ijLjA.HbXnmKhUSIikw6g7.sA7Upup98WT5Ci', 'UAT Molly  ', '8988989     ', '   ', ' 43          ', '2025-08-05', '               234  ', 'F', '                42              ', '23    ', 2, 1, 3, '4   ', '        34                              ', 34, 1, 1, '2025-01-01 00:00:00', 0, '2025-11-25 15:35:02', 0),
-	(76, 1, 'sa', '$2b$04$qiBKEOtdwoFe7pD4ijLjA.HbXnmKhUSIikw6g7.sA7Upup98WT5Ci', 'sa ', 'null ', NULL, 'null ', '2000-01-01', NULL, 'n', NULL, 'null ', NULL, NULL, NULL, NULL, NULL, NULL, 1, 1, '2025-08-06 14:48:05', 0, '2025-08-06 15:39:20', 0);
+	(2, 4, '00', '$2b$04$qiBKEOtdwoFe7pD4ijLjA.HbXnmKhUSIikw6g7.sA7Upup98WT5Ci', 'UAT', '8988989     ', '   ', ' 43          ', '2025-08-05', '               234  ', 'F', '                42              ', '23    ', 2, 1, 3, '4   ', '        34                              ', 34, 1, 1, '2025-01-01 00:00:00', 0, '2025-11-25 15:35:02', 0),
+	(76, 1, 'sa', '$2b$04$qiBKEOtdwoFe7pD4ijLjA.HbXnmKhUSIikw6g7.sA7Upup98WT5Ci', 'sa ', 'null ', NULL, 'null ', '2000-01-01', NULL, 'n', NULL, 'null ', NULL, NULL, NULL, NULL, NULL, NULL, 1, 1, '2025-08-06 14:48:05', 0, '2025-08-06 15:39:20', 0),
+	(100, 1, 'apian', '$2b$04$qiBKEOtdwoFe7pD4ijLjA.HbXnmKhUSIikw6g7.sA7Upup98WT5Ci', 'Apian', 'null ', NULL, 'null ', '2000-01-01', NULL, 'n', NULL, 'null ', NULL, NULL, NULL, NULL, NULL, NULL, 1, 1, '2025-01-01 00:00:00', 0, '2025-11-25 15:35:02', 0);
 
 -- Dumping structure for table pos_resto.employee_access_right
 CREATE TABLE IF NOT EXISTS `employee_access_right` (
@@ -1994,9 +2053,9 @@ CREATE TABLE IF NOT EXISTS `employee_token` (
   `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
   `updateBy` int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=412 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=422 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
--- Dumping data for table pos_resto.employee_token: ~306 rows (approximately)
+-- Dumping data for table pos_resto.employee_token: ~305 rows (approximately)
 INSERT INTO `employee_token` (`id`, `employeeId`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
 	(61, 1, 1, '2025-07-02 15:04:13', 0, '2025-07-02 15:04:13', 0),
 	(62, 1, 1, '2025-07-02 15:10:44', 0, '2025-07-02 15:10:44', 0),
@@ -2348,7 +2407,17 @@ INSERT INTO `employee_token` (`id`, `employeeId`, `presence`, `inputDate`, `inpu
 	(408, 76, 1, '2026-02-11 16:08:53', 0, '2026-02-11 16:08:53', 0),
 	(409, 76, 1, '2026-02-11 16:30:56', 0, '2026-02-11 16:30:56', 0),
 	(410, 76, 1, '2026-02-11 17:01:56', 0, '2026-02-11 17:01:56', 0),
-	(411, 76, 1, '2026-02-11 17:14:58', 0, '2026-02-11 17:14:58', 0);
+	(411, 76, 1, '2026-02-11 17:14:58', 0, '2026-02-11 17:14:58', 0),
+	(412, 76, 1, '2026-02-12 15:06:38', 0, '2026-02-12 15:06:38', 0),
+	(413, 76, 1, '2026-02-12 15:06:51', 0, '2026-02-12 15:06:51', 0),
+	(414, 76, 1, '2026-02-12 15:07:04', 0, '2026-02-12 15:07:04', 0),
+	(415, 76, 1, '2026-02-13 14:30:24', 0, '2026-02-13 14:30:24', 0),
+	(416, 76, 1, '2026-02-13 14:30:47', 0, '2026-02-13 14:30:47', 0),
+	(417, 76, 1, '2026-02-13 14:36:30', 0, '2026-02-13 14:36:30', 0),
+	(418, 76, 1, '2026-02-13 14:36:38', 0, '2026-02-13 14:36:38', 0),
+	(419, 100, 1, '2026-02-13 15:33:03', 0, '2026-02-13 15:33:03', 0),
+	(420, 76, 1, '2026-02-13 15:33:12', 0, '2026-02-13 15:33:12', 0),
+	(421, 100, 1, '2026-02-13 15:33:22', 0, '2026-02-13 15:33:22', 0);
 
 -- Dumping structure for table pos_resto.foreign_currency_type
 CREATE TABLE IF NOT EXISTS `foreign_currency_type` (
@@ -2686,9 +2755,9 @@ CREATE TABLE IF NOT EXISTS `logs` (
   `outletId` varchar(50) DEFAULT NULL,
   `url` varchar(250) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4091 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4664 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table pos_resto.logs: ~3,997 rows (approximately)
+-- Dumping data for table pos_resto.logs: ~4,008 rows (approximately)
 INSERT INTO `logs` (`id`, `timestamp`, `actionDate`, `bill`, `dailyCheckId`, `action`, `actionBy`, `actionId`, `actionRelated`, `terminalId`, `outletId`, `url`) VALUES
 	(33, '1762934803', '2025-11-12 15:06:43', '000279', '000080', 'Menu Lookup 2', 'sa ', 76, '', '0005', '15', 'http://localhost:4850/#/menu?id=000279'),
 	(34, '1762934804', '2025-11-12 15:06:44', '000279', '000080', 'Menu Lookup 6', 'sa ', 76, '', '0005', '15', 'http://localhost:4850/#/menu?id=000279'),
@@ -6747,7 +6816,580 @@ INSERT INTO `logs` (`id`, `timestamp`, `actionDate`, `bill`, `dailyCheckId`, `ac
 	(4087, '1770814031', '2026-02-11 19:47:11', '260211000677', '000109', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260211000677'),
 	(4088, '1770814178', '2026-02-11 19:49:38', '260211000677', '000109', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260211000677'),
 	(4089, '1770814226', '2026-02-11 19:50:26', '260211000677', '000109', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260211000677'),
-	(4090, '1770814240', '2026-02-11 19:50:40', '260211000677', '000109', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260211000677');
+	(4090, '1770814240', '2026-02-11 19:50:40', '260211000677', '000109', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260211000677'),
+	(4091, '1770873185', '2026-02-12 12:13:05', '', '000109', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4092, '1770873187', '2026-02-12 12:13:07', '260211000677', '000109', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4093, '1770873187', '2026-02-12 12:13:07', '260211000677', '000109', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260211000677'),
+	(4094, '1770873233', '2026-02-12 12:13:53', '260211000677', '000109', 'Click BILL', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260211000677'),
+	(4095, '1770873907', '2026-02-12 12:25:07', '260211000677', '000109', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260211000677'),
+	(4096, '1770874492', '2026-02-12 12:34:52', '260211000677', '000109', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260211000677'),
+	(4097, '1770874543', '2026-02-12 12:35:43', '260211000677', '000109', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260211000677'),
+	(4098, '1770874583', '2026-02-12 12:36:23', '260211000677', '000109', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260211000677'),
+	(4099, '1770874605', '2026-02-12 12:36:45', '260211000677', '000109', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260211000677'),
+	(4100, '1770874793', '2026-02-12 12:39:53', '260211000677', '000109', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260211000677'),
+	(4101, '1770882778', '2026-02-12 14:52:58', '260211000677', '000109', 'Menu Lookup 22', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260211000677'),
+	(4102, '1770882779', '2026-02-12 14:52:59', '260211000677', '000109', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260211000677'),
+	(4103, '1770882873', '2026-02-12 14:54:33', '260211000677', '000109', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260211000677'),
+	(4104, '1770882892', '2026-02-12 14:54:52', '260211000677', '000109', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260211000677'),
+	(4105, '1770882899', '2026-02-12 14:54:59', '', '000109', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4106, '1770882900', '2026-02-12 14:55:00', '', '000109', 'Select Table Padel Count 1', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4107, '1770882903', '2026-02-12 14:55:03', '260211000677', '000109', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4108, '1770882903', '2026-02-12 14:55:03', '260211000677', '000109', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260211000677'),
+	(4109, '1770883088', '2026-02-12 14:58:08', '260211000677', '000109', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260211000677'),
+	(4110, '1770883161', '2026-02-12 14:59:21', '260211000677', '000109', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260211000677'),
+	(4111, '1770883185', '2026-02-12 14:59:44', '260211000677', '000109', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260211000677'),
+	(4112, '1770883210', '2026-02-12 15:00:10', '260211000677', '000109', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260211000677'),
+	(4113, '1770883229', '2026-02-12 15:00:29', '260211000677', '000109', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260211000677'),
+	(4114, '1770883246', '2026-02-12 15:00:46', '260211000677', '000109', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260211000677'),
+	(4115, '1770883390', '2026-02-12 15:03:10', '260211000677', '000109', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260211000677'),
+	(4116, '1770883421', '2026-02-12 15:03:41', '260211000677', '000109', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260211000677'),
+	(4117, '1770883443', '2026-02-12 15:04:03', '260211000677', '000109', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260211000677'),
+	(4118, '1770883559', '2026-02-12 15:05:59', '260211000677', '000109', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260211000677'),
+	(4119, '1770883578', '2026-02-12 15:06:18', '260211000677', '000109', 'Click BILL', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260211000677'),
+	(4120, '1770883581', '2026-02-12 15:06:21', '', '000109', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4121, '1770883582', '2026-02-12 15:06:22', '260211000677', '000109', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4122, '1770883582', '2026-02-12 15:06:22', '260211000677', '000109', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260211000677'),
+	(4123, '1770883584', '2026-02-12 15:06:24', '260211000677', '000109', 'Click BILL', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260211000677'),
+	(4124, '1770883587', '2026-02-12 15:06:27', '260211000677', '000109', 'Click PAYMENT', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260211000677'),
+	(4125, '1770883593', '2026-02-12 15:06:33', '260211000677', '000109', 'Submit Payment', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/payment?id=260211000677'),
+	(4126, '1770883594', '2026-02-12 15:06:34', '', '000109', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4127, '1770883596', '2026-02-12 15:06:36', '', '000109', 'WARNING Daily Close ?', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4128, '1770883596', '2026-02-12 15:06:36', '', '000109', 'Daily Close -> YES', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4129, '1770883600', '2026-02-12 15:06:40', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '15', 'http://localhost:4850/#/tables'),
+	(4130, '1770883601', '2026-02-12 15:06:41', '', '000110', 'Change Map 1st Floor', 'sa ', 76, '', '0005', '15', 'http://localhost:4850/#/tables'),
+	(4131, '1770883602', '2026-02-12 15:06:42', '', '000110', 'Change Map 2nd Floor', 'sa ', 76, '', '0005', '15', 'http://localhost:4850/#/tables'),
+	(4132, '1770883603', '2026-02-12 15:06:43', '', '000110', 'modalSwitchOutlet', 'sa ', 76, '', '0005', '15', 'http://localhost:4850/#/tables'),
+	(4133, '1770883605', '2026-02-12 15:06:45', '', '000110', 'Change Outlet to Sport Padel', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4134, '1770883607', '2026-02-12 15:06:47', '', '000110', 'Change Map Indoor', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4135, '1770883607', '2026-02-12 15:06:47', '', '000110', 'Change Map Outdoor', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4136, '1770883609', '2026-02-12 15:06:49', '', '000110', 'Sign Off', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4137, '1770883611', '2026-02-12 15:06:51', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '15', 'http://localhost:4850/#/tables'),
+	(4138, '1770883613', '2026-02-12 15:06:53', '', '000110', 'modalSwitchOutlet', 'sa ', 76, '', '0005', '15', 'http://localhost:4850/#/tables'),
+	(4139, '1770883614', '2026-02-12 15:06:54', '', '000110', 'Change Outlet to Sport Padel', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4140, '1770883616', '2026-02-12 15:06:56', '', '000110', 'Log Off', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4141, '1770883620', '2026-02-12 15:07:00', '', '000110', 'Log In ERROR PASSWORD', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/home'),
+	(4142, '1770883624', '2026-02-12 15:07:04', '', '000110', 'Log In Success', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/home'),
+	(4143, '1770883624', '2026-02-12 15:07:04', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4144, '1770883629', '2026-02-12 15:07:09', '', '000110', 'Change Map Indoor', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4145, '1770883630', '2026-02-12 15:07:10', '', '000110', 'Change Map Outdoor', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4146, '1770883631', '2026-02-12 15:07:11', '', '000110', 'Select Table Padel Count 6', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4147, '1770883632', '2026-02-12 15:07:12', '', '000110', 'New Order Sport Padel(1002) Cover : 4, Table : Padel Count 6(147)', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4148, '1770883632', '2026-02-12 15:07:12', '000359', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4149, '1770883632', '2026-02-12 15:07:12', '000359', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000359'),
+	(4150, '1770883678', '2026-02-12 15:07:58', '000359', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000359'),
+	(4151, '1770883681', '2026-02-12 15:08:01', '000359', '000110', 'Menu Lookup 21', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000359'),
+	(4152, '1770883682', '2026-02-12 15:08:02', '000359', '000110', 'Add Menu Sewa Lapangan 60 Menit(199) @500000', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000359'),
+	(4153, '1770883686', '2026-02-12 15:08:06', '000359', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000359'),
+	(4154, '1770883688', '2026-02-12 15:08:08', '000359', '000110', 'Send Order & Print Queue', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000359'),
+	(4155, '1770883688', '2026-02-12 15:08:08', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000359'),
+	(4156, '1770883688', '2026-02-12 15:08:08', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4157, '1770883689', '2026-02-12 15:08:09', '260212000678', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4158, '1770883689', '2026-02-12 15:08:09', '260212000678', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000678'),
+	(4159, '1770883723', '2026-02-12 15:08:43', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4160, '1770883724', '2026-02-12 15:08:44', '', '000110', 'Select Table Padel Count 7', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4161, '1770883725', '2026-02-12 15:08:45', '', '000110', 'New Order Sport Padel(1002) Cover : 4, Table : Padel Count 7(148)', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4162, '1770883725', '2026-02-12 15:08:45', '000360', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4163, '1770883725', '2026-02-12 15:08:45', '000360', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000360'),
+	(4164, '1770883728', '2026-02-12 15:08:48', '000360', '000110', 'Menu Lookup 23', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000360'),
+	(4165, '1770883729', '2026-02-12 15:08:49', '000360', '000110', 'Add Menu Nasi Goreng Special(169) @28000', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000360'),
+	(4166, '1770883730', '2026-02-12 15:08:50', '000360', '000110', 'Add Menu Nasi Goreng Seafood(170) @32000', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000360'),
+	(4167, '1770883730', '2026-02-12 15:08:50', '000360', '000110', 'Add Menu Mie Goreng Jawa(171) @25000', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000360'),
+	(4168, '1770883732', '2026-02-12 15:08:52', '000360', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000360'),
+	(4169, '1770883733', '2026-02-12 15:08:53', '000360', '000110', 'Send Order & Print Queue', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000360'),
+	(4170, '1770883733', '2026-02-12 15:08:53', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000360'),
+	(4171, '1770883733', '2026-02-12 15:08:53', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4172, '1770883734', '2026-02-12 15:08:54', '260212000679', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4173, '1770883735', '2026-02-12 15:08:54', '260212000679', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000679'),
+	(4174, '1770883740', '2026-02-12 15:09:00', '260212000679', '000110', 'Menu Lookup 21', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000679'),
+	(4175, '1770883741', '2026-02-12 15:09:01', '260212000679', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000679'),
+	(4176, '1770883744', '2026-02-12 15:09:04', '260212000679', '000110', 'Exit Without Order', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000679'),
+	(4177, '1770883744', '2026-02-12 15:09:04', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000679'),
+	(4178, '1770883744', '2026-02-12 15:09:04', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4179, '1770883745', '2026-02-12 15:09:05', '260212000678', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4180, '1770883745', '2026-02-12 15:09:05', '260212000678', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000678'),
+	(4181, '1770883828', '2026-02-12 15:10:28', '260212000678', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000678'),
+	(4182, '1770883970', '2026-02-12 15:12:50', '260212000678', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000678'),
+	(4183, '1770884015', '2026-02-12 15:13:35', '260212000678', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000678'),
+	(4184, '1770884049', '2026-02-12 15:14:09', '260212000678', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000678'),
+	(4185, '1770885662', '2026-02-12 15:41:02', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4186, '1770885664', '2026-02-12 15:41:04', '260212000678', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4187, '1770885664', '2026-02-12 15:41:04', '260212000678', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000678'),
+	(4188, '1770885666', '2026-02-12 15:41:06', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4189, '1770885667', '2026-02-12 15:41:07', '260212000679', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4190, '1770885667', '2026-02-12 15:41:07', '260212000679', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000679'),
+	(4191, '1770885669', '2026-02-12 15:41:09', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4192, '1770885986', '2026-02-12 15:46:26', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4193, '1770885988', '2026-02-12 15:46:28', '', '000110', 'Change Map Indoor', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4194, '1770885989', '2026-02-12 15:46:29', '', '000110', 'Change Map Outdoor', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4195, '1770886113', '2026-02-12 15:48:33', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4196, '1770886618', '2026-02-12 15:56:58', '', '000110', 'Change Map Indoor', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4197, '1770886625', '2026-02-12 15:57:05', '', '000110', 'Select Table Padel Count 1', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4198, '1770886625', '2026-02-12 15:57:05', '', '000110', 'Select Table Padel Count 1', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4199, '1770886642', '2026-02-12 15:57:22', '', '000110', 'New Order Sport Padel(1002) Cover : 5, Table : Padel Count 1(153)', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4200, '1770886643', '2026-02-12 15:57:23', '000361', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4201, '1770886643', '2026-02-12 15:57:23', '000361', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000361'),
+	(4202, '1770887107', '2026-02-12 16:05:07', '000361', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000361'),
+	(4203, '1770887186', '2026-02-12 16:06:26', '000361', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000361'),
+	(4204, '1770887210', '2026-02-12 16:06:50', '000361', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000361'),
+	(4205, '1770887389', '2026-02-12 16:09:49', '000361', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000361'),
+	(4206, '1770887504', '2026-02-12 16:11:44', '000361', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000361'),
+	(4207, '1770887515', '2026-02-12 16:11:55', '000361', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000361'),
+	(4208, '1770887526', '2026-02-12 16:12:06', '000361', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000361'),
+	(4209, '1770887549', '2026-02-12 16:12:29', '000361', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000361'),
+	(4210, '1770887573', '2026-02-12 16:12:53', '000361', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000361'),
+	(4211, '1770887612', '2026-02-12 16:13:32', '000361', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000361'),
+	(4212, '1770887615', '2026-02-12 16:13:35', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4213, '1770887618', '2026-02-12 16:13:38', '000361', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4214, '1770887618', '2026-02-12 16:13:38', '000361', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000361'),
+	(4215, '1770887619', '2026-02-12 16:13:39', '000361', '000110', 'Menu Lookup 22', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000361'),
+	(4216, '1770887620', '2026-02-12 16:13:40', '000361', '000110', 'Add Menu Tempe Goreng(195) @15000', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000361'),
+	(4217, '1770887620', '2026-02-12 16:13:40', '000361', '000110', 'Add Menu Tahu Isi(196) @18000', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000361'),
+	(4218, '1770887623', '2026-02-12 16:13:43', '000361', '000110', 'Send Order & Print Queue', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000361'),
+	(4219, '1770887623', '2026-02-12 16:13:43', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000361'),
+	(4220, '1770887623', '2026-02-12 16:13:43', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4221, '1770887627', '2026-02-12 16:13:47', '260212000680', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4222, '1770887627', '2026-02-12 16:13:47', '260212000680', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000680'),
+	(4223, '1770887629', '2026-02-12 16:13:49', '260212000680', '000110', 'Exit Without Order', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000680'),
+	(4224, '1770887629', '2026-02-12 16:13:49', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000680'),
+	(4225, '1770887629', '2026-02-12 16:13:49', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4226, '1770887633', '2026-02-12 16:13:53', '260212000680', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4227, '1770887633', '2026-02-12 16:13:53', '260212000680', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000680'),
+	(4228, '1770887635', '2026-02-12 16:13:55', '260212000680', '000110', 'Exit Without Order', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000680'),
+	(4229, '1770887635', '2026-02-12 16:13:55', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000680'),
+	(4230, '1770887635', '2026-02-12 16:13:55', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4231, '1770887708', '2026-02-12 16:15:08', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4232, '1770887730', '2026-02-12 16:15:30', '', '000110', 'Select Table Padel Count 2', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4233, '1770887839', '2026-02-12 16:17:19', '', '000110', 'Change Map Outdoor', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4234, '1770887840', '2026-02-12 16:17:20', '260212000679', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4235, '1770887840', '2026-02-12 16:17:20', '260212000679', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000679'),
+	(4236, '1770887842', '2026-02-12 16:17:22', '260212000679', '000110', 'Exit Without Order', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000679'),
+	(4237, '1770887842', '2026-02-12 16:17:22', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000679'),
+	(4238, '1770887843', '2026-02-12 16:17:23', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4239, '1770887844', '2026-02-12 16:17:24', '260212000678', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4240, '1770887844', '2026-02-12 16:17:24', '260212000678', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000678'),
+	(4241, '1770887848', '2026-02-12 16:17:28', '260212000678', '000110', 'Exit Without Order', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000678'),
+	(4242, '1770887848', '2026-02-12 16:17:28', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000678'),
+	(4243, '1770887848', '2026-02-12 16:17:28', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4244, '1770887850', '2026-02-12 16:17:30', '260212000679', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4245, '1770887850', '2026-02-12 16:17:30', '260212000679', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000679'),
+	(4246, '1770887853', '2026-02-12 16:17:33', '260212000679', '000110', 'Exit Without Order', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000679'),
+	(4247, '1770887853', '2026-02-12 16:17:33', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000679'),
+	(4248, '1770887853', '2026-02-12 16:17:33', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4249, '1770887854', '2026-02-12 16:17:34', '', '000110', 'Select Table Padel Count 8', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4250, '1770887855', '2026-02-12 16:17:35', '', '000110', 'New Order Sport Padel(1002) Cover : 4, Table : Padel Count 8(149)', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4251, '1770887855', '2026-02-12 16:17:35', '000362', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4252, '1770887855', '2026-02-12 16:17:35', '000362', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000362'),
+	(4253, '1770887856', '2026-02-12 16:17:36', '000362', '000110', 'Menu Lookup 21', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000362'),
+	(4254, '1770887857', '2026-02-12 16:17:37', '000362', '000110', 'Add Menu Sewa Lapangan 60 Menit(199) @500000', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000362'),
+	(4255, '1770887861', '2026-02-12 16:17:41', '000362', '000110', 'Add Qty 2 Sewa Lapangan 60 Menit', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000362'),
+	(4256, '1770887870', '2026-02-12 16:17:50', '000362', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000362'),
+	(4257, '1770887873', '2026-02-12 16:17:53', '000362', '000110', 'Send Order & Print Queue', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000362'),
+	(4258, '1770887873', '2026-02-12 16:17:53', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000362'),
+	(4259, '1770887873', '2026-02-12 16:17:53', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4260, '1770887876', '2026-02-12 16:17:56', '260212000681', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4261, '1770887876', '2026-02-12 16:17:56', '260212000681', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000681'),
+	(4262, '1770888008', '2026-02-12 16:20:08', '260212000681', '000110', 'Send Order & Print Queue', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000681'),
+	(4263, '1770888008', '2026-02-12 16:20:08', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000681'),
+	(4264, '1770888008', '2026-02-12 16:20:08', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4265, '1770888010', '2026-02-12 16:20:10', '260212000681', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4266, '1770888010', '2026-02-12 16:20:10', '260212000681', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000681'),
+	(4267, '1770888016', '2026-02-12 16:20:16', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4268, '1770888017', '2026-02-12 16:20:17', '', '000110', 'Select Table Padel Count 8', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4269, '1770888019', '2026-02-12 16:20:19', '', '000110', 'New Order Sport Padel(1002) Cover : 4, Table : Padel Count 8(149)', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4270, '1770888019', '2026-02-12 16:20:19', '000363', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4271, '1770888019', '2026-02-12 16:20:19', '000363', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000363'),
+	(4272, '1770888104', '2026-02-12 16:21:44', '000363', '000110', 'Menu Lookup 21', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000363'),
+	(4273, '1770888105', '2026-02-12 16:21:45', '000363', '000110', 'Add Menu Sewa Lapangan 60 Menit(199) @500000', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000363'),
+	(4274, '1770888108', '2026-02-12 16:21:48', '000363', '000110', 'Add Qty 2 Sewa Lapangan 60 Menit', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000363'),
+	(4275, '1770888108', '2026-02-12 16:21:48', '000363', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000363'),
+	(4276, '1770888110', '2026-02-12 16:21:50', '000363', '000110', 'Send Order & Print Queue', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000363'),
+	(4277, '1770888110', '2026-02-12 16:21:50', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000363'),
+	(4278, '1770888110', '2026-02-12 16:21:50', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4279, '1770888111', '2026-02-12 16:21:51', '260212000682', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4280, '1770888111', '2026-02-12 16:21:51', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4281, '1770888153', '2026-02-12 16:22:33', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4282, '1770888155', '2026-02-12 16:22:35', '260212000682', '000110', 'Exit Without Order', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4283, '1770888155', '2026-02-12 16:22:35', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4284, '1770888156', '2026-02-12 16:22:36', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4285, '1770888158', '2026-02-12 16:22:38', '260212000679', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4286, '1770888158', '2026-02-12 16:22:38', '260212000679', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000679'),
+	(4287, '1770888198', '2026-02-12 16:23:17', '260212000679', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000679'),
+	(4288, '1770888201', '2026-02-12 16:23:21', '260212000679', '000110', 'Exit Without Order', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000679'),
+	(4289, '1770888201', '2026-02-12 16:23:21', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000679'),
+	(4290, '1770888201', '2026-02-12 16:23:21', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4291, '1770888203', '2026-02-12 16:23:23', '260212000682', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4292, '1770888203', '2026-02-12 16:23:23', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4293, '1770888204', '2026-02-12 16:23:24', '260212000682', '000110', 'Exit Without Order', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4294, '1770888204', '2026-02-12 16:23:24', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4295, '1770888204', '2026-02-12 16:23:24', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4296, '1770888206', '2026-02-12 16:23:26', '260212000679', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4297, '1770888206', '2026-02-12 16:23:26', '260212000679', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000679'),
+	(4298, '1770888207', '2026-02-12 16:23:27', '260212000679', '000110', 'Exit Without Order', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000679'),
+	(4299, '1770888207', '2026-02-12 16:23:27', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000679'),
+	(4300, '1770888207', '2026-02-12 16:23:27', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4301, '1770888209', '2026-02-12 16:23:29', '260212000678', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4302, '1770888209', '2026-02-12 16:23:29', '260212000678', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000678'),
+	(4303, '1770888231', '2026-02-12 16:23:51', '260212000678', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000678'),
+	(4304, '1770888375', '2026-02-12 16:26:15', '260212000678', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000678'),
+	(4305, '1770888431', '2026-02-12 16:27:11', '260212000678', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000678'),
+	(4306, '1770888458', '2026-02-12 16:27:38', '260212000678', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000678'),
+	(4307, '1770888467', '2026-02-12 16:27:47', '260212000678', '000110', 'Exit Without Order', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000678'),
+	(4308, '1770888467', '2026-02-12 16:27:47', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000678'),
+	(4309, '1770888467', '2026-02-12 16:27:47', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4310, '1770888631', '2026-02-12 16:30:31', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4311, '1770889139', '2026-02-12 16:38:59', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4312, '1770889231', '2026-02-12 16:40:30', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4313, '1770889298', '2026-02-12 16:41:38', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4314, '1770890474', '2026-02-12 17:01:14', '260212000678', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4315, '1770890474', '2026-02-12 17:01:14', '260212000678', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000678'),
+	(4316, '1770890478', '2026-02-12 17:01:18', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4317, '1770890479', '2026-02-12 17:01:19', '260212000682', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4318, '1770890479', '2026-02-12 17:01:19', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4319, '1770890498', '2026-02-12 17:01:38', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4320, '1770890499', '2026-02-12 17:01:39', '260212000678', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4321, '1770890499', '2026-02-12 17:01:39', '260212000678', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000678'),
+	(4322, '1770891185', '2026-02-12 17:13:05', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4323, '1770891187', '2026-02-12 17:13:07', '260212000682', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4324, '1770891187', '2026-02-12 17:13:07', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4325, '1770891504', '2026-02-12 17:18:24', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4326, '1770891514', '2026-02-12 17:18:34', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4327, '1770892035', '2026-02-12 17:27:15', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4328, '1770892038', '2026-02-12 17:27:18', '260212000682', '000110', 'Exit Without Order', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4329, '1770892038', '2026-02-12 17:27:18', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4330, '1770892039', '2026-02-12 17:27:19', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4331, '1770892041', '2026-02-12 17:27:21', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4332, '1770892130', '2026-02-12 17:28:49', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4333, '1770892380', '2026-02-12 17:33:00', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4334, '1770892397', '2026-02-12 17:33:17', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4335, '1770892426', '2026-02-12 17:33:46', '', '000110', 'Change Map Indoor', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4336, '1770892428', '2026-02-12 17:33:48', '', '000110', 'Change Map Outdoor', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4337, '1770892438', '2026-02-12 17:33:58', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4338, '1770892442', '2026-02-12 17:34:02', '', '000110', 'Change Map Indoor', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4339, '1770892443', '2026-02-12 17:34:03', '', '000110', 'Change Map Outdoor', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4340, '1770892638', '2026-02-12 17:37:17', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4341, '1770892640', '2026-02-12 17:37:20', '260212000678', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000678'),
+	(4342, '1770892640', '2026-02-12 17:37:20', '260212000678', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4343, '1770892653', '2026-02-12 17:37:33', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4344, '1770892655', '2026-02-12 17:37:35', '', '000110', 'Change Map Indoor', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4345, '1770892655', '2026-02-12 17:37:35', '', '000110', 'Change Map Outdoor', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4346, '1770892657', '2026-02-12 17:37:37', '260212000678', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4347, '1770892657', '2026-02-12 17:37:37', '260212000678', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000678'),
+	(4348, '1770892671', '2026-02-12 17:37:51', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4349, '1770892673', '2026-02-12 17:37:53', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4350, '1770892673', '2026-02-12 17:37:53', '260212000682', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4351, '1770892680', '2026-02-12 17:38:00', '260212000682', '000110', 'Menu Lookup 21', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4352, '1770892681', '2026-02-12 17:38:01', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4353, '1770892682', '2026-02-12 17:38:02', '260212000682', '000110', 'Menu Lookup 22', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4354, '1770892684', '2026-02-12 17:38:04', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4355, '1770892806', '2026-02-12 17:40:06', '260212000682', '000110', 'Menu Lookup 21', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4356, '1770892806', '2026-02-12 17:40:06', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4357, '1770892807', '2026-02-12 17:40:07', '260212000682', '000110', 'Menu Lookup 22', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4358, '1770892808', '2026-02-12 17:40:08', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4359, '1770892809', '2026-02-12 17:40:09', '260212000682', '000110', 'Menu Lookup 21', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4360, '1770892810', '2026-02-12 17:40:10', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4361, '1770892811', '2026-02-12 17:40:11', '260212000682', '000110', 'Menu Lookup 22', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4362, '1770892812', '2026-02-12 17:40:12', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4363, '1770892813', '2026-02-12 17:40:13', '260212000682', '000110', 'Menu Lookup 23', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4364, '1770892813', '2026-02-12 17:40:13', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4365, '1770892818', '2026-02-12 17:40:18', '260212000682', '000110', 'Menu Lookup 22', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4366, '1770892819', '2026-02-12 17:40:19', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4367, '1770892820', '2026-02-12 17:40:20', '260212000682', '000110', 'Menu Lookup 25', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4368, '1770892821', '2026-02-12 17:40:21', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4369, '1770892824', '2026-02-12 17:40:24', '260212000682', '000110', 'Menu Lookup 21', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4370, '1770892825', '2026-02-12 17:40:25', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4371, '1770892828', '2026-02-12 17:40:28', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4372, '1770892828', '2026-02-12 17:40:28', '260212000682', '000110', 'Menu Lookup 21', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4373, '1770892829', '2026-02-12 17:40:29', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4374, '1770892830', '2026-02-12 17:40:30', '260212000682', '000110', 'Menu Lookup 22', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4375, '1770892831', '2026-02-12 17:40:31', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4376, '1770892832', '2026-02-12 17:40:32', '260212000682', '000110', 'Menu Lookup 21', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4377, '1770892834', '2026-02-12 17:40:34', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4378, '1770892836', '2026-02-12 17:40:36', '260212000682', '000110', 'Menu Lookup 22', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4379, '1770892837', '2026-02-12 17:40:37', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4380, '1770892839', '2026-02-12 17:40:39', '260212000682', '000110', 'Menu Lookup 23', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4381, '1770892839', '2026-02-12 17:40:39', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4382, '1770892849', '2026-02-12 17:40:49', '260212000682', '000110', 'Menu Lookup 21', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4383, '1770892924', '2026-02-12 17:42:04', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4384, '1770892926', '2026-02-12 17:42:06', '260212000682', '000110', 'Menu Lookup 22', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4385, '1770892927', '2026-02-12 17:42:07', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4386, '1770892929', '2026-02-12 17:42:09', '260212000682', '000110', 'Menu Lookup 21', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4387, '1770892931', '2026-02-12 17:42:11', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4388, '1770892953', '2026-02-12 17:42:33', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4389, '1770892961', '2026-02-12 17:42:41', '260212000682', '000110', 'Menu Lookup 21', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4390, '1770892962', '2026-02-12 17:42:42', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4391, '1770892968', '2026-02-12 17:42:48', '260212000682', '000110', 'Menu Lookup 21', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4392, '1770892970', '2026-02-12 17:42:50', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4393, '1770892999', '2026-02-12 17:43:19', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4394, '1770893000', '2026-02-12 17:43:20', '260212000682', '000110', 'Menu Lookup 21', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4395, '1770893001', '2026-02-12 17:43:21', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4396, '1770893002', '2026-02-12 17:43:22', '260212000682', '000110', 'Menu Lookup 22', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4397, '1770893003', '2026-02-12 17:43:23', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4398, '1770893004', '2026-02-12 17:43:24', '260212000682', '000110', 'Menu Lookup 21', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4399, '1770893005', '2026-02-12 17:43:25', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4400, '1770893006', '2026-02-12 17:43:26', '260212000682', '000110', 'Menu Lookup 21', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4401, '1770893006', '2026-02-12 17:43:26', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4402, '1770893007', '2026-02-12 17:43:27', '260212000682', '000110', 'Menu Lookup 21', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4403, '1770893009', '2026-02-12 17:43:29', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4404, '1770893010', '2026-02-12 17:43:30', '260212000682', '000110', 'Menu Lookup 25', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4405, '1770893011', '2026-02-12 17:43:31', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4406, '1770893036', '2026-02-12 17:43:56', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4407, '1770893040', '2026-02-12 17:44:00', '260212000682', '000110', 'Menu Lookup 21', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4408, '1770893071', '2026-02-12 17:44:31', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4409, '1770893072', '2026-02-12 17:44:32', '260212000682', '000110', 'Menu Lookup 21', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4410, '1770893079', '2026-02-12 17:44:39', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4411, '1770893080', '2026-02-12 17:44:40', '260212000682', '000110', 'Menu Lookup 21', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4412, '1770893083', '2026-02-12 17:44:43', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4413, '1770893084', '2026-02-12 17:44:44', '260212000682', '000110', 'Menu Lookup 22', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4414, '1770893085', '2026-02-12 17:44:45', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4415, '1770893087', '2026-02-12 17:44:47', '260212000682', '000110', 'Menu Lookup 21', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4416, '1770893088', '2026-02-12 17:44:48', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4417, '1770893089', '2026-02-12 17:44:49', '260212000682', '000110', 'Menu Lookup 23', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4418, '1770893090', '2026-02-12 17:44:50', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4419, '1770893095', '2026-02-12 17:44:55', '260212000682', '000110', 'Menu Lookup 21', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4420, '1770893099', '2026-02-12 17:44:59', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4421, '1770893129', '2026-02-12 17:45:29', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4422, '1770893130', '2026-02-12 17:45:30', '260212000682', '000110', 'Menu Lookup 21', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4423, '1770893133', '2026-02-12 17:45:33', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4424, '1770893151', '2026-02-12 17:45:51', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4425, '1770893152', '2026-02-12 17:45:52', '260212000682', '000110', 'Menu Lookup 21', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4426, '1770893153', '2026-02-12 17:45:53', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4427, '1770893183', '2026-02-12 17:46:23', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4428, '1770893184', '2026-02-12 17:46:24', '260212000682', '000110', 'Menu Lookup 21', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4429, '1770893185', '2026-02-12 17:46:25', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4430, '1770893187', '2026-02-12 17:46:27', '260212000682', '000110', 'Menu Lookup 22', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4431, '1770893192', '2026-02-12 17:46:32', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4432, '1770893194', '2026-02-12 17:46:34', '260212000682', '000110', 'Menu Lookup 22', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4433, '1770893197', '2026-02-12 17:46:37', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4434, '1770893224', '2026-02-12 17:47:04', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4435, '1770893225', '2026-02-12 17:47:05', '260212000682', '000110', 'Menu Lookup 21', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4436, '1770893249', '2026-02-12 17:47:29', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4437, '1770893251', '2026-02-12 17:47:31', '260212000682', '000110', 'Menu Lookup 21', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4438, '1770893274', '2026-02-12 17:47:54', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4439, '1770893307', '2026-02-12 17:48:27', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4440, '1770893308', '2026-02-12 17:48:28', '260212000682', '000110', 'Menu Lookup 21', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4441, '1770893309', '2026-02-12 17:48:29', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4442, '1770893356', '2026-02-12 17:49:16', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4443, '1770893381', '2026-02-12 17:49:41', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4444, '1770893383', '2026-02-12 17:49:43', '260212000682', '000110', 'Menu Lookup 21', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4445, '1770893386', '2026-02-12 17:49:46', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4446, '1770893391', '2026-02-12 17:49:51', '260212000682', '000110', 'Menu Lookup 21', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4447, '1770893401', '2026-02-12 17:50:01', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4448, '1770893560', '2026-02-12 17:52:40', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4449, '1770893563', '2026-02-12 17:52:43', '260212000682', '000110', 'Menu Lookup 21', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4450, '1770893565', '2026-02-12 17:52:45', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4451, '1770893582', '2026-02-12 17:53:02', '260212000682', '000110', 'Menu Lookup 22', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4452, '1770893583', '2026-02-12 17:53:03', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4453, '1770893630', '2026-02-12 17:53:50', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4454, '1770893633', '2026-02-12 17:53:53', '260212000682', '000110', 'Menu Lookup 21', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4455, '1770893635', '2026-02-12 17:53:55', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4456, '1770893636', '2026-02-12 17:53:56', '260212000682', '000110', 'Menu Lookup 22', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4457, '1770893639', '2026-02-12 17:53:59', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4458, '1770893640', '2026-02-12 17:54:00', '260212000682', '000110', 'Menu Lookup 23', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4459, '1770893641', '2026-02-12 17:54:01', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4460, '1770893671', '2026-02-12 17:54:31', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4461, '1770893687', '2026-02-12 17:54:47', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4462, '1770893689', '2026-02-12 17:54:49', '260212000682', '000110', 'Menu Lookup 21', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4463, '1770893690', '2026-02-12 17:54:50', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4464, '1770893691', '2026-02-12 17:54:51', '260212000682', '000110', 'Menu Lookup 22', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4465, '1770893693', '2026-02-12 17:54:53', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4466, '1770893693', '2026-02-12 17:54:53', '260212000682', '000110', 'Menu Lookup 23', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4467, '1770893694', '2026-02-12 17:54:54', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4468, '1770893695', '2026-02-12 17:54:55', '260212000682', '000110', 'Menu Lookup 24', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4469, '1770893695', '2026-02-12 17:54:55', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4470, '1770893696', '2026-02-12 17:54:56', '260212000682', '000110', 'Menu Lookup 25', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4471, '1770893696', '2026-02-12 17:54:56', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4472, '1770893699', '2026-02-12 17:54:59', '260212000682', '000110', 'Menu Lookup 21', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4473, '1770893699', '2026-02-12 17:54:59', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4474, '1770893700', '2026-02-12 17:55:00', '260212000682', '000110', 'Menu Lookup 22', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4475, '1770893700', '2026-02-12 17:55:00', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4476, '1770893701', '2026-02-12 17:55:01', '260212000682', '000110', 'Menu Lookup 23', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4477, '1770893702', '2026-02-12 17:55:02', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4478, '1770893702', '2026-02-12 17:55:02', '260212000682', '000110', 'Menu Lookup 24', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4479, '1770893703', '2026-02-12 17:55:03', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4480, '1770893705', '2026-02-12 17:55:05', '260212000682', '000110', 'Menu Lookup 21', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4481, '1770893709', '2026-02-12 17:55:09', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4482, '1770893709', '2026-02-12 17:55:09', '260212000682', '000110', 'Menu Lookup 22', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4483, '1770893791', '2026-02-12 17:56:31', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4484, '1770893792', '2026-02-12 17:56:32', '260212000682', '000110', 'Menu Lookup 22', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4485, '1770893793', '2026-02-12 17:56:33', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4486, '1770893793', '2026-02-12 17:56:33', '260212000682', '000110', 'Menu Lookup 24', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4487, '1770893794', '2026-02-12 17:56:34', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4488, '1770893794', '2026-02-12 17:56:34', '260212000682', '000110', 'Menu Lookup 25', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4489, '1770893830', '2026-02-12 17:57:10', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4490, '1770893850', '2026-02-12 17:57:30', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4491, '1770893853', '2026-02-12 17:57:33', '260212000682', '000110', 'Exit Without Order', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4492, '1770893853', '2026-02-12 17:57:33', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4493, '1770893853', '2026-02-12 17:57:33', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4494, '1770893962', '2026-02-12 17:59:22', '260212000682', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4495, '1770893962', '2026-02-12 17:59:22', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4496, '1770893965', '2026-02-12 17:59:25', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4497, '1770893972', '2026-02-12 17:59:32', '260212000678', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4498, '1770893972', '2026-02-12 17:59:32', '260212000678', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000678'),
+	(4499, '1770893978', '2026-02-12 17:59:38', '260212000678', '000110', 'Add Modifier undefined(undefined) @undefined', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000678'),
+	(4500, '1770893982', '2026-02-12 17:59:42', '260212000678', '000110', 'Exit Without Order', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000678'),
+	(4501, '1770893982', '2026-02-12 17:59:42', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000678'),
+	(4502, '1770893983', '2026-02-12 17:59:43', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4503, '1770893985', '2026-02-12 17:59:45', '', '000110', 'Change Map Indoor', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4504, '1770893986', '2026-02-12 17:59:46', '', '000110', 'Change Map Outdoor', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4505, '1770894467', '2026-02-12 18:07:47', '260212000682', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4506, '1770894467', '2026-02-12 18:07:47', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4507, '1770894476', '2026-02-12 18:07:56', '260212000682', '000110', 'Menu Lookup 22', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4508, '1770894478', '2026-02-12 18:07:58', '260212000682', '000110', 'Add Menu Tahu Goreng(194) @15000', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4509, '1770894479', '2026-02-12 18:07:59', '260212000682', '000110', 'Add Menu Tempe Goreng(195) @15000', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4510, '1770894479', '2026-02-12 18:07:59', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4511, '1770894481', '2026-02-12 18:08:01', '260212000682', '000110', 'Send Order & Print Queue', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4512, '1770894481', '2026-02-12 18:08:01', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4513, '1770894481', '2026-02-12 18:08:01', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4514, '1770894483', '2026-02-12 18:08:03', '260212000682', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4515, '1770894483', '2026-02-12 18:08:03', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4516, '1770967717', '2026-02-13 14:28:37', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4517, '1770967719', '2026-02-13 14:28:39', '260212000682', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4518, '1770967719', '2026-02-13 14:28:39', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4519, '1770967721', '2026-02-13 14:28:41', '260212000682', '000110', 'Send Order & Print Queue', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4520, '1770967721', '2026-02-13 14:28:41', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4521, '1770967721', '2026-02-13 14:28:41', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4522, '1770967722', '2026-02-13 14:28:42', '260212000682', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4523, '1770967722', '2026-02-13 14:28:42', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4524, '1770967730', '2026-02-13 14:28:50', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4525, '1770967733', '2026-02-13 14:28:53', '260212000682', '000110', 'Click BILL', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4526, '1770967735', '2026-02-13 14:28:55', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4527, '1770967737', '2026-02-13 14:28:57', '260212000682', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4528, '1770967737', '2026-02-13 14:28:57', '260212000682', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4529, '1770967739', '2026-02-13 14:28:59', '260212000682', '000110', 'Click PAYMENT', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000682'),
+	(4530, '1770967748', '2026-02-13 14:29:08', '260212000682', '000110', 'Submit Payment', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/payment?id=260212000682'),
+	(4531, '1770967749', '2026-02-13 14:29:09', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4532, '1770967750', '2026-02-13 14:29:10', '260212000679', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4533, '1770967750', '2026-02-13 14:29:10', '260212000679', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000679'),
+	(4534, '1770967753', '2026-02-13 14:29:13', '260212000679', '000110', 'Click BILL', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000679'),
+	(4535, '1770967755', '2026-02-13 14:29:15', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4536, '1770967757', '2026-02-13 14:29:17', '260212000679', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4537, '1770967757', '2026-02-13 14:29:17', '260212000679', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000679'),
+	(4538, '1770967759', '2026-02-13 14:29:19', '260212000679', '000110', 'Click PAYMENT', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000679'),
+	(4539, '1770967762', '2026-02-13 14:29:22', '260212000679', '000110', 'Submit Payment', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/payment?id=260212000679'),
+	(4540, '1770967763', '2026-02-13 14:29:23', '260212000679', '000110', 'Finish Payment And Print Copy Bill', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/receipt?id=260212000679'),
+	(4541, '1770967764', '2026-02-13 14:29:24', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4542, '1770967766', '2026-02-13 14:29:26', '260212000678', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4543, '1770967766', '2026-02-13 14:29:26', '260212000678', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000678'),
+	(4544, '1770967767', '2026-02-13 14:29:27', '260212000678', '000110', 'Send Order & Print Queue', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000678'),
+	(4545, '1770967767', '2026-02-13 14:29:27', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000678'),
+	(4546, '1770967767', '2026-02-13 14:29:27', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4547, '1770967777', '2026-02-13 14:29:37', '260212000678', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4548, '1770967777', '2026-02-13 14:29:37', '260212000678', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000678'),
+	(4549, '1770967778', '2026-02-13 14:29:38', '260212000678', '000110', 'Send Order & Print Queue', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000678'),
+	(4550, '1770967778', '2026-02-13 14:29:38', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000678'),
+	(4551, '1770967778', '2026-02-13 14:29:38', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4552, '1770967780', '2026-02-13 14:29:40', '260212000678', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4553, '1770967780', '2026-02-13 14:29:40', '260212000678', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000678'),
+	(4554, '1770967785', '2026-02-13 14:29:45', '260212000678', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000678'),
+	(4555, '1770967787', '2026-02-13 14:29:47', '260212000678', '000110', 'Click BILL', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000678'),
+	(4556, '1770967789', '2026-02-13 14:29:49', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4557, '1770967791', '2026-02-13 14:29:51', '260212000678', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4558, '1770967791', '2026-02-13 14:29:51', '260212000678', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000678'),
+	(4559, '1770967792', '2026-02-13 14:29:52', '260212000678', '000110', 'Click PAYMENT', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000678'),
+	(4560, '1770967799', '2026-02-13 14:29:59', '260212000678', '000110', 'Submit Payment', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/payment?id=260212000678'),
+	(4561, '1770967801', '2026-02-13 14:30:01', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4562, '1770967803', '2026-02-13 14:30:03', '', '000110', 'please close 1 tables!', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4563, '1770967804', '2026-02-13 14:30:04', '', '000110', 'Change Map Indoor', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4564, '1770967805', '2026-02-13 14:30:05', '260212000680', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4565, '1770967805', '2026-02-13 14:30:05', '260212000680', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000680'),
+	(4566, '1770967807', '2026-02-13 14:30:07', '260212000680', '000110', 'Menu Lookup 21', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000680'),
+	(4567, '1770967808', '2026-02-13 14:30:08', '260212000680', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000680'),
+	(4568, '1770967810', '2026-02-13 14:30:10', '260212000680', '000110', 'Click BILL', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000680'),
+	(4569, '1770967812', '2026-02-13 14:30:12', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4570, '1770967815', '2026-02-13 14:30:15', '260212000680', '000110', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4571, '1770967815', '2026-02-13 14:30:15', '260212000680', '000110', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000680'),
+	(4572, '1770967818', '2026-02-13 14:30:18', '260212000680', '000110', 'Click PAYMENT', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260212000680'),
+	(4573, '1770967820', '2026-02-13 14:30:20', '260212000680', '000110', 'Submit Payment', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/payment?id=260212000680'),
+	(4574, '1770967821', '2026-02-13 14:30:21', '', '000110', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4575, '1770967822', '2026-02-13 14:30:22', '', '000110', 'WARNING Daily Close ?', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4576, '1770967823', '2026-02-13 14:30:23', '', '000110', 'Daily Close -> YES', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4577, '1770967827', '2026-02-13 14:30:27', '', '000111', 'Clear Lock Table', 'sa ', 76, '', '0005', '15', 'http://localhost:4850/#/tables'),
+	(4578, '1770967829', '2026-02-13 14:30:29', '', '000111', 'modalSwitchOutlet', 'sa ', 76, '', '0005', '15', 'http://localhost:4850/#/tables'),
+	(4579, '1770967831', '2026-02-13 14:30:31', '', '000111', 'Change Outlet to Buffee', 'sa ', 76, '', '0005', '1004', 'http://localhost:4850/#/tables'),
+	(4580, '1770967832', '2026-02-13 14:30:32', '', '000111', 'modalSwitchOutlet', 'sa ', 76, '', '0005', '1004', 'http://localhost:4850/#/tables'),
+	(4581, '1770967832', '2026-02-13 14:30:32', '', '000111', 'Change Outlet to Sport Padel', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4582, '1770967833', '2026-02-13 14:30:33', '', '000111', 'modalSwitchOutlet', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4583, '1770967834', '2026-02-13 14:30:34', '', '000111', 'Change Outlet to Food Court', 'sa ', 76, '', '0005', '1001', 'http://localhost:4850/#/tables'),
+	(4584, '1770967835', '2026-02-13 14:30:35', '', '000111', 'modalSwitchOutlet', 'sa ', 76, '', '0005', '1001', 'http://localhost:4850/#/tables'),
+	(4585, '1770967838', '2026-02-13 14:30:38', '', '000111', 'Change Outlet to Restaurant', 'sa ', 76, '', '0005', '15', 'http://localhost:4850/#/tables'),
+	(4586, '1770967839', '2026-02-13 14:30:39', '', '000111', 'modalSwitchOutlet', 'sa ', 76, '', '0005', '15', 'http://localhost:4850/#/tables'),
+	(4587, '1770967841', '2026-02-13 14:30:41', '', '000111', 'Change Outlet to Sport Padel', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4588, '1770967843', '2026-02-13 14:30:43', '', '000111', 'Log Off', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4589, '1770967845', '2026-02-13 14:30:45', '', '000111', 'Sign Off', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/home'),
+	(4590, '1770968187', '2026-02-13 14:36:27', '', '000111', 'Sign Off', 'sa ', 76, '', '0005', '1001', 'http://localhost:4850/#/cashier'),
+	(4591, '1770968195', '2026-02-13 14:36:35', '', '000111', 'Sign Off', 'sa ', 76, '', '0005', '1001', 'http://localhost:4850/#/cashier'),
+	(4592, '1770968198', '2026-02-13 14:36:38', '', '000111', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4593, '1770968873', '2026-02-13 14:47:53', '', '000111', 'Select Table Padel Count 7', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4594, '1770968874', '2026-02-13 14:47:54', '', '000111', 'New Order Sport Padel(1002) Cover : 4, Table : Padel Count 7(148)', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4595, '1770968874', '2026-02-13 14:47:54', '000364', '000111', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4596, '1770968874', '2026-02-13 14:47:54', '000364', '000111', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000364'),
+	(4597, '1770968875', '2026-02-13 14:47:55', '000364', '000111', 'Menu Lookup 21', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000364'),
+	(4598, '1770968876', '2026-02-13 14:47:56', '000364', '000111', 'Add Menu Sewa Lapangan 60 Menit(199) @500000', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000364'),
+	(4599, '1770968877', '2026-02-13 14:47:57', '000364', '000111', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000364'),
+	(4600, '1770968879', '2026-02-13 14:47:59', '000364', '000111', 'Send Order & Print Queue', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000364'),
+	(4601, '1770968879', '2026-02-13 14:47:59', '', '000111', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000364'),
+	(4602, '1770968879', '2026-02-13 14:47:59', '', '000111', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4603, '1770968880', '2026-02-13 14:48:00', '260213000683', '000111', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4604, '1770968881', '2026-02-13 14:48:00', '260213000683', '000111', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260213000683'),
+	(4605, '1770968918', '2026-02-13 14:48:38', '260213000683', '000111', 'Menu Lookup 22', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260213000683'),
+	(4606, '1770968919', '2026-02-13 14:48:39', '260213000683', '000111', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260213000683'),
+	(4607, '1770968920', '2026-02-13 14:48:40', '260213000683', '000111', 'Menu Lookup 21', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260213000683'),
+	(4608, '1770968920', '2026-02-13 14:48:40', '260213000683', '000111', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260213000683'),
+	(4609, '1770968921', '2026-02-13 14:48:41', '260213000683', '000111', 'Menu Lookup 23', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260213000683'),
+	(4610, '1770968921', '2026-02-13 14:48:41', '260213000683', '000111', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260213000683'),
+	(4611, '1770968922', '2026-02-13 14:48:42', '260213000683', '000111', 'Menu Lookup 24', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260213000683'),
+	(4612, '1770968923', '2026-02-13 14:48:43', '260213000683', '000111', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260213000683'),
+	(4613, '1770968924', '2026-02-13 14:48:44', '260213000683', '000111', 'Menu Lookup 25', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260213000683'),
+	(4614, '1770968924', '2026-02-13 14:48:44', '260213000683', '000111', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260213000683'),
+	(4615, '1770968950', '2026-02-13 14:49:10', '260213000683', '000111', 'Exit Without Order', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260213000683'),
+	(4616, '1770968950', '2026-02-13 14:49:10', '', '000111', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260213000683'),
+	(4617, '1770968950', '2026-02-13 14:49:10', '', '000111', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4618, '1770968953', '2026-02-13 14:49:13', '', '000111', 'Select Table Padel Count 6', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4619, '1770968954', '2026-02-13 14:49:14', '', '000111', 'New Order Sport Padel(1002) Cover : 4, Table : Padel Count 6(147)', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4620, '1770968954', '2026-02-13 14:49:14', '000365', '000111', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4621, '1770968954', '2026-02-13 14:49:14', '000365', '000111', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000365'),
+	(4622, '1770968997', '2026-02-13 14:49:57', '000365', '000111', 'Menu Lookup 21', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000365'),
+	(4623, '1770968998', '2026-02-13 14:49:58', '000365', '000111', 'Add Menu Sewa Lapangan 60 Menit(199) @500000', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000365'),
+	(4624, '1770969002', '2026-02-13 14:50:02', '000365', '000111', 'Send Order & Print Queue', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000365'),
+	(4625, '1770969002', '2026-02-13 14:50:02', '', '000111', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=000365'),
+	(4626, '1770969002', '2026-02-13 14:50:02', '', '000111', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4627, '1770969003', '2026-02-13 14:50:03', '260213000684', '000111', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4628, '1770969003', '2026-02-13 14:50:03', '260213000684', '000111', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260213000684'),
+	(4629, '1770969018', '2026-02-13 14:50:18', '260213000684', '000111', 'Menu Lookup 22', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260213000684'),
+	(4630, '1770969019', '2026-02-13 14:50:19', '260213000684', '000111', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260213000684'),
+	(4631, '1770969023', '2026-02-13 14:50:23', '260213000684', '000111', 'Menu Lookup 22', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260213000684'),
+	(4632, '1770969025', '2026-02-13 14:50:25', '260213000684', '000111', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260213000684'),
+	(4633, '1770969081', '2026-02-13 14:51:21', '260213000684', '000111', 'Menu Lookup 22', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260213000684'),
+	(4634, '1770969082', '2026-02-13 14:51:22', '260213000684', '000111', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260213000684'),
+	(4635, '1770969082', '2026-02-13 14:51:22', '260213000684', '000111', 'Menu Lookup 23', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260213000684'),
+	(4636, '1770969085', '2026-02-13 14:51:25', '260213000684', '000111', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260213000684'),
+	(4637, '1770969086', '2026-02-13 14:51:26', '260213000684', '000111', 'Menu Lookup 25', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260213000684'),
+	(4638, '1770969088', '2026-02-13 14:51:28', '260213000684', '000111', 'Add Menu Es batu(201) @0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260213000684'),
+	(4639, '1770969093', '2026-02-13 14:51:33', '260213000684', '000111', 'Add Qty 3 Es batu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260213000684'),
+	(4640, '1770969094', '2026-02-13 14:51:34', '260213000684', '000111', 'Send Order & Print Queue', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260213000684'),
+	(4641, '1770969094', '2026-02-13 14:51:34', '', '000111', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260213000684'),
+	(4642, '1770969094', '2026-02-13 14:51:34', '', '000111', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4643, '1770969096', '2026-02-13 14:51:36', '260213000684', '000111', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4644, '1770969096', '2026-02-13 14:51:36', '260213000684', '000111', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260213000684'),
+	(4645, '1770969230', '2026-02-13 14:53:50', '260213000684', '000111', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260213000684'),
+	(4646, '1770969604', '2026-02-13 15:00:04', '260213000684', '000111', 'Exit Without Order', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260213000684'),
+	(4647, '1770969604', '2026-02-13 15:00:04', '', '000111', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260213000684'),
+	(4648, '1770969604', '2026-02-13 15:00:04', '', '000111', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4649, '1770969615', '2026-02-13 15:00:15', '', '000111', 'Click Tables', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4650, '1770969616', '2026-02-13 15:00:16', '', '000111', 'Click Print Queue', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4651, '1770969618', '2026-02-13 15:00:18', '', '000111', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4652, '1770969698', '2026-02-13 15:01:38', '', '000111', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4653, '1770969705', '2026-02-13 15:01:45', '', '000111', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4654, '1770970025', '2026-02-13 15:07:05', '260213000684', '000111', 'Go to Menu', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4655, '1770970025', '2026-02-13 15:07:05', '260213000684', '000111', 'Menu Lookup 0', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260213000684'),
+	(4656, '1770971575', '2026-02-13 15:32:55', '260213000684', '000111', 'Send Order & Print Queue', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260213000684'),
+	(4657, '1770971575', '2026-02-13 15:32:55', '', '000111', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/menu?id=260213000684'),
+	(4658, '1770971575', '2026-02-13 15:32:55', '', '000111', 'Clear Lock Table', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4659, '1770971577', '2026-02-13 15:32:57', '', '000111', 'Log Off', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/tables'),
+	(4660, '1770971578', '2026-02-13 15:32:58', '', '000111', 'Sign Off', 'sa ', 76, '', '0005', '1002', 'http://localhost:4850/#/home'),
+	(4661, '1770971587', '2026-02-13 15:33:07', '', '000111', 'Sign Off', 'Apian', 100, '', '0005', '1001', 'http://localhost:4850/#/cashier'),
+	(4662, '1770971594', '2026-02-13 15:33:14', '', '000111', 'Sign Off', 'sa ', 76, '', '0005', '1001', 'http://localhost:4850/#/cashier'),
+	(4663, '1770971603', '2026-02-13 15:33:22', '', '000111', 'Clear Lock Table', 'Apian', 100, '', '0005', '1002', 'http://localhost:4850/#/tables');
 
 -- Dumping structure for table pos_resto.member_class
 CREATE TABLE IF NOT EXISTS `member_class` (
@@ -6869,42 +7511,43 @@ CREATE TABLE IF NOT EXISTS `menu` (
   `updateDate` datetime NOT NULL DEFAULT '2025-01-01 00:00:00',
   `updateBy` smallint(6) NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=201 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=202 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
--- Dumping data for table pos_resto.menu: ~32 rows (approximately)
+-- Dumping data for table pos_resto.menu: ~33 rows (approximately)
 INSERT INTO `menu` (`id`, `plu`, `menuSet`, `menuSetMinQty`, `name`, `descm`, `descs`, `menuLookupId`, `startDate`, `endDate`, `discountGroupId`, `adjustItemsId`, `menuTaxScId`, `qty`, `sku`, `barcode`, `keyword`, `price1`, `price2`, `price3`, `price4`, `price5`, `specialPrice1`, `specialPrice2`, `specialPrice3`, `specialPrice4`, `specialPrice5`, `timer`, `cost`, `printerId`, `printerGroupId`, `itemGroupId`, `orderLevelGroupId`, `menuDepartmentId`, `menuCategoryId`, `menuClassId`, `modifierGroupId`, `taxStatus`, `scStatus`, `openPrice`, `image`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
-	(169, 'MKN001', '', 0, 'Nasi Goreng Special', 'Nasi Goreng Special', 'Nasi Goreng Special', 23, '2020-01-01', '2030-01-01', 0, 'A0144', 0, 900, '', '', '', 28000.00, 28000.00, 28000.00, 28000.00, 28000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 2, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
-	(170, 'MKN002', '', 0, 'Nasi Goreng Seafood', 'Nasi Goreng Seafood', 'Nasi Goreng Seafood', 23, '2020-01-01', '2030-01-01', 0, 'A0145', 0, 900, '', '', '', 32000.00, 32000.00, 32000.00, 32000.00, 32000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 2, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
-	(171, 'MKN003', '', 0, 'Mie Goreng Jawa', 'Mie Goreng Jawa', 'Mie Goreng Jawa', 23, '2020-01-01', '2030-01-01', 0, 'A0146', 0, 900, '', '', '', 25000.00, 25000.00, 25000.00, 25000.00, 25000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 2, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
-	(172, 'MKN004', '', 0, 'Ayam Goreng Kremes', 'Ayam Goreng Kremes', 'Ayam Goreng Kremes', 23, '2020-01-01', '2030-01-01', 0, 'A0147', 0, 900, '', '', '', 30000.00, 30000.00, 30000.00, 30000.00, 30000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 2, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
-	(173, 'MKN005', '', 0, 'Ayam Bakar', 'Ayam Bakar', 'Ayam Bakar', 23, '2020-01-01', '2030-01-01', 0, 'A0148', 0, 900, '', '', '', 32000.00, 32000.00, 32000.00, 32000.00, 32000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 2, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
-	(174, 'MKN006', '', 0, 'Ayam Penyet', 'Ayam Penyet', 'Ayam Penyet', 23, '2020-01-01', '2030-01-01', 0, 'A0149', 0, 900, '', '', '', 28000.00, 28000.00, 28000.00, 28000.00, 28000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 2, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
-	(175, 'MKN007', '', 0, 'Bebek Goreng', 'Bebek Goreng', 'Bebek Goreng', 23, '2020-01-01', '2030-01-01', 0, 'A0150', 0, 900, '', '', '', 38000.00, 38000.00, 38000.00, 38000.00, 38000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 2, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
-	(176, 'MKN008', '', 0, 'Soto Ayam', 'Soto Ayam', 'Soto Ayam', 23, '2020-01-01', '2030-01-01', 0, 'A0151', 0, 900, '', '', '', 22000.00, 22000.00, 22000.00, 22000.00, 22000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 2, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
-	(177, 'MKN009', '', 0, 'Rawon', 'Rawon', 'Rawon', 23, '2020-01-01', '2030-01-01', 0, 'A0152', 0, 900, '', '', '', 30000.00, 30000.00, 30000.00, 30000.00, 30000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 2, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
-	(178, 'MKN010', '', 0, 'Rendang Sapi', 'Rendang Sapi', 'Rendang Sapi', 23, '2020-01-01', '2030-01-01', 0, 'A0153', 0, 900, '', '', '', 38000.00, 38000.00, 38000.00, 38000.00, 38000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 2, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
-	(179, 'D001', '', 0, 'Es Teh Manis', 'Es Teh Manis', 'Es Teh Manis', 25, '2020-01-01', '2030-01-01', 0, 'A0154', 0, 900, '', '', '', 8000.00, 8000.00, 8000.00, 8000.00, 8000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 1, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
-	(180, 'D002', '', 0, 'Teh Hangat', 'Teh Hangat', 'Teh Hangat', 25, '2020-01-01', '2030-01-01', 0, 'A0155', 0, 900, '', '', '', 6000.00, 6000.00, 6000.00, 6000.00, 6000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 1, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
-	(181, 'D003', '', 0, 'Es Jeruk', 'Es Jeruk', 'Es Jeruk', 25, '2020-01-01', '2030-01-01', 0, 'A0156', 0, 900, '', '', '', 12000.00, 12000.00, 12000.00, 12000.00, 12000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 1, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
-	(182, 'D004', '', 0, 'Lemon Tea', 'Lemon Tea', 'Lemon Tea', 25, '2020-01-01', '2030-01-01', 0, 'A0157', 0, 900, '', '', '', 15000.00, 15000.00, 15000.00, 15000.00, 15000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 1, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
-	(183, 'D005', '', 0, 'Es Kopi Susu', 'Es Kopi Susu', 'Es Kopi Susu', 25, '2020-01-01', '2030-01-01', 0, 'A0158', 0, 900, '', '', '', 18000.00, 18000.00, 18000.00, 18000.00, 18000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 1, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
-	(184, 'D006', '', 0, 'Kopi Hitam', 'Kopi Hitam', 'Kopi Hitam', 25, '2020-01-01', '2030-01-01', 0, 'A0159', 0, 900, '', '', '', 15000.00, 15000.00, 15000.00, 15000.00, 15000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 1, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
-	(185, 'D007', '', 0, 'Cappuccino', 'Cappuccino', 'Cappuccino', 25, '2020-01-01', '2030-01-01', 0, 'A0160', 0, 900, '', '', '', 22000.00, 22000.00, 22000.00, 22000.00, 22000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 1, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
-	(186, 'D008', '', 0, 'Air Mineral', 'Air Mineral', 'Air Mineral', 25, '2020-01-01', '2030-01-01', 0, 'A0161', 0, 900, '', '', '', 6000.00, 6000.00, 6000.00, 6000.00, 6000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 1, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
-	(187, 'D009', '', 0, 'Jus Alpukat', 'Jus Alpukat', 'Jus Alpukat', 25, '2020-01-01', '2030-01-01', 0, 'A0162', 0, 900, '', '', '', 20000.00, 20000.00, 20000.00, 20000.00, 20000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 1, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
-	(188, 'D010', '', 0, 'Es Kelapa Muda', 'Es Kelapa Muda', 'Es Kelapa Muda', 25, '2020-01-01', '2030-01-01', 0, 'A0163', 0, 900, '', '', '', 17000.00, 17000.00, 17000.00, 17000.00, 17000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 1, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
-	(189, 'DST001', '', 0, 'Es Campur', 'Es Campur', 'Es Campur', 24, '2020-01-01', '2030-01-01', 0, 'A0164', 0, 900, '', '', '', 18000.00, 18000.00, 18000.00, 18000.00, 18000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 4, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
-	(190, 'DST002', '', 0, 'Es Teler', 'Es Teler', 'Es Teler', 24, '2020-01-01', '2030-01-01', 0, 'A0165', 0, 900, '', '', '', 20000.00, 20000.00, 20000.00, 20000.00, 20000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 4, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
-	(191, 'DST003', '', 0, 'Pisang Goreng', 'Pisang Goreng', 'Pisang Goreng', 24, '2020-01-01', '2030-01-01', 0, 'A0166', 0, 900, '', '', '', 15000.00, 15000.00, 15000.00, 15000.00, 15000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 4, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
-	(192, 'DST004', '', 0, 'Pisang Bakar Keju', 'Pisang Bakar Keju', 'Pisang Bakar Keju', 24, '2020-01-01', '2030-01-01', 0, 'A0167', 0, 900, '', '', '', 18000.00, 18000.00, 18000.00, 18000.00, 18000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 4, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
-	(193, 'DST005', '', 0, 'Puding Coklat', 'Puding Coklat', 'Puding Coklat', 24, '2020-01-01', '2030-01-01', 0, 'A0168', 0, 900, '', '', '', 14000.00, 14000.00, 14000.00, 14000.00, 14000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 4, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
-	(194, 'APP001', '', 0, 'Tahu Goreng', 'Tahu Goreng', 'Tahu Goreng', 22, '2020-01-01', '2030-01-01', 0, 'A0169', 0, 900, '', '', '', 15000.00, 15000.00, 15000.00, 15000.00, 15000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 5, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
-	(195, 'APP002', '', 0, 'Tempe Goreng', 'Tempe Goreng', 'Tempe Goreng', 22, '2020-01-01', '2030-01-01', 0, 'A0170', 0, 900, '', '', '', 15000.00, 15000.00, 15000.00, 15000.00, 15000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 5, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
-	(196, 'APP003', '', 0, 'Tahu Isi', 'Tahu Isi', 'Tahu Isi', 22, '2020-01-01', '2030-01-01', 0, 'A0171', 0, 900, '', '', '', 18000.00, 18000.00, 18000.00, 18000.00, 18000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 5, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
-	(197, 'APP004', '', 0, 'Lumpia Goreng', 'Lumpia Goreng', 'Lumpia Goreng', 22, '2020-01-01', '2030-01-01', 0, 'A0172', 0, 900, '', '', '', 20000.00, 20000.00, 20000.00, 20000.00, 20000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 5, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
-	(198, 'APP005', '', 0, 'Kentang Goreng', 'Kentang Goreng', 'Kentang Goreng', 22, '2020-01-01', '2030-01-01', 0, 'A0173', 0, 900, '', '', '', 20000.00, 20000.00, 20000.00, 20000.00, 20000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 5, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
-	(199, 'L001', '', 0, 'Sewa Lapangan 60 Menit', 'Kentang Goreng', 'Kentang Goreng', 21, '2020-01-01', '2030-01-01', 0, '', 0, 0, '', '', '', 500000.00, 500000.00, 500000.00, 500000.00, 500000.00, NULL, NULL, NULL, NULL, NULL, 60, NULL, 0, 0, 'null', NULL, 3, 0, 0, 0, 'null', 'null', 0, 'null', 1, '2026-02-11 17:59:14', 2026, '2026-02-11 18:04:44', 2026),
-	(200, 'L002', '', 0, 'Sewa Lapangan 120 Menit', 'Kentang Goreng', 'Kentang Goreng', 21, '2020-01-01', '2030-01-01', 0, '', 0, 0, '', '', '', 500000.00, 500000.00, 500000.00, 500000.00, 500000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, 'null', NULL, 3, 0, 0, 0, 'null', 'null', 0, 'null', 1, '2026-02-11 18:04:34', 2026, '2026-02-11 18:04:44', 2026);
+	(169, 'MKN001', '', 0, 'Nasi Goreng Special', 'Nasi Goreng Special', 'Nasi Goreng Special', 23, '2020-01-01', '2030-01-01', 0, 'A0144', 1, 900, '', '', '', 28000.00, 28000.00, 28000.00, 28000.00, 28000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 2, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
+	(170, 'MKN002', '', 0, 'Nasi Goreng Seafood', 'Nasi Goreng Seafood', 'Nasi Goreng Seafood', 23, '2020-01-01', '2030-01-01', 0, 'A0145', 1, 900, '', '', '', 32000.00, 32000.00, 32000.00, 32000.00, 32000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 2, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
+	(171, 'MKN003', '', 0, 'Mie Goreng Jawa', 'Mie Goreng Jawa', 'Mie Goreng Jawa', 23, '2020-01-01', '2030-01-01', 0, 'A0146', 1, 900, '', '', '', 25000.00, 25000.00, 25000.00, 25000.00, 25000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 2, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
+	(172, 'MKN004', '', 0, 'Ayam Goreng Kremes', 'Ayam Goreng Kremes', 'Ayam Goreng Kremes', 23, '2020-01-01', '2030-01-01', 0, 'A0147', 1, 900, '', '', '', 30000.00, 30000.00, 30000.00, 30000.00, 30000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 2, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
+	(173, 'MKN005', '', 0, 'Ayam Bakar', 'Ayam Bakar', 'Ayam Bakar', 23, '2020-01-01', '2030-01-01', 0, 'A0148', 1, 900, '', '', '', 32000.00, 32000.00, 32000.00, 32000.00, 32000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 2, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
+	(174, 'MKN006', '', 0, 'Ayam Penyet', 'Ayam Penyet', 'Ayam Penyet', 23, '2020-01-01', '2030-01-01', 0, 'A0149', 1, 900, '', '', '', 28000.00, 28000.00, 28000.00, 28000.00, 28000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 2, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
+	(175, 'MKN007', '', 0, 'Bebek Goreng', 'Bebek Goreng', 'Bebek Goreng', 23, '2020-01-01', '2030-01-01', 0, 'A0150', 1, 900, '', '', '', 38000.00, 38000.00, 38000.00, 38000.00, 38000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 2, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
+	(176, 'MKN008', '', 0, 'Soto Ayam', 'Soto Ayam', 'Soto Ayam', 23, '2020-01-01', '2030-01-01', 0, 'A0151', 1, 900, '', '', '', 22000.00, 22000.00, 22000.00, 22000.00, 22000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 2, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
+	(177, 'MKN009', '', 0, 'Rawon', 'Rawon', 'Rawon', 23, '2020-01-01', '2030-01-01', 0, 'A0152', 1, 900, '', '', '', 30000.00, 30000.00, 30000.00, 30000.00, 30000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 2, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
+	(178, 'MKN010', '', 0, 'Rendang Sapi', 'Rendang Sapi', 'Rendang Sapi', 23, '2020-01-01', '2030-01-01', 0, 'A0153', 1, 900, '', '', '', 38000.00, 38000.00, 38000.00, 38000.00, 38000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 2, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
+	(179, 'D001', '', 0, 'Es Teh Manis', 'Es Teh Manis', 'Es Teh Manis', 25, '2020-01-01', '2030-01-01', 0, 'A0154', 1, 900, '', '', '', 8000.00, 8000.00, 8000.00, 8000.00, 8000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 1, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
+	(180, 'D002', '', 0, 'Teh Hangat', 'Teh Hangat', 'Teh Hangat', 25, '2020-01-01', '2030-01-01', 0, 'A0155', 1, 900, '', '', '', 6000.00, 6000.00, 6000.00, 6000.00, 6000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 1, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
+	(181, 'D003', '', 0, 'Es Jeruk', 'Es Jeruk', 'Es Jeruk', 25, '2020-01-01', '2030-01-01', 0, 'A0156', 1, 900, '', '', '', 12000.00, 12000.00, 12000.00, 12000.00, 12000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 1, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
+	(182, 'D004', '', 0, 'Lemon Tea', 'Lemon Tea', 'Lemon Tea', 25, '2020-01-01', '2030-01-01', 0, 'A0157', 1, 900, '', '', '', 15000.00, 15000.00, 15000.00, 15000.00, 15000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 1, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
+	(183, 'D005', '', 0, 'Es Kopi Susu', 'Es Kopi Susu', 'Es Kopi Susu', 25, '2020-01-01', '2030-01-01', 0, 'A0158', 1, 900, '', '', '', 18000.00, 18000.00, 18000.00, 18000.00, 18000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 1, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
+	(184, 'D006', '', 0, 'Kopi Hitam', 'Kopi Hitam', 'Kopi Hitam', 25, '2020-01-01', '2030-01-01', 0, 'A0159', 1, 900, '', '', '', 15000.00, 15000.00, 15000.00, 15000.00, 15000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 1, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
+	(185, 'D007', '', 0, 'Cappuccino', 'Cappuccino', 'Cappuccino', 25, '2020-01-01', '2030-01-01', 0, 'A0160', 1, 900, '', '', '', 22000.00, 22000.00, 22000.00, 22000.00, 22000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 1, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
+	(186, 'D008', '', 0, 'Air Mineral', 'Air Mineral', 'Air Mineral', 25, '2020-01-01', '2030-01-01', 0, 'A0161', 1, 900, '', '', '', 6000.00, 6000.00, 6000.00, 6000.00, 6000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 1, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
+	(187, 'D009', '', 0, 'Jus Alpukat', 'Jus Alpukat', 'Jus Alpukat', 25, '2020-01-01', '2030-01-01', 0, 'A0162', 1, 900, '', '', '', 20000.00, 20000.00, 20000.00, 20000.00, 20000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 1, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
+	(188, 'D010', '', 0, 'Es Kelapa Muda', 'Es Kelapa Muda', 'Es Kelapa Muda', 25, '2020-01-01', '2030-01-01', 0, 'A0163', 1, 900, '', '', '', 17000.00, 17000.00, 17000.00, 17000.00, 17000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 1, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
+	(189, 'DST001', '', 0, 'Es Campur', 'Es Campur', 'Es Campur', 24, '2020-01-01', '2030-01-01', 0, 'A0164', 1, 900, '', '', '', 18000.00, 18000.00, 18000.00, 18000.00, 18000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 4, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
+	(190, 'DST002', '', 0, 'Es Teler', 'Es Teler', 'Es Teler', 24, '2020-01-01', '2030-01-01', 0, 'A0165', 1, 900, '', '', '', 20000.00, 20000.00, 20000.00, 20000.00, 20000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 4, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
+	(191, 'DST003', '', 0, 'Pisang Goreng', 'Pisang Goreng', 'Pisang Goreng', 24, '2020-01-01', '2030-01-01', 0, 'A0166', 1, 900, '', '', '', 15000.00, 15000.00, 15000.00, 15000.00, 15000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 4, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
+	(192, 'DST004', '', 0, 'Pisang Bakar Keju', 'Pisang Bakar Keju', 'Pisang Bakar Keju', 24, '2020-01-01', '2030-01-01', 0, 'A0167', 1, 900, '', '', '', 18000.00, 18000.00, 18000.00, 18000.00, 18000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 4, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
+	(193, 'DST005', '', 0, 'Puding Coklat', 'Puding Coklat', 'Puding Coklat', 24, '2020-01-01', '2030-01-01', 0, 'A0168', 1, 900, '', '', '', 14000.00, 14000.00, 14000.00, 14000.00, 14000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 4, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
+	(194, 'APP001', '', 0, 'Tahu Goreng', 'Tahu Goreng', 'Tahu Goreng', 22, '2020-01-01', '2030-01-01', 0, 'A0169', 1, 900, '', '', '', 15000.00, 15000.00, 15000.00, 15000.00, 15000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 5, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
+	(195, 'APP002', '', 0, 'Tempe Goreng', 'Tempe Goreng', 'Tempe Goreng', 22, '2020-01-01', '2030-01-01', 0, 'A0170', 1, 900, '', '', '', 15000.00, 15000.00, 15000.00, 15000.00, 15000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 5, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
+	(196, 'APP003', '', 0, 'Tahu Isi', 'Tahu Isi', 'Tahu Isi', 22, '2020-01-01', '2030-01-01', 0, 'A0171', 1, 900, '', '', '', 18000.00, 18000.00, 18000.00, 18000.00, 18000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 5, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
+	(197, 'APP004', '', 0, 'Lumpia Goreng', 'Lumpia Goreng', 'Lumpia Goreng', 22, '2020-01-01', '2030-01-01', 0, 'A0172', 1, 900, '', '', '', 20000.00, 20000.00, 20000.00, 20000.00, 20000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 5, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
+	(198, 'APP005', '', 0, 'Kentang Goreng', 'Kentang Goreng', 'Kentang Goreng', 22, '2020-01-01', '2030-01-01', 0, 'A0173', 1, 900, '', '', '', 20000.00, 20000.00, 20000.00, 20000.00, 20000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 5, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1),
+	(199, 'L001', '', 0, 'Sewa Lapangan 60 Menit', 'Kentang Goreng', 'Kentang Goreng', 21, '2020-01-01', '2030-01-01', 0, '', 1, 0, '', '', '', 500000.00, 500000.00, 500000.00, 500000.00, 500000.00, NULL, NULL, NULL, NULL, NULL, 60, NULL, 0, 0, 'null', NULL, 3, 0, 0, 0, 'null', 'null', 0, 'null', 1, '2026-02-11 17:59:14', 2026, '2026-02-11 18:04:44', 2026),
+	(200, 'L002', '', 0, 'Sewa Lapangan 120 Menit', 'Kentang Goreng', 'Kentang Goreng', 21, '2020-01-01', '2030-01-01', 0, '', 1, 0, '', '', '', 500000.00, 500000.00, 500000.00, 500000.00, 500000.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, 'null', NULL, 3, 0, 0, 0, 'null', 'null', 0, 'null', 1, '2026-02-11 18:04:34', 2026, '2026-02-11 18:04:44', 2026),
+	(201, 'D000', '', 0, 'Es batu', 'Es batu', 'Es batu', 25, '2020-01-01', '2030-01-01', 0, 'A0163', 1, 900, '', '', '', 0.00, 0.00, 0.00, 0.00, 0.00, NULL, NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, 1, 0, 0, 0, NULL, NULL, 0, NULL, 1, '2025-01-01 00:00:00', 1, '2026-02-11 18:04:44', 1);
 
 -- Dumping structure for table pos_resto.menu_category
 CREATE TABLE IF NOT EXISTS `menu_category` (
@@ -7020,7 +7663,7 @@ CREATE TABLE IF NOT EXISTS `menu_tax_sc` (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
--- Dumping data for table pos_resto.menu_tax_sc: ~4 rows (approximately)
+-- Dumping data for table pos_resto.menu_tax_sc: ~5 rows (approximately)
 INSERT INTO `menu_tax_sc` (`id`, `desc`, `name`, `taxRate`, `taxNote`, `taxStatus`, `scRate`, `scNote`, `scStatus`, `scTaxIncluded`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
 	(1, 'Tax & S.C.', 'Tax & S.C.', 10, '10% Tax ', 1, 5, 'S.C. 5%', 1, 0, 1, '2025-01-01 00:00:00', 1, '2025-08-19 18:33:34', 1),
 	(2, 'Tax', 'Tax', 10, '10% Tax ', 1, 0, 'No S.C', 0, 1, 1, '2025-01-01 00:00:00', 1, '2025-08-19 18:33:34', 1),
@@ -7105,7 +7748,7 @@ CREATE TABLE IF NOT EXISTS `modifier_group` (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
--- Dumping data for table pos_resto.modifier_group: ~3 rows (approximately)
+-- Dumping data for table pos_resto.modifier_group: ~4 rows (approximately)
 INSERT INTO `modifier_group` (`id`, `name`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
 	(1, 'Makanan', 1, '2025-01-01 00:00:00', 1, '2025-07-31 16:30:04', 1),
 	(2, 'Muniman', 1, '2025-01-01 00:00:00', 1, '2025-07-31 16:30:04', 1),
@@ -7300,7 +7943,7 @@ CREATE TABLE IF NOT EXISTS `outlet_table_map` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=161 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
--- Dumping data for table pos_resto.outlet_table_map: ~114 rows (approximately)
+-- Dumping data for table pos_resto.outlet_table_map: ~98 rows (approximately)
 INSERT INTO `outlet_table_map` (`id`, `outletId`, `outletFloorPlandId`, `tableName`, `tableNameExt`, `desc1`, `desc2`, `desc3`, `class`, `seatcnt`, `posY`, `posX`, `width`, `height`, `capacity`, `shape`, `seatpos`, `seatarr`, `default`, `consume`, `icon`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
 	(1, 15, 2, 'TA5', '   ', '                    ', '                    ', '                    ', 0, 0, 1, 639, 50, 50, 4, 2, 2, 0, '  ', 0.00, 'cover4.png', 1, '2025-01-01 00:00:00', 1, '2025-08-01 17:12:27', 1),
 	(2, 15, 2, 'TA4', '   ', '                    ', '                    ', '                    ', 0, 0, 1, 489, 50, 50, 4, 2, 2, 0, '  ', 0.00, 'table4.png', 1, '2025-01-01 00:00:00', 1, '2025-08-01 17:12:02', 1),
@@ -7374,16 +8017,6 @@ INSERT INTO `outlet_table_map` (`id`, `outletId`, `outletFloorPlandId`, `tableNa
 	(70, 1001, 4, 'DEL08', '   ', '                    ', '                    ', '                    ', 0, 0, 1, 526, 50, 50, 4, 2, 2, 0, '  ', 0.00, 'table4.png', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
 	(71, 1001, 4, 'DEL09', '   ', '                    ', '                    ', '                    ', 0, 0, 1, 601, 50, 50, 4, 2, 2, 0, '  ', 0.00, 'table4.png', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
 	(72, 1001, 4, 'DEL10', '   ', '                    ', '                    ', '                    ', 0, 0, 1, 675, 50, 50, 4, 2, 2, 0, '  ', 0.00, 'table4.png', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
-	(73, 1002, 1, 'HOT013+22', '   ', '                    ', '                    ', '                    ', 0, 0, 50, 49, 50, 50, 4, 2, 2, 0, '  ', 0.00, 'table4.png', 0, '2025-01-01 00:00:00', 1, '2025-05-06 15:38:03', 1),
-	(74, 1002, 1, 'HOT06', '   ', '                    ', '                    ', '                    ', 0, 0, 364, 1, 50, 50, 6, 2, 2, 0, '  ', 0.00, 'table4.png', 0, '2025-01-01 00:00:00', 1, '2026-02-11 16:59:47', 1),
-	(75, 1002, 1, 'HOT07', '   ', '                    ', '                    ', '                    ', 0, 0, 364, 77, 50, 50, 4, 2, 2, 0, '  ', 0.00, 'table4.png', 0, '2025-01-01 00:00:00', 1, '2026-02-11 16:59:48', 1),
-	(76, 1002, 1, 'HOT08', '   ', '                    ', '                    ', '                    ', 0, 0, 364, 153, 50, 50, 4, 2, 2, 0, '  ', 0.00, 'table4.png', 0, '2025-01-01 00:00:00', 1, '2026-02-11 16:59:50', 1),
-	(77, 1002, 1, 'HOT09', '   ', '                    ', '                    ', '                    ', 0, 0, 364, 230, 50, 50, 4, 2, 2, 0, '  ', 0.00, 'table4.png', 0, '2025-01-01 00:00:00', 1, '2026-02-11 16:59:52', 1),
-	(78, 1002, 1, 'HOT10', '   ', '                    ', '                    ', '                    ', 0, 0, 364, 306, 50, 50, 4, 2, 2, 0, '  ', 0.00, 'table4.png', 0, '2025-01-01 00:00:00', 1, '2026-02-11 17:02:10', 1),
-	(79, 1002, 1, 'T2', '   ', '                    ', '                    ', '                    ', 0, 0, 102, 463, 50, 50, 4, 2, 2, 0, '  ', 0.00, 'table4.png', 0, '2025-01-01 00:00:00', 1, '2025-05-06 15:38:20', 1),
-	(80, 1002, 1, 'HOT03', '   ', '                    ', '                    ', '                    ', 0, 0, 278, 152, 50, 50, 4, 2, 2, 0, '  ', 0.00, 'table4.png', 0, '2025-01-01 00:00:00', 1, '2026-02-11 17:02:12', 1),
-	(81, 1002, 1, 'HOT04', '   ', '                    ', '                    ', '                    ', 0, 0, 278, 237, 50, 50, 4, 2, 2, 0, '  ', 0.00, 'table4.png', 0, '2025-01-01 00:00:00', 1, '2026-02-11 17:02:13', 1),
-	(82, 1002, 1, 'HOT05', '   ', '                    ', '                    ', '                    ', 0, 0, 280, 324, 50, 50, 4, 2, 2, 0, '  ', 0.00, 'table4.png', 0, '2025-01-01 00:00:00', 1, '2026-02-11 17:02:17', 1),
 	(83, 1001, 4, 'DEL11', '   ', '                    ', '                    ', '                    ', 0, 0, 80, 1, 50, 50, 4, 2, 2, 0, '  ', 0.00, 'table4.png', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
 	(84, 1001, 4, 'DEL12', '   ', '                    ', '                    ', '                    ', 0, 0, 80, 76, 50, 50, 4, 2, 2, 0, '  ', 0.00, 'table4.png', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
 	(85, 1001, 4, 'DEL13', '   ', '                    ', '                    ', '                    ', 0, 0, 80, 151, 50, 50, 4, 2, 2, 0, '  ', 0.00, 'table4.png', 1, '2025-01-01 00:00:00', 1, '2025-01-01 00:00:00', 1),
@@ -7405,17 +8038,11 @@ INSERT INTO `outlet_table_map` (`id`, `outletId`, `outletFloorPlandId`, `tableNa
 	(147, NULL, 1, 'Padel Count 6', NULL, NULL, NULL, NULL, NULL, NULL, 25, 64, 120, 70, 4, NULL, NULL, NULL, NULL, NULL, 'padel-1-removebg-preview.png', 1, '2025-08-01 17:35:16', 1, '2026-02-11 18:51:39', 1),
 	(148, NULL, 1, 'Padel Count 7', NULL, NULL, NULL, NULL, NULL, NULL, 25, 194, 120, 70, 4, NULL, NULL, NULL, NULL, NULL, 'padel-1-removebg-preview.png', 1, '2025-08-01 17:36:50', 1, '2026-02-11 18:51:39', 1),
 	(149, NULL, 1, 'Padel Count 8', NULL, NULL, NULL, NULL, NULL, NULL, 24, 322, 120, 70, 4, NULL, NULL, NULL, NULL, NULL, 'padel-1-removebg-preview.png', 1, '2025-08-01 17:36:50', 1, '2026-02-11 18:51:39', 1),
-	(150, NULL, 1, 'class 2 3', NULL, NULL, NULL, NULL, NULL, NULL, 17, 161, 50, 50, 4, NULL, NULL, NULL, NULL, NULL, 'cover4.png', 0, '2025-08-01 17:36:50', 1, '2026-02-11 17:02:09', 1),
-	(151, NULL, 1, 'class 2 4', NULL, NULL, NULL, NULL, NULL, NULL, 13, 256, 50, 50, 4, NULL, NULL, NULL, NULL, NULL, 'cover4.png', 0, '2025-08-01 17:36:50', 1, '2026-02-11 17:02:07', 1),
-	(152, NULL, 1, 'class 2 5', NULL, NULL, NULL, NULL, NULL, NULL, 19, 371, 50, 50, 4, NULL, NULL, NULL, NULL, NULL, 'cover4.png', 0, '2025-08-01 17:36:50', 1, '2026-02-11 17:02:05', 1),
 	(153, NULL, 5439, 'Padel Count 1', NULL, NULL, NULL, NULL, NULL, NULL, 55, 34, 80, 150, 4, NULL, NULL, NULL, NULL, NULL, 'INDOOR-PADEL-CLUB_2-removebg-preview.png', 1, '2026-02-11 17:43:51', 1, '2026-02-11 18:51:59', 1),
 	(154, NULL, 5439, 'Padel Count 2', NULL, NULL, NULL, NULL, NULL, NULL, 55, 150, 80, 150, 4, NULL, NULL, NULL, NULL, NULL, 'INDOOR-PADEL-CLUB_2-removebg-preview.png', 1, '2026-02-11 17:43:51', 1, '2026-02-11 18:51:59', 1),
 	(155, NULL, 5439, 'Padel Count 3', NULL, NULL, NULL, NULL, NULL, NULL, 53, 268, 80, 150, 4, NULL, NULL, NULL, NULL, NULL, 'INDOOR-PADEL-CLUB_2-removebg-preview.png', 1, '2026-02-11 17:43:51', 1, '2026-02-11 18:51:59', 1),
 	(156, NULL, 5439, 'Padel Count 4', NULL, NULL, NULL, NULL, NULL, NULL, 57, 387, 80, 150, 4, NULL, NULL, NULL, NULL, NULL, 'INDOOR-PADEL-CLUB_2-removebg-preview.png', 1, '2026-02-11 17:43:51', 1, '2026-02-11 18:51:59', 1),
-	(157, NULL, 5439, 'Padel Count 5', NULL, NULL, NULL, NULL, NULL, NULL, 58, 495, 80, 150, 4, NULL, NULL, NULL, NULL, NULL, 'INDOOR-PADEL-CLUB_2-removebg-preview.png', 1, '2026-02-11 17:44:47', 1, '2026-02-11 18:51:59', 1),
-	(158, NULL, 5439, 'Padel Count 1 2', NULL, NULL, NULL, NULL, NULL, NULL, 10, 10, 50, 50, 1, NULL, NULL, NULL, NULL, NULL, 'table4.png', 0, '2026-02-11 17:44:47', 1, '2026-02-11 17:44:58', 1),
-	(159, NULL, 5439, 'Padel Count 1 3', NULL, NULL, NULL, NULL, NULL, NULL, 10, 15, 50, 50, 1, NULL, NULL, NULL, NULL, NULL, 'table4.png', 0, '2026-02-11 17:44:47', 1, '2026-02-11 17:45:01', 1),
-	(160, NULL, 5439, 'Padel Count 1 4', NULL, NULL, NULL, NULL, NULL, NULL, 10, 20, 50, 50, 1, NULL, NULL, NULL, NULL, NULL, 'table4.png', 0, '2026-02-11 17:44:47', 1, '2026-02-11 17:45:03', 1);
+	(157, NULL, 5439, 'Padel Count 5', NULL, NULL, NULL, NULL, NULL, NULL, 58, 495, 80, 150, 4, NULL, NULL, NULL, NULL, NULL, 'INDOOR-PADEL-CLUB_2-removebg-preview.png', 1, '2026-02-11 17:44:47', 1, '2026-02-11 18:51:59', 1);
 
 -- Dumping structure for table pos_resto.outlet_table_map_status
 CREATE TABLE IF NOT EXISTS `outlet_table_map_status` (
@@ -7553,9 +8180,9 @@ CREATE TABLE IF NOT EXISTS `print_queue` (
   `updateDate` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `updateBy` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf16 COLLATE=utf16_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf16 COLLATE=utf16_bin;
 
--- Dumping data for table pos_resto.print_queue: ~10 rows (approximately)
+-- Dumping data for table pos_resto.print_queue: ~33 rows (approximately)
 INSERT INTO `print_queue` (`id`, `dailyCheckId`, `cartId`, `cartItemId`, `menuId`, `rushPrinting`, `so`, `message`, `printerId`, `printerId2`, `consoleError`, `status`, `status2`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
 	(1, '000109', '260211000677', 6, 199, 0, 'SO001321', '{"tableName":"Padel Count 2","dateTime":"2026-02-11 18:17:22","cartId":"260211000677","sendOrder":"SO001321","menuId":199,"cartItemId":6,"qty":1,"descs":"Kentang Goreng","modifier":"","printerId":4,"printerId2":14,"printerName":"Kasir","ipAddress":"192.168.1.238","port":"9100","cover":4}', 4, 14, '', 0, 0, 1, '2026-02-11 18:17:22', 76, '2026-02-11 18:17:22', 76),
 	(2, '000109', '260211000677', 6, 199, 0, 'SO001321', '{"tableName":"Padel Count 2","dateTime":"2026-02-11 18:17:22","cartId":"260211000677","sendOrder":"SO001321","menuId":199,"cartItemId":6,"qty":1,"descs":"Kentang Goreng","modifier":"","printerId":5,"printerId2":14,"printerName":"Office 2","ipAddress":"192.168.1.238","port":"9100","cover":4}', 5, 14, '', 0, 0, 1, '2026-02-11 18:17:22', 76, '2026-02-11 18:17:22', 76),
@@ -7570,7 +8197,33 @@ INSERT INTO `print_queue` (`id`, `dailyCheckId`, `cartId`, `cartItemId`, `menuId
 	(11, '000109', '260211000677', 11, 195, 0, 'SO001326', '{"tableName":"Padel Count 2","dateTime":"2026-02-11 19:15:03","cartId":"260211000677","sendOrder":"SO001326","menuId":195,"cartItemId":11,"qty":1,"descs":"Tempe Goreng","modifier":"","printerId":4,"printerId2":14,"printerName":"Kasir","ipAddress":"192.168.1.238","port":"9100","cover":4}', 4, 14, '', 0, 0, 1, '2026-02-11 19:15:03', 76, '2026-02-11 19:15:03', 76),
 	(12, '000109', '260211000677', 11, 195, 0, 'SO001326', '{"tableName":"Padel Count 2","dateTime":"2026-02-11 19:15:03","cartId":"260211000677","sendOrder":"SO001326","menuId":195,"cartItemId":11,"qty":1,"descs":"Tempe Goreng","modifier":"","printerId":5,"printerId2":14,"printerName":"Office 2","ipAddress":"192.168.1.238","port":"9100","cover":4}', 5, 14, '', 0, 0, 1, '2026-02-11 19:15:03', 76, '2026-02-11 19:15:03', 76),
 	(13, '000109', '260211000677', 12, 199, 0, 'SO001327', '{"tableName":"Padel Count 2","dateTime":"2026-02-11 19:15:27","cartId":"260211000677","sendOrder":"SO001327","menuId":199,"cartItemId":12,"qty":1,"descs":"Kentang Goreng","modifier":"","printerId":4,"printerId2":14,"printerName":"Kasir","ipAddress":"192.168.1.238","port":"9100","cover":4}', 4, 14, '', 0, 0, 1, '2026-02-11 19:15:27', 76, '2026-02-11 19:15:27', 76),
-	(14, '000109', '260211000677', 12, 199, 0, 'SO001327', '{"tableName":"Padel Count 2","dateTime":"2026-02-11 19:15:27","cartId":"260211000677","sendOrder":"SO001327","menuId":199,"cartItemId":12,"qty":1,"descs":"Kentang Goreng","modifier":"","printerId":5,"printerId2":14,"printerName":"Office 2","ipAddress":"192.168.1.238","port":"9100","cover":4}', 5, 14, '', 0, 0, 1, '2026-02-11 19:15:27', 76, '2026-02-11 19:15:27', 76);
+	(14, '000109', '260211000677', 12, 199, 0, 'SO001327', '{"tableName":"Padel Count 2","dateTime":"2026-02-11 19:15:27","cartId":"260211000677","sendOrder":"SO001327","menuId":199,"cartItemId":12,"qty":1,"descs":"Kentang Goreng","modifier":"","printerId":5,"printerId2":14,"printerName":"Office 2","ipAddress":"192.168.1.238","port":"9100","cover":4}', 5, 14, '', 0, 0, 1, '2026-02-11 19:15:27', 76, '2026-02-11 19:15:27', 76),
+	(15, '000110', '260212000678', 13, 199, 0, 'SO001330', '{"tableName":"Padel Count 6","dateTime":"2026-02-12 15:08:08","cartId":"260212000678","sendOrder":"SO001330","menuId":199,"cartItemId":13,"qty":1,"descs":"Kentang Goreng","modifier":"","printerId":4,"printerId2":14,"printerName":"Kasir","ipAddress":"192.168.1.238","port":"9100","cover":4}', 4, 14, '', 0, 0, 1, '2026-02-12 15:08:08', 76, '2026-02-12 15:08:08', 76),
+	(16, '000110', '260212000678', 13, 199, 0, 'SO001330', '{"tableName":"Padel Count 6","dateTime":"2026-02-12 15:08:08","cartId":"260212000678","sendOrder":"SO001330","menuId":199,"cartItemId":13,"qty":1,"descs":"Kentang Goreng","modifier":"","printerId":5,"printerId2":14,"printerName":"Office 2","ipAddress":"192.168.1.238","port":"9100","cover":4}', 5, 14, '', 0, 0, 1, '2026-02-12 15:08:08', 76, '2026-02-12 15:08:08', 76),
+	(17, '000110', '260212000679', 14, 169, 0, 'SO001331', '{"tableName":"Padel Count 7","dateTime":"2026-02-12 15:08:53","cartId":"260212000679","sendOrder":"SO001331","menuId":169,"cartItemId":14,"qty":1,"descs":"Nasi Goreng Special","modifier":"","printerId":4,"printerId2":14,"printerName":"Kasir","ipAddress":"192.168.1.238","port":"9100","cover":4}', 4, 14, '', 0, 0, 1, '2026-02-12 15:08:53', 76, '2026-02-12 15:08:53', 76),
+	(18, '000110', '260212000679', 14, 169, 0, 'SO001331', '{"tableName":"Padel Count 7","dateTime":"2026-02-12 15:08:53","cartId":"260212000679","sendOrder":"SO001331","menuId":169,"cartItemId":14,"qty":1,"descs":"Nasi Goreng Special","modifier":"","printerId":5,"printerId2":14,"printerName":"Office 2","ipAddress":"192.168.1.238","port":"9100","cover":4}', 5, 14, '', 0, 0, 1, '2026-02-12 15:08:53', 76, '2026-02-12 15:08:53', 76),
+	(19, '000110', '260212000679', 15, 170, 0, 'SO001331', '{"tableName":"Padel Count 7","dateTime":"2026-02-12 15:08:53","cartId":"260212000679","sendOrder":"SO001331","menuId":170,"cartItemId":15,"qty":1,"descs":"Nasi Goreng Seafood","modifier":"","printerId":4,"printerId2":14,"printerName":"Kasir","ipAddress":"192.168.1.238","port":"9100","cover":4}', 4, 14, '', 0, 0, 1, '2026-02-12 15:08:53', 76, '2026-02-12 15:08:53', 76),
+	(20, '000110', '260212000679', 15, 170, 0, 'SO001331', '{"tableName":"Padel Count 7","dateTime":"2026-02-12 15:08:53","cartId":"260212000679","sendOrder":"SO001331","menuId":170,"cartItemId":15,"qty":1,"descs":"Nasi Goreng Seafood","modifier":"","printerId":5,"printerId2":14,"printerName":"Office 2","ipAddress":"192.168.1.238","port":"9100","cover":4}', 5, 14, '', 0, 0, 1, '2026-02-12 15:08:53', 76, '2026-02-12 15:08:53', 76),
+	(21, '000110', '260212000679', 16, 171, 0, 'SO001331', '{"tableName":"Padel Count 7","dateTime":"2026-02-12 15:08:53","cartId":"260212000679","sendOrder":"SO001331","menuId":171,"cartItemId":16,"qty":1,"descs":"Mie Goreng Jawa","modifier":"","printerId":4,"printerId2":14,"printerName":"Kasir","ipAddress":"192.168.1.238","port":"9100","cover":4}', 4, 14, '', 0, 0, 1, '2026-02-12 15:08:53', 76, '2026-02-12 15:08:53', 76),
+	(22, '000110', '260212000679', 16, 171, 0, 'SO001331', '{"tableName":"Padel Count 7","dateTime":"2026-02-12 15:08:53","cartId":"260212000679","sendOrder":"SO001331","menuId":171,"cartItemId":16,"qty":1,"descs":"Mie Goreng Jawa","modifier":"","printerId":5,"printerId2":14,"printerName":"Office 2","ipAddress":"192.168.1.238","port":"9100","cover":4}', 5, 14, '', 0, 0, 1, '2026-02-12 15:08:53', 76, '2026-02-12 15:08:53', 76),
+	(23, '000110', '260212000680', 17, 195, 0, 'SO001332', '{"tableName":"Padel Count 1","dateTime":"2026-02-12 16:13:43","cartId":"260212000680","sendOrder":"SO001332","menuId":195,"cartItemId":17,"qty":1,"descs":"Tempe Goreng","modifier":"","printerId":4,"printerId2":14,"printerName":"Kasir","ipAddress":"192.168.1.238","port":"9100","cover":5}', 4, 14, '', 0, 0, 1, '2026-02-12 16:13:43', 76, '2026-02-12 16:13:43', 76),
+	(24, '000110', '260212000680', 17, 195, 0, 'SO001332', '{"tableName":"Padel Count 1","dateTime":"2026-02-12 16:13:43","cartId":"260212000680","sendOrder":"SO001332","menuId":195,"cartItemId":17,"qty":1,"descs":"Tempe Goreng","modifier":"","printerId":5,"printerId2":14,"printerName":"Office 2","ipAddress":"192.168.1.238","port":"9100","cover":5}', 5, 14, '', 0, 0, 1, '2026-02-12 16:13:43', 76, '2026-02-12 16:13:43', 76),
+	(25, '000110', '260212000680', 18, 196, 0, 'SO001332', '{"tableName":"Padel Count 1","dateTime":"2026-02-12 16:13:43","cartId":"260212000680","sendOrder":"SO001332","menuId":196,"cartItemId":18,"qty":1,"descs":"Tahu Isi","modifier":"","printerId":4,"printerId2":14,"printerName":"Kasir","ipAddress":"192.168.1.238","port":"9100","cover":5}', 4, 14, '', 0, 0, 1, '2026-02-12 16:13:43', 76, '2026-02-12 16:13:43', 76),
+	(26, '000110', '260212000680', 18, 196, 0, 'SO001332', '{"tableName":"Padel Count 1","dateTime":"2026-02-12 16:13:43","cartId":"260212000680","sendOrder":"SO001332","menuId":196,"cartItemId":18,"qty":1,"descs":"Tahu Isi","modifier":"","printerId":5,"printerId2":14,"printerName":"Office 2","ipAddress":"192.168.1.238","port":"9100","cover":5}', 5, 14, '', 0, 0, 1, '2026-02-12 16:13:43', 76, '2026-02-12 16:13:43', 76),
+	(27, '000110', '260212000681', 19, 199, 0, 'SO001333', '{"tableName":"Padel Count 8","dateTime":"2026-02-12 16:17:53","cartId":"260212000681","sendOrder":"SO001333","menuId":199,"cartItemId":19,"qty":2,"descs":"Kentang Goreng","modifier":"","printerId":4,"printerId2":14,"printerName":"Kasir","ipAddress":"192.168.1.238","port":"9100","cover":4}', 4, 14, '', 0, 0, 1, '2026-02-12 16:17:53', 76, '2026-02-12 16:17:53', 76),
+	(28, '000110', '260212000681', 19, 199, 0, 'SO001333', '{"tableName":"Padel Count 8","dateTime":"2026-02-12 16:17:53","cartId":"260212000681","sendOrder":"SO001333","menuId":199,"cartItemId":19,"qty":2,"descs":"Kentang Goreng","modifier":"","printerId":5,"printerId2":14,"printerName":"Office 2","ipAddress":"192.168.1.238","port":"9100","cover":4}', 5, 14, '', 0, 0, 1, '2026-02-12 16:17:53', 76, '2026-02-12 16:17:53', 76),
+	(29, '000110', '260212000682', 20, 199, 0, 'SO001335', '{"tableName":"Padel Count 8","dateTime":"2026-02-12 16:21:50","cartId":"260212000682","sendOrder":"SO001335","menuId":199,"cartItemId":20,"qty":2,"descs":"Kentang Goreng","modifier":"","printerId":4,"printerId2":14,"printerName":"Kasir","ipAddress":"192.168.1.238","port":"9100","cover":4}', 4, 14, '', 0, 0, 1, '2026-02-12 16:21:50', 76, '2026-02-12 16:21:50', 76),
+	(30, '000110', '260212000682', 20, 199, 0, 'SO001335', '{"tableName":"Padel Count 8","dateTime":"2026-02-12 16:21:50","cartId":"260212000682","sendOrder":"SO001335","menuId":199,"cartItemId":20,"qty":2,"descs":"Kentang Goreng","modifier":"","printerId":5,"printerId2":14,"printerName":"Office 2","ipAddress":"192.168.1.238","port":"9100","cover":4}', 5, 14, '', 0, 0, 1, '2026-02-12 16:21:50', 76, '2026-02-12 16:21:50', 76),
+	(31, '000110', '260212000682', 21, 194, 0, 'SO001336', '{"tableName":"Padel Count 8","dateTime":"2026-02-12 18:08:01","cartId":"260212000682","sendOrder":"SO001336","menuId":194,"cartItemId":21,"qty":1,"descs":"Tahu Goreng","modifier":"","printerId":4,"printerId2":14,"printerName":"Kasir","ipAddress":"192.168.1.238","port":"9100","cover":4}', 4, 14, '', 0, 0, 1, '2026-02-12 18:08:01', 76, '2026-02-12 18:08:01', 76),
+	(32, '000110', '260212000682', 21, 194, 0, 'SO001336', '{"tableName":"Padel Count 8","dateTime":"2026-02-12 18:08:01","cartId":"260212000682","sendOrder":"SO001336","menuId":194,"cartItemId":21,"qty":1,"descs":"Tahu Goreng","modifier":"","printerId":5,"printerId2":14,"printerName":"Office 2","ipAddress":"192.168.1.238","port":"9100","cover":4}', 5, 14, '', 0, 0, 1, '2026-02-12 18:08:01', 76, '2026-02-12 18:08:01', 76),
+	(33, '000110', '260212000682', 22, 195, 0, 'SO001336', '{"tableName":"Padel Count 8","dateTime":"2026-02-12 18:08:01","cartId":"260212000682","sendOrder":"SO001336","menuId":195,"cartItemId":22,"qty":1,"descs":"Tempe Goreng","modifier":"","printerId":4,"printerId2":14,"printerName":"Kasir","ipAddress":"192.168.1.238","port":"9100","cover":4}', 4, 14, '', 0, 0, 1, '2026-02-12 18:08:01', 76, '2026-02-12 18:08:01', 76),
+	(34, '000110', '260212000682', 22, 195, 0, 'SO001336', '{"tableName":"Padel Count 8","dateTime":"2026-02-12 18:08:01","cartId":"260212000682","sendOrder":"SO001336","menuId":195,"cartItemId":22,"qty":1,"descs":"Tempe Goreng","modifier":"","printerId":5,"printerId2":14,"printerName":"Office 2","ipAddress":"192.168.1.238","port":"9100","cover":4}', 5, 14, '', 0, 0, 1, '2026-02-12 18:08:01', 76, '2026-02-12 18:08:01', 76),
+	(35, '000111', '260213000683', 23, 199, 0, 'SO001348', '{"tableName":"Padel Count 7","dateTime":"2026-02-13 14:47:59","cartId":"260213000683","sendOrder":"SO001348","menuId":199,"cartItemId":23,"qty":1,"descs":"Kentang Goreng","modifier":"","printerId":4,"printerId2":14,"printerName":"Kasir","ipAddress":"192.168.1.238","port":"9100","cover":4}', 4, 14, '', 0, 0, 1, '2026-02-13 14:47:59', 76, '2026-02-13 14:47:59', 76),
+	(36, '000111', '260213000683', 23, 199, 0, 'SO001348', '{"tableName":"Padel Count 7","dateTime":"2026-02-13 14:47:59","cartId":"260213000683","sendOrder":"SO001348","menuId":199,"cartItemId":23,"qty":1,"descs":"Kentang Goreng","modifier":"","printerId":5,"printerId2":14,"printerName":"Office 2","ipAddress":"192.168.1.238","port":"9100","cover":4}', 5, 14, '', 0, 0, 1, '2026-02-13 14:47:59', 76, '2026-02-13 14:47:59', 76),
+	(37, '000111', '260213000684', 24, 199, 0, 'SO001349', '{"tableName":"Padel Count 6","dateTime":"2026-02-13 14:50:02","cartId":"260213000684","sendOrder":"SO001349","menuId":199,"cartItemId":24,"qty":1,"descs":"Kentang Goreng","modifier":"","printerId":4,"printerId2":14,"printerName":"Kasir","ipAddress":"192.168.1.238","port":"9100","cover":4}', 4, 14, '', 0, 0, 1, '2026-02-13 14:50:02', 76, '2026-02-13 14:50:02', 76),
+	(38, '000111', '260213000684', 24, 199, 0, 'SO001349', '{"tableName":"Padel Count 6","dateTime":"2026-02-13 14:50:02","cartId":"260213000684","sendOrder":"SO001349","menuId":199,"cartItemId":24,"qty":1,"descs":"Kentang Goreng","modifier":"","printerId":5,"printerId2":14,"printerName":"Office 2","ipAddress":"192.168.1.238","port":"9100","cover":4}', 5, 14, '', 0, 0, 1, '2026-02-13 14:50:02', 76, '2026-02-13 14:50:02', 76),
+	(39, '000111', '260213000684', 25, 201, 0, 'SO001350', '{"tableName":"Padel Count 6","dateTime":"2026-02-13 14:51:34","cartId":"260213000684","sendOrder":"SO001350","menuId":201,"cartItemId":25,"qty":3,"descs":"Es batu","modifier":"","printerId":4,"printerId2":14,"printerName":"Kasir","ipAddress":"192.168.1.238","port":"9100","cover":4}', 4, 14, '', 0, 0, 1, '2026-02-13 14:51:34', 76, '2026-02-13 14:51:34', 76),
+	(40, '000111', '260213000684', 25, 201, 0, 'SO001350', '{"tableName":"Padel Count 6","dateTime":"2026-02-13 14:51:34","cartId":"260213000684","sendOrder":"SO001350","menuId":201,"cartItemId":25,"qty":3,"descs":"Es batu","modifier":"","printerId":5,"printerId2":14,"printerName":"Office 2","ipAddress":"192.168.1.238","port":"9100","cover":4}', 5, 14, '', 0, 0, 1, '2026-02-13 14:51:34', 76, '2026-02-13 14:51:34', 76);
 
 -- Dumping structure for table pos_resto.print_queue_status
 CREATE TABLE IF NOT EXISTS `print_queue_status` (
@@ -7726,13 +8379,22 @@ CREATE TABLE IF NOT EXISTS `send_order` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16 COLLATE=utf16_bin;
 
--- Dumping data for table pos_resto.send_order: ~3 rows (approximately)
+-- Dumping data for table pos_resto.send_order: ~10 rows (approximately)
 INSERT INTO `send_order` (`id`, `cartId`, `sendOrderDate`, `presence`, `inputDate`, `inputBy`, `updateDate`, `updateBy`) VALUES
 	('SO001321', '260211000677', '2026-02-11 18:17:22', 1, '2026-02-11 18:17:22', 76, '2026-02-11 18:17:22', 76),
 	('SO001322', '260211000677', '2026-02-11 18:28:16', 1, '2026-02-11 18:28:16', 76, '2026-02-11 18:28:16', 76),
 	('SO001325', '260211000677', '2026-02-11 18:56:46', 1, '2026-02-11 18:56:46', 76, '2026-02-11 18:56:46', 76),
 	('SO001326', '260211000677', '2026-02-11 19:15:03', 1, '2026-02-11 19:15:03', 76, '2026-02-11 19:15:03', 76),
-	('SO001327', '260211000677', '2026-02-11 19:15:27', 1, '2026-02-11 19:15:27', 76, '2026-02-11 19:15:27', 76);
+	('SO001327', '260211000677', '2026-02-11 19:15:27', 1, '2026-02-11 19:15:27', 76, '2026-02-11 19:15:27', 76),
+	('SO001330', '260212000678', '2026-02-12 15:08:08', 1, '2026-02-12 15:08:08', 76, '2026-02-12 15:08:08', 76),
+	('SO001331', '260212000679', '2026-02-12 15:08:53', 1, '2026-02-12 15:08:53', 76, '2026-02-12 15:08:53', 76),
+	('SO001332', '260212000680', '2026-02-12 16:13:43', 1, '2026-02-12 16:13:43', 76, '2026-02-12 16:13:43', 76),
+	('SO001333', '260212000681', '2026-02-12 16:17:53', 1, '2026-02-12 16:17:53', 76, '2026-02-12 16:17:53', 76),
+	('SO001335', '260212000682', '2026-02-12 16:21:50', 1, '2026-02-12 16:21:50', 76, '2026-02-12 16:21:50', 76),
+	('SO001336', '260212000682', '2026-02-12 18:08:01', 1, '2026-02-12 18:08:01', 76, '2026-02-12 18:08:01', 76),
+	('SO001348', '260213000683', '2026-02-13 14:47:59', 1, '2026-02-13 14:47:59', 76, '2026-02-13 14:47:59', 76),
+	('SO001349', '260213000684', '2026-02-13 14:50:02', 1, '2026-02-13 14:50:02', 76, '2026-02-13 14:50:02', 76),
+	('SO001350', '260213000684', '2026-02-13 14:51:34', 1, '2026-02-13 14:51:34', 76, '2026-02-13 14:51:34', 76);
 
 -- Dumping structure for table pos_resto.template_table_map
 CREATE TABLE IF NOT EXISTS `template_table_map` (

@@ -44,11 +44,11 @@ exports.index = async (req, res) => {
       LEFT JOIN outlet_table_map_status AS s ON c.tableMapStatusId = s.id 
       WHERE c.close  = 0 AND c.presence = 1 AND c.outletId = ${outletId}
     `;
-    console.log('cartQuery', cartQuery);
+   
     const [cart] = await db.query(cartQuery);
 
     for (const row of cart) {
-      console.log('cart item', row);
+     
       if(row.warning == 1){
         // update cart to set warning
         await db.query(`

@@ -2,14 +2,18 @@ const db = require('../../../config/db');
 const { today, formatDateTime } = require('../../../helpers/global');
 
 exports.getAllData = async (req, res) => {
+  const startDate = req.query.startDate;
+  const endDate = req.query.endDate;
   try {
-
-    const [rows] = await db.query(`
+    const a = `
       SELECT d.*, s.name as 'dailySchedule'
       FROM daily_check  AS d
       JOIN daily_schedule AS s ON s.id = d.dailyScheduleId
       WHERE d.presence = 1
-    `);
+        AND d.startDate >= '${startDate}'
+        AND d.startDate <= '${endDate}'
+    `;
+    const [rows] = await db.query(a);
 
     const formattedRows = rows.map(row => ({
       ...row,
@@ -19,6 +23,7 @@ exports.getAllData = async (req, res) => {
 
 
     const data = {
+      query: a,
       error: false,
       items: formattedRows,
       get: req.query

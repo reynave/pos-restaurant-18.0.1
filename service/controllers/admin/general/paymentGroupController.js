@@ -16,10 +16,16 @@ exports.getAllData = async (req, res) => {
       enddate: formatDateOnly(row.enddate),
     }));
 
+    const [rows2] = await db.query(`
+      SELECT * 
+      FROM check_payment_type_popup  
+      WHERE presence =1
+    `);
 
     const data = {
       error: false,
       items: formattedRows,
+      checkPaymentTypePopup : rows2,
       get: req.query
     }
 
