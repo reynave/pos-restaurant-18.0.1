@@ -18,6 +18,7 @@ router.get('/printer/', printer.getAllData);
 router.post('/printer/update', printer.postUpdate);
 router.post('/printer/delete', printer.postDelete);
 router.post('/printer/create', printer.postCreate);
+router.post('/printer/duplicate', printer.duplicate);
 
 router.post('/printer/test/', printer.testPrinting);
 //router.get('/printer/test/ip', printer.testPrintingIP);

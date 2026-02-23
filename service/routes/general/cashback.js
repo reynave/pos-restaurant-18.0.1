@@ -10,6 +10,7 @@ router.get('/amount', cb.amount);
 router.post('/updateAmount', cb.updateAmount);
 router.post('/addAmount', cb.addAmount); 
 router.post('/deleteAmount', cb.deleteAmount); 
+router.post('/duplicate', cb.duplicate); 
 
 router.get('/selectPaymentMethod', cb.selectPaymentMethod);
 

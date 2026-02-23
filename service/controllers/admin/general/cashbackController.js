@@ -457,3 +457,136 @@ exports.postDelete = async (req, res) => {
     res.status(500).json({ error: 'Database update error', details: err.message });
   }
 };
+
+exports.duplicate = async (req, res) => {
+  const data = req.body;
+
+  if (!Array.isArray(data) || data.length === 0) {
+    return res.status(400).json({ error: 'Request body should be a non-empty array' });
+  }
+
+  const results = [];
+
+  try {
+    for (const emp of data) {
+      const { id, checkbox } = emp;
+
+      if (!id || !checkbox) {
+        results.push({ id, status: 'failed', reason: 'Missing fields' });
+        continue;
+      }
+
+      if (checkbox == 1) {
+        // Duplicate header: cashback
+        const [header] = await db.query(
+          `INSERT INTO cashback (
+            presence, inputDate, name, description,
+            earningStartDate, earningEndDate,
+            redeemStartDate, redeemEndDate,
+            x1, x2, outletId, status
+          )
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          [
+            1,
+            today(),
+            emp['name'],
+            emp['description'],
+            emp['earningStartDate'],
+            emp['earningEndDate'],
+            emp['redeemStartDate'],
+            emp['redeemEndDate'],
+            emp['x1'],
+            emp['x2'],
+            emp['outletId'],
+            emp['status']
+          ]
+        );
+
+        if (header.affectedRows === 0) {
+          results.push({ id, status: 'not found' });
+          continue;
+        }
+
+        const newCashbackId = header.insertId;
+
+        // Duplicate detail: cashback_amount
+        const [amounts] = await db.query(
+          `SELECT * FROM cashback_amount WHERE cashbackId = ? AND presence = 1`,
+          [id]
+        );
+        for (const amt of amounts) {
+          await db.query(
+            `INSERT INTO cashback_amount (
+              cashbackId, earnMin, earnMax, cashbackMin, cashbackMax,
+              redeemMinAmount, status, presence, inputDate
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+              newCashbackId,
+              amt['earnMin'],
+              amt['earnMax'],
+              amt['cashbackMin'],
+              amt['cashbackMax'],
+              amt['redeemMinAmount'],
+              amt['status'],
+              1,
+              today()
+            ]
+          );
+        }
+
+        // Duplicate detail: cashback_payment
+        const [payments] = await db.query(
+          `SELECT * FROM cashback_payment WHERE cashbackId = ? AND presence = 1`,
+          [id]
+        );
+        for (const pay of payments) {
+          await db.query(
+            `INSERT INTO cashback_payment (
+              cashbackId, paymentId, status, presence, inputDate
+            )
+            VALUES (?, ?, ?, ?, ?)`,
+            [
+              newCashbackId,
+              pay['paymentId'],
+              pay['status'],
+              1,
+              today()
+            ]
+          );
+        }
+
+        // Duplicate detail: cashback_outlet
+        const [outlets] = await db.query(
+          `SELECT * FROM cashback_outlet WHERE cashbackId = ? AND presence = 1`,
+          [id]
+        );
+        for (const out of outlets) {
+          await db.query(
+            `INSERT INTO cashback_outlet (
+              cashbackId, outletId, status, presence, inputDate
+            )
+            VALUES (?, ?, ?, ?, ?)`,
+            [
+              newCashbackId,
+              out['outletId'],
+              out['status'],
+              1,
+              today()
+            ]
+          );
+        }
+
+        results.push({ id, status: 'duplicated', newId: newCashbackId });
+      }
+    }
+
+    res.json({
+      message: 'Batch duplicate completed',
+      results: results
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database duplicate error', details: err.message });
+  }
+};

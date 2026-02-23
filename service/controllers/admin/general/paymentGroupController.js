@@ -130,9 +130,8 @@ exports.postDelete = async (req, res) => {
 
   try {
     for (const emp of data) {
-      const { paygrpid, checkbox } = emp; 
-
-      const id = paygrpid;
+      const { id, checkbox } = emp; 
+ 
       if (!id || !checkbox) {
         results.push({ id, status: 'failed', reason: 'Missing fields' });
         continue;
@@ -140,7 +139,7 @@ exports.postDelete = async (req, res) => {
 
 
       const [result] = await db.query(
-        'UPDATE check_payment_group SET presence = ?, updateDate = ? WHERE paygrpid = ?',
+        'UPDATE check_payment_group SET presence = ?, updateDate = ? WHERE id = ?',
         [checkbox == 0 ? 1 : 0, today(), id]
       );
 
@@ -160,5 +159,54 @@ exports.postDelete = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Database update error', details: err.message });
+  }
+};
+
+exports.duplicate = async (req, res) => {
+  const data = req.body;
+
+  if (!Array.isArray(data) || data.length === 0) {
+    return res.status(400).json({ error: 'Request body should be a non-empty array' });
+  }
+
+  const results = [];
+
+  try {
+    for (const emp of data) {
+      const { id, checkbox } = emp;
+
+      if (!id || !checkbox) {
+        results.push({ id, status: 'failed', reason: 'Missing fields' });
+        continue;
+      }
+
+      if (checkbox == 1) {
+        const [result] = await db.query(
+          `INSERT INTO check_payment_group (
+            presence, inputDate, name
+          )
+          VALUES (?, ?, ?)`,
+          [
+            1,
+            today(),
+            emp['name']
+          ]
+        );
+
+        if (result.affectedRows === 0) {
+          results.push({ id, status: 'not found' });
+        } else {
+          results.push({ id, status: 'duplicated' });
+        }
+      }
+    }
+
+    res.json({
+      message: 'Batch duplicate completed',
+      results: results
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database duplicate error', details: err.message });
   }
 };

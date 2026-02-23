@@ -5,9 +5,12 @@ const { cartHistory } = require('../../../helpers/bill');
 exports.getAllData = async (req, res) => {
 
   const outletId = req.query.outletId == 'undefined' ? '' : req.query.outletId;
+  const startDate = req.query.startDate;
+  const endDate = req.query.endDate;
   try {
-
-    const [rows] = await db.query(`
+    const whereDate = startDate && endDate ? `and (c.startDate >= '${startDate} 00:00:00' AND c.endDate <= '${endDate} 23:59:59')` : '';
+    
+    const q = `
       SELECT c.*, o.name AS 'outlet', m.tableName
       FROM cart AS c
       LEFT JOIN outlet AS o ON o.id = c.outletId
@@ -15,8 +18,11 @@ exports.getAllData = async (req, res) => {
       LEFT JOIN outlet_table_map_status AS s ON s.id = c.tableMapStatusId
       WHERE c.close = 1 
         ${outletId ? 'and c.outletId = ' + outletId : ''}
+        ${whereDate}
          ORDER BY c.id DESC limit 500
-    `);
+    `;
+    console.log(q)
+    const [rows] = await db.query(q);
 
     const formattedRows = rows.map(row => ({
       ...row,
@@ -28,7 +34,8 @@ exports.getAllData = async (req, res) => {
     const data = {
       error: false,
       items: formattedRows,
-      get: req.query
+      get: req.query,
+     
     }
 
     res.json(data);
@@ -73,173 +80,24 @@ exports.detailGroup = async (req, res) => {
       ORDER BY m.name ASC
        `;
     const [cartItem] = await db.query(q2);
-
-    let i = 0;
-    for (const row of cartItem) {
-      const temp = [];
-      const q1 = `
-        --  CUSTOM NOTES    
-        SELECT t1.name, COUNT(t1.menuSetMenuId) AS qty , SUM(t1.price) AS 'totalPrice', SUM(t1.void) AS 'void'
-        FROM (
-          SELECT 
-              c.void, c.menuSetMenuId,
-            c.note AS 'name', c.price,
-            c.inputDate
-          FROM cart_item AS i
-          JOIN cart_item_modifier AS c ON c.cartItemId = i.id
-          WHERE i.menuId =  '${row['menuId']}'   AND i.cartId =   '${id}'
-          AND c.presence = 1  AND c.note != '' AND c.sendOrder != ''
-        ) AS t1
-        GROUP BY t1.menuSetMenuId, t1.void, t1.name
-        ORDER BY t1.name ASC  
-       `;
-    
-      const [a1] = await db.query(q1);
-
-      const q2 = `
-        -- MODIFIER
-        SELECT t1.name, COUNT(t1.id) AS qty , SUM(t1.price) AS 'totalPrice', SUM(t1.void) AS 'void'
-          FROM (
-                  SELECT 
-                c.cartItemId as 'id',  c.id 'cartItemModifierId' , c.sendOrder,   c.void, 
-                  m.descl AS 'name', c.price,
-                    c.inputDate
-            FROM cart_item AS i
-            JOIN cart_item_modifier AS c ON c.cartItemId = i.id
-            JOIN modifier AS m ON m.id = c.modifierId
-            WHERE i.menuId = '${row['menuId']}'   AND i.cartId =   '${id}'
-            AND c.presence = 1  AND c.sendOrder != ''
-          ) AS t1
-        GROUP BY t1.id, t1.void, t1.name
-        ORDER BY t1.name ASC 
-       `;
-      const [a2] = await db.query(q2);
-
-      const q3 = ` 
-        -- applyDiscount
-       SELECT t1.name, COUNT(t1.id) AS qty , SUM(t1.price) AS 'totalPrice', SUM(t1.void) AS 'void'
-        FROM (
-                SELECT 
-              c.cartItemId as 'id',  c.id 'cartItemModifierId' , c.sendOrder,   c.void, 
-                d.name AS 'name', c.price,
-                 c.inputDate
-          FROM cart_item AS i
-          JOIN cart_item_modifier AS c ON c.cartItemId = i.id
-          JOIN discount AS d ON d.id = c.applyDiscount
-        WHERE i.menuId = '${row['menuId']}'   AND i.cartId =   '${id}'
-          AND c.presence = 1  AND c.sendOrder != ''
-        ) AS t1
-        GROUP BY t1.id, t1.void, t1.name
-        ORDER BY t1.name ASC 
-       `;
-      const [a3] = await db.query(q3);
-
-      const q4 = `  
-        -- SC
-       SELECT t1.name, COUNT(t1.id) AS qty , SUM(t1.price) AS 'totalPrice', SUM(t1.void) AS 'void'
-        FROM (
-                SELECT 
-             d.id, c.sendOrder,   c.void, 
-                d.scNote AS 'name', c.price,
-                c.inputDate
-          FROM cart_item AS i
-          JOIN cart_item_modifier AS c ON c.cartItemId = i.id
-          JOIN menu_tax_sc AS d ON d.id = c.menuTaxScId
-          WHERE i.menuId = '${row['menuId']}'   AND i.cartId =   '${id}'
-          AND c.presence = 1  AND c.sendOrder != ''  AND c.scStatus != 0   
-        ) AS t1
-        GROUP BY t1.id, t1.void, t1.name
-        ORDER BY t1.name ASC 
-       `;
-      const [a4] = await db.query(q4);
-
-
-      const q5 = `  
-        -- TAX
-       SELECT t1.name, COUNT(t1.id) AS qty , SUM(t1.price) AS 'totalPrice', SUM(t1.void) AS 'void'
-        FROM (
-                SELECT 
-                d.id, c.sendOrder,   c.void, 
-                d.taxNote AS 'name', c.price,
-                c.inputDate
-          FROM cart_item AS i
-          JOIN cart_item_modifier AS c ON c.cartItemId = i.id
-          JOIN menu_tax_sc AS d ON d.id = c.menuTaxScId
-                 WHERE i.menuId = '${row['menuId']}'   AND i.cartId =   '${id}'
-          AND c.presence = 1  AND c.sendOrder != ''  AND c.taxStatus != 0
-        ) AS t1
-        GROUP BY t1.id, t1.void, t1.name
-        ORDER BY t1.name ASC 
-       `;
-      const [a5] = await db.query(q5);
-
-      cartItem[i]['modifier'] = [...a1, ...a2, ...a3, ...a4, ...a5];
-
-      i++;
-    }
-
-
-
-
-    const j = ` SELECT   c.menuTaxScId,
-        d.scNote AS 'name' , sum(c.price) AS 'total'
-        FROM cart_item_modifier AS c
-        JOIN menu_tax_sc AS d ON d.id = c.menuTaxScId
-        WHERE c.cartId =  '${id}'  AND c.presence = 1   AND c.scStatus != 0 
-        AND c.void =0
-        GROUP BY c.menuTaxScId,  d.scNote `;
-    const [sc] = await db.query(j);
-
-    const j2 = ` SELECT   c.menuTaxScId,
-        d.taxNote AS 'name' , sum(c.price) AS 'total'
-        FROM cart_item_modifier AS c
-        JOIN menu_tax_sc AS d ON d.id = c.menuTaxScId
-        WHERE c.cartId =  '${id}'  AND c.presence = 1   AND c.taxStatus != 0 
-        AND c.void =0
-        GROUP BY c.menuTaxScId,  d.scNote `;
-    const [tax] = await db.query(j2);
-
-    const j3 = `
-      SELECT    
-        c.applyDiscount  , d.name ,  SUM(c.price) AS 'total'
-      FROM cart_item_modifier AS c
-      JOIN discount AS d ON d.id = c.applyDiscount
-      WHERE c.cartId = '${id}'  AND c.presence = 1  AND c.void = 0
-      GROUP BY c.applyDiscount  ,  d.name `;
-    const [discount] = await db.query(j3);
-
-    const j4 = `SELECT 'modifier' as 'name', SUM(t1.price) AS 'total' FROM 
-      ( 
-        --  CUSTOM NOTES   
-        SELECT     
-          c.price 
-        FROM cart_item_modifier AS c 
-        WHERE c.cartId = '${id}'  AND c.presence = 1  AND c.void = 0 AND c.note != ''
-        UNION 
-        -- MODIFIER
-        SELECT   
-            c.price 
-        FROM cart_item_modifier AS c
-          JOIN modifier AS m ON m.id = c.modifierId
-        WHERE c.cartId = '${id}'  AND c.presence = 1  AND c.void = 0
-        AND c.applyDiscount = 0 AND c.menuTaxScId = 0
-        ) AS t1  `;
-    const [modifier] = await db.query(j4);
-
+ 
     const j5 = `SELECT c.*, p.name FROM cart_payment AS c
       LEFT JOIN check_payment_type AS p ON p.id = c.checkPaymentTypeId
       WHERE c.cartId = '${id}' and c.presence = 1 `;
 
     const [payment] = await db.query(j5);
 
+    const c = `SELECT *  FROM cart 
+    WHERE id = '${id}' and presence = 1  and void  =0`;
+
+    const [cart] = await db.query(c);
+
+
     res.json({
       error: false,
+      cart : cart,
       cartItem: cartItem,
       header: formattedRows[0],
-      sc: sc,
-      tax: tax,
-      discount: discount,
-      modifier: modifier,
       payment: payment,
     });
 
@@ -253,11 +111,13 @@ exports.detail = async (req, res) => {
   try {
 
     const [rows] = await db.query(`
-      SELECT c.*, o.name AS 'outlet', m.tableName
+      SELECT c.*, o.name AS 'outlet', m.tableName, e.name AS 'closeByName', p.name AS 'periodName'
       FROM cart AS c
       LEFT JOIN outlet AS o ON o.id = c.outletId
       LEFT JOIN outlet_table_map AS m ON m.id = c.outletTableMapId
       LEFT JOIN outlet_table_map_status AS s ON s.id = c.tableMapStatusId
+      left join employee AS e ON e.id = c.closeBy
+      left join period AS p ON p.id = c.periodId
       WHERE c.close = 1  and c.id = '${id}' 
     `);
 
@@ -268,143 +128,22 @@ exports.detail = async (req, res) => {
     }));
 
     const q2 = `
-       SELECT 
-         i.id, ROW_NUMBER() OVER (ORDER BY i.inputDate ASC, i.sendOrder ASC) AS no, i.void, m.id as 'menuId',
-         0 as 'cartItemModifierId',  i.sendOrder, m.name, i.price,
-        c.desc1 AS 'category', d.desc1 AS 'department', i.inputDate , '' as 'modifier'
-        FROM cart_item  AS i
-          JOIN menu AS m ON m.id = i.menuId
-          LEFT JOIN menu_category AS c ON c.id = i.menuCategoryId
-          LEFT JOIN menu_department AS d ON d.id = i.menuDepartmentId
-        WHERE i.cartId =  '${id}'  and i.presence = 1  and i.sendOrder != ''
-        ORDER BY i.inputDate ASC, i.sendOrder ASC
+       SELECT * FROM view_cart WHERE id = '${id}';
        `;
     const [cartItem] = await db.query(q2);
-    const items = [];
-    let i = 0;
-    for (const row of cartItem) {
-      items.push(row);
-
-      const q2 = `
-  --  CUSTOM NOTES   
-        SELECT    
-          c.cartItemId as 'id',  c.id 'cartItemModifierId' , c.sendOrder,   c.void, 
-         c.note AS 'name', c.price,
-          0 AS 'applyDiscount', 0 AS 'rate', c.inputDate
-        FROM cart_item_modifier AS c 
-        WHERE c.cartItemId = ${row['id']}  AND c.presence = 1  AND c.note != ''
-
-
-        UNION
-
-
-
-        -- MODIFIER
-        SELECT  
-          c.cartItemId as 'id',  c.id 'cartItemModifierId' , c.sendOrder,   c.void, 
-          m.descl AS 'name', c.price,
-          0 AS 'applyDiscount', 0 AS 'rate', c.inputDate
-        FROM cart_item_modifier AS c
-          JOIN modifier AS m ON m.id = c.modifierId
-        WHERE c.cartItemId = ${row['id']}  AND c.presence = 1  
-        
-        UNION
-        -- applyDiscount
-        SELECT 
-          c.cartItemId as 'id',  c.id 'cartItemModifierId' , c.sendOrder,c.void, 
-          d.name , c.price, c.applyDiscount , 0 AS 'rate' , c.inputDate
-        FROM cart_item_modifier AS c
-          JOIN discount AS d ON d.id = c.applyDiscount
-        WHERE c.cartItemId =  ${row['id']}  AND c.presence = 1  
-
-        UNION
-        -- SC
-        SELECT 
-          c.cartItemId as 'id',  c.id 'cartItemModifierId' , c.sendOrder,c.void, 
-          d.scNote AS 'name' , c.price,
-          0 AS 'applyDiscount', c.scRate  AS 'rate' , c.inputDate
-        FROM cart_item_modifier AS c
-          JOIN menu_tax_sc AS d ON d.id = c.menuTaxScId
-        WHERE c.cartItemId =  ${row['id']}   AND c.presence = 1   AND c.scStatus != 0   
-
-        UNION
-        -- TAX
-        SELECT 
-          c.cartItemId as 'id',  c.id 'cartItemModifierId' , c.sendOrder, c.void, 
-          d.taxNote AS 'name' , c.price,  0 AS 'applyDiscount', c.taxRate AS 'rate' , c.inputDate
-        FROM cart_item_modifier AS c
-          JOIN menu_tax_sc AS d ON d.id = c.menuTaxScId
-          WHERE c.cartItemId =  ${row['id']} AND c.presence = 1   AND c.taxStatus != 0;
-
+     
+  
+      const q3 = `
+       SELECT c.* , p.name FROM cart_payment as c
+       LEFT JOIN check_payment_type AS p ON p.id = c.checkPaymentTypeId
+       WHERE c.cartId = '${id}' and c.presence = 1  and c.void = 0 and c.paid != 0 and c.submit = 1;
        `;
-      const [cartItemModifier] = await db.query(q2);
+    const [payment] = await db.query(q3);
 
-
-      cartItemModifier.forEach(element => {
-        items.push(element);
-      });
-
-      cartItem[i]['modifier'] = cartItemModifier;;
-      i++;
-    }
-
-
-
-    const j = ` SELECT   c.menuTaxScId,
-        d.scNote AS 'name' , sum(c.price) AS 'total'
-        FROM cart_item_modifier AS c
-        JOIN menu_tax_sc AS d ON d.id = c.menuTaxScId
-        WHERE c.cartId =  '${id}'  AND c.presence = 1   AND c.scStatus != 0 
-        AND c.void =0
-        GROUP BY c.menuTaxScId,  d.scNote `;
-    const [sc] = await db.query(j);
-
-    const j2 = ` SELECT   c.menuTaxScId,
-        d.taxNote AS 'name' , sum(c.price) AS 'total'
-        FROM cart_item_modifier AS c
-        JOIN menu_tax_sc AS d ON d.id = c.menuTaxScId
-        WHERE c.cartId =  '${id}'  AND c.presence = 1   AND c.taxStatus != 0 
-        AND c.void =0
-        GROUP BY c.menuTaxScId,  d.scNote `;
-    const [tax] = await db.query(j2);
-
-
-    const j3 = `  SELECT    
- c.applyDiscount  , d.name ,  SUM(c.price) AS 'total'
-FROM cart_item_modifier AS c
- JOIN discount AS d ON d.id = c.applyDiscount
-WHERE c.cartId = '${id}'  AND c.presence = 1  AND c.void = 0
-GROUP BY c.applyDiscount  ,  d.name `;
-    const [discount] = await db.query(j3);
-
-
-    const j4 = `SELECT 'modifier' as 'name', SUM(t1.price) AS 'total' FROM 
-      ( 
-        --  CUSTOM NOTES   
-        SELECT     
-          c.price 
-        FROM cart_item_modifier AS c 
-        WHERE c.cartId = '${id}'  AND c.presence = 1  AND c.void = 0 AND c.note != ''
-        UNION 
-        -- MODIFIER
-        SELECT   
-            c.price 
-        FROM cart_item_modifier AS c
-          JOIN modifier AS m ON m.id = c.modifierId
-        WHERE c.cartId = '${id}'  AND c.presence = 1  AND c.void = 0
-        AND c.applyDiscount = 0 AND c.menuTaxScId = 0
-        ) AS t1  `;
-    const [modifier] = await db.query(j4);
-
-    res.json({
-      error: false,
+    res.json({ 
       cartItem: cartItem,
-      header: formattedRows[0],
-      sc: sc,
-      tax: tax,
-      discount: discount,
-      modifier: modifier,
-      //  items: items,
+      header: formattedRows[0], 
+      payment: payment
     });
 
   } catch (err) {

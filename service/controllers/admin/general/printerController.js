@@ -69,7 +69,8 @@ exports.getAllData = async (req, res) => {
     const data = {
       error: false,
       items: items,
-      get: req.query
+      get: req.query,
+      DUMMY_PRINTER : process.env.DUMMY_PRINTER,
     }
 
     res.json(data);
@@ -206,3 +207,60 @@ exports.postDelete = async (req, res) => {
     res.status(500).json({ error: 'Database update error', details: err.message });
   }
 };
+
+exports.duplicate = async (req, res) => {
+  const data = req.body;
+
+  if (!Array.isArray(data) || data.length === 0) {
+    return res.status(400).json({ error: 'Request body should be a non-empty array' });
+  }
+
+  const results = [];
+
+  try {
+    for (const emp of data) {
+      const { id, checkbox } = emp;
+
+      if (!id || !checkbox) {
+        results.push({ id, status: 'failed', reason: 'Missing fields' });
+        continue;
+      }
+
+      if (checkbox == 1) {
+        const [result] = await db.query(
+          `INSERT INTO printer (
+            presence, inputDate, printerGroupId, printerTypeCon,
+            name, ipAddress, port, printerId2
+          )
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+          [
+            1,
+            today(),
+            emp['printerGroupId'],
+            emp['printerTypeCon'],
+            emp['name'],
+            emp['ipAddress'],
+            emp['port'],
+            emp['printerId2']
+          ]
+        );
+
+        if (result.affectedRows === 0) {
+          results.push({ id, status: 'not found' });
+        } else {
+          results.push({ id, status: 'duplicated' });
+        }
+      }
+    }
+
+    res.json({
+      message: 'Batch duplicate completed',
+      results: results
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database duplicate error', details: err.message });
+  }
+};
+
+

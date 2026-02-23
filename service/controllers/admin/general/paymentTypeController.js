@@ -161,3 +161,62 @@ exports.postDelete = async (req, res) => {
     res.status(500).json({ error: 'Database update error', details: err.message });
   }
 };
+
+exports.duplicate = async (req, res) => {
+  const data = req.body;
+
+  if (!Array.isArray(data) || data.length === 0) {
+    return res.status(400).json({ error: 'Request body should be a non-empty array' });
+  }
+
+  const results = [];
+
+  try {
+    for (const emp of data) {
+      const { id, checkbox } = emp;
+
+      if (!id || !checkbox) {
+        results.push({ id, status: 'failed', reason: 'Missing fields' });
+        continue;
+      }
+
+      if (checkbox == 1) {
+        const [result] = await db.query(
+          `INSERT INTO check_payment_type (
+            presence, inputDate, setDefault, paymentGroupId,
+            name, autoMatchAmount, maxlimit, openDrawer,
+            checkPaymentTypePopupId, checkPaymentTypePopupRequirement
+          )
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          [
+            1,
+            today(),
+            emp['setDefault'],
+            emp['paymentGroupId'],
+            emp['name'],
+            emp['autoMatchAmount'],
+            emp['maxlimit'],
+            emp['openDrawer'],
+            emp['checkPaymentTypePopupId'],
+            emp['checkPaymentTypePopupRequirement']
+          ]
+        );
+
+        if (result.affectedRows === 0) {
+          results.push({ id, status: 'not found' });
+        } else {
+          results.push({ id, status: 'duplicated' });
+        }
+      }
+    }
+
+    res.json({
+      message: 'Batch duplicate completed',
+      results: results
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database duplicate error', details: err.message });
+  }
+};
+

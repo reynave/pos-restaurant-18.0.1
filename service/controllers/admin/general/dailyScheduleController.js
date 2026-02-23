@@ -73,6 +73,7 @@ exports.postUpdate = async (req, res) => {
           name = '${emp['name']}',   
           days = '${emp['days']}',   
           closeHour = '${emp['closeHour']}',   
+          openHour = '${emp['openHour']}',   
          
           mon = '${emp['mon']}',  
           tue = '${emp['tue']}',  
@@ -153,3 +154,72 @@ exports.postDelete = async (req, res) => {
     res.status(500).json({ error: 'Database update error', details: err.message });
   }
 };
+
+exports.duplicate = async (req, res) => {
+  // const { id, name, position, email } = req.body;
+  const data = req.body;
+  console.log(data);
+  // res.json({
+  //   body: req.body, 
+  // });
+
+  if (!Array.isArray(data) || data.length === 0) {
+    return res.status(400).json({ error: 'Request body should be a non-empty array' });
+  }
+
+  const results = [];
+
+  try {
+    for (const emp of data) {
+      console.log(emp);
+      const { id, checkbox } = emp;
+
+      if (!id || !checkbox) {
+        results.push({ id, status: 'failed', reason: 'Missing fields' });
+        continue;
+      }
+
+      if (checkbox == 1) {
+        const [result] = await db.query(
+          `INSERT INTO daily_schedule (
+            presence, inputDate, name, days, closeHour, openHour,
+            mon, tue, wed, thu, fri, sat, sun,
+            status
+          )
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          [
+            1,
+            today(),
+            emp['name'],
+            emp['days'],
+            emp['closeHour'],
+            emp['openHour'],
+            emp['mon'],
+            emp['tue'],
+            emp['wed'],
+            emp['thu'],
+            emp['fri'],
+            emp['sat'],
+            emp['sun'],
+            emp['status']
+          ]
+        );
+
+        if (result.affectedRows === 0) {
+          results.push({ id, status: 'not found' });
+        } else {
+          results.push({ id, status: 'duplicated' });
+        }
+      }
+    }
+
+    res.json({
+      message: 'Batch duplicate completed',
+      results: results
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database update error', details: err.message });
+  }
+};
+

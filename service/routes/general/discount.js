@@ -11,15 +11,19 @@ router.get('/', discount.getAllData);
 router.post('/update', discount.postUpdate);
 router.post('/create', discount.postCreate);
 router.post('/delete', discount.postDelete);
+router.post('/duplicate', discount.duplicate);
 
 router.get('/group', discountGroup.getAllData);
 router.post('/group/update', discountGroup.postUpdate);
 router.post('/group/create', discountGroup.postCreate);
 router.post('/group/delete', discountGroup.postDelete);
+router.post('/group/duplicate', discountGroup.duplicate);
+
 
 router.get('/level', discountLevel.getAllData);
 router.post('/level/update', discountLevel.postUpdate);
- 
+router.post('/level/duplicate', discountLevel.duplicate);
+
 router.get('/outlet', outlet.getAllData);
 router.post('/outlet/update', outlet.postUpdate);
 
