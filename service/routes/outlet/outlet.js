@@ -10,7 +10,7 @@ router.get('/select', outlet.getSelect);
 router.post('/index/update', outlet.postUpdate);
 router.post('/index/create', outlet.postCreate);
 router.post('/index/delete', outlet.postDelete); 
-
+router.post('/index/duplicate', outlet.duplicate);
 
 router.get('/payment/', payment.getAllData);
 router.get('/payment/masterData', payment.getMasterData);

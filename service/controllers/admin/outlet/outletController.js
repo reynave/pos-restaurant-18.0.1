@@ -163,16 +163,16 @@ exports.postDelete = async (req, res) => {
 
   try {
     for (const emp of data) {
-      const { date, checkbox } = emp;
-      const id = date;
-      if (!id || !checkbox) {
+      const { id, checkbox } = emp;
+ 
+      if (!id || checkbox === undefined) {
         results.push({ id, status: 'failed', reason: 'Missing fields' });
         continue;
       }
 
 
       const [result] = await db.query(
-        'UPDATE outlet SET presence = ?, updateDate = ? WHERE date = ?',
+        'UPDATE outlet SET presence = ?, updateDate = ? WHERE id = ?',
         [checkbox == 0 ? 1 : 0, today(), id]
       );
 
@@ -192,5 +192,73 @@ exports.postDelete = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Database update error', details: err.message });
+  }
+};
+
+exports.duplicate = async (req, res) => {
+  const data = req.body;
+
+  if (!Array.isArray(data) || data.length === 0) {
+    return res.status(400).json({ error: 'Request body should be a non-empty array' });
+  }
+
+  const results = [];
+
+  try {
+    for (const emp of data) {
+      const { id, checkbox } = emp;
+
+      if (!id || !checkbox) {
+        results.push({ id, status: 'failed', reason: 'Missing fields' });
+        continue;
+      }
+
+      if (checkbox == 1) {
+        const [result] = await db.query(
+          `INSERT INTO outlet (
+            presence, inputDate, name, priceNo, printerId,
+            descs, tel, fax, email, company,
+            address, street, city, country,
+            greeting1, greeting2, greeting3, greeting4, greeting5
+          )
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          [
+            1,
+            today(),
+            emp['name'],
+            emp['priceNo'],
+            emp['printerId'],
+            emp['descs'],
+            emp['tel'],
+            emp['fax'],
+            emp['email'],
+            emp['company'],
+            emp['address'],
+            emp['street'],
+            emp['city'],
+            emp['country'],
+            emp['greeting1'],
+            emp['greeting2'],
+            emp['greeting3'],
+            emp['greeting4'],
+            emp['greeting5']
+          ]
+        );
+
+        if (result.affectedRows === 0) {
+          results.push({ id, status: 'not found' });
+        } else {
+          results.push({ id, status: 'duplicated' });
+        }
+      }
+    }
+
+    res.json({
+      message: 'Batch duplicate completed',
+      results: results
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database duplicate error', details: err.message });
   }
 };

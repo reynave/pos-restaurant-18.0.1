@@ -7,5 +7,5 @@ router.post('/create', tableMap.postCreate);
 router.post('/delete', tableMap.postDelete);  
 router.post('/update', tableMap.postUpdate);  
  router.post('/updateImg', tableMap.updateImg);  
- 
+ router.post('/duplicate', tableMap.duplicate);
 module.exports = router;

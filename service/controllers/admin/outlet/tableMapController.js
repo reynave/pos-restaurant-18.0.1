@@ -4,7 +4,7 @@ const path = require('path');
 const { today, formatDateOnly } = require('../../../helpers/global');
 
 
-exports.getAllData = async (req, res) => {
+exports.index = async (req, res) => {
   const id = req.query.id == 'undefined' ? '' : req.query.id;
   try {
     const outletFloorPlandId = req.query.outletFloorPlandId
@@ -285,3 +285,111 @@ exports.submitDetail = async (req, res) => {
     res.status(500).json({ error: 'Database update error', details: err.message, body: req.body });
   }
 };
+
+exports.deleteCheckAll = async (req, res) => {
+  const items = req.body['items']; 
+
+  if (!Array.isArray(items) || items.length === 0) {
+    return res.status(400).json({ error: 'Request body should be a non-empty array' });
+  }
+
+  const results = [];
+
+  try {
+    for (const emp of items) {
+      const { id, checkbox } = emp;
+
+      if (!id || !checkbox) {
+        results.push({ id, status: 'failed', reason: 'Missing fields' });
+        continue;
+      }
+
+      if (checkbox == 1) {
+        const [result] = await db.query(
+          `UPDATE outlet_table_map SET presence = 0, updateDate = ? WHERE id = ?`,
+          [today(), id]
+        );
+
+        if (result.affectedRows === 0) {
+          results.push({ id, status: 'not found' });
+        } else {
+          results.push({ id, status: 'duplicated' });
+        }
+      }
+    }
+
+    res.json({
+      message: 'Batch duplicate completed',
+      results: results
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database duplicate error', details: err.message });
+  }
+};
+
+
+exports.duplicate = async (req, res) => {
+  const duplicateItems = req.body['duplicateItems'];
+
+  const outletId = req.body['outletId'];
+  const outletFloorPlandId = req.body['outletFloorPlandId'];
+ 
+
+  if (!Array.isArray(duplicateItems) || duplicateItems.length === 0) {
+    return res.status(400).json({ error: 'Request body should be a non-empty array' });
+  }
+
+  const results = [];
+
+  try {
+    for (const emp of duplicateItems) {
+      const { id, checkbox } = emp;
+
+      if (!id || !checkbox) {
+        results.push({ id, status: 'failed', reason: 'Missing fields' });
+        continue;
+      }
+
+      if (checkbox == 1) {
+        const [result] = await db.query(
+          `INSERT INTO outlet_table_map (
+            presence, inputDate, outletId, outletFloorPlandId,
+            tableName, posY, posX, width, height,
+            capacity, icon
+          )
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          [
+            1,
+            today(),
+            outletId,
+            outletFloorPlandId,
+            emp['tableName'],
+            emp['y'] + 100,
+            emp['x'] + 100,
+            emp['width'],
+            emp['height'],
+            emp['capacity'],
+            emp['icon']
+          ]
+        );
+
+        if (result.affectedRows === 0) {
+          results.push({ id, status: 'not found' });
+        } else {
+          results.push({ id, status: 'duplicated' });
+        }
+      }
+    }
+
+    res.json({
+      message: 'Batch duplicate completed',
+      results: results
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database duplicate error', details: err.message });
+  }
+};
+
+

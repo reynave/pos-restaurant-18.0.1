@@ -15,17 +15,20 @@ router.get('/category/', menuCategory.getAllData);
 router.post('/category/update', menuCategory.postUpdate);
 router.post('/category/create', menuCategory.postCreate);
 router.post('/category/delete', menuCategory.postDelete); 
+router.post('/category/duplicate', menuCategory.duplicate);
   
 //router.get('/', outlet.getMaster); 
 router.get('/department/', department.getAllData);
 router.post('/department/update', department.postUpdate);
 router.post('/department/create', department.postCreate);
 router.post('/department/delete', department.postDelete); 
+router.post('/department/duplicate', department.duplicate);
   
 router.get('/class/', menuClass.getAllData);
 router.post('/class/update', menuClass.postUpdate);
 router.post('/class/create', menuClass.postCreate);
 router.post('/class/delete', menuClass.postDelete); 
+router.post('/class/duplicate', menuClass.duplicate);
   
 
 router.get('/item/', menuItem.getAllData);
@@ -41,7 +44,7 @@ router.post('/item/update', menuItem.postUpdate);
 router.post('/item/create', menuItem.postCreate);
 router.post('/item/delete', menuItem.postDelete); 
   
- 
+
 router.get('/menuLookup/', menuLookup.getAllData)
 router.get('/menuLookup/allItem', menuLookup.allItem);
 router.get('/menuLookup/items', menuLookup.items);
@@ -57,11 +60,13 @@ router.get('/modifierList', modifierList.getAllData);
 router.post('/modifierList/update', modifierList.postUpdate);
 router.post('/modifierList/create', modifierList.postCreate);
 router.post('/modifierList/delete', modifierList.postDelete); 
+router.post('/modifierList/duplicate', modifierList.duplicate);
 
 router.get('/modifierGroup', modifierGroup.getAllData); 
 router.post('/modifierGroup/update', modifierGroup.postUpdate);
 router.post('/modifierGroup/create', modifierGroup.postCreate);
 router.post('/modifierGroup/delete', modifierGroup.postDelete); 
+router.post('/modifierGroup/duplicate', modifierGroup.duplicate);
 
 
 router.get('/modifier', modifier.getAllData);
@@ -71,5 +76,6 @@ router.get('/modifier/master/', menuItem.getMasterData);
 router.post('/modifier/update', modifier.postUpdate);
 router.post('/modifier/create', modifier.postCreate);
 router.post('/modifier/delete', modifier.postDelete); 
+router.post('/modifier/duplicate', modifier.duplicate);
   
 module.exports = router;

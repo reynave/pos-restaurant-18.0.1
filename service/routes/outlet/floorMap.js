@@ -10,5 +10,6 @@ router.post('/map/update', floorMap.postUpdate);
 router.post('/map/create', floorMap.postCreate);
 router.post('/map/delete', floorMap.postDelete); 
  router.post('/map/updateImg', floorMap.updateImg); 
- 
+ router.post('/map/duplicate', floorMap.duplicate);
+
 module.exports = router;
