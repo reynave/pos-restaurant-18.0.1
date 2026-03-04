@@ -5,11 +5,11 @@ Global settings are in the **.env** file (set according to your server, port, an
 
 ## Prerequisites for Windows
 
-1. **Install Node.js v22.x or higher (LTS recommended)**  
+1. **Install Node.js v24.14.0 (LTS)**  
     [Download Node.js](https://nodejs.org/en)
+    download windows installer (.msi)
 2. **Install MySQL user friendly**  
     [Download XAMPP](https://www.apachefriends.org/)
-
     [mysql editor] (https://www.heidisql.com/)
 
 #### Clone or Download the Project
