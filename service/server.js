@@ -70,6 +70,7 @@ app.get(process.env.PREFIX + 'checkdb', async (req, res) => {
             message: 'Successfully connected to the database',
             date: now,
             db: formattedRows,  
+            prefix: process.env.PREFIX
         });
     } catch (err) {
         console.error('❌ DB error:', err.message);
@@ -81,7 +82,9 @@ app.get(process.env.PREFIX + 'checkdb', async (req, res) => {
     }
 });
 
+app.use( '/pos', express.static('pos'));
 app.use(process.env.PREFIX + 'public', express.static('public'));
+
 // ADMIN SERVICE HERE  
 app.use(process.env.PREFIX + 'global', require('./routes/global/global')); //MENU
 app.use(process.env.PREFIX + 'login', require('./routes/admin/loginAdmin')); //ADMIN
@@ -129,6 +132,7 @@ app.use(process.env.PREFIX + process.env.TERMINAL + 'reports',  IsAuth.checkRepo
 
 app.use('/', (req, res) => {
     const data = {
+        message: 'Welcome to POS Restaurant API',
         error: false,
         serverTime: new Date(),
         prefix: process.env.PREFIX

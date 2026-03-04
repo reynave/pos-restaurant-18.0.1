@@ -1,28 +1,28 @@
 # AGENTS.md — POS Restaurant Service (v18.0.1)
 
-> Dokumentasi pengembangan untuk AI Agent. Berisi arsitektur, flow bisnis, database schema, endpoint API, dan konvensi kode.
+> Development documentation for AI Agents. Contains architecture, business flows, database schema, API endpoints, and code conventions.
 
 ---
 
-## 1. Ringkasan Proyek
+## 1. Project Overview
 
-Sistem **Point of Sale (POS) untuk Restoran** berbasis Node.js + Express 5, dengan database MySQL/MariaDB. Mendukung:
+A **Point of Sale (POS) system for Restaurants** built with Node.js + Express 5, using MySQL/MariaDB database. Supports:
 
-- **Multi-outlet** (banyak cabang restoran)
-- **Multi-terminal** (banyak perangkat POS per outlet)
-- **Dine-in** (table map, floor plan) dan **Counter/Take-out** mode
+- **Multi-outlet** (multiple restaurant branches)
+- **Multi-terminal** (multiple POS devices per outlet)
+- **Dine-in** (table map, floor plan) and **Counter/Take-out** mode
 - **Kitchen printing** via ESC/POS thermal printer (TCP/IP)
 - **Real-time sync** via Socket.IO
 - **Split bill, merge table, transfer items**
-- **Cashback engine** terintegrasi
-- **17+ laporan bisnis** (HTML/EJS rendered)
+- **Integrated cashback engine**
+- **17+ business reports** (HTML/EJS rendered)
 - **Dual-language UI** (EN/ID)
 
 ---
 
 ## 2. Tech Stack
 
-| Layer | Teknologi |
+| Layer | Technology |
 |-------|-----------|
 | Runtime | Node.js |
 | Framework | Express 5.1 |
@@ -33,18 +33,19 @@ Sistem **Point of Sale (POS) untuk Restoran** berbasis Node.js + Express 5, deng
 | Printing | `escpos` + `escpos-network` (ESC/POS thermal, TCP/IP) |
 | Logging | Winston (daily rotating file) |
 | Barcode/QR | `jsbarcode`, `qrcode` |
-| Lainnya | `csv-parser`, `dotenv` |
+| Other | `csv-parser`, `dotenv` |
 
 ---
 
-## 3. Struktur Direktori
+## 3. Directory Structure
 
 ```
 service/
 ├── server.js              # Entry point — Express app + Socket.IO server
 ├── printWorker.js          # Background print queue worker (Socket.IO client)
-├── token.js                # Utility: generate JWT license token
-├── .env                    # Environment variables (lihat §4)
+├── token.js                # CLI utility: generate JWT terminal license key (see §8.5)
+├── .env                    # Environment variables (see §4)
+├── pos/                    # Angular SPA frontend (served at /pos)
 ├── config/
 │   └── db.js               # MySQL2 connection pool (async/await)
 ├── routes/
@@ -96,7 +97,7 @@ service/
 │   ├── terminal/           # POS terminal controllers (19 files)
 │   │   ├── loginController.js
 │   │   ├── tableMapController.js
-│   │   ├── menuItemPosController.js   # 2826 baris — controller terbesar
+│   │   ├── menuItemPosController.js   # 2826 lines — largest controller
 │   │   ├── menuItemCartController.js
 │   │   ├── menuItemFuncController.js
 │   │   ├── billController.js
@@ -108,7 +109,7 @@ service/
 │   │   ├── printQueueController.js
 │   │   ├── receiptController.js
 │   │   ├── itemsController.js
-│   │   ├── reportsController.js       # 2649 baris — laporan terbesar
+│   │   ├── reportsController.js       # 2649 lines — largest report file
 │   │   ├── userLogController.js
 │   │   ├── uxFunctionController.js
 │   │   ├── languageController.js
@@ -120,7 +121,7 @@ service/
 ├── helpers/
 │   ├── IsAuth.js           # JWT middleware (validateToken, checkReportToken)
 │   ├── autoNumber.js       # Auto-increment ID generator
-│   ├── bill.js             # Core billing/cart calculation engine (1561 baris)
+│   ├── bill.js             # Core billing/cart calculation engine (1561 lines)
 │   ├── cashcback.js        # Cashback calculation + QR code
 │   ├── printer.js          # ESC/POS printing engine + print queue
 │   ├── sendOrder.js        # Send order data assembly
@@ -175,7 +176,7 @@ service/
 PRODUCTION=false            # true = enforce JWT validation, false = bypass
 SECRET_KEY=<jwt-secret>     # JWT signing key
 NODE_ENV=development
-PREFIX=/                    # API route prefix (all routes start with this)
+PREFIX=/api/                # API route prefix (all routes start with this)
 TERMINAL=terminal/          # Terminal route sub-prefix
 TO_LOCALE_STRING=id-ID      # Locale for number/date formatting
 PORT=3000                   # HTTP server port
@@ -183,40 +184,48 @@ DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=
 DB_NAME=pos_resto           # MySQL database name
-TIMEZONE='+07:00'           # WIB (Western Indonesia Time)
 LOCALHOST=http://localhost:3000  # Used by printWorker.js for Socket.IO connection
 DUMMY_PRINTER=false         # true = simulate printing (no real printer)
 ```
 
+**URL Path Layout:**
+| Path | Serves | Description |
+|------|--------|-------------|
+| `/pos` | Angular SPA | Frontend HTML app (static files from `pos/` folder) |
+| `/api/*` | REST API | All backend API endpoints (PREFIX = `/api/`) |
+| `/api/terminal/*` | Terminal API | POS terminal endpoints (PREFIX + TERMINAL) |
+| `/api/public/*` | Static assets | Public files (templates, output) |
+
 ---
 
-## 5. Arsitektur & Flow Utama
+## 5. Architecture & Main Flows
 
 ### 5.1. High Level Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                    CLIENT (Angular SPA)                      │
-│         admin18.0.1/ (Admin) + terminal18.0.1/ (POS)        │
+│  Served at /pos  (admin18.0.1 + terminal18.0.1)             │
 └─────────────┬──────────────────────┬────────────────────────┘
-              │ HTTP REST API        │ Socket.IO (real-time)
+              │ HTTP REST /api/*     │ Socket.IO (real-time)
               ▼                      ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                     server.js (Express + Socket.IO)          │
 │  Port: 3000                                                  │
-│  ┌─────────────────┐  ┌──────────────────────────────────┐  │
-│  │  Admin Routes     │  │  Terminal Routes                  │  │
-│  │  /login           │  │  /terminal/login                  │  │
-│  │  /global          │  │  /terminal/tableMap               │  │
-│  │  /employee        │  │  /terminal/menuItemPos            │  │
-│  │  /payment         │  │  /terminal/bill                   │  │
-│  │  /discount        │  │  /terminal/payment                │  │
-│  │  /menu            │  │  /terminal/daily                  │  │
-│  │  /outlet          │  │  /terminal/transaction            │  │
-│  │  /tableMap        │  │  /terminal/printing               │  │
-│  │  /floorMap        │  │  /terminal/cashier                │  │
-│  │  ...              │  │  /terminal/reports                │  │
-│  └─────────────────┘  └──────────────────────────────────┘  │
+│  Static: /pos → Angular SPA                                  │
+│  ┌─────────────────────┐  ┌──────────────────────────────┐  │
+│  │  Admin Routes /api/   │  │  Terminal Routes               │  │
+│  │  /api/login           │  │  /api/terminal/login           │  │
+│  │  /api/global          │  │  /api/terminal/tableMap        │  │
+│  │  /api/employee        │  │  /api/terminal/menuItemPos     │  │
+│  │  /api/payment         │  │  /api/terminal/bill            │  │
+│  │  /api/discount        │  │  /api/terminal/payment         │  │
+│  │  /api/menu            │  │  /api/terminal/daily           │  │
+│  │  /api/outlet          │  │  /api/terminal/transaction     │  │
+│  │  /api/tableMap        │  │  /api/terminal/printing        │  │
+│  │  /api/floorMap        │  │  /api/terminal/cashier         │  │
+│  │  ...                  │  │  /api/terminal/reports         │  │
+│  └─────────────────────┘  └──────────────────────────────┘  │
 │                              │                               │
 │                              ▼                               │
 │                     ┌──────────────┐                         │
@@ -231,24 +240,24 @@ DUMMY_PRINTER=false         # true = simulate printing (no real printer)
 ┌──────────────────────┐        ┌──────────────────────┐
 │   MySQL/MariaDB       │        │  printWorker.js       │
 │   Database: pos_resto │        │  (Background process) │
-│   ~50 tables          │        │  Polls print_queue    │
+│   ~74 tables          │        │  Polls print_queue    │
 └──────────────────────┘        │  Sends to ESC/POS     │
                                  └──────────────────────┘
 ```
 
-### 5.2. Lifecycle: Hari Operasional Restoran
+### 5.2. Lifecycle: Restaurant Daily Operation
 
 ```
-1. DAILY START (Buka Hari)
+1. DAILY START (Open Day)
    ├── Employee login → POST /terminal/login/signin
    ├── Terminal license check → POST /terminal/login/terminal
    ├── Daily start → POST /terminal/daily/start
-   │   ├── Lookup daily_schedule (hari ini)
+   │   ├── Lookup daily_schedule (today)
    │   ├── Reset auto_number running counter
    │   └── Insert daily_check record
    └── Cash opening balance → POST /terminal/daily/addCashIn
 
-2. ORDERING FLOW (Pesan Makanan)
+2. ORDERING FLOW (Place Orders)
    ├── View floor plan + tables → GET /terminal/tableMap/
    ├── Select table → new order → POST /terminal/tableMap/newOrder
    │   ├── Create `cart` record
@@ -270,13 +279,13 @@ DUMMY_PRINTER=false         # true = simulate printing (no real printer)
        ├── Export CSV/TXT files
        └── Socket.IO broadcast → triggers printWorker.js
 
-3. KITCHEN PRINTING (Cetak Pesanan)
+3. KITCHEN PRINTING (Print Orders)
    ├── printWorker.js polls print_queue (status=0)
    ├── Status flow: 0 (PENDING) → 1 (PRINTING) → 2 (DONE) / 3 (ERROR)
    ├── Renders kitchen.hbs template via Handlebars
    └── Sends ESC/POS commands via TCP socket to thermal printer
 
-4. BILLING (Cetak Bill)
+4. BILLING (Print Bill)
    ├── View bill → GET /terminal/bill/
    ├── Bill update (increment version) → POST /terminal/bill/billUpdate
    ├── Split bill → GET /terminal/bill/splitBill
@@ -285,7 +294,7 @@ DUMMY_PRINTER=false         # true = simulate printing (no real printer)
    ├── Print bill → GET /terminal/bill/printing (renders bill.hbs)
    └── Mark print bill → POST /terminal/payment/markPrintBill
 
-5. PAYMENT (Pembayaran)
+5. PAYMENT (Process Payment)
    ├── View cart for payment → GET /terminal/payment/cart
    ├── Select payment type → GET /terminal/payment/paymentType
    ├── Add payment → POST /terminal/payment/addPayment
@@ -309,7 +318,7 @@ DUMMY_PRINTER=false         # true = simulate printing (no real printer)
    │   └── Remove daily_cash_balance entries
    └── Reprint bill → POST /terminal/transaction/addCopyBill
 
-7. DAILY CLOSE (Tutup Hari)
+7. DAILY CLOSE (Close Day)
    ├── Close daily → POST /terminal/daily/close
    │   ├── Mark daily_check as closed
    │   └── Export daily summary CSV
@@ -318,26 +327,26 @@ DUMMY_PRINTER=false         # true = simulate printing (no real printer)
 
 ### 5.3. Counter/Cashier Mode
 
-Alternatif mode untuk restoran counter (tanpa table map):
+Alternative mode for counter-service restaurants (no table map):
 
 ```
-POST /terminal/cashier/newOrder  → Buat order counter baru (auto-number counter no)
-GET  /terminal/cashier/queue     → List antrian counter aktif
-POST /terminal/cashier/deleteOrder → Hapus order counter
+POST /terminal/cashier/newOrder  → Create new counter order (auto-number counter no)
+GET  /terminal/cashier/queue     → List active counter queue
+POST /terminal/cashier/deleteOrder → Delete counter order
 ```
 
 ### 5.4. Print Queue Architecture
 
 ```
-┌──────────┐    INSERT      ┌──────────────┐    Socket.IO     ┌────────────────┐
-│sendOrder()│ ──────────►   │ print_queue   │ ──broadcast──►  │ printWorker.js  │
-│addToCart()│   status=0    │ (DB table)    │   'printing'    │                 │
-└──────────┘                └──────────────┘                  │ processQueue()  │
-                                                              │ polls DB        │
-                              status flow:                    │ renders .hbs    │
-                              0=PENDING                       │ sends ESC/POS   │
-                              1=PRINTING                      │ via TCP socket  │
-                              2=DONE                          └────────────────┘
+┌───────────┐    INSERT      ┌───────────────┐    Socket.IO    ┌─────────────────┐
+│sendOrder()│ ──────────►    │ print_queue   │ ──broadcast──►  │ printWorker.js  │
+│addToCart()│   status=0     │ (DB table)    │   'printing'    │                 │
+└───────────┘                └───────────────┘                 │ processQueue()  │
+                                                               │ polls DB        │
+                              status flow:                     │ renders .hbs    │
+                              0=PENDING                        │ sends ESC/POS   │
+                              1=PRINTING                       │ via TCP socket  │
+                              2=DONE                           └─────────────────┘
                               3=ERROR (with retry)
 ```
 
@@ -376,25 +385,25 @@ POST /terminal/cashier/deleteOrder → Hapus order counter
 ┌─────────────────────────────────────────────────────────────────────┐
 │                        TRANSACTIONAL DATA                            │
 ├─────────────────────────────────────────────────────────────────────┤
-│ daily_check (hari operasional)                                      │
-│ daily_cash_balance (cash in/out per hari)                            │
-│ cart (order/transaksi utama)                                         │
-│   ├── cart_item (item dalam order)                                   │
+│ daily_check (business day)                                          │
+│ daily_cash_balance (daily cash in/out)                               │
+│ cart (main order/transaction)                                        │
+│   ├── cart_item (items in an order)                                  │
 │   │   ├── cart_item_modifier (modifier per item)                    │
-│   │   ├── cart_item_discount (diskon per item)                      │
+│   │   ├── cart_item_discount (discount per item)                    │
 │   │   ├── cart_item_sc (service charge per item)                    │
-│   │   ├── cart_item_tax (pajak per item)                            │
+│   │   ├── cart_item_tax (tax per item)                              │
 │   │   ├── cart_item_group (split bill grouping)                     │
 │   │   └── cart_item_void_reason                                     │
-│   ├── cart_payment (pembayaran per transaksi)                       │
-│   ├── cart_cashback (cashback yang diberikan)                       │
-│   ├── cart_copy_bill (log reprint bill)                             │
-│   ├── cart_void_reason (alasan void transaksi)                      │
-│   ├── cart_payment_void_reason (alasan void pembayaran)             │
-│   ├── cart_merge_log (log merge meja)                               │
-│   └── cart_transfer_items (log transfer item antar meja)            │
+│   ├── cart_payment (payments per transaction)                       │
+│   ├── cart_cashback (cashback awarded)                              │
+│   ├── cart_copy_bill (bill reprint log)                             │
+│   ├── cart_void_reason (transaction void reason)                    │
+│   ├── cart_payment_void_reason (payment void reason)                │
+│   ├── cart_merge_log (table merge log)                              │
+│   └── cart_transfer_items (item transfer log between tables)        │
 │ send_order (kitchen order batches)                                   │
-│ print_queue (antrian cetak printer)                                  │
+│ print_queue (printer queue)                                          │
 │ bill (bill versioning)                                              │
 │ adjust_items (stock tracking)                                       │
 │ logs (user activity log)                                            │
@@ -412,178 +421,180 @@ POST /terminal/cashier/deleteOrder → Hapus order counter
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
-### 6.2. Tabel Kunci & Kolom Penting
+### 6.2. Key Tables & Important Columns
 
-#### `cart` — Tabel Utama Transaksi
-| Kolom | Tipe | Deskripsi |
-|-------|------|-----------|
-| `id` | varchar(50) | ID transaksi (generated via auto_number, format: prefix+yymmdd+seq) |
-| `counterNo` | smallint | Nomor antrian (mode counter) |
-| `billNo` | tinyint | Versi bill (increment setiap bill update) |
-| `printBill` | tinyint | Flag bill sudah dicetak |
-| `paymentId` | varchar(10) | Kode pembayaran saat close |
+#### `cart` — Main Transaction Table
+| Column | Type | Description |
+|--------|------|-------------|
+| `id` | varchar(50) | Transaction ID (generated via auto_number, format: prefix+yymmdd+seq) |
+| `counterNo` | smallint | Queue number (counter mode) |
+| `billNo` | tinyint | Bill version (incremented on each bill update) |
+| `printBill` | tinyint | Flag: bill has been printed |
+| `paymentId` | varchar(10) | Payment code on close |
 | `dailyCheckId` | varchar(50) | FK → daily_check.id |
-| `sendOrder` | tinyint | Jumlah send order yang sudah dilakukan |
+| `sendOrder` | tinyint | Number of send orders placed |
 | `outletId` | int | FK → outlet.id |
 | `outletTableMapId` | int | FK → outlet_table_map.id |
-| `lockBy` | varchar(10) | Terminal ID yang mengunci transaksi |
-| `cover` | int | Jumlah tamu |
+| `lockBy` | varchar(10) | Terminal ID that locked the transaction |
+| `cover` | int | Guest count |
 | `close` | tinyint | **Status: 0=open, 20=paid, 41=void** |
 | `periodId` | tinyint | FK → period.id (breakfast/lunch/dinner) |
-| `summaryItemTotal` | int | Total harga item |
-| `summaryDiscount` | int | Total diskon |
+| `summaryItemTotal` | int | Total item price |
+| `summaryDiscount` | int | Total discount |
 | `summarySc` | int | Total service charge |
-| `summaryTax` | int | Total pajak |
+| `summaryTax` | int | Total tax |
 | `grandTotal` | int | Grand total (computed on close) |
-| `startDate` | datetime | Waktu order dibuat |
-| `overDue` | datetime | Waktu overdue (dari outlet.overDue) |
+| `startDate` | datetime | Order creation time |
+| `overDue` | datetime | Overdue time (from outlet.overDue) |
 | `void` | tinyint | 0=normal, 1=voided |
 | `presence` | tinyint | Soft delete flag (1=active) |
 
-#### `cart_item` — Item dalam Order
-| Kolom | Tipe | Deskripsi |
-|-------|------|-----------|
+#### `cart_item` — Items in an Order
+| Column | Type | Description |
+|--------|------|-------------|
 | `id` | int(11) | Auto-increment PK |
 | `cartId` | varchar(50) | FK → cart.id |
 | `subgroup` | smallint | Split bill group (default 1) |
-| `qty` | smallint | Jumlah |
+| `qty` | smallint | Quantity |
 | `menuId` | int | FK → menu.id |
 | `adjustItemsId` | varchar(50) | FK → adjust_items.id (stock tracking) |
 | `ta` | tinyint | Take-away flag (1=TA, disables SC) |
-| `price` | int | Harga satuan |
-| `debit` | int | Harga yang dicharge |
-| `credit` | int | Pengurangan harga |
+| `price` | int | Unit price |
+| `debit` | int | Amount charged |
+| `credit` | int | Amount deducted |
 | `sendOrder` | varchar(50) | FK → send_order.id (empty if not yet sent) |
 | `void` | tinyint | 0=normal, 1=voided |
 | `menuCategoryId` | int | Denormalized from menu |
 | `menuDepartmentId` | int | Denormalized from menu |
 
-#### `menu` — Daftar Menu
-| Kolom | Tipe | Deskripsi |
-|-------|------|-----------|
+#### `menu` — Menu Items
+| Column | Type | Description |
+|--------|------|-------------|
 | `id` | int | Auto-increment PK |
 | `plu` | varchar(50) | PLU/SKU code |
 | `menuSet` | varchar(50) | Menu set type: '' (normal), 'FIXED', 'SELECT' |
-| `menuSetMinQty` | tinyint | Minimum qty untuk menu set |
-| `name` | varchar(200) | Nama menu |
-| `menuLookupId` | smallint | FK → menu_lookup.id (kategori navigasi) |
+| `menuSetMinQty` | tinyint | Minimum qty for menu set |
+| `name` | varchar(200) | Menu name |
+| `menuLookupId` | smallint | FK → menu_lookup.id (navigation category) |
 | `discountGroupId` | smallint | FK → discount_group.id |
-| `menuTaxScId` | tinyint | FK → menu_tax_sc.id (profil pajak & SC) |
-| `price1`–`price5` | decimal(9,2) | Harga per price-level (outlet/terminal specific) |
-| `specialPrice1`–`specialPrice5` | decimal(9,2) | Harga spesial |
-| `printerGroupId` | smallint | FK → printer_group.id (printer tujuan kitchen) |
+| `menuTaxScId` | tinyint | FK → menu_tax_sc.id (tax & SC profile) |
+| `price1`–`price5` | decimal(9,2) | Price per price-level (outlet/terminal specific) |
+| `specialPrice1`–`specialPrice5` | decimal(9,2) | Special prices |
+| `printerGroupId` | smallint | FK → printer_group.id (target kitchen printer) |
 | `modifierGroupId` | smallint | FK → modifier_group.id |
-| `openPrice` | tinyint | 1=harga bisa diisi manual |
+| `openPrice` | tinyint | 1=price can be entered manually |
 | `menuDepartmentId` | int | FK → menu_department.id |
 | `menuCategoryId` | int | FK → menu_category.id |
 
-#### `menu_tax_sc` — Profil Pajak & Service Charge
-| Kolom | Tipe | Deskripsi |
-|-------|------|-----------|
-| `taxRate` | tinyint | Persentase pajak (e.g., 10 = 10%) |
+#### `menu_tax_sc` — Tax & Service Charge Profile
+| Column | Type | Description |
+|--------|------|-------------|
+| `taxRate` | tinyint | Tax percentage (e.g., 10 = 10%) |
 | `taxStatus` | tinyint | 1=tax included in price, 2=tax excluded |
-| `scRate` | tinyint | Persentase service charge |
+| `scRate` | tinyint | Service charge percentage |
 | `scStatus` | tinyint | 1=SC included in price, 2=SC excluded |
-| `scTaxIncluded` | tinyint | SC dikenakan pajak? |
+| `scTaxIncluded` | tinyint | Is SC subject to tax? |
 
-#### `daily_check` — Hari Operasional
-| Kolom | Tipe | Deskripsi |
-|-------|------|-----------|
+#### `daily_check` — Business Day
+| Column | Type | Description |
+|--------|------|-------------|
 | `id` | varchar(50) | Generated ID (auto_number) |
 | `dailyScheduleId` | smallint | FK → daily_schedule.id |
 | `outletId` | tinyint | FK → outlet.id |
 | `closed` | tinyint | 0=open, 1=closed |
-| `startDate` | datetime | Waktu buka |
-| `closeDate` | datetime | Waktu tutup |
-| `closeDateLimit` | datetime | Batas waktu auto-close |
+| `startDate` | datetime | Opening time |
+| `closeDate` | datetime | Closing time |
+| `closeDateLimit` | datetime | Auto-close time limit |
 
 ---
 
-## 7. API Endpoints — Lengkap
+## 7. API Endpoints — Complete Reference
 
 ### 7.1. Authentication
 
-| Auth Method | Digunakan Pada | Mekanisme |
-|-------------|----------------|-----------|
-| **None** | `/terminal/login/*`, `/terminal/printing/*`, `/terminal/log/*`, `/terminal/language/*` | No authentication |
-| **validateToken** | Semua terminal route lainnya | JWT Bearer token di header `Authorization` |
-| **checkReportToken** | `/terminal/reports/*` | Query param `?t=<token>`, validated against `reports_token` table |
-| **Admin routes** | `/login/*`, `/employee/*`, dll. | Saat ini belum enforce auth (lihat catatan) |
+| Auth Method | Used On | Mechanism |
+|-------------|---------|-----------|
+| **None** | `/api/terminal/login/*`, `/api/terminal/printing/*`, `/api/terminal/log/*`, `/api/terminal/language/*` | No authentication |
+| **validateToken** | All other terminal routes | JWT Bearer token in `Authorization` header |
+| **checkReportToken** | `/api/terminal/reports/*` | Query param `?t=<token>`, validated against `reports_token` table |
+| **Admin routes** | `/api/login/*`, `/api/employee/*`, etc. | Currently not enforcing auth (see notes) |
 
-**Catatan:** Saat `PRODUCTION=false`, `validateToken` middleware di-bypass (langsung `next()`).
+**Note:** When `PRODUCTION=false`, the `validateToken` middleware is bypassed (calls `next()` directly).
 
 ### 7.2. Terminal Routes (POS)
 
-Base: `/{PREFIX}{TERMINAL}` = `/terminal/`
+Base: `/{PREFIX}{TERMINAL}` = `/api/terminal/`
+
+> **Note:** All endpoint paths below show the route-level path (e.g., `/terminal/...`). The actual full URL includes the PREFIX: `http://localhost:3000/api/terminal/...`
 
 #### Login & Setup
 ```
-GET  /terminal/login/outlet          → Daftar outlet + employee untuk login screen
-POST /terminal/login/signin          → Login employee (username/password)
-POST /terminal/login/terminal        → Validasi license terminal (key file)
-GET  /terminal/login/checkTerminal   → Cek session terminal masih valid
+GET  /terminal/login/outlet          → List of outlets + employees for login screen
+POST /terminal/login/signin          → Employee login (username/password)
+POST /terminal/login/terminal        → Validate terminal license (key file)
+GET  /terminal/login/checkTerminal   → Check if terminal session is still valid
 ```
 
 #### Daily Operation
 ```
-GET  /terminal/daily/                → Cek ada daily check open
-GET  /terminal/daily/getDailyStart   → Detail daily check aktif + schedule info
-POST /terminal/daily/start           → Buka hari operasional baru
-POST /terminal/daily/close           → Tutup hari operasional + export CSV
+GET  /terminal/daily/                → Check if a daily check is open
+GET  /terminal/daily/getDailyStart   → Active daily check details + schedule info
+POST /terminal/daily/start           → Open a new business day
+POST /terminal/daily/close           → Close the business day + export CSV
 GET  /terminal/daily/cashbalance     → Cash in/out entries per daily check
-GET  /terminal/daily/checkCashType   → Daftar denominasi uang
-POST /terminal/daily/addCashIn       → Input kas masuk/keluar
-GET  /terminal/daily/checkItems      → Cek item yang belum di-close
+GET  /terminal/daily/checkCashType   → List of cash denominations
+POST /terminal/daily/addCashIn       → Record cash in/out
+GET  /terminal/daily/checkItems      → Check items not yet closed
 ```
 
 #### Table Map
 ```
 GET  /terminal/tableMap/             → Floor plan + table status (occupied/available/overdue)
-GET  /terminal/tableMap/detail       → Detail meja + total cart
-POST /terminal/tableMap/newOrder     → Buat order baru untuk meja
+GET  /terminal/tableMap/detail       → Table details + cart total
+POST /terminal/tableMap/newOrder     → Create a new order for a table
 ```
 
-#### Menu & Ordering (menuItemPos) — *Controller terbesar*
+#### Menu & Ordering (menuItemPos) — *Largest controller*
 ```
 GET  /terminal/menuItemPos/          → Browse menu items by lookup category
 GET  /terminal/menuItemPos/lookUpMenu → Menu lookup categories
 GET  /terminal/menuItemPos/menuLookUp → Hierarchical menu navigation
-GET  /terminal/menuItemPos/selectMenuSet → Sub-items untuk combo/package
-GET  /terminal/menuItemPos/discountGroup → Daftar grup diskon
+GET  /terminal/menuItemPos/selectMenuSet → Sub-items for combo/package
+GET  /terminal/menuItemPos/discountGroup → List of discount groups
 GET  /terminal/menuItemPos/cart      → Full cart view (items, modifiers, discounts, SC, tax)
-GET  /terminal/menuItemPos/cartDetail → Detail single item + semua detailnya
-GET  /terminal/menuItemPos/getModifier → Daftar modifier dengan harga
-GET  /terminal/menuItemPos/printQueue → Status print queue
-GET  /terminal/menuItemPos/voidReason → Daftar alasan void
-GET  /terminal/menuItemPos/mergeLog  → History merge meja (recursive)
+GET  /terminal/menuItemPos/cartDetail → Single item detail + all related data
+GET  /terminal/menuItemPos/getModifier → Modifier list with prices
+GET  /terminal/menuItemPos/printQueue → Print queue status
+GET  /terminal/menuItemPos/voidReason → List of void reasons
+GET  /terminal/menuItemPos/mergeLog  → Table merge history (recursive)
 GET  /terminal/menuItemPos/transferItems → Items available for transfer
 GET  /terminal/menuItemPos/transferItemsGroup → Transfer items grouped
 GET  /terminal/menuItemPos/transferLog → Transfer history log
 GET  /terminal/menuItemPos/tableChecker → Send order history per table
-GET  /terminal/menuItemPos/tableCheckerDetail → Detail send order
+GET  /terminal/menuItemPos/tableCheckerDetail → Send order detail
 
-POST /terminal/menuItemPos/addToCart → Tambah item ke cart (+ SC & tax rows)
-POST /terminal/menuItemPos/updateQty → Update jumlah item
-POST /terminal/menuItemPos/updateCover → Update jumlah tamu
-POST /terminal/menuItemPos/addModifier → Tambah modifier ke item
-POST /terminal/menuItemPos/removeDetailModifier → Hapus modifier
-POST /terminal/menuItemPos/addToItemModifier → Bulk add modifiers ke checked items
-POST /terminal/menuItemPos/addDiscountGroup → Apply discount ke selected items
-POST /terminal/menuItemPos/addCustomNotes → Tambah catatan kustom
-POST /terminal/menuItemPos/addCustomNotesDetail → Catatan per item detail
-POST /terminal/menuItemPos/sendOrder → **KIRIM KE DAPUR** (critical flow)
-POST /terminal/menuItemPos/lockTable → Lock cart untuk terminal ini
+POST /terminal/menuItemPos/addToCart → Add item to cart (+ SC & tax rows)
+POST /terminal/menuItemPos/updateQty → Update item quantity
+POST /terminal/menuItemPos/updateCover → Update guest count
+POST /terminal/menuItemPos/addModifier → Add modifier to item
+POST /terminal/menuItemPos/removeDetailModifier → Remove modifier
+POST /terminal/menuItemPos/addToItemModifier → Bulk add modifiers to checked items
+POST /terminal/menuItemPos/addDiscountGroup → Apply discount to selected items
+POST /terminal/menuItemPos/addCustomNotes → Add custom notes
+POST /terminal/menuItemPos/addCustomNotesDetail → Notes per item detail
+POST /terminal/menuItemPos/sendOrder → **SEND TO KITCHEN** (critical flow)
+POST /terminal/menuItemPos/lockTable → Lock cart for this terminal
 POST /terminal/menuItemPos/clearLockTable → Unlock cart
-POST /terminal/menuItemPos/exitWithoutOrder → Keluar tanpa order
+POST /terminal/menuItemPos/exitWithoutOrder → Exit without ordering
 POST /terminal/menuItemPos/voidItem → Void item (unsent only)
-POST /terminal/menuItemPos/voidItemSo → Void item yang sudah sent
+POST /terminal/menuItemPos/voidItemSo → Void already-sent item
 POST /terminal/menuItemPos/voidItemDetail → Void item detail
-POST /terminal/menuItemPos/voidTransaction → Void seluruh transaksi
-POST /terminal/menuItemPos/transferTable → Transfer items antar meja
-POST /terminal/menuItemPos/mergerCheck → Merge 2 meja jadi 1
+POST /terminal/menuItemPos/voidTransaction → Void entire transaction
+POST /terminal/menuItemPos/transferTable → Transfer items between tables
+POST /terminal/menuItemPos/mergerCheck → Merge 2 tables into 1
 POST /terminal/menuItemPos/takeOut → Toggle take-away flag
 POST /terminal/menuItemPos/takeOutDetail → Toggle TA per item detail
-POST /terminal/menuItemPos/changeTable → Pindah meja
+POST /terminal/menuItemPos/changeTable → Move to a different table
 ```
 
 #### Bill
@@ -591,7 +602,7 @@ POST /terminal/menuItemPos/changeTable → Pindah meja
 GET  /terminal/bill/                 → Cart items grouped (by menu+price+modifiers)
 GET  /terminal/bill/printing         → Render bill HTML (Handlebars: bill.hbs)
 GET  /terminal/bill/splitBill        → Items available for split + current groups
-GET  /terminal/bill/getCartCopyBill  → Log reprint bill
+GET  /terminal/bill/getCartCopyBill  → Bill reprint log
 POST /terminal/bill/ipPrint          → Send text to network printer
 POST /terminal/bill/billUpdate       → Increment bill version + update summary
 POST /terminal/bill/copyBill         → Record bill reprint
@@ -608,12 +619,12 @@ GET  /terminal/payment/bill          → Rendered bill HTML with QR/cashback
 GET  /terminal/payment/paymentType   → Available payment methods
 GET  /terminal/payment/paymentGroup  → Payment groups
 GET  /terminal/payment/paid          → Current payment status
-POST /terminal/payment/addPayment    → Tambah payment row
-POST /terminal/payment/deletePayment → Hapus payment row
+POST /terminal/payment/addPayment    → Add payment row
+POST /terminal/payment/deletePayment → Delete payment row
 POST /terminal/payment/updateRow     → Edit payment row
-POST /terminal/payment/addPaid       → **SUBMIT SEMUA PEMBAYARAN** (triggers close check)
-POST /terminal/payment/submit        → Assign send-order ke unsent items
-POST /terminal/payment/markPrintBill → Tandai bill sudah dicetak
+POST /terminal/payment/addPaid       → **SUBMIT ALL PAYMENTS** (triggers close check)
+POST /terminal/payment/submit        → Assign send-order to unsent items
+POST /terminal/payment/markPrintBill → Mark bill as printed
 POST /terminal/payment/createTxt     → Export bill as .txt
 ```
 
@@ -700,9 +711,9 @@ GET  /terminal/log/downloadLog       → Download log as CSV
 
 ### 7.3. Admin Routes
 
-Base: `/{PREFIX}` = `/`
+Base: `/{PREFIX}` = `/api/`
 
-Mengikuti pola CRUD konsisten: `GET /` (list), `POST /create`, `POST /update`, `POST /delete`, `POST /duplicate`
+Follows a consistent CRUD pattern: `GET /` (list), `POST /create`, `POST /update`, `POST /delete`, `POST /duplicate`
 
 ```
 POST /login/admin                    → Admin sign-in
@@ -735,28 +746,28 @@ POST /global/uxFunction/onSaveStatus → Save UX function status
 
 ## 8. Core Business Logic
 
-### 8.1. Billing Engine (`helpers/bill.js` — 1561 baris)
+### 8.1. Billing Engine (`helpers/bill.js` — 1561 lines)
 
-Ini adalah **jantung kalkulasi** transaksi. Dipanggil oleh banyak controller.
+This is the **heart of transaction calculation**. Called by many controllers.
 
-**Fungsi utama:**
+**Main functions:**
 
-| Function | Deskripsi |
-|----------|-----------|
+| Function | Description |
+|----------|-------------|
 | `cart(cartId)` | Full cart assembly: items + modifiers + discounts → compute itemTotal, discount, subTotal, SC, tax, grandTotal |
-| `cartGrouping(cartId, subgroup)` | Sama seperti `cart()` tapi filter per split-bill subgroup |
-| `cartHistory(cartId)` | View aggregat termasuk void items, payment status, tips, change |
+| `cartGrouping(cartId, subgroup)` | Same as `cart()` but filtered per split-bill subgroup |
+| `cartHistory(cartId)` | Aggregated view including void items, payment status, tips, change |
 | `summary(cartId)` | Lightweight per-item subtotal via UNION (item + modifier + discount) |
-| `scTaxUpdate2(cartId)` | **Recalculate & UPDATE** semua SC/tax rows di DB |
-| `discountMaxAmountByPercent(cartId)` | Enforce max discount cap untuk percentage discounts |
-| `discountMaxPerItem(cartId)` | Enforce max discount cap untuk fixed-amount discounts |
+| `scTaxUpdate2(cartId)` | **Recalculate & UPDATE** all SC/tax rows in DB |
+| `discountMaxAmountByPercent(cartId)` | Enforce max discount cap for percentage discounts |
+| `discountMaxPerItem(cartId)` | Enforce max discount cap for fixed-amount discounts |
 
-**Logika Kalkulasi:**
+**Calculation Logic:**
 ```
 Per Item:
   itemTotal = price × qty
   modifierTotal = Σ(modifier.debit - modifier.credit) × qty
-  discountAmount = berdasarkan rate(%) atau fixed amount
+  discountAmount = based on rate(%) or fixed amount
   subTotalBeforeSC = itemTotal + modifierTotal - discountAmount
 
   SC (Service Charge):
@@ -773,8 +784,8 @@ Grand Total = Σ(itemTotal + modifierTotal - discountAmount + sc + tax)
 
 ### 8.2. Print Engine (`helpers/printer.js`)
 
-| Function | Deskripsi |
-|----------|-----------|
+| Function | Description |
+|----------|-------------|
 | `printToPrinter(message, ip, port)` | Raw TCP socket print → ESC/POS commands + paper cut |
 | `printerEsc(message, printerData)` | `escpos` library formatted print |
 | `openCashDrawer(ip, port)` | ESC/POS cash drawer kick (pulse pin 2+5) |
@@ -785,100 +796,134 @@ Grand Total = Σ(itemTotal + modifierTotal - discountAmount + sc + tax)
 
 ### 8.3. Auto Number Generator (`helpers/autoNumber.js`)
 
-Menghasilkan ID berurutan berdasarkan konfigurasi di tabel `auto_number`:
+Generates sequential IDs based on configuration in the `auto_number` table:
 
 ```
-Konfigurasi:
+Configuration:
   name: "cartId"
-  prefix: "yymmdd" (atau string statis)
-  digit: 6 (jumlah digit angka)
+  prefix: "yymmdd" (or static string)
+  digit: 6 (number of digits)
   runningNumber: auto-increment
 
-Hasil contoh: "250304000001" (250304 = 2025-03-04, 000001 = sequence)
+Example result: "250304000001" (250304 = 2025-03-04, 000001 = sequence)
 ```
 
 ### 8.4. Cashback Engine (`helpers/cashcback.js`)
 
-Setelah pembayaran:
-1. Cari cashback rules aktif per outlet → `cashback` + `cashback_outlet`
-2. Cek payment method eligible → `cashback_payment`
-3. Match payment amount ke `cashback_amount` tier (earnMin–earnMax)
+After payment:
+1. Find active cashback rules per outlet → `cashback` + `cashback_outlet`
+2. Check if payment method is eligible → `cashback_payment`
+3. Match payment amount to `cashback_amount` tier (earnMin–earnMax)
 4. Generate random cashback (cashbackMin–cashbackMax range)
 5. Insert `cart_cashback` record
-6. Generate QR code untuk redemption
+6. Generate QR code for redemption
+
+### 8.5. Terminal License Key Generator (`token.js`)
+
+A standalone CLI utility for generating **JWT license tokens** for each POS terminal deployed to a client site. This is **not** part of the running server — it is run manually by the developer/admin to produce a license key file for each terminal installation.
+
+**How it works:**
+```
+1. Define client name (e.g., 'MITRALINK')
+2. Define payload: { terminalId: '0005', expired: '2027-01-01' }
+3. Signing key = clientName + secretPassword
+4. Generate JWT with 1-hour signing expiry (but actual license validity is in payload.expired)
+5. Output: JWT string → saved as terminal key file
+```
+
+**Signing key construction:**
+```javascript
+const matchPass = client + myPassword;
+// e.g., 'MITRALINK' + 'gXXjLL9M9P1lyTg49nJ32GvwMT09rl30IgJWoo712T4IL8CREV'
+```
+
+**Token payload:**
+| Field | Description |
+|-------|-------------|
+| `terminalId` | Unique terminal identifier (e.g., '0001', '0005') |
+| `expired` | License expiry date (e.g., '2027-01-01') |
+
+**Usage flow:**
+1. Admin runs `node token.js` (after editing client/terminalId/expired values)
+2. Copy the generated JWT string
+3. Save it as the terminal's license key file
+4. Terminal app sends this key via `POST /api/terminal/login/terminal` to validate
+5. Server verifies the JWT signature using the same client+password combination
+
+**Important:** The `myPassword` in token.js is a **separate secret** from `.env SECRET_KEY`. The `SECRET_KEY` is for employee login JWT tokens, while `myPassword` in token.js is specifically for terminal license keys.
 
 ---
 
 ## 9. Socket.IO Events
 
-| Event | Direction | Deskripsi |
-|-------|-----------|-----------|
-| `message-from-client` | Client → Server | Generic message dari client |
-| `message-from-server` | Server → All (broadcast, exclude sender) | Forward pesan ke semua client lain |
+| Event | Direction | Description |
+|-------|-----------|-------------|
+| `message-from-client` | Client → Server | Generic message from client |
+| `message-from-server` | Server → All (broadcast, exclude sender) | Forward message to all other clients |
 | `broadcast-reload` | Client → Server | Trigger reload |
-| `reload` | Server → All (broadcast) | Notify semua terminal untuk reload data |
+| `reload` | Server → All (broadcast) | Notify all terminals to reload data |
 | `printing-reload` | Client → Server | Printer status update |
-| `printing` | Server → All (broadcast) | Notify terminal: print queue status changed |
+| `printing` | Server → All (broadcast) | Notify terminals: print queue status changed |
 
-**Digunakan oleh `printWorker.js`:** Mengirim `printing-reload` event saat status print berubah (PENDING→PRINTING→DONE/ERROR).
+**Used by `printWorker.js`:** Sends `printing-reload` event when print status changes (PENDING→PRINTING→DONE/ERROR).
 
 ---
 
-## 10. Konvensi Kode
+## 10. Code Conventions
 
-### 10.1. Pola Umum
+### 10.1. Common Patterns
 
-- **Soft delete**: Semua tabel punya kolom `presence` (1=active, 0=deleted). Query selalu filter `WHERE presence = 1`.
-- **Audit trail**: Semua tabel punya `inputDate`, `inputBy`, `updateDate`, `updateBy`.
-- **Void flag**: Tabel transaksional punya kolom `void` (0=normal, 1=voided).
-- **Database**: Semua query menggunakan `mysql2` promise pool, `async/await` pattern.
-- **ID Generation**: Menggunakan `helpers/autoNumber.js` untuk ID seperti cartId, dailyCheckId, sendOrder.
-- **Naming**: Controller files: `*Controller.js`, Route files: tanpa suffix. camelCase untuk variable dan function.
+- **Soft delete**: All tables have a `presence` column (1=active, 0=deleted). Queries always filter `WHERE presence = 1`.
+- **Audit trail**: All tables have `inputDate`, `inputBy`, `updateDate`, `updateBy`.
+- **Void flag**: Transactional tables have a `void` column (0=normal, 1=voided).
+- **Database**: All queries use `mysql2` promise pool with `async/await` pattern.
+- **ID Generation**: Uses `helpers/autoNumber.js` for IDs like cartId, dailyCheckId, sendOrder.
+- **Naming**: Controller files: `*Controller.js`, Route files: no suffix. camelCase for variables and functions.
 - **Response format**: `res.json({ error: false/true, data: ..., message: '...' })`.
-- **Currency**: Semua harga disimpan sebagai **integer** (Rupiah tanpa desimal, kecuali `menu.price*` yang `decimal(9,2)`).
+- **Currency**: All prices stored as **integers** (Rupiah without decimals, except `menu.price*` which uses `decimal(9,2)`).
 
 ### 10.2. Cart Close Status Values
 
-| `cart.close` | Arti |
-|--------------|------|
-| 0 | Open (masih aktif) |
-| 20 | Paid (sudah bayar) |
-| 41 | Void (dibatalkan) |
+| `cart.close` | Meaning |
+|--------------|---------|
+| 0 | Open (still active) |
+| 20 | Paid (payment completed) |
+| 41 | Void (cancelled) |
 
 ### 10.3. Print Queue Status Values
 
-| `print_queue.status` | Arti |
-|----------------------|------|
-| 0 | PENDING (belum diproses) |
-| 1 | PRINTING (sedang cetak) |
-| 2 | DONE (selesai) |
-| 3 | ERROR (gagal, akan retry) |
+| `print_queue.status` | Meaning |
+|----------------------|---------|
+| 0 | PENDING (not yet processed) |
+| 1 | PRINTING (currently printing) |
+| 2 | DONE (completed) |
+| 3 | ERROR (failed, will retry) |
 
 ### 10.4. Menu Set Types
 
-| `menu.menuSet` | Tipe |
+| `menu.menuSet` | Type |
 |----------------|------|
 | `''` (empty) | Regular menu item |
-| `'FIXED'` | Fixed combo — semua sub-items otomatis masuk |
-| `'SELECT'` | Select combo — customer pilih sub-items |
+| `'FIXED'` | Fixed combo — all sub-items automatically included |
+| `'SELECT'` | Select combo — customer chooses sub-items |
 
 ### 10.5. Tax/SC Status Values
 
-| Value | Arti |
-|-------|------|
-| 1 | Included in price (harga sudah termasuk) |
-| 2 | Excluded from price (harga belum termasuk) |
+| Value | Meaning |
+|-------|---------|
+| 1 | Included in price (price already includes tax/SC) |
+| 2 | Excluded from price (tax/SC added on top) |
 
 ### 10.6. Price Levels
 
-Menu memiliki `price1`–`price5` dan `specialPrice1`–`specialPrice5`. Price level ditentukan oleh `outlet.priceNo` atau `terminal.priceNo`.
+Menu has `price1`–`price5` and `specialPrice1`–`specialPrice5`. The price level is determined by `outlet.priceNo` or `terminal.priceNo`.
 
 ---
 
 ## 11. File Output
 
-| Tipe File | Lokasi | Trigger |
-|-----------|--------|---------|
+| File Type | Location | Trigger |
+|-----------|----------|---------|
 | Daily close CSV | `public/output/{yyyymmdd}-daily.csv` | POST /terminal/daily/close |
 | Bill text | `public/output/bill/{yyyymmdd}/` | POST /terminal/bill/createTxtBill |
 | Closed bill text | `public/output/billClosed/{yyyymmdd}/` | Payment close |
@@ -889,18 +934,18 @@ Menu memiliki `price1`–`price5` dan `specialPrice1`–`specialPrice5`. Price l
 
 ---
 
-## 12. Catatan Pengembangan
+## 12. Development Notes
 
 ### Known Issues / Technical Debt
-1. **SQL Injection risk**: Beberapa query menggunakan string concatenation alih-alih parameterized queries (terutama di `IsAuth.checkReportToken`).
-2. **Typo**: `voidTransacton` (missing 'i') di route menuItemPos.js.
-3. **Duplikat route**: `/global` route di-mount 2x di server.js.
-4. **`bill copy.js`**: File helper yang belum di-cleanup.
-5. **`cashcback.js`**: Typo di nama file (seharusnya `cashback.js`).
-6. **Production auth**: Admin routes saat ini tidak enforce authentication.
-7. **Currency precision**: Mix antara `int` (Rupiah bulat) dan `decimal(9,2)` di database bisa menyebabkan rounding issues.
+1. **SQL Injection risk**: Some queries use string concatenation instead of parameterized queries (especially in `IsAuth.checkReportToken`).
+2. **Typo**: `voidTransacton` (missing 'i') in menuItemPos.js route.
+3. **Duplicate route**: `/global` route is mounted twice in server.js.
+4. **`bill copy.js`**: Helper file that has not been cleaned up.
+5. **`cashcback.js`**: Typo in filename (should be `cashback.js`).
+6. **Production auth**: Admin routes currently do not enforce authentication.
+7. **Currency precision**: Mix of `int` (whole Rupiah) and `decimal(9,2)` in the database can cause rounding issues.
 
-### Cara Menjalankan
+### How to Run
 ```bash
 # Development
 cd service
@@ -908,7 +953,7 @@ cp env .env         # Setup environment
 npm install
 npm run run         # nodemon server.js (auto-reload)
 
-# Print Worker (terpisah)
+# Print Worker (separate process)
 node printWorker.js
 
 # Production
@@ -916,93 +961,93 @@ npm start           # node server.js
 ```
 
 ### Testing Database
-- `dbPos-for-AI.sql` — Schema saja (tanpa data) untuk referensi AI
-- `dbPos-dummy-data.sql` — Schema + dummy data untuk testing
+- `dbPos-for-AI.sql` — Schema only (no data) for AI reference
+- `dbPos-dummy-data.sql` — Schema + dummy data for testing
 - `backupDb/` — Full production backup
 
 ---
 
-## 13. Quick Reference — Tabel Database Lengkap
+## 13. Quick Reference — Complete Database Tables
 
-| # | Tabel | Deskripsi | Tipe |
-|---|-------|-----------|------|
+| # | Table | Description | Type |
+|---|-------|-------------|------|
 | 1 | `adjust_items` | Stock tracking records | Transactional |
 | 2 | `auto_number` | ID generator configuration | Config |
 | 3 | `bill` | Bill versioning per cart | Transactional |
-| 4 | `cart` | **Order/transaksi utama** | Transactional |
+| 4 | `cart` | **Main order/transaction** | Transactional |
 | 5 | `cart_cashback` | Cashback per payment | Transactional |
 | 6 | `cart_copy_bill` | Bill reprint log | Transactional |
-| 7 | `cart_item` | **Item dalam order** | Transactional |
-| 8 | `cart_item_discount` | Diskon per item | Transactional |
+| 7 | `cart_item` | **Items in an order** | Transactional |
+| 8 | `cart_item_discount` | Discount per item | Transactional |
 | 9 | `cart_item_group` | Split bill grouping | Transactional |
 | 10 | `cart_item_modifier` | Modifier per item | Transactional |
 | 11 | `cart_item_sc` | Service charge per item | Transactional |
-| 12 | `cart_item_tax` | Pajak per item | Transactional |
-| 13 | `cart_item_void_reason` | Alasan void item | Transactional |
-| 14 | `cart_merge_log` | Log merge meja | Transactional |
-| 15 | `cart_payment` | Pembayaran per transaksi | Transactional |
-| 16 | `cart_payment_void_reason` | Alasan void payment | Transactional |
-| 17 | `cart_transfer_items` | Log transfer item | Transactional |
-| 18 | `cart_void_reason` | Alasan void transaksi | Transactional |
+| 12 | `cart_item_tax` | Tax per item | Transactional |
+| 13 | `cart_item_void_reason` | Item void reason | Transactional |
+| 14 | `cart_merge_log` | Table merge log | Transactional |
+| 15 | `cart_payment` | Payments per transaction | Transactional |
+| 16 | `cart_payment_void_reason` | Payment void reason | Transactional |
+| 17 | `cart_transfer_items` | Item transfer log | Transactional |
+| 18 | `cart_void_reason` | Transaction void reason | Transactional |
 | 19 | `cashback` | Cashback rules | Master |
 | 20 | `cashback_amount` | Cashback tiers | Master |
 | 21 | `cashback_outlet` | Cashback per outlet | Master |
 | 22 | `cashback_payment` | Cashback per payment type | Master |
-| 23 | `check_cash_type` | Denominasi uang | Master |
-| 24 | `check_payment_group` | Grup payment | Master |
-| 25 | `check_payment_type` | Tipe pembayaran | Master |
-| 26 | `check_payment_type_popup` | Popup config payment | Master |
-| 27 | `daily_cash_balance` | Cash in/out harian | Transactional |
-| 28 | `daily_check` | Hari operasional | Transactional |
-| 29 | `daily_schedule` | Jadwal buka/tutup | Master |
-| 30 | `discount` | Aturan diskon | Master |
-| 31 | `discount_group` | Grup diskon | Master |
-| 32 | `discount_level` | Level diskon per auth level | Master |
-| 33 | `employee` | Data karyawan | Master |
-| 34 | `employee_access_right` | Hak akses per auth level | Master |
-| 35 | `employee_auth_level` | Level otorisasi | Master |
-| 36 | `employee_dept` | Departemen karyawan | Master |
-| 37 | `employee_order_level` | Level order karyawan | Master |
-| 38 | `employee_token` | Login session | Transactional |
-| 39 | `foreign_currency_type` | Mata uang asing | Master |
+| 23 | `check_cash_type` | Cash denominations | Master |
+| 24 | `check_payment_group` | Payment groups | Master |
+| 25 | `check_payment_type` | Payment types | Master |
+| 26 | `check_payment_type_popup` | Payment popup config | Master |
+| 27 | `daily_cash_balance` | Daily cash in/out | Transactional |
+| 28 | `daily_check` | Business day | Transactional |
+| 29 | `daily_schedule` | Open/close schedule | Master |
+| 30 | `discount` | Discount rules | Master |
+| 31 | `discount_group` | Discount groups | Master |
+| 32 | `discount_level` | Discount level per auth level | Master |
+| 33 | `employee` | Employee data | Master |
+| 34 | `employee_access_right` | Access rights per auth level | Master |
+| 35 | `employee_auth_level` | Authorization levels | Master |
+| 36 | `employee_dept` | Employee departments | Master |
+| 37 | `employee_order_level` | Employee order levels | Master |
+| 38 | `employee_token` | Login sessions | Transactional |
+| 39 | `foreign_currency_type` | Foreign currencies | Master |
 | 40 | `language` | i18n key-value | Master |
 | 41 | `logs` | User activity log | Transactional |
-| 42 | `member_class` | Kelas member | Master |
-| 43 | `member_transaction_type` | Tipe transaksi member | Master |
-| 44 | `menu` | **Daftar menu** | Master |
-| 45 | `menu_category` | Kategori menu | Master |
-| 46 | `menu_class` | Kelas menu | Master |
-| 47 | `menu_department` | Departemen menu | Master |
-| 48 | `menu_lookup` | Navigasi menu (tree) | Master |
+| 42 | `member_class` | Member classes | Master |
+| 43 | `member_transaction_type` | Member transaction types | Master |
+| 44 | `menu` | **Menu items** | Master |
+| 45 | `menu_category` | Menu categories | Master |
+| 46 | `menu_class` | Menu classes | Master |
+| 47 | `menu_department` | Menu departments | Master |
+| 48 | `menu_lookup` | Menu navigation (tree) | Master |
 | 49 | `menu_set` | Combo/package items | Master |
-| 50 | `menu_tax_sc` | Profil pajak & SC | Master |
-| 51 | `menu_tax_sc_status` | Status label tax/SC | Master |
+| 50 | `menu_tax_sc` | Tax & SC profile | Master |
+| 51 | `menu_tax_sc_status` | Tax/SC status labels | Master |
 | 52 | `modifier` | Modifier items | Master |
-| 53 | `modifier_group` | Grup modifier | Master |
-| 54 | `modifier_list` | Daftar modifier list | Master |
-| 55 | `module` | Modul sistem (untuk access rights) | Master |
-| 56 | `outlet` | Data outlet/cabang | Master |
-| 57 | `outlet_discount` | Diskon per outlet | Master |
-| 58 | `outlet_floor_plan` | Floor plan per outlet | Master |
-| 59 | `outlet_table_map` | Denah meja per outlet | Master |
-| 60 | `outlet_table_map_status` | Status meja (warna, label) | Master |
-| 61 | `pantry_message` | Pesan pantry/kitchen | Master |
-| 62 | `period` | Periode waktu (breakfast/lunch/dinner) | Master |
-| 63 | `print_queue` | Antrian cetak | Transactional |
-| 64 | `print_queue_status` | Label status print | Master |
-| 65 | `printer` | Data printer | Master |
-| 66 | `printer_group` | Grup printer | Master |
-| 67 | `reports` | Daftar laporan (menu hierarchy) | Master |
-| 68 | `reports_token` | Token akses laporan | Transactional |
-| 69 | `send_order` | Batch kitchen order | Transactional |
-| 70 | `template_table_map` | Template icon meja | Master |
-| 71 | `terminal` | Data terminal POS | Master |
-| 72 | `terminal_token` | Terminal session | Transactional |
-| 73 | `ux` | Konfigurasi UI POS | Master |
-| 74 | `void_reason` | Alasan void | Master |
+| 53 | `modifier_group` | Modifier groups | Master |
+| 54 | `modifier_list` | Modifier lists | Master |
+| 55 | `module` | System modules (for access rights) | Master |
+| 56 | `outlet` | Outlet/branch data | Master |
+| 57 | `outlet_discount` | Discounts per outlet | Master |
+| 58 | `outlet_floor_plan` | Floor plans per outlet | Master |
+| 59 | `outlet_table_map` | Table layout per outlet | Master |
+| 60 | `outlet_table_map_status` | Table status (color, label) | Master |
+| 61 | `pantry_message` | Pantry/kitchen messages | Master |
+| 62 | `period` | Time periods (breakfast/lunch/dinner) | Master |
+| 63 | `print_queue` | Print queue | Transactional |
+| 64 | `print_queue_status` | Print status labels | Master |
+| 65 | `printer` | Printer data | Master |
+| 66 | `printer_group` | Printer groups | Master |
+| 67 | `reports` | Report list (menu hierarchy) | Master |
+| 68 | `reports_token` | Report access tokens | Transactional |
+| 69 | `send_order` | Kitchen order batches | Transactional |
+| 70 | `template_table_map` | Table icon templates | Master |
+| 71 | `terminal` | POS terminal data | Master |
+| 72 | `terminal_token` | Terminal sessions | Transactional |
+| 73 | `ux` | POS UI configuration | Master |
+| 74 | `void_reason` | Void reasons | Master |
 | V1 | `view_cart` | View: cart items flat | View |
 | V2 | `view_discount` | View: discounts flat | View |
 
 ---
 
-*Dokumentasi ini di-generate berdasarkan analisis kode sumber pada 2026-03-04. Update file ini setiap ada perubahan signifikan pada arsitektur, endpoint, atau schema database.*
+*This documentation was generated based on source code analysis. Update this file whenever there are significant changes to architecture, endpoints, or database schema.*
