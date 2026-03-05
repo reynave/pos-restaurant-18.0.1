@@ -61,7 +61,13 @@ service/
 │   │   ├── language.js
 │   │   ├── dailySchedule.js
 │   │   ├── workStation.js
-│   │   └── other.js
+│   │   ├── other.js
+│   │   ├── complaint.js        # ⚠ Defined but not yet registered in server.js
+│   │   ├── customer.js         # ⚠ Defined but not yet registered in server.js
+│   │   ├── holidayList.js      # ⚠ Defined but not yet registered in server.js
+│   │   ├── member.js           # ⚠ Defined but not yet registered in server.js
+│   │   ├── specialHour.js      # ⚠ Defined but not yet registered in server.js
+│   │   └── template.js         # ⚠ Defined but not yet registered in server.js
 │   ├── outlet/             # Outlet management routes
 │   │   ├── outlet.js
 │   │   ├── tableMap.js
@@ -93,7 +99,29 @@ service/
 │       └── reports.js
 ├── controllers/
 │   ├── admin/              # Admin controllers
-│   │   └── login/
+│   │   ├── login/
+│   │   ├── general/            # General master data controllers
+│   │   │   └── tablesForAgent/ # SQL schema reference for AI agents
+│   │   ├── menu/               # Menu CRUD controllers
+│   │   │   └── tablesForAgent/ # SQL schema reference for AI agents
+│   │   ├── outlet/             # Outlet CRUD controllers
+│   │   │   └── tableForAgent/  # SQL schema reference for AI agents
+│   │   ├── report/             # Admin report controllers
+│   │   ├── DELETE/             # ⚠ Deprecated controllers (archived, not in use)
+│   │   ├── funcAuthorityController.js
+│   │   ├── functionAuthorityController.js
+│   │   ├── functionShortCutsController.js
+│   │   ├── menuController.js
+│   │   ├── outletCashTypesController.js
+│   │   ├── outletPaymentController.js
+│   │   ├── outletSpecialHourController.js
+│   │   ├── pantryMessageController.js
+│   │   ├── pantryStationController.js
+│   │   ├── printQueueController.js
+│   │   ├── serviceChargeController.js
+│   │   ├── stationTaxRunController.js
+│   │   ├── templateController.js
+│   │   └── voidCodeController.js
 │   ├── terminal/           # POS terminal controllers (19 files)
 │   │   ├── loginController.js
 │   │   ├── tableMapController.js
@@ -114,10 +142,7 @@ service/
 │   │   ├── uxFunctionController.js
 │   │   ├── languageController.js
 │   │   └── menuReportsController.js
-│   ├── general/            # Master data CRUD controllers
-│   ├── menu/               # Menu CRUD controllers
-│   ├── outlet/             # Outlet CRUD controllers
-│   └── report/             # Admin report controllers
+
 ├── helpers/
 │   ├── IsAuth.js           # JWT middleware (validateToken, checkReportToken)
 │   ├── autoNumber.js       # Auto-increment ID generator
@@ -139,6 +164,9 @@ service/
 │   │   ├── receiptPaid.hbs
 │   │   ├── kitchen.hbs
 │   │   └── tableChecker.hbs
+│   ├── floorMap/           # Floor plan images (.jpg)
+│   ├── keyLicence/         # Terminal license key files
+│   ├── userLog/            # User activity CSV logs (per date)
 │   └── output/             # Generated output files
 │       ├── *.csv           # Daily close exports
 │       ├── bill/           # Bill text exports
@@ -148,6 +176,9 @@ service/
 │       └── dailyClose/     # Daily close exports
 ├── views/
 │   └── reports/            # EJS templates for reports
+│       ├── global/
+│       │   ├── header.ejs      # Shared report header (included via <%- include() %>)
+│       │   └── footer.ejs      # Shared report footer
 │       ├── salesSummaryReport.ejs
 │       ├── cashierReports.ejs
 │       ├── itemizedSalesDetail.ejs
@@ -164,7 +195,8 @@ service/
 │       ├── employeeItemizedSales.ejs
 │       ├── managerClose.ejs
 │       ├── serverCloseReport.ejs
-│       └── dailyStartCloseHistory.ejs
+│       ├── dailyStartCloseHistory.ejs
+│       └── summary.ejs         # Item summary table (qty, price, subtotal)
 └── backupDb/               # SQL backup files
 ```
 
@@ -184,6 +216,7 @@ DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=
 DB_NAME=pos_resto           # MySQL database name
+TIMEZONE='+07:00'          # MySQL session timezone (Asia/Jakarta WIB)
 LOCALHOST=http://localhost:3000  # Used by printWorker.js for Socket.IO connection
 DUMMY_PRINTER=false         # true = simulate printing (no real printer)
 ```
@@ -742,6 +775,69 @@ POST /global/uxFunction/onSaveStatus → Save UX function status
 /userLogin/                          → User login history
 ```
 
+#### Admin Controllers — Additional Details
+
+These admin controllers are used by the routes above (`other.js`, `outlet.js`, `workStation.js`):
+
+| Controller | Database Table | Used By Route |
+|------------|---------------|---------------|
+| `funcAuthorityController.js` | `outlet_func_authority` | `/outlet/funcAuthority/*` |
+| `functionAuthorityController.js` | `func_auth_on_off` | `/other/functionAuthority/*` |
+| `functionShortCutsController.js` | `func_short_cut` | `/other/functionShortCuts/*` |
+| `menuController.js` | Multiple (menu navigation) | `/global/menu` |
+| `outletCashTypesController.js` | `outlet_cash_type` | `/outlet/cashType/*` |
+| `outletPaymentController.js` | `outlet_payment` | `/outlet/payment/*` |
+| `outletSpecialHourController.js` | `outlet_special_hour` | `/outlet/*` |
+| `pantryMessageController.js` | `pantry_message` | `/other/pantryMessage/*` |
+| `pantryStationController.js` | `pantry_station` | `/workStation/*` (commented out) |
+| `printQueueController.js` (admin) | `pantry_station_print_queue` | `/workStation/*` (commented out) |
+| `serviceChargeController.js` | `check_sc_type` | `/payment/*` |
+| `stationTaxRunController.js` | `station_tax_run` | `/workStation/*` (commented out) |
+| `templateController.js` | `template` | `/template/*` |
+| `voidCodeController.js` | `void_code` | `/other/voidCode/*` |
+
+> **Note:** Some controllers (`pantryStation`, `stationTaxRun`, `printQueue`) are referenced in `workStation.js` but currently **commented out** — not yet active.
+
+### 7.4. Upcoming Admin Routes (Defined but Not Registered)
+
+These route files exist in `routes/general/` but are **not yet registered** in `server.js`. They will need `app.use()` entries to become active:
+
+```
+/complaint/*                         → Complaint categories + types CRUD
+  GET    /complaint/category/
+  POST   /complaint/category/create|update|delete
+  GET    /complaint/type/
+  POST   /complaint/type/create|update|delete
+
+/customer/*                          → Customer info + groups CRUD
+  GET    /customer/info/
+  GET    /customer/info/select
+  POST   /customer/info/create|update|delete
+  GET    /customer/grp/
+  POST   /customer/grp/create|update|delete
+
+/holidayList/*                       → Holiday schedule CRUD
+  GET    /holidayList/
+  POST   /holidayList/create|update|delete
+
+/member/*                            → Member management (26 endpoints)
+  /member/profile/*                  → Member profiles CRUD
+  /member/class/*                    → Member classifications CRUD
+  /member/period/*                   → Member periods/tiers CRUD
+  /member/account/*                  → Member accounts CRUD
+  /member/accountHolder/*            → Account holders CRUD
+  /member/costCentre/*               → Cost centre mapping CRUD
+
+/specialHour/*                       → Special operating hours CRUD
+  GET    /specialHour/
+  POST   /specialHour/create|update|delete
+
+/template/*                          → Template management CRUD
+  GET    /template/
+  GET    /template/detail
+  POST   /template/create|update|delete
+```
+
 ---
 
 ## 8. Core Business Logic
@@ -930,7 +1026,9 @@ Menu has `price1`–`price5` and `specialPrice1`–`specialPrice5`. The price le
 | Send order files | `public/output/sendOrder/{yyyymmdd}/` | POST /terminal/menuItemPos/sendOrder |
 | Table checker text | `public/output/tableChecker/{yyyymmdd}/` | GET /terminal/printing/tableChecker |
 | Daily close export | `public/output/dailyClose/` | POST /terminal/daily/close |
-| User action logs | CSV via Winston logger | POST /terminal/log/ |
+| User action logs | `public/userLog/{yyyy-mm-dd}.csv` | POST /terminal/log/ (via Winston logger) |
+| Floor plan images | `public/floorMap/*.jpg` | Uploaded via admin |
+| Terminal license keys | `public/keyLicence/{terminalId}.txt` | Generated via `node token.js` |
 
 ---
 
@@ -944,6 +1042,9 @@ Menu has `price1`–`price5` and `specialPrice1`–`specialPrice5`. The price le
 5. **`cashcback.js`**: Typo in filename (should be `cashback.js`).
 6. **Production auth**: Admin routes currently do not enforce authentication.
 7. **Currency precision**: Mix of `int` (whole Rupiah) and `decimal(9,2)` in the database can cause rounding issues.
+8. **Orphaned route files**: 6 route files in `routes/general/` (`complaint.js`, `customer.js`, `holidayList.js`, `member.js`, `specialHour.js`, `template.js`) are defined but not registered in `server.js`.
+9. **Deprecated controllers**: `controllers/admin/DELETE/` folder contains 19 archived controllers (bonusRules, complaint, customer, member, mixAndMatch, tipsPool, etc.) — kept for reference but not in use.
+10. **Commented-out routes**: In `workStation.js`, routes for `stationTaxRun`, `pantryStation`, and `printQueue` (admin) are commented out.
 
 ### How to Run
 ```bash
@@ -964,6 +1065,16 @@ npm start           # node server.js
 - `dbPos-for-AI.sql` — Schema only (no data) for AI reference
 - `dbPos-dummy-data.sql` — Schema + dummy data for testing
 - `backupDb/` — Full production backup
+
+### Schema Reference for AI Agents (`tablesForAgent/`)
+
+SQL CREATE TABLE files placed alongside controllers for AI agent reference:
+
+| Location | Files | Tables Documented |
+|----------|-------|-------------------|
+| `controllers/admin/general/tablesForAgent/` | `cashback.sql`, `daily_schedule.sql`, `discount.sql`, `payment.sql`, `printer.sql`, `taxAndService.sql` | Cashback, schedule, discount, payment, printer, tax/SC tables |
+| `controllers/admin/menu/tablesForAgent/` | `menu.sql` | menu_category, menu_class, menu_department, modifier, modifier_group, modifier_list |
+| `controllers/admin/outlet/tableForAgent/` | `outlet.sql` | outlet, outlet_floor_plan, outlet_table_map, template_table_map |
 
 ---
 
