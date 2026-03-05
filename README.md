@@ -34,16 +34,31 @@ npm start
 Using nodemon (install first: https://www.npmjs.com/package/nodemon)  
 ```npm install -g nodemon```
 
+ ```bash
+nodemon server.js
+```
  
 # Run Server Production
  
 ###  **PM2** is required
 https://pm2.keymetrics.io/
+ ```bash
+npm install pm2 -g
+```
+start server
+ ```bash
+pm2 start server.js
+```
+
+See Monitor
+ ```bash
+pm2 lis
+```
 
 
 ###  Update Patch Code
 ```
 git pull
 ```
-In the current folder (see step 2: Clone the repository)  
-Or, without GitHub, just overwrite the folder and files.
+
+Without GitHub, just donwload and overwrite the folder and files.
