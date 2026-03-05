@@ -12,51 +12,36 @@ Global settings are in the **.env** file (set according to your server, port, an
     [Download XAMPP](https://www.apachefriends.org/)
     [mysql editor] (https://www.heidisql.com/)
 
-#### Clone or Download the Project
+#### Clone / Download and install the Project
+```
+git clone https://github.com/reynave/pos-restaurant-18.0.1
+```
 
-1. **Install GitHub Command Line**  
-    [Download GitHub CLI](https://cli.github.com/)  
-    Enter your project folder.  
-    Open Command Line (cmd) in Windows, set it in the system variable, and check with `git version`.
+Go to the `service` folder and install the Node.js packages:
 
-2. **Clone the repository**  
-    Run the following command in your project folder:
-    ```
-    git clone https://github.com/reynave/pos-restaurant-18.0.1
-    ```
-    Or download manually (without GitHub):
-    1. Download (click CODE, then Download ZIP)
-    2. Extract the *.zip file
-    3. Continue to **SERVER INSTALLATION**
+```bash
+cd service
+npm install
+```
 
+Start Server 
 
-# Install SERVER
+ ```bash
+npm start
+```
+
+# Install NPM (ALTERNATVIE)
 Using nodemon (install first: https://www.npmjs.com/package/nodemon)  
 ```npm install -g nodemon```
 
-
-Open **CMD / Command Prompt / Windows PowerShell** and navigate to your current project folder  
-*Example: c:\nodejs\server\ (your current project folder)*
-```
-c:\nodejs\server\npm install
-c:\nodejs\server\nodemon server.js
-```
-
-#### Install LOCALHOST
-
-Open **CMD / Command Prompt / Windows PowerShell** and navigate to your current project folder  
-*Example: c:\nodejs\localhost\ (your current project folder)*
-```
-c:\nodejs\localhost\npm install
-c:\nodejs\localhost\nodemon host.js
-```
-
+ 
 # Run Server Production
  
 ###  **PM2** is required
 https://pm2.keymetrics.io/
 
-###  Update Patch Code - Only with GitHub CMD
+
+###  Update Patch Code
 ```
 git pull
 ```
