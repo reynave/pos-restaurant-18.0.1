@@ -83,6 +83,27 @@ app.get(process.env.PREFIX + 'checkdb', async (req, res) => {
 });
 
 app.use( '/pos', express.static('pos'));
+
+app.use( '/pos/env.js', (req, res) => {
+    res.setHeader('Content-Type', 'application/javascript');
+
+    const port = process.env.PORT || 3000;
+    const protocol = process.env.PRODUCTION === 'true' ? 'https' : 'http';
+    const host = req.hostname;
+    const ssl = process.env.PRODUCTION === 'true';
+    const server = `${protocol}://${host}:${port}`;
+    const api = `${protocol}://${host}:${port}${process.env.PREFIX}`;
+
+    res.send(
+`// EDIT HERE
+let ssl = ${ssl};
+const server = "${server}/";
+const api = "${api}"; 
+const lisence = 'MITRALINK';
+`
+    );
+});
+ 
 app.use(process.env.PREFIX + 'public', express.static('public'));
 
 // ADMIN SERVICE HERE  
@@ -133,9 +154,15 @@ app.use(process.env.PREFIX + process.env.TERMINAL + 'reports',  IsAuth.checkRepo
 app.use('/', (req, res) => {
     const data = {
         message: 'Welcome to POS Restaurant API',
+        forntEnd : `${req.protocol}://${req.get('host')}/pos/`,
+        api : {
+                admin : `${req.protocol}://${req.get('host')}${process.env.PREFIX}login`,
+                terminal : `${req.protocol}://${req.get('host')}${process.env.PREFIX}${process.env.TERMINAL}login`,     
+        },
         error: false,
         serverTime: new Date(),
-        prefix: process.env.PREFIX
+        prefix: process.env.PREFIX, 
+        
     }
     res.json(data);
 });
